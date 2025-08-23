@@ -1,4 +1,4 @@
-import { ButtonSelector } from "@components";
+import { ButtonSelector, TabSwitcher } from "@components";
 import {
   Arrow,
   CalculatedFields,
@@ -10,6 +10,8 @@ import { useCalculationGuide } from "@RM/hooks";
 import { fields } from "@RM/data";
 import { useMemo } from "react";
 import { useRiskManagementStore } from "@RM/stores";
+import { SettingsSectionWrapper } from "@RM/layout";
+import { Label } from "@layout";
 
 export default function CalculationLogicGuide({ updateSettings }) {
   const { selectedField, affected, userDefined, mainFields, formulaMap } =
@@ -24,45 +26,56 @@ export default function CalculationLogicGuide({ updateSettings }) {
     [selectedSection]
   );
 
+  const tabs = [
+    { key: "Calculator", label: "Normal" },
+    { key: "Target", label: "Target" },
+    { key: "Stop-Loss", label: "Stop-Loss" },
+    { key: "Position-Sizing", label: "Position-Sizing" },
+  ];
+
   return (
-    <>
-      <ButtonSelector
-        label={"Calculation Logic Guide:"}
-        options={["Calculator", "Target", "Stop-Loss", "Position-Sizing"]}
-        onSelect={(mode) => updateSettings("selectedSection", mode)}
-        selectedOption={selectedSection}
-        size="small"
+    <div>
+      <TabSwitcher
+        tabs={tabs}
+        tabStyle={{ marginBottom: "0px" }}
+        currentTab={selectedSection}
+        onClick={(tab) => updateSettings({ selectedSection: tab })}
+        style={{ padding: "10px 15px" }}
       />
-      {/* Dependencies Visualization */}
-      <div className="settings-popup-grid">
-        <InputFields
-          selectedField={selectedField}
-          updateSettings={updateSettings}
-          mainFields={mainFields}
-        />
-        <Arrow selectedField={selectedField} />
-        <ManualInputs userDefined={userDefined} />
-        <CalculatedFields
+      <SettingsSectionWrapper>
+        <Label>Calculation Logic Guide</Label>
+        <div className="divider"></div>
+
+        <div className="settings-popup-grid">
+          <InputFields
+            selectedField={selectedField}
+            updateSettings={updateSettings}
+            mainFields={mainFields}
+          />
+          <Arrow selectedField={selectedField} />
+          <ManualInputs userDefined={userDefined} />
+          <CalculatedFields
+            affected={affected}
+            formulaMap={formulaMap}
+            currentSection={selectedSection}
+          />
+          {isTargetOrSl && (
+            <CalculatedFields
+              affected={fields["target"]}
+              formulaMap={formulaMap}
+              currentSection={
+                selectedSection === "Target" ? "Stop-Loss" : "Target"
+              }
+            />
+          )}{" "}
+        </div>
+
+        <Summary
           affected={affected}
-          formulaMap={formulaMap}
+          selectedField={selectedField}
           currentSection={selectedSection}
         />
-        {isTargetOrSl && (
-          <CalculatedFields
-            affected={fields}
-            formulaMap={formulaMap}
-            currentSection={
-              selectedSection === "Target" ? "Stop-Loss" : "Target"
-            }
-          />
-        )}{" "}
-      </div>
-
-      <Summary
-        affected={affected}
-        selectedField={selectedField}
-        currentSection={selectedSection}
-      />
-    </>
+      </SettingsSectionWrapper>
+    </div>
   );
 }

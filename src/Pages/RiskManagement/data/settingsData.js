@@ -1,3 +1,21 @@
+export const qtyRoundModePoints = {
+  Nearest: [
+    "Rounds quantity to the nearest valid lot multiple.",
+    "✅ Balanced approach — adjusted SL may be slightly above or below original SL.",
+    "⚖️ Best used when precision and capital efficiency are both important.",
+  ],
+  Up: [
+    "Always rounds quantity upward to the next valid lot multiple.",
+    "✅ Ensures full risk utilization — adjusted SL will always be 'lower' than original SL.",
+    "⚠️ May slightly increase capital usage and reduce buffer margin.",
+  ],
+  Down: [
+    "Always rounds quantity downward to the previous valid lot multiple.",
+    "✅ Conservative sizing — adjusted SL will always be 'higher' than original SL.",
+    "👍 Ideal for risk-sensitive setups or capital preservation strategies.",
+  ],
+};
+
 export const calculationPoints = {
   Approx: [
     "Rounding is done up to 2 decimal places.",

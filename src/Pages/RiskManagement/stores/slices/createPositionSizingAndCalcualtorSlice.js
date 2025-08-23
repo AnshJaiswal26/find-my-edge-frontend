@@ -9,12 +9,10 @@ export const createPositionSizingAndCalculatorSlice = () => ({
     slPts: 0,
     riskAmount: 0,
     riskPercent: 0,
-    prevVal: 0,
   },
 
   calculator: {
     name: "calculator",
     ...createMetrics(),
-    prevVal: 0,
   },
 });

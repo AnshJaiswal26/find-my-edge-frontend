@@ -5,7 +5,7 @@ import { Input } from "@RM/components";
 import { useRiskManagementStore } from "@RM/stores";
 
 export function CapitalInputContainer() {
-  const updateSettings = useRiskManagementStore((s) => s.update.settings);
+  const updateSettings = useRiskManagementStore((s) => s.updater.settings);
 
   return (
     // <RenderLogger id={"CapitalInputContainer"} why={"updateSettings"}>
@@ -20,7 +20,7 @@ export function CapitalInputContainer() {
         </div>
         <IconButton
           src="Icons/others/adjust.png"
-          onClick={() => updateSettings("show", true)}
+          onClick={() => updateSettings({ showPanel: true })}
         />
       </div>
     </Container>

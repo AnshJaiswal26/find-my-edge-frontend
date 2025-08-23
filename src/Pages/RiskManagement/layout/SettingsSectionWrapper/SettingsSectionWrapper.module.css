@@ -1,0 +1,12 @@
+.settingsSectionWrapper {
+  padding: 15px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  background-color: #f3f3f39f;
+  border: 1px solid #e8e8e8;
+}
+
+:global(.dark-theme) .settingsSectionWrapper {
+  background-color: #24303f;
+  border: 1px solid #2d3b4d;
+}

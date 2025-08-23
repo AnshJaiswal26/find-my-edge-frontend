@@ -4,10 +4,8 @@ import { fields } from "@RM/data";
 import { getFormulaMap } from "@RM/utils";
 
 export default function useCalculationGuide() {
-  const derivedInput = useRiskManagementStore((s) => s.settings.derived.input);
-  const selectedField = useRiskManagementStore(
-    (s) => s.settings.logicGuide.selectedField
-  );
+  const derivedInput = useRiskManagementStore((s) => s.settings.derivedInput);
+  const selectedField = useRiskManagementStore((s) => s.settings.selectedField);
   const selectedSection = useRiskManagementStore(
     (s) => s.settings.selectedSection
   );
@@ -28,8 +26,8 @@ export default function useCalculationGuide() {
   const mainFields = useMemo(
     () =>
       selectedSection === "Target" || selectedSection === "Stop-Loss"
-        ? ["riskReward", ...fields]
-        : fields,
+        ? ["riskReward", ...fields["calculator"]]
+        : fields["calculator"],
     [selectedSection]
   );
 

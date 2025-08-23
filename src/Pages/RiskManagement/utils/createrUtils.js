@@ -3,11 +3,13 @@ import { is } from "./derivedUtils";
 import { logInfo } from ".";
 import { useRiskManagementStore } from "@RM/stores";
 
+export const getKey = (s, f) => `${s}_${f}`;
+
 export const generateTooltip = (field, key, mode) => {
   if (!key) return null;
 
   const derived =
-    mode ?? useRiskManagementStore.getState().settings.derived.input;
+    mode ?? useRiskManagementStore.getState().settings.derivedInput;
 
   const fieldHolder = fieldLabels[field];
   const isPriceOrQty = is.BSQ(field);

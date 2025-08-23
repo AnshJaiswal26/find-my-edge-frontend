@@ -6,4 +6,4 @@ export {
   fieldColors,
   postitionSizingFields,
 } from "./calculatorsData";
-export { calculationPoints } from "./settingsData";
+export { calculationPoints, qtyRoundModePoints } from "./settingsData";

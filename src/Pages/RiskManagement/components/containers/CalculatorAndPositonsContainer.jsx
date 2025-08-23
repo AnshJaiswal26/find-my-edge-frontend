@@ -60,7 +60,7 @@ function getSelectedCalculator(current) {
 }
 
 function TabContainer() {
-  const updateTab = useRiskManagementStore((s) => s.update.tab);
+  const updateTab = useRiskManagementStore((s) => s.updater.tab);
   const currentTab = useRiskManagementStore((s) => s.currentTab);
 
   const tabs = [

@@ -3,20 +3,16 @@ import { useRiskManagementStore } from "@RM/stores";
 import { calculationPoints } from "@RM/data";
 
 export default function CalculationModeSelector({ updateSettings }) {
-  const autoRound = useRiskManagementStore(
-    (s) => s.settings.calculation.autoRound
-  );
+  const autoRound = useRiskManagementStore((s) => s.settings.autoRound);
 
   return (
     <>
       <div className="settings-popup-label-container">
-        <div className="settings-popup-label">Calculation Mode:</div>
+        <div className="settings-popup-label">Round Mode</div>
         <ToggleButton
           label={["Auto-Rounding"]}
           toggleOn={autoRound}
-          onClick={() =>
-            updateSettings("calculation", { autoRound: !autoRound })
-          }
+          onClick={() => updateSettings({ autoRound: !autoRound })}
           color={"#1d4ed8"}
         />
       </div>
@@ -26,17 +22,17 @@ export default function CalculationModeSelector({ updateSettings }) {
 }
 
 function SelectorAndOverview({ updateSettings }) {
-  const calcMode = useRiskManagementStore((s) => s.settings.calculation.mode);
+  const calcMode = useRiskManagementStore((s) => s.settings.roundMode);
 
   return (
     <>
       <ButtonSelector
         options={["Approx", "Market", "Buffer"]}
         selectedOption={calcMode}
-        onSelect={(mode) => updateSettings("calculation", { mode: mode })}
+        onSelect={(mode) => updateSettings({ roundMode: mode })}
       />
       <Overview
-        title={"⚙️ Calculation Mode Overview"}
+        title={"⚙️ Round Mode Overview"}
         pointsArray={calculationPoints[calcMode]}
         withNote={true}
         note={

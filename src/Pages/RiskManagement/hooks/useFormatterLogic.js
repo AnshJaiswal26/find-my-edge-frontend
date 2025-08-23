@@ -1,59 +1,60 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useRiskManagementStore } from "@RM/stores";
-import { useAmountAndPtsHandler } from ".";
-import { formatValue, logEnd, logResult, logStart } from "@RM/utils";
-import { shouldFormat } from "@RM/utils/derivedUtils";
-
-const getArray = (t) =>
-  t === "normal" ? ["calculator"] : ["target", "stopLoss"];
+import { usePtsAmountAndPercentHandler } from ".";
+import { formatValue, logResult, logStart } from "@RM/utils";
+import { shouldFormat } from "@RM/utils";
 
 export default function useFormatterLogic() {
-  const updateSection = useRiskManagementStore((s) => s.update.section);
-  const handleAmountOrPtsChange = useAmountAndPtsHandler();
+  const updateSections = useRiskManagementStore((s) => s.updater.sections);
+  const handlePtsAmountAndPercentChange = usePtsAmountAndPercentHandler();
 
   const formatAndUpdate = useCallback(
-    (sec, formatedKeys, mode) => {
+    (sec, formatedKeys, mode, state) => {
       logStart("formatAndUpdate", { sec, formatedKeys, mode });
-      const { name, buyPrice, sellPrice, qty } = sec;
+      const { name, buyPrice, sellPrice, qty, pts } = sec;
 
       if (mode === "Approx") {
-        updateSection(sec.name, formatedKeys);
-        return;
+        logResult("formatAndUpdate", `formating done for ${name}`);
+        return [["calculator", name, formatedKeys]];
       }
 
-      const correctMode = mode === "Buffer" ? "Market" : mode;
-
-      const formated = {
-        buyPrice: formatValue(buyPrice, { mode: correctMode }),
-        sellPrice: formatValue(sellPrice, { mode: correctMode }),
-        qty: qty,
-      };
-      const adjustedPts = formatValue(sec.pts, { mode: mode });
-
-      const section = handleAmountOrPtsChange({
-        section: { name, ...formated },
+      const section = handlePtsAmountAndPercentChange({
+        section: {
+          name,
+          buyPrice: formatValue(buyPrice, { mode }),
+          sellPrice: formatValue(sellPrice, { mode }),
+          qty,
+        },
         field: "pts",
-        val: adjustedPts,
-        sync: false,
+        val: formatValue(pts, { mode }),
+        isFormatting: true,
+        state,
       });
 
-      updateSection(name, { ...section, ...formated });
-      logResult("formatAndUpdate", { ...section, ...formated });
+      logResult("formatAndUpdate", `formating done for ${name}`);
+      return section;
     },
-    [handleAmountOrPtsChange, updateSection]
+    [handlePtsAmountAndPercentChange]
   );
 
   const format = useCallback(() => {
-    const sections = useRiskManagementStore.getState();
-    const sectionArray = getArray(sections.currentTab);
-    const mode = sections.settings.calculation.mode;
+    const state = useRiskManagementStore.getState();
+    const { settings, currentTab } = state;
+    const sectionArray =
+      currentTab === "normal" ? ["calculator"] : ["target", "stopLoss"];
+    const mode = settings.roundMode;
 
-    sectionArray.forEach((k) => {
-      const sec = sections[k];
+    const sectionUpdates = [];
+    sectionArray.forEach((s) => {
+      const sec = state[s];
       const formatedKeys = shouldFormat(sec, mode);
-      if (formatedKeys) formatAndUpdate(sec, formatedKeys, mode);
+      if (formatedKeys) {
+        const updates = formatAndUpdate(sec, formatedKeys, mode, state);
+        sectionUpdates.push(...updates);
+      }
     });
-  }, [formatAndUpdate]);
+    updateSections(sectionUpdates);
+  }, [formatAndUpdate, updateSections]);
 
   return { format };
 }

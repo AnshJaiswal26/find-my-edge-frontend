@@ -1,4 +1,4 @@
-export const fields = [
+export const commonfields = [
   "buyPrice",
   "sellPrice",
   "qty",
@@ -15,6 +15,23 @@ export const postitionSizingFields = [
   "riskAmount",
   "riskPercent",
 ];
+
+const pyramidingFields = [
+  "entryPrice",
+  "qtyAdded",
+  "avgBuyPrice",
+  "atRiskReward",
+  "riskAmountPyramiding",
+  "riskPercentPyramiding",
+];
+
+export const fields = {
+  calculator: commonfields,
+  target: commonfields,
+  stopLoss: commonfields,
+  positionSizing: postitionSizingFields,
+  pyramiding: pyramidingFields,
+};
 
 export const sectionLabels = {
   calculator: "Calculator",
@@ -35,9 +52,15 @@ export const fieldLabels = {
   slPts: "SL Pts",
   lotSize: "Lot Size",
   suggestedQty: "Suggested Qty",
-  riskPercent: "Risk (%)",
   riskAmount: "Risk (₹)",
+  riskPercent: "Risk (%)",
   adjustedSl: "Adjusted SL",
+  entryPrice: "Entry Price",
+  qtyAdded: "Qty",
+  atRiskReward: "At Risk/Reward",
+  riskAmountPyramiding: "Risk (₹)",
+  riskPercentPyramiding: "Risk (%)",
+  avgBuyPrice: "Avg. Buy Price",
 };
 
 export const sectionColor = {

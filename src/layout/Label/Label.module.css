@@ -1,0 +1,19 @@
+.label {
+  color: rgb(63, 63, 63);
+  margin: 10px 0px;
+}
+
+:global(.dark-theme) .label {
+  color: rgb(255, 255, 255);
+}
+
+.label.large {
+  font-size: large;
+}
+.label.medium {
+  font-size: medium;
+}
+
+.label.small {
+  font-size: small;
+}

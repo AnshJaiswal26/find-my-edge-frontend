@@ -1,33 +1,30 @@
 import { useMemo } from "react";
 import { debounce } from "lodash";
 import { Button } from "@components";
-import { Input } from "@RM/components";
 import { useRiskManagementStore } from "@RM/stores";
 import { useClearLogic } from "@RM/hooks";
 import { CalcualtorSectionLayout } from "@RM/layout";
-import { fieldLabels, fields, sectionColor, sectionLabels } from "@RM/data";
 import RenderLogger from "@Profiler";
 
 export default function CalculatorSection({ sectionName }) {
-  const updateSection = useRiskManagementStore((s) => s.update.section);
+  const updateTransaction = useRiskManagementStore(
+    (s) => s.updater.transaction
+  );
 
   const debouncedsetHoveredSection = useMemo(() => {
     const handler = debounce((name) => {
-      const currentTransaction =
-        useRiskManagementStore.getState().currentTransaction;
-      if (currentTransaction === name) return;
-      updateSection("currentTransaction", name);
+      updateTransaction(name);
     }, 100);
 
     return handler;
-  }, [updateSection]);
+  }, [updateTransaction]);
 
   const isTargetOrSL = sectionName !== "calculator";
 
   return (
     // <RenderLogger id={"CalculatorSection"} why={sectionName}>
     <CalcualtorSectionLayout
-      name={sectionName}
+      section={sectionName}
       onMouseEnter={debouncedsetHoveredSection}
       headerElement={
         isTargetOrSL && (
@@ -42,24 +39,16 @@ export default function CalculatorSection({ sectionName }) {
           />
         )
       }
-      inputGrid={fields.map((field) => (
-        <div className="relative" key={field}>
-          <Input
-            label={fieldLabels[field]}
-            sectionName={sectionName}
-            field={field}
-          />
-        </div>
-      ))}
-    >
-      {!isTargetOrSL && <FooterButtons sectionName={sectionName} />}
-    </CalcualtorSectionLayout>
+      footerElement={
+        !isTargetOrSL && <FooterButtons sectionName={sectionName} />
+      }
+    />
     // </RenderLogger>
   );
 }
 
 function FooterButtons({ sectionName }) {
-  const { clearSection } = useClearLogic();
+  const clearSection = useClearLogic();
 
   return (
     <div className="footer-buttons">

@@ -18,9 +18,7 @@ export default function InputFields({
             className={`field-card input-card input-field ${
               field === selectedField ? "selected" : ""
             }`}
-            onClick={() =>
-              updateSettings("logicGuide", { selectedField: field })
-            }
+            onClick={() => updateSettings({ selectedField: field })}
           >
             <div className="field-name">{fieldLabels[field]}</div>
             <div className="field-note">Editable</div>

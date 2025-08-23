@@ -17,6 +17,8 @@ export default function CalculatedFields({
 
   return (
     <div>
+      <div className="divider"></div>
+
       <div className="section-title calc-title">
         🧮 Calculated Inputs - {isRRAndLengthIs6 ? 0 : affected.length}{" "}
         {currentSection && "in (" + currentSection + ")"}

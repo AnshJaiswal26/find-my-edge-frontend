@@ -4,13 +4,16 @@ import {
   CalculationLogicGuide,
   CalculationModeSelector,
   DerivedModeSelector,
+  QtyRoundSelector,
 } from "./components";
+import { SettingsSectionWrapper } from "@RM/layout";
+import { Label } from "@layout";
 
 function Settings() {
-  const updateSettings = useRiskManagementStore((s) => s.update.settings);
-  const show = useRiskManagementStore((s) => s.settings.show);
+  const updateSettings = useRiskManagementStore((s) => s.updater.settings);
+  const showPanel = useRiskManagementStore((s) => s.settings.showPanel);
 
-  if (!show) return null;
+  if (!showPanel) return null;
 
   return (
     <div className="settings-popup-overlay">
@@ -20,7 +23,7 @@ function Settings() {
           <div className="settings-popup-header-content">
             <span className="settings-popup-title">Settings</span>
             <button
-              onClick={() => updateSettings("show", false)}
+              onClick={() => updateSettings({ showPanel: false })}
               className="settings-popup-close-button"
             >
               ×
@@ -29,13 +32,26 @@ function Settings() {
         </div>
 
         <div className="settings-popup-body">
-          <CalculationModeSelector updateSettings={updateSettings} />
+          <SettingsSectionWrapper>
+            <Label>Applies to Calculator, Target & Stop-Loss</Label>
 
-          <div className="divider"></div>
+            <div className="divider"></div>
 
-          <DerivedModeSelector updateSettings={updateSettings} />
+            <CalculationModeSelector updateSettings={updateSettings} />
 
-          <div className="divider"></div>
+            <div className="divider"></div>
+
+            <DerivedModeSelector updateSettings={updateSettings} />
+          </SettingsSectionWrapper>
+
+          <SettingsSectionWrapper>
+            <Label>Applies to Position-Sizing</Label>
+            <div className="divider"></div>
+
+            <QtyRoundSelector updateSettings={updateSettings} />
+          </SettingsSectionWrapper>
+
+          {/* <div className="divider"></div> */}
 
           <CalculationLogicGuide updateSettings={updateSettings} />
         </div>

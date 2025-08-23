@@ -1,7 +1,6 @@
-export { calculateCharges, getNewCharges } from "./chargesUtils";
+export { calculateCharges, getNewCharges, toggleCharges } from "./chargesUtils";
 export {
-  getDerivedObj,
-  getPtsByRatio,
+  resolvePts,
   getValBySecName,
   resetAllToZero,
   getUpdatedKeys,
@@ -13,11 +12,22 @@ export {
   cleanFloat,
   formatValue,
   roundKeys,
+  shouldFormat,
 } from "./formatterUtils";
-export { calculatorUpdater } from "./updaterUtils";
+export {
+  calculatorUpdater,
+  toolTipUpdater,
+  singleUpdater,
+  settingsUpdater,
+} from "./updaterUtils";
 export { getFormulaMap } from "./formulaUtils";
 export { getFormula } from "./formulaUtils";
-export { createFlash, createMetrics, generateTooltip } from "./createrUtils";
+export {
+  getKey,
+  createFlash,
+  createMetrics,
+  generateTooltip,
+} from "./createrUtils";
 export {
   logStart,
   logInfo,

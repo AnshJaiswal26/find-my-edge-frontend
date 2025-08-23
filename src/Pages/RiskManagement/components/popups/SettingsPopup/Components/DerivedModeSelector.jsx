@@ -6,10 +6,9 @@ import { derivedInputPoints } from "@RM/data/settingsData";
 import { generateTooltip, logResult, logStart } from "@RM/utils";
 
 export default function DerivedModeSelector({ updateSettings }) {
-  const derived = useRiskManagementStore((s) => s.settings.derived);
-  const showTooltip = useRiskManagementStore((s) => s.update.tooltip);
-  const derivedInput = derived.input;
-  const adjust = derived.adjust;
+  const derivedInput = useRiskManagementStore((s) => s.settings.derivedInput);
+  const adjust = useRiskManagementStore((s) => s.settings.adjustedField);
+  const updateSections = useRiskManagementStore((s) => s.updater.sections);
 
   const label = fieldLabels[derivedInput];
   const explanationPoints = derivedInputPoints(label);
@@ -18,7 +17,7 @@ export default function DerivedModeSelector({ updateSettings }) {
     (sec, m, track) => {
       const fields = ["buyPrice", "sellPrice"];
       const m1 = m === "amount" ? adjust : m;
-      const m2 = track === "adjust" ? "amount" : m;
+      const m2 = track === "adjustedField" ? "amount" : m;
 
       const updates = fields.reduce((acc, f) => {
         const isNeg = sec[f] < 0;
@@ -27,9 +26,11 @@ export default function DerivedModeSelector({ updateSettings }) {
         return acc;
       }, {});
 
-      if (Object.keys(updates).length > 0) showTooltip(sec.name, updates);
+      return Object.keys(updates).length > 0
+        ? ["tooltip", sec.name + "Tooltip", updates]
+        : [];
     },
-    [showTooltip, adjust]
+    [adjust]
   );
 
   const handleDependencyChange = useCallback(
@@ -40,32 +41,36 @@ export default function DerivedModeSelector({ updateSettings }) {
         .map((sec) => sections[sec])
         .filter((sec) => sec.buyPrice < 0 || sec.sellPrice < 0);
 
-      invalids.forEach((sec) => showTooltipForInvalids(sec, mode, track));
+      const sectionUpdates = invalids.map((sec) =>
+        showTooltipForInvalids(sec, mode, track)
+      );
 
-      updateSettings("derived", { [track]: mode });
+      sectionUpdates.push(["settings", "settings", { [track]: mode }]);
+      updateSections(sectionUpdates);
+
       logResult("handleDependencyChange", "Changes Done for " + mode);
     },
-    [showTooltipForInvalids, updateSettings]
+    [showTooltipForInvalids, updateSections]
   );
 
   return (
     <div className="settings-popup-section">
       <div>
         <ButtonSelector
-          label={"Derived Input:"}
+          label={"Derived Input"}
           options={["amount", "buyPrice", "sellPrice"]}
           selectedOption={derivedInput}
-          onSelect={(m) => handleDependencyChange(m, "input")}
+          onSelect={(m) => handleDependencyChange(m, "derivedInput")}
           fieldFormatter={fieldLabels}
         />
       </div>
       {derivedInput === "amount" && (
         <div className="settings-popup-label flex center gap10">
-          <span className="margin-bottom-10">When Amount changes adjust:</span>
+          <span className="margin-bottom-10">When Amount changes adjust →</span>
           <ButtonSelector
             options={["buyPrice", "sellPrice"]}
             selectedOption={adjust}
-            onSelect={(m) => handleDependencyChange(m, "adjust")}
+            onSelect={(m) => handleDependencyChange(m, "adjustedField")}
             size="small"
             fieldFormatter={fieldLabels}
           />

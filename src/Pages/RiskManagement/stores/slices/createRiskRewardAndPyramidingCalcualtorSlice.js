@@ -5,50 +5,46 @@ export const createRiskRewardAndPyramidingCalculatorSlice = () => ({
     name: "riskReward",
     ratio: 0,
     prevRatio: 0,
-    prevVal: 0,
   },
 
   target: {
     name: "target",
     ...createMetrics(),
-    prevVal: 0,
   },
 
   stopLoss: {
     name: "stopLoss",
     ...createMetrics(),
-    prevVal: 0,
   },
 
   pyramiding: {
     name: "pyramiding",
-    currentLayer: 0,
     riskIncrement: "Fix",
     at: "priceAchieved",
-    table: {
-      headers: [
-        "Layer",
-        "Entry Price",
-        "Qty",
-        "Risk/Reward",
-        "Risk (%) Per Layer",
-        "Cumulative Risk",
-        "Risk (₹) Per Layer",
-        "Avg Buy Price",
-      ],
-      rows: [
-        {
-          layer: 1,
-          priceAchieved: 0,
-          addQty: 0,
-          rrAchieved: 0,
-          riskPerLayer: 0,
-          cummulativeRisk: 0,
-          riskAmount: 0,
-          avgBuyPrice: 0,
-        },
-      ],
-    },
-    prevVal: 0,
+    layer: 0,
+  },
+
+  pyramidingTable: {
+    headers: [
+      "Layer",
+      "Entry Price",
+      "Qty Added",
+      "At Risk/Reward",
+      "Risk Per Layer",
+      "Cumulative Risk",
+      "Avg Buy Price",
+    ],
+    rows: [
+      {
+        entryPrice: 0,
+        qtyAdded: 0,
+        atRiskReward: 0,
+        riskAmountPyramiding: 0,
+        riskPercentPyramiding: 0,
+        cummulativeRiskPercent: 0,
+        cummulativeRiskAmount: 0,
+        avgBuyPrice: 0,
+      },
+    ],
   },
 });

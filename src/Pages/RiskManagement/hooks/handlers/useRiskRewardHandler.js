@@ -1,31 +1,32 @@
 import { useCallback } from "react";
-import { useSyncOppositeSection } from "@RM/hooks";
-import { useRiskManagementStore } from "@RM/stores";
+import { useValidateAndSyncSection } from "@RM/hooks";
 
 export default function useRiskRewardHandler() {
-  const updateSection = useRiskManagementStore((s) => s.update.section);
-
-  const syncOppositeSection = useSyncOppositeSection();
+  const validateAndSyncSection = useValidateAndSyncSection();
   const handleRiskRewardChange = useCallback(
-    ({ val }) => {
-      const stopLoss = useRiskManagementStore.getState().stopLoss;
+    ({ val, state }) => {
+      const { buyPrice, pts, qty } = state.stopLoss;
+      const newRiskReward = Math.max(0, val);
 
-      const updatedRR = Math.max(0, val);
+      const syncUpdates = validateAndSyncSection(
+        {
+          name: "stopLoss",
+          field: "pts",
+          buyPrice,
+          pts,
+          qty,
+          rr: newRiskReward,
+          state,
+        },
+        false
+      );
 
-      syncOppositeSection({
-        name: "stopLoss",
-        field: "pts",
-        buyPrice: stopLoss.buyPrice,
-        pts: stopLoss.pts,
-        qty: stopLoss.qty,
-        ratio: updatedRR,
-      });
-
-      updateSection("riskReward", { ratio: updatedRR });
-
-      return null;
+      return [
+        ["calculator", "riskReward", { ratio: newRiskReward }],
+        ...syncUpdates,
+      ];
     },
-    [syncOppositeSection, updateSection]
+    [validateAndSyncSection]
   );
   return handleRiskRewardChange;
 }

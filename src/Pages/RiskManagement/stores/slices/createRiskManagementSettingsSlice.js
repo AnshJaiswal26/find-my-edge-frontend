@@ -1,21 +1,22 @@
-export const createRiskManagementSettingsSlice = (set) => ({
+export const createRiskManagementSettingsSlice = () => ({
   settings: {
-    show: false,
+    showPanel: false,
 
-    calculation: {
-      autoRound: false,
-      mode: "Approx",
-    },
+    //Calculation Accuracy
+    autoRound: false,
+    roundMode: "Approx",
 
-    derived: {
-      input: "sellPrice",
-      adjust: "sellPrice",
-    },
+    // Derived Input
+    derivedInput: "sellPrice",
+    adjustedField: "sellPrice",
 
-    logicGuide: {
-      selectedField: "buyPrice",
-    },
+    //Round Qty
+    roundQtyTo: "Nearest",
 
+    //Logic Guide
+    selectedField: "buyPrice",
+
+    //Selected Section
     selectedSection: "Calculator",
   },
 });

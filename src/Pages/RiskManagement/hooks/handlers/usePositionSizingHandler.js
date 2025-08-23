@@ -1,8 +1,8 @@
 import { useRiskManagementStore } from "@RM/stores";
 import { formatValue, safe } from "@RM/utils";
 
-const calculateLockFields = (amt, slPts, lotSize) => {
-  const suggestedQty = Math.round(safe(amt / slPts / lotSize)) * lotSize;
+const calculateLockFields = (amt, slPts, lotSize, mode) => {
+  const suggestedQty = Math[mode](safe(amt / slPts / lotSize)) * lotSize;
   const adjustedSl = safe(amt / suggestedQty);
   return {
     suggestedQty: suggestedQty,
@@ -11,9 +11,16 @@ const calculateLockFields = (amt, slPts, lotSize) => {
 };
 
 export default function usePositionSizingHandler() {
-  const handlePositionSizingChange = ({ section, field, val }) => {
-    const { lotSize, slPts, riskAmount } = section;
-    const capital = useRiskManagementStore.getState().capital.current;
+  const handlePositionSizingChange = ({ section, field, val, state }) => {
+    const { name, lotSize, slPts, riskAmount } = section;
+    const capital = state.capital.current;
+    const roundQtyTo = state.settings.roundQtyTo;
+    const mode =
+      roundQtyTo === "Nearest"
+        ? "round"
+        : roundQtyTo === "Up"
+        ? "ceil"
+        : "floor";
 
     const num = Math.abs(val);
 
@@ -31,10 +38,11 @@ export default function usePositionSizingHandler() {
     const readOnlyFields = calculateLockFields(
       updated.riskAmount ?? riskAmount,
       updated.slPts ?? slPts,
-      updated.lotSize ?? lotSize
+      updated.lotSize ?? lotSize,
+      mode
     );
 
-    return { ...updated, ...readOnlyFields };
+    return [["calculator", name, { ...updated, ...readOnlyFields }]];
   };
 
   return handlePositionSizingChange;

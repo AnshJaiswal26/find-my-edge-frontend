@@ -1,12 +1,13 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { debounce } from "lodash";
 import "./Inputs.css";
 import { useRiskManagementStore } from "@RM/stores";
 import { useInputChange, useSpecialCaseHandler } from "@RM/hooks";
-import { Tooltip, ValidationTooltip } from "@components";
-import { is } from "@RM/utils";
+import { ValidationTooltip } from "@components";
+import { is, logMsg, logObj } from "@RM/utils";
 import RenderLogger from "@Profiler";
 import { fieldColors } from "@RM/data";
+import { InfoTooltip } from "./InfoTooltip";
 
 export default function Input({
   className,
@@ -18,16 +19,23 @@ export default function Input({
 }) {
   return (
     <>
-      <div className="risk-label">
-        <span>{label}</span>
+      <div className="relative">
+        <div className="risk-label">
+          <span className="fs13">
+            {`${
+              field === "suggestedQty" || field === "adjustedSl" ? "🔒" : ""
+            }`}
+          </span>
+          <span>{label}</span>
+        </div>
+        <NormalInput
+          className={className}
+          sectionName={sectionName}
+          field={field}
+          enableTooltip={enableTooltip}
+          readOnly={readOnly}
+        />
       </div>
-      <NormalInput
-        className={className}
-        sectionName={sectionName}
-        field={field}
-        enableTooltip={enableTooltip}
-        readOnly={readOnly}
-      />
     </>
   );
 }
@@ -36,23 +44,30 @@ function NormalInput({
   className,
   sectionName,
   field,
-  value,
   enableTooltip,
   readOnly,
 }) {
   const handleChange = useInputChange();
   const handleSpecialCases = useSpecialCaseHandler();
 
-  const setHoveredInput = useRiskManagementStore((s) => s.update.hoveredInput);
-  const showTooltip = useRiskManagementStore((s) => s.update.tooltip);
+  const setHoveredInput = useRiskManagementStore((s) => s.updater.hoveredInput);
+  const showTooltip = useRiskManagementStore((s) => s.updater.tooltip);
   const tooltip = useRiskManagementStore(
-    (s) => s.tooltip?.[sectionName]?.[field]
+    (s) => s?.[sectionName + "Tooltip"]?.[field]
   );
   const isFlashing = useRiskManagementStore(
-    (s) => s.flash?.[sectionName]?.[field]
+    (s) => s?.[sectionName + "Flash"]?.[field]
   );
 
-  const currentVal = useRiskManagementStore((s) => s?.[sectionName]?.[field]);
+  const isPyramiding = sectionName === "pyramiding";
+  const currentVal = useRiskManagementStore((s) => {
+    if (isPyramiding) {
+      const i = s.pyramiding.layer;
+      return s.pyramidingTable.rows?.[i]?.[field] || 0;
+    } else {
+      return s?.[sectionName]?.[field];
+    }
+  });
 
   const isCapital = sectionName === "capital";
 
@@ -72,6 +87,21 @@ function NormalInput({
     [handleChange]
   );
 
+  const timeoutRef = useRef(null);
+
+  const handleMouseEnter = () => {
+    setHoveredInput(`${sectionName}_${field}`);
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setHoveredInput(null);
+      timeoutRef.current = null;
+    }, 3000);
+  };
+
   return (
     <>
       <RenderLogger id={`NormalInput`} why={`${sectionName}.${field}`}>
@@ -85,10 +115,12 @@ function NormalInput({
             debouncedChange(sectionName, field, e.target.value);
           }}
           onBlur={(e) => {
-            handleSpecialCases(sectionName, field, e.target.value, true);
+            const state = useRiskManagementStore.getState();
+            const section = state[sectionName];
+            const inputPrev = state.inputPrev;
+            handleSpecialCases(section, field, e.target.value, inputPrev);
           }}
-          onMouseEnter={() => setHoveredInput(`${sectionName}_${field}`)}
-          onMouseLeave={() => setHoveredInput(null)}
+          onMouseEnter={handleMouseEnter}
           readOnly={readOnly}
         />
       </RenderLogger>
@@ -100,50 +132,12 @@ function NormalInput({
             position={tooltip.position}
             isVisible={true}
             autoHide={isCapital}
-            onClose={() => showTooltip(sectionName, { [field]: null })}
+            onClose={() => showTooltip("capitalTooltip", { [field]: null })}
             showCloseButton={isCapital}
           />
         </RenderLogger>
       )}
       <InfoTooltip name={sectionName} field={field} />
     </>
-  );
-}
-
-function InfoTooltip({ name, field }) {
-  const derived = useRiskManagementStore((s) => s.settings.derived);
-  const isHovered = useRiskManagementStore(
-    (s) => s.hoveredInput === `${name}_${field}`
-  );
-
-  const isReadOnly = field === "suggestedQty" || field === "adjustedSl";
-  const isRiskAmtOrPercent = field === "riskPercent" || field === "riskAmount";
-  const derivedInput = derived.input;
-  const isDerived = derivedInput === field;
-  const isAdjust = derived.adjust === field && derivedInput === "amount";
-
-  const getTitle = () => {
-    return [
-      isReadOnly ? "🔒 Read Only" : "✏️ Input",
-      isDerived && "🎯 Derived Input",
-      (isAdjust ||
-        isDerived ||
-        isReadOnly ||
-        isRiskAmtOrPercent ||
-        is.PAP(field)) &&
-        "🔄 Auto-Calculated",
-    ];
-  };
-
-  return (
-    // <RenderLogger id={`Lablel-(${field})`}>
-    <Tooltip
-      data={getTitle()}
-      isVisible={isHovered}
-      position={
-        is.BSQ(field) || isReadOnly || field === "lotSize" ? "top" : "bottom"
-      }
-    />
-    // </RenderLogger>
   );
 }

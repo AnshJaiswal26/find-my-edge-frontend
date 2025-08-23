@@ -5,8 +5,8 @@ import { useClearLogic } from "@RM/hooks";
 export function CurrentPositionsContainer() {
   console.log("CurrentPositionsContainer...");
 
-  const updateSection = useRiskManagementStore((s) => s.update.section);
-  const updateTab = useRiskManagementStore((s) => s.update.tab);
+  const updateSection = useRiskManagementStore((s) => s.updater.section);
+  const updateTab = useRiskManagementStore((s) => s.updater.tab);
 
   const { clearTargetAndStopLoss } = useClearLogic();
 

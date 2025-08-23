@@ -21,7 +21,7 @@ export default function Summary({ affected, selectedField, currentSection }) {
           <span className="summary-text">
             Auto-Calculated inputs in {oppositeSection}→{" "}
             <span className="highlight-calc">
-              {fields.map((field) => fieldLabels[field]).join(", ")}
+              {fields["target"].map((field) => fieldLabels[field]).join(", ")}
             </span>{" "}
           </span>
         )}
