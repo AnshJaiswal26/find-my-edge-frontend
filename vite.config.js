@@ -2,18 +2,26 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { fileURLToPath } from "url";
+import tailwindcss from "@tailwindcss/vite";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
+  publicDir: "public",
   resolve: {
     alias: {
+      "@icons": path.resolve(__dirname, "src/assets/icons"),
+      "@charts": path.resolve(__dirname, "src/charts"),
+      "@ui": path.resolve(__dirname, "src/components/ui"),
+      "@layout": path.resolve(__dirname, "src/components/layout"),
+      "@stores": path.resolve(__dirname, "src/stores"),
+      "@features": path.resolve(__dirname, "src/features"),
+
       "@Profiler": path.resolve(__dirname, "src/RenderLogger"),
-      "@components": path.resolve(__dirname, "src/components"),
-      "@layout": path.resolve(__dirname, "src/layout"),
       "@RM": path.resolve(__dirname, "src/pages/RiskManagement"),
+      "@Dashboard": path.resolve(__dirname, "src/pages/Dashboard"),
     },
     extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
   },

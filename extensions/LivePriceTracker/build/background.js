@@ -1,0 +1,1 @@
+chrome.runtime.onMessage.addListener((e,r,o)=>(e.type==="optionData"&&chrome.tabs.query({url:"https://tv.dhan.co/*"},t=>{t.forEach(a=>{chrome.tabs.sendMessage(a.id,{type:"priceUpdate",payload:e.payload})})}),!0));

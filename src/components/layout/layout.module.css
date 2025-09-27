@@ -1,0 +1,132 @@
+/* Page Container */
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Trebuchet MS";
+  width: var(--page-width);
+  margin-left: var(--page-margin-left);
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.mainContent {
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  padding: 20px;
+  background-color: var(--color-bg-main);
+  width: 100%;
+  height: 100%;
+  max-width: 1350px;
+  overflow-y: hidden;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* Container */
+.container {
+  min-width: 360px;
+  border: 1px solid var(--color-border-container);
+  display: flex;
+  border-radius: 15px;
+  height: fit-content;
+  padding: 20px;
+  box-sizing: border-box;
+  color: var(--color-text-heading);
+  background-color: var(--color-bg-container);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.childrenWrapper,
+.innerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0px;
+  margin-bottom: 5px;
+}
+
+:global(.dark-theme) .container img {
+  filter: invert(1);
+}
+
+/* Label */
+.label {
+  color: rgb(63, 63, 63);
+  margin: 10px 0px;
+}
+
+:global(.dark-theme) .label {
+  color: rgb(255, 255, 255);
+}
+
+.label.large {
+  font-size: large;
+}
+.label.medium {
+  font-size: medium;
+}
+
+.label.small {
+  font-size: small;
+}
+
+/* Legend */
+.legendWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.93rem;
+  color: var(--color-text-charts);
+}
+
+.legendIndicator {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+}
+
+.legendIndicatorLabelWrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Percentage Bar */
+.barContainer {
+  width: 100%;
+  min-width: 180px;
+  box-sizing: border-box;
+}
+
+.barLabelsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-charts);
+}
+
+.bar {
+  flex: 1;
+  height: 14px;
+  background-color: var(--color-bg-bar-track);
+  overflow: hidden;
+  position: relative;
+  border-radius: 6px;
+}
+
+.barFill {
+  height: 100%;
+}

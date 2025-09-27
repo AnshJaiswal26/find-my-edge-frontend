@@ -1,0 +1,84 @@
+:root {
+  /* main-tooltip */
+  --apexcharts-tooltip-background: #ffffff;
+
+  --apexcharts-tooltip-title-background: #ecf0f4;
+  --apexcharts-tooltip-title-color: #34495e;
+
+  /* x-axis-toolip */
+  --apexcharts-xaxistooltip-background: #ffffff;
+  --apexcharts-xaxistooltip-color: #000;
+  --apexcharts-xaxistooltip-border: #e2e2e2;
+  --apexcharts-xaxistooltip-shadow: 0px 0px 43px rgba(0, 0, 0, 0.2);
+}
+
+.dark-theme {
+  /* main-tooltip */
+  --apexcharts-tooltip-background: #141a21;
+
+  --apexcharts-tooltip-title-background: #28323d;
+  --apexcharts-tooltip-title-color: #919eab;
+
+  /* x-axis-toolip */
+  --apexcharts-xaxistooltip-background: #141a21;
+  --apexcharts-xaxistooltip-color: #fff;
+  --apexcharts-xaxistooltip-border: #26282f;
+  --apexcharts-xaxistooltip-shadow: none;
+}
+
+/* labels #34495e */
+
+.apexcharts-xaxistooltip-bottom {
+  background-color: var(--apexcharts-xaxistooltip-background) !important;
+  color: var(--apexcharts-xaxistooltip-color) !important;
+  border: 1px solid var(--apexcharts-xaxistooltip-border) !important;
+  box-shadow: var(--apexcharts-xaxistooltip-shadow) !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  font-size: 12px !important;
+}
+
+.apexcharts-xaxistooltip-bottom :after,
+.apexcharts-xaxistooltip-bottom :before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: -15px;
+  border-width: 8px;
+  transform: translateX(-50%);
+  left: 50%;
+  background: transparent;
+  border-style: solid;
+  border-color: transparent transparent transparent transparent;
+  border-bottom-color: var(--apexcharts-xaxistooltip-background) !important;
+}
+
+.apexcharts-xaxistooltip-bottom :after {
+  z-index: 2;
+  top: -16px;
+  border-bottom-color: var(--apexcharts-xaxistooltip-border) !important;
+}
+
+.apexcharts-tooltip {
+  background-color: var(--apexcharts-tooltip-background) !important;
+  color: var(--color-text-charts) !important;
+  border: none !important;
+  box-shadow: 0px 0px 43px rgba(0, 0, 0, 0.2) !important;
+}
+
+.apexcharts-tooltip-title {
+  text-align: center;
+  color: var(--apexcharts-tooltip-title-color) !important;
+  background-color: var(--apexcharts-tooltip-title-background) !important;
+  border: none !important;
+  font-weight: bold !important;
+}
+
+.apexcharts-radialbar .apexcharts-radialbar-track {
+  stroke: var(--color-bg-bar-track) !important;
+}
+
+.apexcharts-pie .apexcharts-text,
+.apexcharts-radialbar .apexcharts-text {
+  fill: var(--color-text-charts);
+}

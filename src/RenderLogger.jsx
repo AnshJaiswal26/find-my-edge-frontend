@@ -1,4 +1,4 @@
-import { logCmpt } from "@RM/utils";
+import { logCmpt } from "@features/risk-management/utils";
 import React, { Profiler } from "react";
 
 let totalDuration = 0;

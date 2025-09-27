@@ -22,6 +22,9 @@ export default defineConfig([
         sourceType: "module",
       },
     },
+    env: {
+      webextensions: true,
+    },
     rules: {
       "no-unused-vars": "off",
       "react-refresh/only-export-components": "off",

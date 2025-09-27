@@ -19,89 +19,14 @@
   color: #05ab72;
 }
 
-.flex {
-  display: flex !important;
-}
-.wrap {
-  flex-wrap: wrap !important;
-}
-.center {
-  align-items: center !important;
-}
-.justify {
-  justify-content: space-between !important;
+.invert-on-theme {
+  color: #000;
+  fill: #000;
 }
 
-.j-flex-end {
-  justify-content: flex-end !important;
-}
-
-.a-flex-end {
-  align-items: flex-end !important;
-}
-
-.gap10 {
-  gap: 10px;
-}
-
-.gap20 {
-  gap: 20px;
-}
-
-.baseline {
-  align-items: baseline !important;
-}
-
-.relative {
-  position: relative;
-}
-
-.absolute {
-  position: absolute;
-}
-.fs13 {
-  font-size: 13px;
-}
-.fs10 {
-  font-size: 10px;
-}
-.fs15 {
-  font-size: 15px;
-}
-.fs20 {
-  font-size: 20px;
-}
-
-.column {
-  flex-direction: column;
-}
-
-.flex-1 {
-  flex: 1;
-}
-
-.margin-top-5 {
-  margin-top: 5px;
-}
-.margin-top-10 {
-  margin-top: 10px;
-}
-.margin-top-20 {
-  margin-top: 20px;
-}
-.margin-bottom-5 {
-  margin-bottom: 5px;
-}
-.margin-bottom-10 {
-  margin-bottom: 10px;
-}
-.margin-bottom-20 {
-  margin-bottom: 20px;
-}
-
-.radius-top-0 {
-  border-top-left-radius: 0px !important;
-  border-top-right-radius: 0px !important;
+.dark-theme .invert-on-theme {
+  color: #ffffff;
+  fill: #ffffff;
 }
 
 .divider {
@@ -111,4 +36,10 @@
 
 .dark-theme .divider {
   border-top: 1px solid #3b4556;
+}
+
+.flex-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
 }

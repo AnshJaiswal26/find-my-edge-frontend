@@ -1,0 +1,28 @@
+:root {
+  --scrollbar-size-min: 0.3vw;
+  --scrollbar-size-mid: 4px;
+  --scrollbar-size-max: 0.4vw;
+
+  --scrollbar-track: #d5d5d5;
+  --scrollbar-thumb: #7a7a7a;
+  --scrollbar-thumb-hover: #9c9c9c;
+}
+
+.dark-theme {
+  --scrollbar-track: #272d3a;
+  --scrollbar-thumb: #7e7e7e;
+  --scrollbar-thumb-hover: #a7a7a7;
+}
+
+html::-webkit-scrollbar {
+  width: var(--scrollbar-size-max);
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}

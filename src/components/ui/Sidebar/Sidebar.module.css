@@ -1,0 +1,82 @@
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--bg-color-page);
+  color: var(--color-text-heading);
+  height: 100%;
+  position: fixed;
+  transition: left 0.3s ease;
+  font-family: inherit;
+  border-right: 1px solid var(--color-border-container);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  left: var(--sidebar-left);
+}
+
+.sidebar ::-webkit-scrollbar {
+  width: 2px;
+}
+
+.sidebarProfile {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border-container);
+  border-top: 1px solid var(--color-border-container);
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.sidebarProfile h3 {
+  font-family: "Trebuchet MS";
+}
+
+.sidebarProfile:hover {
+  transition: ease 0.3;
+  background-color: var(--color-bg-hover);
+}
+
+.profileIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.sidebarMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px;
+  height: min(74vh, 500px);
+  overflow-y: scroll;
+  border-bottom: 1px solid var(--color-border-container);
+}
+
+/* sidebar button */
+.sidebarButtons {
+  background: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid var(--color-border-sidebar-button);
+  transition: background-color ease 0.1s;
+}
+
+/* sidebar button active */
+.buttonActive {
+  background-color: var(--color-border-container);
+  border: 1px solid var(--color-border-container);
+  pointer-events: none;
+}
+
+/* sidebar button hover */
+.sidebarButtons:hover {
+  background-color: var(--color-bg-hover);
+  border: 1px solid var(--color-bg-hover);
+  border-radius: 10px;
+}

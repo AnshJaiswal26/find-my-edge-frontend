@@ -2,10 +2,17 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "@Profiler": ["RenderLogger"],
-      "@components": ["components"],
-      "@layout": ["layout"],
-      "@RM/*": ["pages/RiskManagement/*"]
+      "@icons/*": ["assets/icons/*"],
+      "@charts/*": ["charts/*"],
+      "@ui": ["components/ui"],
+      "@layout": ["components/layout"],
+      "@stores": ["stores"],
+      "@features/*": ["features/*"],
+      "@Profiler": ["RenderLogger"]
+
+      // no use
+      // "@RM/*": ["pages/RiskManagement/*"],
+      // "@Dashboard/*": ["pages/Dashboard/*"]
     }
   },
   "include": ["src"],

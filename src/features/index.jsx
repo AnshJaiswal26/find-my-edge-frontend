@@ -1,0 +1,11 @@
+export { default as Dashboard } from "./DashBoard/Dashboard";
+export { default as Edge } from "./Edge/Edge";
+export { default as CustomJournal } from "./CustomRecords/CustomJournal";
+export { default as CustomEdge } from "./CustomRecords/CustomEdge";
+export { default as TradingJournal } from "./TradingJournal/TradingJournal";
+export { default as YearlyCalendar } from "./YearlyCalendar/YearlyCalendar";
+export { default as SetupRules } from "./SetupRules/SetupRules";
+export { default as Settings } from "./Settings/Settings";
+export { default as Backtest } from "./CustomRecords/backtest";
+export { default as Mistakes } from "./Mistakes/Mistakes";
+export { default as RiskManagement } from "./risk-management/RiskManagement";
