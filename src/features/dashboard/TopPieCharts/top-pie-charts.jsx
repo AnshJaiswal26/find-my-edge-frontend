@@ -6,6 +6,7 @@ import SetupBarChart from "./SetupBarChart";
 import { StatCard } from "@ui";
 import { DashboardStatsGrid } from "../layout";
 import { Bar, Container, Legend } from "@layout";
+import { customTooltip, getBarChartConfig } from "@charts/apex/configs";
 
 function TopPieCharts({ data, theme, isDarkTheme, isSidebarOpen }) {
   const pieChartTradeData = [
@@ -74,53 +75,28 @@ function TopPieCharts({ data, theme, isDarkTheme, isSidebarOpen }) {
   const rawLosingStreakData = [-500, -470, -600];
   const losingStreakData = rawLosingStreakData.map((v) => Math.abs(v));
 
-  const miniBarOptions = (color, isLoss = false) => ({
-    chart: {
-      type: "bar",
-      sparkline: { enabled: true },
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: "60%",
-        borderRadius: 1,
+  const miniBarOptions = (color) => {
+    const isLoss = color !== "#4caf50";
+    const customTooltipCallback = (seriesValue) => {
+      const val = seriesValue[0];
+      const displayVal = isLoss ? `-₹${val}` : `₹${val}`;
+      return { dataArray: [{ label: displayVal, color }] };
+    };
+    return getBarChartConfig({
+      type: "stats",
+      horizontal: false,
+      barColors: [color],
+      dataLabels: { enabled: false },
+      yaxis: {
+        labels: { show: false },
+        max: isLoss
+          ? Math.max(...losingStreakData)
+          : Math.max(...winningStreakData),
+        min: 0,
       },
-    },
-    tooltip: {
-      enabled: true,
-      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-        const val = series[seriesIndex][dataPointIndex];
-        const displayVal = isLoss ? `-₹${val}` : `₹${val}`;
-        const color = isLoss ? "#f44336" : "#4caf50";
-        return `
-          <div style="padding:6px;display:flex;flex-direction:row;align-items:center;gap:8px">
-          <div style="background-color:${color};height:10px;width:10px;border-radius:50%"></div>
-            <div style="font-size:0.95rem;font-weight:bold;color: var(--text-charts);">
-              ${displayVal}
-            </div>
-          </div>
-        `;
-      },
-      style: { fontSize: "12px" },
-      marker: { show: false },
-      theme: "light",
-    },
-    colors: [color],
-    grid: { show: false },
-    dataLabels: { enabled: false },
-    xaxis: {
-      labels: { show: false },
-      axisTicks: { show: false },
-      axisBorder: { show: false },
-    },
-    yaxis: {
-      labels: { show: false },
-      max: isLoss
-        ? Math.max(...losingStreakData) + 100
-        : Math.max(...winningStreakData) + 100,
-      min: 0,
-    },
-  });
+      customTooltipCallback,
+    });
+  };
 
   return (
     <div className="top-charts-section">
@@ -132,7 +108,7 @@ function TopPieCharts({ data, theme, isDarkTheme, isSidebarOpen }) {
           flex: 1,
         }}
       >
-        <Container title={"Total Trades"} className="flex-[1.75]">
+        <Container title="Total Trades" className="flex-[1.75]">
           <div className="flex-box">
             <div className="flex-box flex-col flex-4 items-center">
               <TradePieChart
@@ -163,33 +139,35 @@ function TopPieCharts({ data, theme, isDarkTheme, isSidebarOpen }) {
         </Container>
 
         <DashboardStatsGrid className="flex-1">
-          <StatCard
-            title={"Winning Streak"}
-            icon={
-              <Chart
-                options={miniBarOptions("#4caf50")}
-                series={[{ data: winningStreakData }]}
-                type="bar"
-                height={50}
-                width={70}
-              />
-            }
-            value={"5 Trades"}
-          />
-
-          <StatCard
-            title={"Losing Streak"}
-            icon={
-              <Chart
-                options={miniBarOptions("#f44336", true)}
-                series={[{ data: losingStreakData }]}
-                type="bar"
-                height={50}
-                width={70}
-              />
-            }
-            value={"3 Trades"}
-          />
+          {[
+            {
+              title: "Winning Streak",
+              color: "#4caf50",
+              value: "5 Trades",
+              data: winningStreakData,
+            },
+            {
+              title: "Lossing Streak",
+              color: "#f44336",
+              value: "3 Trades",
+              data: losingStreakData,
+            },
+          ].map(({ title, color, value, data }, i) => (
+            <StatCard
+              key={i}
+              title={title}
+              icon={
+                <Chart
+                  options={miniBarOptions(color)}
+                  series={[{ data }]}
+                  type="bar"
+                  height={60}
+                  width={100}
+                />
+              }
+              value={value}
+            />
+          ))}
         </DashboardStatsGrid>
       </div>
 

@@ -21,18 +21,16 @@ const statCards = [
 
 function StatCards() {
   return (
-    <>
-      <DashboardStatsGrid>
-        {statCards.map((card, i) => (
-          <StatCard
-            key={i}
-            iconSrc={card.src}
-            title={card.title}
-            value={card.value}
-          />
-        ))}
-      </DashboardStatsGrid>
-    </>
+    <DashboardStatsGrid>
+      {statCards.map((card, i) => (
+        <StatCard
+          key={i}
+          iconSrc={card.src}
+          title={card.title}
+          value={card.value}
+        />
+      ))}
+    </DashboardStatsGrid>
   );
 }
 

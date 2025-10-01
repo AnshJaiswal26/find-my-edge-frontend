@@ -18,6 +18,7 @@ export default defineConfig({
       "@layout": path.resolve(__dirname, "src/components/layout"),
       "@stores": path.resolve(__dirname, "src/stores"),
       "@features": path.resolve(__dirname, "src/features"),
+      "@data": path.resolve(__dirname, "src/data"),
 
       "@Profiler": path.resolve(__dirname, "src/RenderLogger"),
       "@RM": path.resolve(__dirname, "src/pages/RiskManagement"),

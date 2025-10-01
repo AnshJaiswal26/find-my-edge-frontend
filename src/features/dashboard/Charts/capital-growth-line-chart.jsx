@@ -1,38 +1,33 @@
 import React, { useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import { ToggleButton } from "@ui";
+import { tradeData } from "@data";
+import { customTooltip } from "@charts/apex/configs";
 
 function CapitalGrowthLineChart({ data, theme, isSidebarOpen }) {
-  const [audienceMetricsData, setAudienceMetricsData] = useState([
-    { day: "", capital: 15000 },
-    { day: "Day 1", capital: 14500 },
-    { day: "Day 2", capital: 16000 },
-    { day: "Day 3", capital: 15500 },
-    { day: "Day 4", capital: 17500 },
-    { day: "Day 5", capital: 16000 },
-    { day: "Day 6", capital: 18500 },
-    { day: "Day 7", capital: 17000 },
-    { day: "Day 8", capital: 19500 },
-    { day: "Day 9", capital: 19500 },
-    { day: "Day 10", capital: 20000 },
-    { day: "Day 11", capital: 19500 },
-    { day: "Day 12", capital: 23000 },
-    { day: "Day 13", capital: 20500 },
-    { day: "Day 14", capital: 21500 },
-    { day: "Day 15", capital: 23000 },
-    { day: "Day 16", capital: 26500 },
-    { day: "Day 17", capital: 23000 },
-    { day: "Day 18", capital: 27500 },
-    { day: "Day 19", capital: 26500 },
-    { day: "Day 20", capital: 27000 },
-    { day: "Day 21", capital: 28500 },
-    { day: "Day 22", capital: 29000 },
-    { day: "Day 23", capital: 28500 },
-    { day: "Day 24", capital: 24300 },
-  ]);
+  const demoData = tradeData.reduce(
+    ({ demat, capital, array }, { pnl }, i) => {
+      array.push({
+        day: `Day ${i + 1}`,
+        demat: parseInt(demat),
+        capital: parseInt(capital),
+        pnl,
+      });
+
+      demat = demat + pnl;
+      capital = capital + pnl;
+
+      return { demat, capital, array };
+    },
+    { demat: 15000, capital: 25000, array: [] }
+  );
+
+  const [audienceMetricsData, setAudienceMetricsData] = useState(
+    demoData.array
+  );
 
   // Pagination logic
-  const pageSize = 10;
+  const pageSize = 7;
   const [page, setPage] = useState(0);
   const totalPages = Math.ceil(audienceMetricsData.length / pageSize);
 
@@ -55,17 +50,6 @@ function CapitalGrowthLineChart({ data, theme, isSidebarOpen }) {
 
   const handleCapitalChange = () => {
     setIsTotalCapital(!isDematCapital);
-    const newData = isDematCapital
-      ? audienceMetricsData.map((item) => ({
-          ...item,
-          capital: item.capital + 10000,
-        }))
-      : audienceMetricsData.map((item) => ({
-          ...item,
-          capital: item.capital - 10000,
-        }));
-
-    setAudienceMetricsData(newData);
   };
 
   const paginatedData = fullSize
@@ -80,89 +64,52 @@ function CapitalGrowthLineChart({ data, theme, isSidebarOpen }) {
   const diff = val2 - val1;
 
   const categories = paginatedData.map((item) => item.day);
-  const capitalSeries = paginatedData.map((item) => item.capital);
+  const capitalSeries = paginatedData.map((item) =>
+    isDematCapital ? item.demat : item.capital
+  );
 
-  const handleGrowthChange = (val, index) => {
-    const previousValue = index > 0 ? capitalSeries[index - 1] : null;
+  const fix = (v) => +parseFloat(v).toFixed(2) || 0;
 
-    const diff = previousValue !== null ? val - previousValue : 0;
-    const initialCapital = audienceMetricsData[0].capital;
-    const indicatorColor =
-      diff === 0
-        ? theme === "dark"
-          ? "#ccc"
-          : "#3d4753"
-        : diff > 0
-        ? "#05ab72"
-        : "#fe5a5a";
+  const customTooltipCallback = (seriesValue, dataPointIndex) => {
+    const pnl = paginatedData[dataPointIndex - 1]?.pnl || 0;
+    const isNeg = pnl < 0;
+    const returns = `${fix((pnl / capitalSeries[0]) * 100)}%`;
+    const color = isNeg ? "var(--color-red)" : "var(--color-green)";
 
-    const formattedPercentage = parseFloat(
-      (diff / initialCapital) * 100
-    ).toFixed(2);
-
-    const percentage =
-      formattedPercentage % 1 === 0
-        ? parseInt(formattedPercentage)
-        : formattedPercentage;
-
-    const returns =
-      diff >= 0 ? "(+" + percentage + "%)" : "(" + percentage + "%)";
-
-    return `<div style="padding:5px 10px 10px 10px;">
-                <div style="display:flex; flex-direction:row; align-items:center; gap:5px">
-                  <div style="border-radius:50%;height:10px;width:10px;background-color: ${indicatorColor};"></div>
-                      <span>P&L:</span>
-                      <div style="color:${indicatorColor};">
-                        <span>${
-                          diff >= 0
-                            ? "+₹" + diff.toLocaleString()
-                            : "-₹" + diff * -1
-                        }</span> 
-                      </div>
-                </div>
-                <div style="display:flex; flex-direction:row; align-items:center; gap:5px; padding:5px 0px 0px 0px">
-                  <div style="border-radius:50%;height:10px;width:10px;background-color: ${indicatorColor};"></div>
-                      <span>Returns:</span>
-                      <div style="color:${indicatorColor};">
-                       <span>${returns} </span> <span style="color:${
-      theme === "dark" ? "#ccc" : "#3d4753"
-    }">of ₹${initialCapital.toLocaleString()}</span>
-                      </div>
-                </div>
-            </div>`;
+    return {
+      title: paginatedData[dataPointIndex].day,
+      dataArray: [
+        { label: "Captial: ", value: `₹${seriesValue[0]}`, indicator: false },
+        { label: "P&L: ", value: `₹${pnl}`, color },
+        { label: "Returns: ", value: returns, color },
+      ],
+    };
   };
 
   const apexOptions = useMemo(
     () => ({
       chart: {
         type: "line",
-        height: 300,
-        animations: {
-          enabled: true,
-          easing: "easeinout",
-          speed: 200,
-        },
         toolbar: { show: false },
         fontFamily: "inherit",
         selection: { enabled: false },
         zoom: { enabled: false },
       },
       grid: {
-        borderColor: theme === "dark" ? "#333e47" : "#e9ecee",
         strokeDashArray: 3,
         yaxis: { lines: { show: true } },
         xaxis: { lines: { show: false } },
       },
       xaxis: {
         categories,
-
         labels: {
           show: !fullSize,
           style: {
             fontSize: "12px",
-            colors: theme === "dark" ? "#637381" : "#919eab",
+            colors: "var(--apexcharts-axis-labels-color)",
           },
         },
+        max: fullSize ? categories.length + 3 : categories.length,
         axisBorder: { show: false },
         axisTicks: { show: false },
       },
@@ -170,48 +117,16 @@ function CapitalGrowthLineChart({ data, theme, isSidebarOpen }) {
         labels: {
           style: {
             fontSize: "12px",
-            colors: theme === "dark" ? "#637381" : "#919eab",
+            colors: "var(--apexcharts-axis-labels-color)",
           },
         },
       },
       tooltip: {
-        custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-          const value = capitalSeries[dataPointIndex];
-          const i = dataPointIndex;
-          return `
-            <div style="min-width:80px;text-align:center;">
-                <div style="padding:6px;font-weight:bold;font-size:14px;text-align:center;color:${
-                  theme === "dark" ? "#919eab" : "#34495e"
-                };background-color:${
-            theme === "dark" ? "#28323d" : "rgb(236, 240, 244)"
-          }">${i === 0 ? "Initial Capital" : categories[i]}
-                </div>
-                <div style="padding:10px 10px 0px 10px;display:flex;align-items:center;gap:5px;font-size:14px;">
-                  <div style="border-radius:50%;height:10px;width:10px;background-color: #05ab72;">
-                  </div>
-                  <div style=" color: ${
-                    theme === "dark" ? "#fff" : "#000"
-                  };font-size:14px">Capital: 
-                  </div>  
-                  <div style="font-weight:bolder">
-                    ₹${
-                      value % 1 > 0
-                        ? value.toLocaleString()
-                        : value.toLocaleString()
-                    }
-                  </div>
-                  
-                </div>
-                ${handleGrowthChange(value, i)}
-            </div>
-          `;
-        },
-
+        custom: customTooltip(customTooltipCallback),
         style: {
           fontSize: "14px",
           color: "#34495e",
         },
-        theme: theme === "dark" ? "dark" : "light",
         x: {
           show: true,
           style: {

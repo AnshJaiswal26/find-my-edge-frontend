@@ -1,3 +1,7 @@
+.apexcharts-gridline {
+  stroke: #e0e0e0;
+}
+
 .dashboard {
   display: flex;
   justify-content: center;
@@ -283,7 +287,7 @@
   font-weight: 550;
 }
 .badge-profit {
-  background: #e6f7ec;
+  background: #e6f7ea;
   color: #05ab72;
   border: 1px solid #05ab72;
   border-radius: 50px;

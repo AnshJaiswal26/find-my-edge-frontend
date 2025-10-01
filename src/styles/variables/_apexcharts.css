@@ -1,7 +1,6 @@
 :root {
   /* main-tooltip */
   --apexcharts-tooltip-background: #ffffff;
-
   --apexcharts-tooltip-title-background: #ecf0f4;
   --apexcharts-tooltip-title-color: #34495e;
 
@@ -9,13 +8,18 @@
   --apexcharts-xaxistooltip-background: #ffffff;
   --apexcharts-xaxistooltip-color: #000;
   --apexcharts-xaxistooltip-border: #e2e2e2;
-  --apexcharts-xaxistooltip-shadow: 0px 0px 43px rgba(0, 0, 0, 0.2);
+  --apexcharts-xaxistooltip-shadow: 0px 0px 43px #00000033;
+
+  /* grid-line */
+  --apexcharts-grid-lines-color: #e0e0e0;
+
+  /* axis-labels-colors */
+  --apexcharts-axis-labels-color: #919eab;
 }
 
 .dark-theme {
   /* main-tooltip */
   --apexcharts-tooltip-background: #141a21;
-
   --apexcharts-tooltip-title-background: #28323d;
   --apexcharts-tooltip-title-color: #919eab;
 
@@ -24,9 +28,13 @@
   --apexcharts-xaxistooltip-color: #fff;
   --apexcharts-xaxistooltip-border: #26282f;
   --apexcharts-xaxistooltip-shadow: none;
-}
 
-/* labels #34495e */
+  /* grid-lines */
+  --apexcharts-grid-lines-color: #333e47;
+
+  /* axis-labels-colors */
+  --apexcharts-axis-labels-color: #637381;
+}
 
 .apexcharts-xaxistooltip-bottom {
   background-color: var(--apexcharts-xaxistooltip-background) !important;
@@ -68,8 +76,8 @@
 
 .apexcharts-tooltip-title {
   text-align: center;
-  color: var(--apexcharts-tooltip-title-color) !important;
-  background-color: var(--apexcharts-tooltip-title-background) !important;
+  color: var(--apexcharts-tooltip-title-color);
+  background-color: var(--apexcharts-tooltip-title-background);
   border: none !important;
   font-weight: bold !important;
 }
@@ -81,4 +89,32 @@
 .apexcharts-pie .apexcharts-text,
 .apexcharts-radialbar .apexcharts-text {
   fill: var(--color-text-charts);
+}
+
+.apexcharts-gridline {
+  stroke: var(--apexcharts-grid-lines-color);
+}
+
+/* Custom tooltip for grouped bar chart */
+.custom-grouped-bar-chart-tooltip .tooltip-title {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--apexcharts-tooltip-title-color);
+  padding: 6px;
+  background-color: var(--apexcharts-tooltip-title-background);
+}
+
+.custom-grouped-bar-chart-tooltip .tooltip-content-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 10px;
+}
+
+.custom-grouped-bar-chart-tooltip .tooltip-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }

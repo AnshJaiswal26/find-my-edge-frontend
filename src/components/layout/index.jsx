@@ -1,13 +1,13 @@
 import { Editor, Sidebar } from "@ui";
 import styles from "./layout.module.css";
 
-export function PageContainer({
+export const PageContainer = ({
   children,
   className = "",
   editor = true,
   sidebar = true,
   pageActive,
-}) {
+}) => {
   return (
     <div>
       {editor && <Editor />}
@@ -17,24 +17,32 @@ export function PageContainer({
       </div>
     </div>
   );
-}
+};
 
-export function Container({ children, className = "", title }) {
+export const Container = ({
+  children,
+  className = "",
+  title,
+  childClassName,
+}) => {
   return (
     <div className={`${styles.container} ${className}`}>
       <div className={`${styles.innerContainer} ${className}`}>
         {title && <div className={styles.title}>{title}</div>}
-        <div className={styles.childrenWrapper}> {children}</div>
+        <div className={`${styles.childrenWrapper} ${childClassName}`}>
+          {" "}
+          {children}
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export function Label({ children, type = "medium" }) {
+export const Label = ({ children, type = "medium" }) => {
   return <div className={`${styles.label} ${styles[type]}`}>{children}</div>;
-}
+};
 
-export function Legend({ color, label }) {
+export const Legend = ({ color, label }) => {
   return (
     <div className={styles.legendWrapper}>
       <div className={styles.legendIndicatorLabelWrapper}>
@@ -46,9 +54,9 @@ export function Legend({ color, label }) {
       </div>
     </div>
   );
-}
+};
 
-export function Bar({ color, label1, label2, fill }) {
+export const Bar = ({ color, label1, label2, fill }) => {
   return (
     <div className={styles.barContainer}>
       <div className={styles.barLabelsWrapper}>
@@ -75,4 +83,24 @@ export function Bar({ color, label1, label2, fill }) {
       </div>
     </div>
   );
-}
+};
+
+export const Badge = ({ value, label, formatter, className }) => {
+  const v = Number(value);
+  const formatedValue = formatter ? formatter(v) : v;
+  const formatedStyle =
+    v > 0 ? styles.badgeGreen : v === 0 ? styles.badgeYellow : styles.badgeRed;
+
+  return (
+    <div className="flex-box gap-1.5 items-center">
+      {label && <span>{label}</span>}
+      <div>
+        <span
+          className={`${styles.badge} ${formatedStyle} text-[0.88rem] p-[3px 5px] ${className}`}
+        >
+          {formatedValue}
+        </span>
+      </div>
+    </div>
+  );
+};

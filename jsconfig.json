@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "baseUrl": "src",
     "paths": {
       "@icons/*": ["assets/icons/*"],
@@ -8,6 +9,7 @@
       "@layout": ["components/layout"],
       "@stores": ["stores"],
       "@features/*": ["features/*"],
+      "@data": ["data"],
       "@Profiler": ["RenderLogger"]
 
       // no use

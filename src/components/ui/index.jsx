@@ -10,3 +10,4 @@ export { default as TabSwitcher } from "./TabSwitcher";
 export { default as TradeSummary } from "./TradeSummary/TradeSummary";
 export { default as ValidationTooltip } from "./ValidationTooltip";
 export { default as StatCard } from "./StatCard/StatCard";
+export { default as Pagination } from "./Pagination/Pagination";

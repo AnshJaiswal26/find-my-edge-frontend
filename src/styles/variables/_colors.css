@@ -1,5 +1,7 @@
 :root {
   /* Light theme colors */
+  --color-green: #05ab72;
+  --color-red: #fe5a5a;
 
   /* background-colors */
   --color-bg-body: #ffff;
@@ -7,6 +9,9 @@
   --color-bg-container: #ffff;
   --color-bg-editor: rgba(255, 255, 255, 0.2);
   --color-bg-sidebar: #ffff;
+  --color-bg-disabled: #f5f5f5;
+  --color-bg-green-transparent: #e6f7ec;
+  --color-bg-red-transparent: #fdeaea;
 
   --color-bg-hover: #cfddec53;
   --color-bg-bar-track: #cfddec53;
@@ -19,6 +24,7 @@
   --color-text-heading: #343a40;
   --color-text-card-title: #6c757d;
   --color-text-charts: #34495e;
+  --color-text-disabled: #b3b3b3;
 }
 
 .dark-theme {
@@ -30,6 +36,9 @@
   --color-bg-container: #1c252e;
   --color-bg-editor: #1c252ea4;
   --color-bg-sidebar: #12181e;
+  --color-bg-disabled: #2c3e5077;
+  --color-bg-green-transparent: #00ff5910;
+  --color-bg-red-transparent: #ff000010;
 
   /* hover */
   --color-bg-hover: #293a4b77;
@@ -43,4 +52,5 @@
   --color-text-heading: #fff;
   --color-text-card-title: #fff;
   --color-text-charts: #fff;
+  --color-text-disabled: #4f5a7a;
 }

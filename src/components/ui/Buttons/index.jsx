@@ -1,21 +1,25 @@
+import { useState } from "react";
+import Tooltip from "../Tooltip";
 import styles from "./Buttons.module.css";
 
-export const Button = ({ text, color, onClick, style, title }) => {
-  if (!text || typeof text !== "string")
-    console.error("Text must be a non-empty string");
-
-  const buttonStyle = {
-    ...(color ? { backgroundColor: color } : {}),
-    ...(style ? style : {}),
-  };
-
+export const Button = ({
+  text,
+  color,
+  onClick,
+  size = "medium",
+  title,
+  disabled = false,
+  className,
+}) => {
   return (
-    <div>
+    <div className="flex">
       <button
-        style={buttonStyle}
+        style={{ "--bg-color": color }}
         title={title}
-        className={style?.disabled ? `${styles.disabled}` : styles.button}
-        disabled={style?.disabled}
+        className={`${styles.button} ${styles[size]} ${
+          disabled ? `${styles.disabled}` : ""
+        }`}
+        disabled={disabled}
         onClick={() => {
           if (!onClick) return;
           onClick();
@@ -68,15 +72,36 @@ export const ToggleButton = ({
   }
 };
 
-export const IconButton = ({ onClick, icon, src, alt, className }) => {
+export const IconButton = ({
+  onClick,
+  icon,
+  src,
+  alt,
+  tooltip = { title: "", position: "top" },
+  className,
+}) => {
+  const [onHover, setOnHover] = useState(false);
   return (
-    <div>
+    <div className="relative">
       <button
         className={`${styles.iconBtn} ${className}`}
-        onClick={() => onClick()}
+        onClick={() => (onClick ? onClick() : null)}
+        onMouseEnter={() => {
+          if (tooltip) setOnHover(true);
+        }}
+        onMouseLeave={() => {
+          if (tooltip) setOnHover(false);
+        }}
       >
         {icon ? icon : <img src={src} alt={alt ?? "icon button"} />}
       </button>
+      {tooltip.title && (
+        <Tooltip
+          data={[tooltip.title]}
+          isVisible={onHover}
+          position={tooltip.position}
+        />
+      )}
     </div>
   );
 };

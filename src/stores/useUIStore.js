@@ -11,6 +11,7 @@ const getTheme = () => {
 
 const getSidebarStatus = () => {
   const isSidebarOpen = localStorage.getItem("isSidebarOpen");
+
   if (isSidebarOpen)
     document.documentElement.classList.toggle("sidebar-open", isSidebarOpen);
 
@@ -29,7 +30,7 @@ export const useUIStore = create((set) => ({
       return { theme };
     }),
 
-  isSidebarOpen: getSidebarStatus(),
+  isSidebarOpen: false,
 
   toggleSidebar: () =>
     set((prev) => {

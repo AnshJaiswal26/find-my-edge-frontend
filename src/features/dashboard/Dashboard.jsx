@@ -8,10 +8,11 @@ import CapitalGrowthLineChart from "./Charts/capital-growth-line-chart";
 import RRPerformanceBarChart from "./Charts/rr-performance-bar-chart";
 import WonLoseRateBarChart from "./Charts/win-lose-rate-line-chart";
 import CumulativeProfitLineChart from "./Charts/cumulative-profit-line-chart";
-import { PageContainer } from "@layout";
+import { Container, PageContainer } from "@layout";
 
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";
+import { Button } from "@ui";
 
 function Dashboard() {
   const theme = useUIStore((s) => s.theme);
@@ -21,25 +22,30 @@ function Dashboard() {
 
   return (
     <PageContainer pageActive={"dashboard"}>
-      <header className="dashboard-header">
-        <div className="dashboard-heading">
-          <div>
+      <header>
+        <Container className="rounded-[4px]">
+          <div className="flex-box items-center">
             <img
-              className="dashboard-icon"
+              className="w-13 h-13"
               src="Icons/others/analysis.png"
               alt="Trading Analysis"
             />
+            <div className="flex-box flex-col gap-3">
+              <div>
+                <h2>Trading Analytics Dashboard</h2>
+                <p>
+                  Gain insights into your trading performance with detailed
+                  analytics, profit and loss tracking, and risk-reward analysis.
+                </p>
+              </div>
+              <Button text="Add Charts and Stats" />
+            </div>
           </div>
-          <div style={{ paddingLeft: "10px" }} className={theme}>
-            <h2>Trading Analytics Dashboard</h2>
-            <p>
-              Gain insights into your trading performance with detailed
-              analytics, profit and loss tracking, and risk-reward analysis.
-            </p>
-          </div>
-        </div>
+        </Container>
       </header>
+
       <StatCards />
+
       <TopPieCharts
         data={"demo"}
         theme={theme}
@@ -61,10 +67,7 @@ function Dashboard() {
         isSidebarOpen={isSidebarOpen}
       />
 
-      <div
-        className="capital-rr-graph-container"
-        style={{ flexDirection: isSidebarOpen ? "column" : "row" }}
-      >
+      <div className="grid gap-5">
         <CapitalGrowthLineChart
           data={"demo"}
           theme={theme}
@@ -76,12 +79,7 @@ function Dashboard() {
           theme={theme}
           isSidebarOpen={isSidebarOpen}
         />
-      </div>
 
-      <div
-        className="win-lose-cumulative-container"
-        style={{ flexDirection: isSidebarOpen ? "column" : "row" }}
-      >
         <WonLoseRateBarChart
           data={"demo"}
           theme={theme}

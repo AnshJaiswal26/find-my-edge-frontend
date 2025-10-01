@@ -1,31 +1,42 @@
-.button,
-.disabled {
-  padding: 10px 10px;
+.button {
+  --_padding: var(--padding, 4px 10px);
+  --_font-size: var(--font-size, 0.85rem);
+  --_bg-color: var(--bg-color, #007bff);
+
+  padding: var(--_padding);
+  font-size: var(--_font-size);
   border: none;
   margin: 0px;
-  border-radius: 3px;
-  font-size: 14px;
+  border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
-  background-color: #dfdfdf;
+  background-color: var(--_bg-color);
   color: white;
-  transition: background-color ease 0.2s, transform ease-in-out 0.1s;
 }
 
-.disabled {
-  background-color: #e8e8e8 !important;
-  color: rgba(187, 187, 187, 0.692);
-  cursor: not-allowed;
+.button.large {
+  --padding: 5px 12px;
+  --font-size: 1rem;
 }
 
-:global(.dark-theme) .disabled {
-  background-color: rgb(40, 55, 77) !important;
-  color: rgba(79, 90, 122, 0.692);
+.button.medium {
+  --padding: 4px 10px;
+  --font-size: 0.85rem;
+}
+
+.button.small {
+  --padding: 3px 8px;
+  --font-size: 0.75rem;
+}
+
+.button.disabled {
+  --bg-color: var(--color-bg-disabled) !important;
+  color: var(--color-text-disabled) !important;
+  pointer-events: none;
 }
 
 .button:active {
-  filter: brightness(0.85);
-  transform: scale(0.98);
+  filter: brightness(0.8) contrast(1.2) saturate(1.2);
 }
 
 .toggleBtnContainer {
@@ -46,10 +57,10 @@
 
 .toggleBtnTrack {
   cursor: pointer;
-  width: 25px;
-  min-width: 25px;
+  width: 33px;
+  min-width: 33px;
   background-color: #d0d0d0;
-  height: 8px;
+  height: 13px;
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -61,16 +72,17 @@
 }
 
 .toggleBtnCircle {
-  width: 10.5px;
-  height: 11px;
+  width: 17px;
+  height: 17px;
   background-color: #ffffff;
   border: 1px solid #007bff;
-  border-radius: 60%;
+  border-radius: 50%;
+  transform: translateX(0%);
   transition: transform ease 0.2s, border ease 0.2s;
 }
 
 .toggleBtnEnable {
-  transform: translateX(120%);
+  transform: translateX(100%);
 }
 
 .iconBtn {

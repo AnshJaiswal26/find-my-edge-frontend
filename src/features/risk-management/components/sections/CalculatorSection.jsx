@@ -31,11 +31,7 @@ export default function CalculatorSection({ sectionName }) {
           <Button
             text={`Place ${sectionName}`}
             color="#05ab72"
-            style={{
-              padding: "3px 10px",
-              fontSize: "12px",
-              disabled: true,
-            }}
+            disabled={true}
           />
         )
       }
