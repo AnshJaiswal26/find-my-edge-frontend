@@ -1,12 +1,16 @@
 import React, { useMemo, useEffect } from "react";
 import Chart from "react-apexcharts";
-import { RadialBarChart } from "@charts/apex";
+import { RadialBarChart } from "@charts";
 import TradePieChart from "./TradePieChart";
 import SetupBarChart from "./SetupBarChart";
 import { StatCard } from "@ui";
 import { DashboardStatsGrid } from "../layout";
 import { Bar, Container, Legend } from "@layout";
-import { customTooltip, getBarChartConfig } from "@charts/apex/configs";
+import {
+  customTooltip,
+  getBarChartConfig,
+  getMiniBarChartConfig,
+} from "@utils";
 
 function TopPieCharts({ data, theme, isDarkTheme, isSidebarOpen }) {
   const pieChartTradeData = [
@@ -82,7 +86,7 @@ function TopPieCharts({ data, theme, isDarkTheme, isSidebarOpen }) {
       const displayVal = isLoss ? `-₹${val}` : `₹${val}`;
       return { dataArray: [{ label: displayVal, color }] };
     };
-    return getBarChartConfig({
+    return getMiniBarChartConfig({
       type: "stats",
       horizontal: false,
       barColors: [color],

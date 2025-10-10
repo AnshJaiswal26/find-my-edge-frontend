@@ -1,12 +1,12 @@
 import styles from "./Tooltip.module.css";
 
-export default function Tooltip({ data, position, isVisible }) {
+export default function Tooltip({ data, position, isVisible, className }) {
   if (!data) return null;
   return (
     <div
       className={`${styles.container} ${styles[position]} ${
         isVisible ? styles.visible : ""
-      }`}
+      } ${className}`}
     >
       <div className={styles.tooltipContent}>
         {data.map((item, idx) => (

@@ -1,7 +1,6 @@
 import React, { memo, useMemo, useEffect } from "react";
-import Chart from "react-apexcharts";
 import "../Dashboard.css";
-import { customTooltip, getBarChartConfig } from "@charts/apex/configs";
+import { BarChart } from "@charts";
 
 const SetupBarChart = memo(({ data, totalTrades, isSidebarOpen, theme }) => {
   const tradeColors = data.map((item) => item.color);
@@ -35,36 +34,6 @@ const SetupBarChart = memo(({ data, totalTrades, isSidebarOpen, theme }) => {
     };
   };
 
-  const options = useMemo(
-    () =>
-      getBarChartConfig({
-        horizontal: true,
-        xaxis: {
-          categories: data.map((item) => item.name),
-          labels: { formatter: (value) => value + "%" },
-          max: 100,
-        },
-        customTooltipCallback,
-        barColors: [
-          ({ seriesIndex, dataPointIndex: i }) =>
-            seriesIndex === 0 ? tradeColors[i] : accuracyColors[i],
-        ],
-        dataLabels: {
-          style: { fontSize: "13px" },
-          formatter: (val) => `${val}%`,
-        },
-      }),
-    []
-  );
-
-  const series = useMemo(
-    () => [
-      { data: data.map((item) => parseFloat(item.percentage)) },
-      { data: data.map((item) => parseFloat(item.Accuracy)) },
-    ],
-    [data]
-  );
-
   useEffect(() => {
     setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
@@ -72,13 +41,15 @@ const SetupBarChart = memo(({ data, totalTrades, isSidebarOpen, theme }) => {
   }, [isSidebarOpen]);
 
   return (
-    <Chart
-      options={options}
-      series={series}
-      type="bar"
-      height={320}
-      width={"100%"}
-    />
+    // <BarChart
+    //   series={[
+    //     data.map((i) => parseInt(i.percentage)),
+    //     data.map((i) => parseInt(i.Accuracy)),
+    //   ]}
+    //   categories={data.map((i) => i.name)}
+    //   tooltipCallBack={customTooltipCallback}
+    // />
+    <div></div>
   );
 });
 

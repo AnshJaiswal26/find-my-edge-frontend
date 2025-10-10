@@ -13,12 +13,14 @@ export default defineConfig({
   resolve: {
     alias: {
       "@icons": path.resolve(__dirname, "src/assets/icons"),
-      "@charts": path.resolve(__dirname, "src/charts"),
+      "@charts": path.resolve(__dirname, "src/components/charts"),
       "@ui": path.resolve(__dirname, "src/components/ui"),
       "@layout": path.resolve(__dirname, "src/components/layout"),
       "@stores": path.resolve(__dirname, "src/stores"),
       "@features": path.resolve(__dirname, "src/features"),
       "@data": path.resolve(__dirname, "src/data"),
+      "@utils": path.resolve(__dirname, "src/utils"),
+      "@hooks": path.resolve(__dirname, "src/hooks"),
 
       "@Profiler": path.resolve(__dirname, "src/RenderLogger"),
       "@RM": path.resolve(__dirname, "src/pages/RiskManagement"),

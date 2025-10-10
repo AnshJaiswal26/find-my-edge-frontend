@@ -1,5 +1,6 @@
-import { Editor, Sidebar } from "@ui";
+import { Button, Editor, IconButton, Sidebar } from "@ui";
 import styles from "./layout.module.css";
+import { X } from "lucide-react";
 
 export const PageContainer = ({
   children,
@@ -23,12 +24,16 @@ export const Container = ({
   children,
   className = "",
   title,
+  header,
   childClassName,
 }) => {
   return (
     <div className={`${styles.container} ${className}`}>
       <div className={`${styles.innerContainer} ${className}`}>
-        {title && <div className={styles.title}>{title}</div>}
+        <div className="flex-box justify-between">
+          {title && <div className={styles.title}>{title}</div>}
+          {header && <div>{header}</div>}
+        </div>
         <div className={`${styles.childrenWrapper} ${childClassName}`}>
           {" "}
           {children}
@@ -100,6 +105,68 @@ export const Badge = ({ value, label, formatter, className }) => {
         >
           {formatedValue}
         </span>
+      </div>
+    </div>
+  );
+};
+
+export const ChartPopup = ({
+  title,
+  children,
+  large = false,
+  isVisible = true,
+  onClose = () => {},
+  footer = {
+    show: true,
+    buttonLeft: {
+      text: "Close",
+      onClick: () => {},
+    },
+    buttonRight: {
+      text: "Apply",
+      onClick: () => {},
+    },
+  },
+}) => {
+  if (!isVisible) return null;
+
+  return (
+    <div className={styles.chartPopupContainer}>
+      <div
+        className={`${styles.chartPopup} ${
+          large ? styles.chartPopupLarge : ""
+        }`}
+      >
+        <div>
+          <header className={styles.chartPopupHeader}>
+            <div className="flex-box justify-between items-center">
+              <div>{title}</div>
+              <IconButton
+                icon={<X size={17} />}
+                className={styles.closeIcon}
+                onClick={onClose}
+              />
+            </div>
+          </header>
+
+          <main className={styles.chartPopupContent}>{children}</main>
+        </div>
+        {footer?.show && (
+          <footer className={styles.chartPopupFooter}>
+            <Button
+              text={footer?.buttonLeft?.text}
+              size="large"
+              onClick={footer?.buttonLeft?.onClick}
+              color="var(--color-bg-hover)"
+              className="text-[var(--color-text-charts)]"
+            />
+            <Button
+              text={footer?.buttonRight?.text}
+              size="large"
+              onClick={footer?.buttonRight?.onClick}
+            />
+          </footer>
+        )}
       </div>
     </div>
   );

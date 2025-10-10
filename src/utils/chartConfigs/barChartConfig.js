@@ -1,72 +1,80 @@
 import { customTooltip } from "./customTooltip";
 
-export const getBarChartConfig = ({
-  type = "chart",
-  horizontal = true,
-  conditionalColorRange = [],
-  customTooltipCallback = () => ({ title: "", dataArray: [] }),
-  barColors = [],
-  dataLabels = {},
-  xaxis,
-  yaxis,
-}) => {
-  const isChart = type === "chart";
-
+export const getBarChartConfig = ({ config, events, tooltipCallBack }) => {
   const style = {
-    fontSize: "1rem",
-    colors: "var(--apexcharts-axis-labels-color)",
+    fontSize: "0.75rem",
   };
 
   const options = {
     chart: {
       type: "bar",
-      toolbar: { show: false },
+      stacked: config.stacked,
+      stackType: config.stacked100 ? "100%" : "normal",
+      toolbar: { show: true, tools: { download: true } },
+      zoom: { enabled: false },
+      selection: { enabled: config.filteredSeries.length > 1 },
       fontFamily: "inherit",
-      selection: { enabled: false },
-      zoom: { enabled: true },
-      sparkline: { enabled: !isChart },
+      events,
     },
     grid: {
-      show: isChart,
-      strokeDashArray: 1,
-      xaxis: { lines: { show: true } },
-      yaxis: { lines: { show: false } },
+      show: config.gridEnabled,
+      xaxis: { lines: { show: config.xaxisGrid } },
+      yaxis: { lines: { show: config.yaxisGrid } },
+      padding: { top: 0, left: 0, bottom: 0, right: 30 },
     },
     plotOptions: {
       bar: {
-        horizontal, // user defined
-        vertical: !horizontal,
+        horizontal: config.barHorizontal,
         columnWidth: "75%",
-        borderRadius: 2,
+        borderRadius: config.borderRadius,
         distributed: false,
-        colors: { ranges: conditionalColorRange }, // user defined
+        colors: { ranges: config?.colorRange ?? [] },
       },
     },
     xaxis: {
-      tooltip: { enabled: true },
-      ...xaxis,
+      categories: [],
+      tooltip: { enabled: config.xaxisTooltip },
       labels: {
-        ...xaxis?.labels,
-        style: { ...style, ...xaxis?.labels?.style }, // user defined
+        show: config.xaxisLabels,
+        formatter: (v, { dataPointIndex }) => {
+          return `${config.xaxisLabelSeries[dataPointIndex]}`;
+        },
+        style: { fontSize: style.fontSize, colors: style.xaxisLabelsColor },
       },
+      title: {
+        text: config.xaxisTitleText,
+        style: { fontSize: "0.75rem", color: config.xaxisTitleColor },
+      },
+      min: 0,
+      max: Math.max(1, config.filteredSeries.length),
       axisBorder: { show: false },
       axisTicks: { show: false },
     },
     yaxis: {
-      ...yaxis,
+      tooltip: { enabled: config.yaxisTooltip },
       labels: {
-        ...yaxis?.labels,
-        style: { ...style, ...yaxis?.labels?.style }, // user defined
+        offsetY: 4,
+        offsetX: -6,
+        formatter: (v) => `${config.yaxisLabelPrefix}${v}`,
+        style: { fontSize: style.fontSize, colors: config.yaxisLabelsColor },
+      },
+      title: {
+        text: config.yaxisTitleText,
+        style: {
+          fontSize: "0.75rem",
+          color: config.yaxisTitleColor,
+        },
       },
     },
     tooltip: {
-      enabled: true,
-      ...(isChart && { shared: false, intersect: false }),
-      custom: customTooltip(customTooltipCallback),
+      enabled: config.tooltip,
+      intersect: false,
+      custom: customTooltip(tooltipCallBack),
     },
-    colors: barColors, // user defined
-    dataLabels,
-    legend: { show: false },
+
+    colors: ["#ffff"],
+    dataLabels: { enabled: config.dataLabels, style: { fontSize: "0.75rem" } },
+    legend: { show: config.legend },
   };
 
   return options;

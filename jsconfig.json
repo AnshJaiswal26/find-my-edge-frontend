@@ -4,12 +4,14 @@
     "baseUrl": "src",
     "paths": {
       "@icons/*": ["assets/icons/*"],
-      "@charts/*": ["charts/*"],
+      "@charts": ["components/charts"],
       "@ui": ["components/ui"],
       "@layout": ["components/layout"],
       "@stores": ["stores"],
       "@features/*": ["features/*"],
       "@data": ["data"],
+      "@utils": ["utils"],
+      "@hooks": ["hooks"],
       "@Profiler": ["RenderLogger"]
 
       // no use

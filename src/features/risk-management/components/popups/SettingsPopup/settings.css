@@ -9,7 +9,7 @@
 }
 
 .settings-popup-container {
-  background-color: white;
+  background-color: var(--color-bg-chart-popup);
   border-radius: 0.5rem;
   max-width: 29rem;
   width: 100%;
@@ -22,9 +22,6 @@
 
 .settings-popup-container::-webkit-scrollbar {
   width: var(--scrollbar-size-mid);
-}
-.dark-theme .settings-popup-container {
-  background-color: #1f2937;
 }
 
 .settings-popup-header {

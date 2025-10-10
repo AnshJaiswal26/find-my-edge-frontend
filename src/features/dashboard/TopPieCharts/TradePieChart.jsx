@@ -1,4 +1,4 @@
-import { getPieChartConfig } from "@charts/apex/configs";
+import { getPieChartConfig } from "@utils";
 import React, { memo, useState } from "react";
 import Chart from "react-apexcharts";
 

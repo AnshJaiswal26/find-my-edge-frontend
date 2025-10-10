@@ -1,8 +1,8 @@
 export const customTooltip = (callback) => {
-  return ({ series, dataPointIndex }) => {
+  return ({ series, dataPointIndex, w }) => {
     const seriesValue = series.map((s) => s[dataPointIndex]);
 
-    const tooltipData = callback(seriesValue, dataPointIndex);
+    const tooltipData = callback(seriesValue, dataPointIndex, w);
 
     const htmlStringArray = tooltipData?.dataArray?.map(
       ({ label = "", value = "", color = "", indicator = true }) =>

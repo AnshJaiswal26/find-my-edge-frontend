@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import { ToggleButton } from "@ui";
 import { tradeData } from "@data";
-import { customTooltip } from "@charts/apex/configs";
+import { customTooltip } from "@utils";
 
 function CapitalGrowthLineChart({ data, theme, isSidebarOpen }) {
   const demoData = tradeData.reduce(

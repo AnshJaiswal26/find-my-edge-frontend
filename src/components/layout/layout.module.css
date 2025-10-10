@@ -37,6 +37,7 @@
   color: var(--color-text-heading);
   background-color: var(--color-bg-container);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .childrenWrapper,
@@ -45,6 +46,10 @@
   flex-direction: column;
   gap: 1.25rem;
   flex: 1;
+  overflow: visible;
+}
+.innerContainer {
+  gap: 0.65rem;
 }
 
 .title {
@@ -153,4 +158,77 @@
   background: #fcff411e;
   color: var(--color-yellow-200);
   border: 1px solid var(--color-yellow-200);
+}
+
+.chartPopupContainer {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.chartPopup {
+  background-color: var(--color-bg-container);
+  border-radius: 0.5rem;
+  max-width: 29rem;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  height: 500px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chartPopupLarge {
+  max-width: 29rem;
+}
+
+.chartPopup::-webkit-scrollbar {
+  width: var(--scrollbar-size-mid);
+}
+
+.chartPopup header,
+.chartPopup footer {
+  background-color: var(--color-bg-chart-popup-header);
+  padding: 15px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  color: var(--color-text-charts);
+  border-bottom: 1px solid var(--color-border-container);
+  z-index: 2;
+}
+
+.chartPopup main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 10px;
+}
+
+.closeIcon {
+  padding: 7px;
+}
+
+.closeIcon:hover svg {
+  color: rgb(234, 69, 69);
+}
+
+.chartPopupLarge main {
+  grid-template-columns: 1fr 1fr;
+}
+
+.chartPopup footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid var(--color-border-container);
 }

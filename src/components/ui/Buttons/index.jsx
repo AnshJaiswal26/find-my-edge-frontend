@@ -18,7 +18,7 @@ export const Button = ({
         title={title}
         className={`${styles.button} ${styles[size]} ${
           disabled ? `${styles.disabled}` : ""
-        }`}
+        } ${className}`}
         disabled={disabled}
         onClick={() => {
           if (!onClick) return;
@@ -79,27 +79,34 @@ export const IconButton = ({
   alt,
   tooltip = { title: "", position: "top" },
   className,
+  disabled = false,
 }) => {
   const [onHover, setOnHover] = useState(false);
   return (
     <div className="relative">
       <button
-        className={`${styles.iconBtn} ${className}`}
-        onClick={() => (onClick ? onClick() : null)}
+        className={`${styles.iconBtn} ${className} ${
+          disabled
+            ? "pointer-events-none text-[var(--color-text-disabled)]"
+            : ""
+        }`}
+        onClick={(e) => (onClick ? onClick(e) : null)}
         onMouseEnter={() => {
           if (tooltip) setOnHover(true);
         }}
         onMouseLeave={() => {
           if (tooltip) setOnHover(false);
         }}
+        disabled={disabled}
       >
         {icon ? icon : <img src={src} alt={alt ?? "icon button"} />}
       </button>
-      {tooltip.title && (
+      {tooltip.title !== "" && (
         <Tooltip
           data={[tooltip.title]}
           isVisible={onHover}
           position={tooltip.position}
+          className="pl-2 pr-2"
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 import React, { useMemo, memo, useState } from "react";
 import Chart from "react-apexcharts";
-import { getRadialBarChartConfig } from "./configs";
+import { getRadialBarChartConfig } from "@utils";
 
 export default function RadialBarChart({ data, totalTrades }) {
   const [activeIndex, setActiveIndex] = useState();

@@ -8,11 +8,12 @@ import CapitalGrowthLineChart from "./Charts/capital-growth-line-chart";
 import RRPerformanceBarChart from "./Charts/rr-performance-bar-chart";
 import WonLoseRateBarChart from "./Charts/win-lose-rate-line-chart";
 import CumulativeProfitLineChart from "./Charts/cumulative-profit-line-chart";
-import { Container, PageContainer } from "@layout";
+import { ChartPopup, Container, PageContainer } from "@layout";
 
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";
 import { Button } from "@ui";
+import { ChartLayoutCustomizer } from "@charts";
 
 function Dashboard() {
   const theme = useUIStore((s) => s.theme);
@@ -22,27 +23,25 @@ function Dashboard() {
 
   return (
     <PageContainer pageActive={"dashboard"}>
-      <header>
-        <Container className="rounded-[4px]">
-          <div className="flex-box items-center">
-            <img
-              className="w-13 h-13"
-              src="Icons/others/analysis.png"
-              alt="Trading Analysis"
-            />
-            <div className="flex-box flex-col gap-3">
-              <div>
-                <h2>Trading Analytics Dashboard</h2>
-                <p>
-                  Gain insights into your trading performance with detailed
-                  analytics, profit and loss tracking, and risk-reward analysis.
-                </p>
-              </div>
-              <Button text="Add Charts and Stats" />
+      <Container className="rounded-[4px]">
+        <div className="flex-box items-center">
+          <img
+            className="w-13 h-13"
+            src="Icons/others/analysis.png"
+            alt="Trading Analysis"
+          />
+          <div className="flex-box flex-col gap-3">
+            <div>
+              <h2>Trading Analytics Dashboard</h2>
+              <p>
+                Gain insights into your trading performance with detailed
+                analytics, profit and loss tracking, and risk-reward analysis.
+              </p>
             </div>
+            <Button text="Add Charts and Stats" />
           </div>
-        </Container>
-      </header>
+        </div>
+      </Container>
 
       <StatCards />
 
@@ -66,6 +65,8 @@ function Dashboard() {
         theme={theme}
         isSidebarOpen={isSidebarOpen}
       />
+
+      <ChartLayoutCustomizer />
 
       <div className="grid gap-5">
         <CapitalGrowthLineChart

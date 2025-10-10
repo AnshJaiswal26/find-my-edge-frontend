@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton } from "@ui";
-import { Bell, Settings } from "lucide-react";
+import { Bell, ChevronDown, ChevronUp, Settings } from "lucide-react";
 import { useUIStore } from "@stores";
 import { FliterButton, SidebarToggleButton, ThemeButton } from "./Components";
 import styles from "./Editor.module.css";
