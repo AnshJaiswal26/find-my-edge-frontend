@@ -11,13 +11,21 @@ export default function BarChart({ chartId }) {
 
   const wrapperWidth = useChartStore((s) => s.layouts[chartId].wrapperWidth);
 
+  const title = useChartStore((s) => s.charts[chartId].title);
+
   return (
-    <div id={chartId}>
-      <Container
-        title={"P&L Booked on Risk/Reward"}
-        childClassName="flex-wrap flex-col"
-      >
-        <div className="flex items-center justify-end select-none pr-1 h-[fit-content]">
+    <div id={chartId} style={{ width: "100%" }}>
+      <Container childClassName="flex-wrap flex-col gap-0">
+        <div
+          className={`flex items-center justify-${
+            title ? "between" : "end"
+          } select-none pr-1 h-[fit-content]`}
+        >
+          {title && (
+            <div className="text-[1.5rem]">
+              <span>{title}</span>
+            </div>
+          )}
           <ChartToolbar
             chartRef={chartRef}
             chartId={chartId}
@@ -70,8 +78,9 @@ function BarChartWithConfig({ chartId, chartRef }) {
             const min = Math.max(0, Math.floor(xaxis.min || 0));
             const max = Math.floor(xaxis.max || 0);
 
-            const filteredSeries =
-              [...useChartStore.getState().charts[chartId].filteredSeries];
+            const filteredSeries = [
+              ...useChartStore.getState().charts[chartId].filteredSeries,
+            ];
 
             const sliced = filteredSeries.slice(
               min,

@@ -110,7 +110,7 @@ export const Badge = ({ value, label, formatter, className }) => {
   );
 };
 
-export const ChartPopup = ({
+export const Popup = ({
   title,
   children,
   large = false,
@@ -131,25 +131,21 @@ export const ChartPopup = ({
   if (!isVisible) return null;
 
   return (
-    <div className={styles.chartPopupContainer}>
-      <div
-        className={`${styles.chartPopup} ${
-          large ? styles.chartPopupLarge : ""
-        }`}
-      >
+    <div className={styles.popupContainer}>
+      <div className={`${styles.popup} ${large ? styles.popupLarge : ""}`}>
         <div>
-          <header className={styles.chartPopupHeader}>
+          <header>
             <div className="flex-box justify-between items-center">
               <div>{title}</div>
               <IconButton
                 icon={<X size={17} />}
-                className={styles.closeIcon}
+                className={styles.popupCloseIcon}
                 onClick={onClose}
               />
             </div>
           </header>
 
-          <main className={styles.chartPopupContent}>{children}</main>
+          <main>{children}</main>
         </div>
         {footer?.show && (
           <footer className={styles.chartPopupFooter}>
@@ -168,6 +164,39 @@ export const ChartPopup = ({
           </footer>
         )}
       </div>
+    </div>
+  );
+};
+
+export const ChartPopup = ({
+  title,
+  children,
+  isVisible,
+  text = { leftBtn: "Clear", rightBtn: "Apply" },
+  onLeftBtnClick = () => {},
+  onRightBtnClick = () => {},
+  className,
+}) => {
+  if (!isVisible) return null;
+
+  return (
+    <div className={styles.chartPopup}>
+      <header>
+        <span>{title}</span>
+      </header>
+
+      <main className={className}>{children}</main>
+
+      <footer className="flex-box justify-end gap-2">
+        <Button
+          text={text?.leftBtn}
+          color={"var(--color-bg-hover)"}
+          className={"text-[var(--color-text-headings)]"}
+          size="small"
+          onClick={onLeftBtnClick}
+        />
+        <Button text={text?.rightBtn} size="small" onClick={onRightBtnClick} />
+      </footer>
     </div>
   );
 };

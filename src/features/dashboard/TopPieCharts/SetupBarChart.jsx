@@ -37,7 +37,7 @@ const SetupBarChart = memo(({ data, totalTrades, isSidebarOpen, theme }) => {
   useEffect(() => {
     setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
-    }, 50);
+    }, 300);
   }, [isSidebarOpen]);
 
   return (

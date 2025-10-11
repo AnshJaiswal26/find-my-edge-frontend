@@ -6,6 +6,7 @@ import {
   Pin,
   RefreshCcw,
   Settings2,
+  Trash2,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
@@ -21,8 +22,14 @@ import {
   handleDownloadCSV,
   handleDownloadPNG,
 } from "./handlers";
+import ChartLayoutPopup from "../ChartLayoutPopup";
 
-export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
+export default function ChartToolbar({
+  chartRef,
+  chartWrapperRef,
+  chartId,
+  title,
+}) {
   const updateSeries = useChartStore((s) => s.updateSeries);
   const updateLayout = useChartStore((s) => s.updateLayout);
 
@@ -56,28 +63,34 @@ export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
           handleDownloadPNG(chartRef);
         },
       },
+      {
+        icon: Trash2,
+        title: "Remove Chart",
+        onClick: () => {
+          handleDownloadCSV(chartId);
+          handleDownloadPNG(chartRef);
+        },
+      },
     ],
     [chartRef, chartId, updateSeries, updateLayout]
   );
 
   return (
-    <div className="flex-box gap-0 bg-[inherit]] mb-[-20px] mr-[20px] z-100">
+    <div className="flex-box gap-0 bg-[inherit]]  mr-[20px] z-100">
       <IconButton
         className="rounded-none"
         icon={<Pin size={15} />}
-        tooltip={{ title: "Pin Chart", position: "top" }}
+        tooltip={{
+          title: "Pin Chart",
+          position: "bottom",
+        }}
         onClick={() => {}}
       />
-      <IconButton
-        className="rounded-none"
-        icon={<Settings2 size={15} />}
-        tooltip={{ title: "Chart Layout", position: "top" }}
-        onClick={() => {}}
-      />
+      <ChartLayoutPopup chartId={chartId} />
       <IconButton
         className="rounded-none"
         icon={<FunctionSquareIcon size={15} />}
-        tooltip={{ title: "Function", position: "top" }}
+        tooltip={{ title: "Function", position: "bottom" }}
         onClick={() => {}}
       />
       <ChartFilterPopup chartId={chartId} />
@@ -87,7 +100,7 @@ export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
           key={index}
           className={"rounded-none"}
           icon={<item.icon size={15} />}
-          tooltip={{ title: item.title, position: "top" }}
+          tooltip={{ title: item.title, position: "bottom" }}
           onClick={() => (item?.onClick ? item.onClick() : {})}
         />
       ))}

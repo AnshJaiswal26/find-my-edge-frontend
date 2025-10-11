@@ -18,7 +18,9 @@ export default function ExpandableSection({
   return (
     <>
       <button
-        className={`border-t-1 pt-2 border-[var(--color-bg-hover)] ${styles.filterButton}`}
+        className={`border-t-1 ${
+          isExpanded ? "" : "border-b-1"
+        } pt-2 border-[var(--color-bg-hover)] ${styles.filterButton}`}
         onClick={() => setIsExpanded((p) => !p)}
       >
         {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}

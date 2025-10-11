@@ -95,7 +95,7 @@
   box-sizing: border-box;
   height: fit-content;
   width: fit-content;
-  padding: max(1vw, 2px);
+  padding: 1rem;
   border-radius: 10px;
   transition: background-color 0.2s;
 }

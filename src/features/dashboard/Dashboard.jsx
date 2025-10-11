@@ -8,7 +8,7 @@ import CapitalGrowthLineChart from "./Charts/capital-growth-line-chart";
 import RRPerformanceBarChart from "./Charts/rr-performance-bar-chart";
 import WonLoseRateBarChart from "./Charts/win-lose-rate-line-chart";
 import CumulativeProfitLineChart from "./Charts/cumulative-profit-line-chart";
-import { ChartPopup, Container, PageContainer } from "@layout";
+import { Container, PageContainer } from "@layout";
 
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";

@@ -13,6 +13,7 @@ const labelsKeys = "date";
 export const useChartStore = create((set) => ({
   charts: {
     "apex-line-chart-1": {
+      title: "P&L Booked on Risk/Reward",
       labelsKey: labelsKeys,
       wrapperWidth: "100%",
       chartWidth: 100,
@@ -103,7 +104,18 @@ export const useChartStore = create((set) => ({
     set((s) => ({
       filters: {
         ...s.filters,
-        [chartId]: { ...s.filters[chartId], ...newFilters },
+        [chartId]: {
+          ...s.filters[chartId],
+          ...(newFilters === "reset"
+            ? {
+                value: "",
+                from: "",
+                to: "",
+                selectedSort: "none",
+                selectedFilter: "none",
+              }
+            : newFilters),
+        },
       },
     }));
   },

@@ -77,7 +77,7 @@ export const IconButton = ({
   icon,
   src,
   alt,
-  tooltip = { title: "", position: "top" },
+  tooltip = { title: "", position: "top", className: "" },
   className,
   disabled = false,
 }) => {
@@ -106,7 +106,7 @@ export const IconButton = ({
           data={[tooltip.title]}
           isVisible={onHover}
           position={tooltip.position}
-          className="pl-2 pr-2"
+          className={`pl-2 pr-2 ${tooltip.className}`}
         />
       )}
     </div>
