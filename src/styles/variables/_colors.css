@@ -1,8 +1,10 @@
 :root {
   /* Light theme colors */
+
   --color-green: #05ab72;
   --color-red: #fe5a5a;
   --color-yellow: #f8c75f;
+  --color-default: #1979ff;
 
   /* background-colors */
   --color-bg-body: #ffff;

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import Chart from "react-apexcharts";
 import { getBarChartConfig } from "@utils";
 import { ChartToolbar } from "@ui";
@@ -9,107 +9,110 @@ export default function BarChart({ chartId }) {
   const chartRef = useRef();
   const chartWrapperRef = useRef();
 
-  const wrapperWidth = useChartStore((s) => s.layouts[chartId].wrapperWidth);
-
-  const title = useChartStore((s) => s.charts[chartId].title);
-
   return (
     <div id={chartId} style={{ width: "100%" }}>
       <Container childClassName="flex-wrap flex-col gap-0">
-        <div
-          className={`flex items-center justify-${
-            title ? "between" : "end"
-          } select-none pr-1 h-[fit-content]`}
-        >
-          {title && (
-            <div className="text-[1.5rem]">
-              <span>{title}</span>
-            </div>
-          )}
-          <ChartToolbar
-            chartRef={chartRef}
-            chartId={chartId}
-            chartWrapperRef={chartWrapperRef}
-          />
-        </div>
+        <TitleAndToolBar
+          chartId={chartId}
+          chartRef={chartRef}
+          chartWrapperRef={chartWrapperRef}
+        />
         <div ref={chartWrapperRef} id="apexcharts-custom-wrapper">
-          <div
-            style={{ maxWidth: `${wrapperWidth}px` }}
-            className="relative overflow-x-auto overflow-y-hidden box-border w-[100%]"
-          >
-            <BarChartWithConfig chartId={chartId} chartRef={chartRef} />
-          </div>
+          <BarChartWithConfig chartId={chartId} chartRef={chartRef} />
         </div>
       </Container>
     </div>
   );
 }
 
+function TitleAndToolBar({ chartId, chartRef, chartWrapperRef }) {
+  const title = useChartStore((s) => s.charts[chartId].layout.title);
+
+  return (
+    <div
+      className={`flex items-center justify-${
+        title ? "between" : "end"
+      } select-none pr-1 h-[fit-content]`}
+    >
+      {title && (
+        <div className="text-[1.5rem]">
+          <span>{title}</span>
+        </div>
+      )}
+      <ChartToolbar
+        chartRef={chartRef}
+        chartId={chartId}
+        chartWrapperRef={chartWrapperRef}
+      />
+    </div>
+  );
+}
+
 function BarChartWithConfig({ chartId, chartRef }) {
-  const updateSeries = useChartStore((s) => s.updateSeries);
-  const chartConfig = useChartStore((s) => s.charts[chartId]);
-  const filteredSeries = chartConfig.filteredSeries;
-  const seriesConfig = chartConfig.seriesConfig;
-  const labelsKey = chartConfig.labelsKey;
+  const layoutCfg = useChartStore((s) => s.charts[chartId].layout);
+  const filteredSeries = useChartStore((s) => s.charts[chartId].filteredSeries);
+  const seriesConfig = useChartStore((s) => s.charts[chartId].seriesConfig);
 
-  const chartWidth = useChartStore((s) => s.layouts[chartId].chartWidth);
+  const wrapperWidth = layoutCfg.wrapperWidth;
+  const chartWidth = layoutCfg.chartWidth;
 
-  const tooltipCallBack = (seriesValue, index, w) => {
-    const category = filteredSeries[index][labelsKey];
-    return {
-      title: category,
-      dataArray: seriesValue.map((v, i) => {
-        const cfg = seriesConfig[i];
-        return {
-          label: cfg.labelConditions(v),
-          value: v,
-          color: cfg.color({ value: v }),
-        };
-      }),
-    };
-  };
+  const tooltipCallBack = useCallback(
+    (seriesValue, index, w) => {
+      const { filteredSeries, labelsKey, seriesConfig } =
+        useChartStore.getState().charts[chartId];
+
+      return {
+        title: filteredSeries[index][labelsKey],
+        dataArray: seriesValue.map((value, i) => {
+          const { color, label } = seriesConfig[i].colors.reduce((a, r) => {
+            if (r.from <= value && value <= r.to) {
+              a.color = r.color;
+              a.label = r.label;
+            }
+            return a;
+          }, {});
+
+          return { value, label, color };
+        }),
+      };
+    },
+    [chartId]
+  );
 
   const options = useMemo(
     () =>
       getBarChartConfig({
-        config: chartConfig,
-        events: {
-          selection: (chartCtx, { xaxis }) => {
-            const min = Math.max(0, Math.floor(xaxis.min || 0));
-            const max = Math.floor(xaxis.max || 0);
-
-            const filteredSeries = [
-              ...useChartStore.getState().charts[chartId].filteredSeries,
-            ];
-
-            const sliced = filteredSeries.slice(
-              min,
-              Math.min(max + 1, filteredSeries.length)
-            );
-            const updatedSeries = sliced.length < 2 ? filteredSeries : sliced;
-            updateSeries(chartId, updatedSeries);
-          },
-
-          mounted: (chartCtx) => (chartRef.current = chartCtx.el),
-        },
+        config: layoutCfg,
+        chartRef,
+        chartId,
         tooltipCallBack,
+        series: filteredSeries,
       }),
-    [chartConfig, tooltipCallBack, updateSeries]
+    [layoutCfg, tooltipCallBack, filteredSeries]
   );
 
   return (
-    <Chart
-      key={chartWidth}
-      options={options}
-      series={seriesConfig.map((cfg) => ({
-        name: cfg.key,
-        type: cfg.type,
-        data: filteredSeries.map((d) => d[cfg.key]),
-        color: cfg.color,
-      }))}
-      type="bar"
-      height={"400px"}
-      width={`${chartWidth}%`}
-    />
+    <div
+      style={{ maxWidth: `${wrapperWidth}px` }}
+      className="relative overflow-x-auto overflow-y-hidden box-border w-[100%]"
+    >
+      <Chart
+        key={chartWidth}
+        options={options}
+        series={seriesConfig.map((cfg) => ({
+          name: cfg.key,
+          type: cfg.type,
+          data: filteredSeries.map((d) => d[cfg.key]),
+          color: ({ value }) =>
+            cfg.colors.reduce((a, r) => {
+              r.from <= value && value <= r.to && (a = r.color);
+              return a;
+            }, "var(--color-red)"),
+        }))}
+        type="bar"
+        height={"400px"}
+        width={`${chartWidth}%`}
+      />
+    </div>
   );
 }

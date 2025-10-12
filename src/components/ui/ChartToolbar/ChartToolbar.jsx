@@ -1,17 +1,15 @@
 import {
   BoxSelect,
   Download,
-  Filter,
   FunctionSquareIcon,
   Pin,
   RefreshCcw,
-  Settings2,
   Trash2,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
 import { IconButton } from "../Buttons";
-import { Fragment, useMemo } from "react";
+import { useMemo } from "react";
 import ChartFilterPopup from "../ChartFilterPopup";
 import { useChartStore } from "@stores";
 import {
@@ -24,12 +22,7 @@ import {
 } from "./handlers";
 import ChartLayoutPopup from "../ChartLayoutPopup";
 
-export default function ChartToolbar({
-  chartRef,
-  chartWrapperRef,
-  chartId,
-  title,
-}) {
+export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
   const updateSeries = useChartStore((s) => s.updateSeries);
   const updateLayout = useChartStore((s) => s.updateLayout);
 

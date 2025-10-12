@@ -12,11 +12,15 @@ import { handleApply } from "./handlers";
 export default function ChartFilterPopup({ chartId }) {
   const [showFilter, setShowFilter] = useState(false);
   const ref = useRef();
-  // useClickOutside(ref, () => setShowFilter(false));
+  useClickOutside(ref, () => setShowFilter(false));
 
   const updateSeries = useChartStore((s) => s.updateSeries);
+
+  const resetSeries = useChartStore((s) => s.resetSeries);
+
   const updateFilters = useChartStore((s) => s.updateFilters);
-  const filters = useChartStore((s) => s.filters[chartId]);
+
+  const filters = useChartStore((s) => s.charts[chartId].filters);
 
   const { selectedSort, selectedFilter, value, from, to, filterKey } = filters;
 
@@ -51,7 +55,7 @@ export default function ChartFilterPopup({ chartId }) {
         title={"Filter"}
         isVisible={showFilter}
         onLeftBtnClick={() => {
-          updateSeries(chartId, "reset");
+          resetSeries(chartId);
           setShowFilter(false);
           updateFilters(chartId, "reset");
         }}

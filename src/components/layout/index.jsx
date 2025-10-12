@@ -1,4 +1,4 @@
-import { Button, Editor, IconButton, Sidebar } from "@ui";
+import { Button, Editor, IconButton, Sidebar, ToggleButton } from "@ui";
 import styles from "./layout.module.css";
 import { X } from "lucide-react";
 
@@ -197,6 +197,39 @@ export const ChartPopup = ({
         />
         <Button text={text?.rightBtn} size="small" onClick={onRightBtnClick} />
       </footer>
+    </div>
+  );
+};
+
+export const ColorPicker = ({
+  label,
+  color,
+  onChange,
+  onToggle,
+  disable = false,
+}) => {
+  return (
+    <div className="flex justify-between items-center">
+      <div
+        className={`flex gap-0.5 items-center relative px-2 py-1 rounded-[4px] w-fit border-1 border-[var(--color-bg-hover)] ${
+          disable ? "pointer-events-none opacity-40" : ""
+        }`}
+      >
+        <Legend color={color} />
+        <input
+          type="color"
+          value={color}
+          onChange={(e) => (onChange ? onChange(e.target.value) : null)}
+          className="opacity-0 left-0 top-0 w-[100%] h-[100%] absolute"
+        />
+        <span>{label}</span>
+      </div>
+      {onToggle && (
+        <ToggleButton
+          toggleOn={!disable}
+          onClick={() => (onToggle ? onToggle() : null)}
+        />
+      )}
     </div>
   );
 };

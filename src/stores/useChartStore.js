@@ -13,150 +13,159 @@ const labelsKeys = "date";
 export const useChartStore = create((set) => ({
   charts: {
     "apex-line-chart-1": {
-      title: "P&L Booked on Risk/Reward",
+      originalSeries: series,
+      filteredSeries: series,
       labelsKey: labelsKeys,
-      wrapperWidth: "100%",
-      chartWidth: 100,
 
-      // grid
-      gridEnabled: true,
-      xaxisGrid: false,
-      yaxisGrid: true,
+      layout: {
+        title: "P&L Booked on Risk/Reward",
+        labelsKey: labelsKeys,
+        wrapperWidth: "100%",
+        chartWidth: 100,
 
-      // bar
-      barHorizontal: false,
+        // grid
+        gridEnabled: true,
+        xGrid: false,
+        yGrid: true,
 
-      stacked: true,
-      stacked100: false,
-      borderRadius: 1,
+        // bar
+        horizontal: false,
 
-      // xaxis
-      xaxisTooltip: true,
-      xaxisLabels: false,
-      xaxisLabelsColor: "var(--apexcharts-axis-labels-color)",
-      xaxisTitleText: "Trades",
-      xaxisTitleColor: "var(--apexcharts-axis-labels-color)",
-      xaxisLabelSeries: series.map((d) => d[labelsKeys]),
-      xaxisLabelPrefix: "Trade",
-      xaxisLabelIndex: true,
+        stacked: true,
+        stacked100: false,
+        barRadius: 1,
 
-      //yaxis
-      yaxisTooltip: false,
-      yaxisLabels: false,
-      yaxisLabelsColor: "var(--apexcharts-axis-labels-color)",
-      yaxisTitleText: "Risk/Reward",
-      yaxisTitleColor: "var(--apexcharts-axis-labels-color)",
-      yaxisLabelPrefix: "1:",
+        // xaxis
+        xTooltip: true,
+        xLabels: false,
+        xLabelsColor: "var(--apexcharts-axis-labels-color)",
+        xTitleText: "Trades",
+        xTitleColor: "var(--apexcharts-axis-labels-color)",
+        xLabelSeries: series.map((d) => d[labelsKeys]),
+        xLabelPrefix: "Trade",
+        xLabelIndex: true,
 
-      tooltip: true,
-      barColors: ["var(--color-green)"],
+        //yaxis
+        yTooltip: false,
+        yLabels: false,
+        yLabelsColor: "var(--apexcharts-axis-labels-color)",
+        yTitleText: "Risk/Reward",
+        yTitleColor: "var(--apexcharts-axis-labels-color)",
+        yLabelPrefix: "1:",
 
-      colors: [],
-      dataLabels: false,
-      legend: true,
+        tooltip: true,
+        dataLabels: false,
+      },
 
       seriesConfig: [
         {
-          labelConditions: (v) =>
-            v > 0.6
-              ? "Reward Taken"
-              : v <= 0.6 && v >= 0
-              ? "Breakeven"
-              : "Risk Taken",
-
           key: "Risk/Reward",
           type: "bar",
-          color: ({ value }) =>
-            value > 0.6
-              ? "var(--color-green)"
-              : value <= 0.6 && value >= 0
-              ? "var(--color-yellow)"
-              : "var(--color-red)",
+          colors: [
+            {
+              from: 0.61,
+              to: Number.MAX_SAFE_INTEGER,
+              color: "var(--color-green)",
+              label: "Reward Taken",
+            },
+            {
+              from: 0,
+              to: 0.6,
+              color: "var(--color-yellow)",
+              label: "Breakeven",
+            },
+            {
+              from: Number.MIN_SAFE_INTEGER,
+              to: -0.00001,
+              color: "var(--color-red)",
+              label: "Risk Taken",
+            },
+          ],
         },
       ],
 
-      originalSeries: series,
-      filteredSeries: series,
-    },
-  },
-
-  filters: {
-    "apex-line-chart-1": {
-      filterKey: "Risk/Reward",
-      visible: false,
-      selectedFilter: "none",
-      selectedSort: "none",
-      value: "",
-      from: "",
-      to: "",
-    },
-  },
-  layouts: {
-    "apex-line-chart-1": {
-      wrapperWidth: "100%",
-      chartWidth: 100,
+      filters: {
+        filterKey: "Risk/Reward",
+        visible: false,
+        selectedFilter: "none",
+        selectedSort: "none",
+        value: "",
+        from: "",
+        to: "",
+      },
     },
   },
 
   order: [],
 
-  updateFilters: (chartId, newFilters) => {
-    set((s) => ({
-      filters: {
-        ...s.filters,
+  // --- Meta (general chart info)
+  updateMeta: (chartId, meta) => {
+    set((state) => ({
+      charts: {
+        ...state.charts, // new root charts object
         [chartId]: {
-          ...s.filters[chartId],
-          ...(newFilters === "reset"
-            ? {
-                value: "",
-                from: "",
-                to: "",
-                selectedSort: "none",
-                selectedFilter: "none",
-              }
-            : newFilters),
+          ...state.charts[chartId], // new chart object
+          ...meta, // update meta properties
         },
       },
     }));
   },
 
-  updateLayout: (chartId, newLayout) => {
-    set((s) => ({
-      layouts: {
-        ...s.layouts,
-        [chartId]: { ...s.layouts[chartId], ...newLayout },
-      },
-    }));
-  },
-
-  updateChartConfig: (chartId, updates) => {
-    set((s) => {
-      return {
-        charts: {
-          ...s.charts,
-          [chartId]: { ...s.charts[chartId], ...updates },
-        },
-      };
-    });
-  },
-
-  updateSeries: (chartId, updatedSeries) =>
-    set((s) => {
-      const chart = s.charts[chartId];
-      const series =
-        updatedSeries === "reset" ? chart.originalSeries : updatedSeries;
-
-      return {
-        charts: {
-          ...s.charts,
-          [chartId]: {
-            ...chart,
-            xaxisLabelSeries: series.map(
-              (d, i) => d?.[chart.labelsKey] ?? i + 1
-            ),
-            filteredSeries: series,
+  // --- Layout
+  updateLayout: (chartId, layoutUpdates) => {
+    set((state) => ({
+      charts: {
+        ...state.charts, // new root charts object
+        [chartId]: {
+          ...state.charts[chartId], // new chart object
+          layout: {
+            ...state.charts[chartId].layout,
+            ...layoutUpdates, // updated layout
           },
         },
-      };
-    }),
+      },
+    }));
+  },
+
+  // --- Filters
+  updateFilters: (chartId, filterUpdates) => {
+    set((state) => ({
+      charts: {
+        ...state.charts, // new root object
+        [chartId]: {
+          ...state.charts[chartId], // new chart object
+          filters: {
+            ...state.charts[chartId].filters,
+            ...filterUpdates, // updated filters
+          },
+        },
+      },
+    }));
+  },
+
+  // --- Series
+  updateSeries: (chartId, series) => {
+    set((state) => ({
+      charts: {
+        ...state.charts, // new root charts object
+        [chartId]: {
+          ...state.charts[chartId], // new chart object
+          filteredSeries: series, // updated series
+        },
+      },
+    }));
+  },
+
+  // --- Reset Series
+  resetSeries: (chartId) => {
+    set((state) => ({
+      charts: {
+        ...state.charts, // new reference for root charts object
+        [chartId]: {
+          ...state.charts[chartId], // new reference for this chart
+          filteredSeries: state.charts[chartId].originalSeries, // updated series
+        },
+      },
+    }));
+  },
 }));

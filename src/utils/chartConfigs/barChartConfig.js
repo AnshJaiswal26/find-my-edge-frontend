@@ -1,6 +1,13 @@
+import { useChartStore } from "@stores";
 import { customTooltip } from "./customTooltip";
 
-export const getBarChartConfig = ({ config, events, tooltipCallBack }) => {
+export const getBarChartConfig = ({
+  config,
+  chartRef,
+  chartId,
+  series,
+  tooltipCallBack,
+}) => {
   const style = {
     fontSize: "0.75rem",
   };
@@ -12,57 +19,77 @@ export const getBarChartConfig = ({ config, events, tooltipCallBack }) => {
       stackType: config.stacked100 ? "100%" : "normal",
       toolbar: { show: true, tools: { download: true } },
       zoom: { enabled: false },
-      selection: { enabled: config.filteredSeries.length > 1 },
+      selection: { enabled: series.length > 1 },
       fontFamily: "inherit",
-      events,
+      events: {
+        selection: (chartCtx, { xaxis }) => {
+          const min = Math.max(0, Math.floor(xaxis.min || 0));
+          const max = Math.floor(xaxis.max || 0);
+
+          const state = useChartStore.getState();
+          const updateSeries = state.updateSeries;
+
+          const filteredSeries = [...state.charts[chartId].filteredSeries];
+
+          const sliced = filteredSeries.slice(
+            min,
+            Math.min(max + 1, filteredSeries.length)
+          );
+          const updatedSeries = sliced.length < 2 ? filteredSeries : sliced;
+          updateSeries(chartId, updatedSeries);
+        },
+
+        mounted: (chartCtx) => (chartRef.current = chartCtx.el),
+      },
     },
     grid: {
       show: config.gridEnabled,
-      xaxis: { lines: { show: config.xaxisGrid } },
-      yaxis: { lines: { show: config.yaxisGrid } },
+      xaxis: { lines: { show: config.xGrid } },
+      yaxis: { lines: { show: config.yGrid } },
       padding: { top: 0, left: 0, bottom: 0, right: 30 },
     },
     plotOptions: {
       bar: {
-        horizontal: config.barHorizontal,
+        horizontal: config.horizontal,
         columnWidth: "75%",
-        borderRadius: config.borderRadius,
+        borderRadius: config.barRadius,
         distributed: false,
-        colors: { ranges: config?.colorRange ?? [] },
       },
     },
     xaxis: {
       categories: [],
-      tooltip: { enabled: config.xaxisTooltip },
+      tooltip: { enabled: config.xTooltip },
       labels: {
-        show: config.xaxisLabels,
+        show: config.xLabels,
         formatter: (v, { dataPointIndex }) => {
-          return `${config.xaxisLabelSeries[dataPointIndex]}`;
+          return `${config.xLabelSeries[dataPointIndex]}`;
         },
-        style: { fontSize: style.fontSize, colors: style.xaxisLabelsColor },
+        style: { fontSize: style.fontSize, colors: style.xLabelsColor },
       },
       title: {
-        text: config.xaxisTitleText,
-        style: { fontSize: "0.75rem", color: config.xaxisTitleColor },
+        text: config.xTitleText,
+        style: { fontSize: "0.75rem", color: config.xTitleColor },
       },
       min: 0,
-      max: Math.max(1, config.filteredSeries.length),
+      max: Math.max(1, series.length),
       axisBorder: { show: false },
       axisTicks: { show: false },
     },
     yaxis: {
-      tooltip: { enabled: config.yaxisTooltip },
+      tooltip: { enabled: config.yTooltip },
       labels: {
+        show: config.yLabels,
         offsetY: 4,
         offsetX: -6,
-        formatter: (v) => `${config.yaxisLabelPrefix}${v}`,
-        style: { fontSize: style.fontSize, colors: config.yaxisLabelsColor },
+        formatter: (v) => `${config.yLabelPrefix}${v}`,
+        style: { fontSize: style.fontSize, colors: config.yLabelsColor },
       },
       title: {
-        text: config.yaxisTitleText,
+        text: config.yTitleText,
+        offsetX: 6,
         style: {
           fontSize: "0.75rem",
-          color: config.yaxisTitleColor,
+          color: config.yTitleColor,
         },
       },
     },
@@ -72,9 +99,8 @@ export const getBarChartConfig = ({ config, events, tooltipCallBack }) => {
       custom: customTooltip(tooltipCallBack),
     },
 
-    colors: ["#ffff"],
+    colors: ["#1979ff"],
     dataLabels: { enabled: config.dataLabels, style: { fontSize: "0.75rem" } },
-    legend: { show: config.legend },
   };
 
   return options;

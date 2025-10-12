@@ -1,7 +1,7 @@
 import { useChartStore } from "@stores";
 
 export const handleZoomIn = (updater, ref, chartId) => {
-  const prev = useChartStore.getState().layouts[chartId].chartWidth;
+  const prev = useChartStore.getState().charts[chartId].layout.chartWidth;
   if (prev === 1000) return;
   updater(chartId, {
     wrapperWidth: ref.current.getBoundingClientRect().width,
@@ -10,7 +10,7 @@ export const handleZoomIn = (updater, ref, chartId) => {
 };
 
 export const handleZoomOut = (updater, ref, chartId) => {
-  const prev = useChartStore.getState().layouts[chartId].chartWidth;
+  const prev = useChartStore.getState().charts[chartId].layout.chartWidth;
   if (prev === 100) return;
   updater(chartId, {
     wrapperWidth: ref.current.getBoundingClientRect().width,
