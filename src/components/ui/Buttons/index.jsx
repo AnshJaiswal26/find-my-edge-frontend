@@ -32,44 +32,38 @@ export const Button = ({
 };
 
 export const ToggleButton = ({
-  label,
-  toggleOn,
+  label = "",
+  toggleOn = false,
   color,
   onClick,
   bothSide = false,
-  style,
+  className,
 }) => {
-  if (toggleOn !== null && toggleOn !== undefined) {
-    const toggleStyle =
-      toggleOn || bothSide ? { backgroundColor: color ?? "#007bff" } : {};
-    const borderColor = toggleOn || bothSide ? color ?? "#007bff" : "#cccccc";
+  const toggleStyle = toggleOn
+    ? { backgroundColor: color || "var(--color-default)" }
+    : {};
+  const borderColor = toggleOn ? color || "var(--color-default)" : "#cccccc";
 
-    return (
-      <div className={styles.toggleBtnContainer} style={style}>
-        {label?.[0] && (
-          <span className={styles.toggleBtnLabel}>{label[0]}</span>
-        )}
+  return (
+    <div className={`${styles.toggleBtnContainer} ${className}`}>
+      {label && <span className={styles.toggleBtnLabel}>{label}</span>}
+      <div
+        className={styles.toggleBtnTrack}
+        style={toggleStyle}
+        onClick={() => {
+          if (!onClick) return;
+          onClick();
+        }}
+      >
         <div
-          className={styles.toggleBtnTrack}
-          style={toggleStyle}
-          onClick={() => {
-            if (!onClick) return;
-            onClick();
-          }}
-        >
-          <div
-            className={`${styles.toggleBtnCircle} ${
-              toggleOn ? styles.toggleBtnEnable : ""
-            }`}
-            style={{ border: `1px solid ${borderColor}` }}
-          />
-        </div>
-        {label?.[1] && (
-          <span className={styles.toggleBtnLabel}>{label[1]}</span>
-        )}
+          className={`${styles.toggleBtnCircle} ${
+            toggleOn ? styles.enable : ""
+          }`}
+          style={{ border: `1px solid ${borderColor}` }}
+        />
       </div>
-    );
-  }
+    </div>
+  );
 };
 
 export const IconButton = ({

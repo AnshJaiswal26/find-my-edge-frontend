@@ -60,8 +60,25 @@
   margin-bottom: 5px;
 }
 
-:global(.dark-theme) .container img.inverted {
-  chartpopup: invert(1);
+.section {
+  border-radius: 5px;
+  padding: 0.75rem;
+  border: 1px solid var(--color-bg-hover);
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-heading);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sectionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 /* Label */

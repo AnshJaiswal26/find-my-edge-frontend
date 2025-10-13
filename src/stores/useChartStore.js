@@ -23,6 +23,8 @@ export const useChartStore = create((set) => ({
         wrapperWidth: "100%",
         chartWidth: 100,
 
+        dimensions: 100,
+
         // grid
         gridEnabled: true,
         xGrid: false,

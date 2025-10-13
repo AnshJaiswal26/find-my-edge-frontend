@@ -1,7 +1,7 @@
 .button {
   --_padding: var(--padding, 4px 10px);
   --_font-size: var(--font-size, 0.85rem);
-  --_bg-color: var(--bg-color, #007bff);
+  --_bg-color: var(--bg-color, var(--color-default));
 
   padding: var(--_padding);
   font-size: var(--_font-size);
@@ -48,18 +48,14 @@
 
 .toggleBtnLabel {
   font-size: 0.875rem;
-  color: #4b5563;
-}
-
-:global(.dark-theme) .toggleBtnLabel {
-  color: #ffffff;
+  color: var(--color-text-title);
 }
 
 .toggleBtnTrack {
   cursor: pointer;
   width: 33px;
   min-width: 33px;
-  background-color: #d0d0d0;
+  background-color: var(--color-bg-toggle);
   height: 13px;
   border-radius: 20px;
   display: flex;
@@ -67,22 +63,18 @@
   transition: background-color ease 0.2s;
 }
 
-:global(.dark-theme) .toggleBtnTrack {
-  background-color: #314355;
-}
-
 .toggleBtnCircle {
   width: 17px;
   height: 17px;
   background-color: #ffffff;
-  border: 1px solid #007bff;
   border-radius: 50%;
   transform: translateX(0%);
   transition: transform ease 0.2s, border ease 0.2s;
 }
 
-.toggleBtnEnable {
+.toggleBtnCircle.enable {
   transform: translateX(100%);
+  transition: transform ease 0.2s, border ease 0.2s;
 }
 
 .iconBtn {

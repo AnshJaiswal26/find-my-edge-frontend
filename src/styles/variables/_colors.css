@@ -21,6 +21,7 @@
 
   --color-bg-hover: #cfddec53;
   --color-bg-bar-track: #cfddec53;
+  --color-bg-toggle: #d0d0d0;
 
   /* border-colors */
   --color-border-container: #e9eff5;
@@ -52,6 +53,7 @@
   /* hover */
   --color-bg-hover: #293a4b77;
   --color-bg-bar-track: #293a4b77;
+  --color-bg-toggle: #314355;
 
   /* border-colors */
   --color-border-container: #1c252e;

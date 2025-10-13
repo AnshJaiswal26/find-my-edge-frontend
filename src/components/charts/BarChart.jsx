@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import Chart from "react-apexcharts";
 import { getBarChartConfig } from "@utils";
 import { ChartToolbar } from "@ui";
@@ -8,9 +8,10 @@ import { Container } from "@layout";
 export default function BarChart({ chartId }) {
   const chartRef = useRef();
   const chartWrapperRef = useRef();
+  const dimensions = useChartStore((s) => s.charts[chartId].layout.dimensions);
 
   return (
-    <div id={chartId} style={{ width: "100%" }}>
+    <div id={chartId} style={{ width: `${dimensions}%` }}>
       <Container childClassName="flex-wrap flex-col gap-0">
         <TitleAndToolBar
           chartId={chartId}
@@ -18,7 +19,11 @@ export default function BarChart({ chartId }) {
           chartWrapperRef={chartWrapperRef}
         />
         <div ref={chartWrapperRef} id="apexcharts-custom-wrapper">
-          <BarChartWithConfig chartId={chartId} chartRef={chartRef} />
+          <BarChartWithConfig
+            chartId={chartId}
+            chartRef={chartRef}
+            dimensions={dimensions}
+          />
         </div>
       </Container>
     </div>
@@ -48,7 +53,7 @@ function TitleAndToolBar({ chartId, chartRef, chartWrapperRef }) {
   );
 }
 
-function BarChartWithConfig({ chartId, chartRef }) {
+function BarChartWithConfig({ chartId, chartRef, dimensions }) {
   const layoutCfg = useChartStore((s) => s.charts[chartId].layout);
   const filteredSeries = useChartStore((s) => s.charts[chartId].filteredSeries);
   const seriesConfig = useChartStore((s) => s.charts[chartId].seriesConfig);
@@ -97,7 +102,7 @@ function BarChartWithConfig({ chartId, chartRef }) {
       className="relative overflow-x-auto overflow-y-hidden box-border w-[100%]"
     >
       <Chart
-        key={chartWidth}
+        key={chartWidth + dimensions}
         options={options}
         series={seriesConfig.map((cfg) => ({
           name: cfg.key,
