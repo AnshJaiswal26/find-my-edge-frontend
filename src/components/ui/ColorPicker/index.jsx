@@ -1,0 +1,46 @@
+import { Legend } from "@layout";
+import { ToggleButton } from "../Buttons";
+
+export default function ColorPicker({
+  label,
+  onChange,
+  onToggle,
+  disableSelector = false,
+  colorSelector,
+  store,
+}) {
+  const isEnable =
+    store && typeof disableSelector === "function"
+      ? store(disableSelector)
+      : disableSelector;
+
+  const color =
+    store && typeof colorSelector === "function"
+      ? store(colorSelector)
+      : colorSelector;
+
+  return (
+    <div className="flex justify-between items-center">
+      <div
+        className={`flex gap-0.5 items-center relative px-2 py-1 rounded-[4px] w-fit border-1 border-[var(--color-bg-hover)] ${
+          isEnable ? "pointer-events-none opacity-40" : ""
+        }`}
+      >
+        <Legend color={color} />
+        <input
+          type="color"
+          value={color}
+          onChange={(e) => (onChange ? onChange(e.target.value) : null)}
+          className="opacity-0 left-0 top-0 w-[100%] h-[100%] absolute"
+        />
+        <span>{label}</span>
+      </div>
+      {onToggle && (
+        <ToggleButton
+          selector={isEnable}
+          onClick={() => (onToggle ? onToggle() : null)}
+        />
+      )}
+    </div>
+  );
+}

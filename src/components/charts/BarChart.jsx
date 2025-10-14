@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import Chart from "react-apexcharts";
 import { getBarChartConfig } from "@utils";
 import { ChartToolbar } from "@ui";

@@ -1,5 +1,6 @@
 import { useChartStore } from "@stores";
 import { customTooltip } from "./customTooltip";
+import { useMemo } from "react";
 
 export const getBarChartConfig = ({
   config,
@@ -11,6 +12,8 @@ export const getBarChartConfig = ({
   const style = {
     fontSize: "0.75rem",
   };
+
+  const xLabelsSeries = () => series.map((d) => d[config.labelsKeys]);
 
   const options = {
     chart: {
@@ -46,7 +49,12 @@ export const getBarChartConfig = ({
       show: config.gridEnabled,
       xaxis: { lines: { show: config.xGrid } },
       yaxis: { lines: { show: config.yGrid } },
-      padding: { top: 0, left: 0, bottom: 0, right: 30 },
+      padding: {
+        top: 0,
+        left: 0,
+        bottom: config.xTitleText !== "" ? 0 : 15,
+        right: 30,
+      },
     },
     plotOptions: {
       bar: {
@@ -62,7 +70,7 @@ export const getBarChartConfig = ({
       labels: {
         show: config.xLabels,
         formatter: (v, { dataPointIndex }) => {
-          return `${config.xLabelSeries[dataPointIndex]}`;
+          return `${xLabelsSeries[dataPointIndex]}`;
         },
         style: { fontSize: style.fontSize, colors: style.xLabelsColor },
       },

@@ -33,12 +33,16 @@ export const Button = ({
 
 export const ToggleButton = ({
   label = "",
-  toggleOn = false,
+  selector = false,
   color,
   onClick,
   bothSide = false,
   className,
+  store,
 }) => {
+  const toggleOn =
+    store && typeof selector === "function" ? store(selector) : selector;
+
   const toggleStyle = toggleOn
     ? { backgroundColor: color || "var(--color-default)" }
     : {};
@@ -86,10 +90,10 @@ export const IconButton = ({
         }`}
         onClick={(e) => (onClick ? onClick(e) : null)}
         onMouseEnter={() => {
-          if (tooltip) setOnHover(true);
+          if (tooltip?.title !== "") setOnHover(true);
         }}
         onMouseLeave={() => {
-          if (tooltip) setOnHover(false);
+          if (tooltip?.title !== "") setOnHover(false);
         }}
         disabled={disabled}
       >

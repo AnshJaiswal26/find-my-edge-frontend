@@ -14,3 +14,5 @@ export { default as Pagination } from "./Pagination/Pagination";
 
 export { default as ChartToolbar } from "./ChartToolbar/ChartToolbar.jsx";
 export { default as ChartFilter } from "./ChartFilterPopup";
+export { default as Input } from "./InputField";
+export { default as ColorPicker } from "./ColorPicker";

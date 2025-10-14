@@ -20,7 +20,7 @@ import {
   handleDownloadCSV,
   handleDownloadPNG,
 } from "./handlers";
-import ChartLayoutPopup from "../ChartLayoutPopup";
+import { BarChartLayoutPopup } from "../ChartLayoutPopup";
 
 export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
   const updateSeries = useChartStore((s) => s.updateSeries);
@@ -69,9 +69,9 @@ export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
   );
 
   return (
-    <div className="flex-box gap-0 bg-[inherit]]  mr-[20px] z-100">
+    <div className="flex-box gap-0.5 bg-[inherit]] mr-2 z-100">
       <IconButton
-        className="rounded-none"
+        className="rounded-none p-2.5"
         icon={<Pin size={15} />}
         tooltip={{
           title: "Pin Chart",
@@ -79,11 +79,11 @@ export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
         }}
         onClick={() => {}}
       />
-      <ChartLayoutPopup chartId={chartId} />
+      <BarChartLayoutPopup chartId={chartId} />
       <IconButton
-        className="rounded-none"
+        className="rounded-none p-2.5"
         icon={<FunctionSquareIcon size={15} />}
-        tooltip={{ title: "Function", position: "bottom" }}
+        tooltip={{ title: "Functions", position: "bottom" }}
         onClick={() => {}}
       />
       <ChartFilterPopup chartId={chartId} />
@@ -91,7 +91,7 @@ export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
       {IconCmpt.map((item, index) => (
         <IconButton
           key={index}
-          className={"rounded-none"}
+          className="rounded-none p-2.5"
           icon={<item.icon size={15} />}
           tooltip={{ title: item.title, position: "bottom" }}
           onClick={() => (item?.onClick ? item.onClick() : {})}

@@ -45,7 +45,7 @@ export default function ChartFilterPopup({ chartId }) {
   return (
     <div ref={ref} className="relative">
       <IconButton
-        className={"rounded-none"}
+        className="rounded-none p-2.5"
         icon={<Filter size={15} />}
         tooltip={{ title: "Filter", position: "bottom" }}
         onClick={() => setShowFilter((p) => !p)}

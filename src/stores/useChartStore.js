@@ -10,6 +10,47 @@ const series = tradeData.map((trade, i) => ({
 
 const labelsKeys = "date";
 
+const defaultLayout = {
+  title: "P&L Booked on Risk/Reward",
+  labelsKey: labelsKeys,
+  wrapperWidth: "100%",
+  chartWidth: 100,
+
+  dimensions: 100,
+
+  // grid
+  gridEnabled: true,
+  xGrid: false,
+  yGrid: true,
+
+  // bar
+  horizontal: false,
+
+  stacked: true,
+  stacked100: false,
+  barRadius: 1,
+
+  // xaxis
+  xTooltip: true,
+  xLabels: false,
+  xLabelsColor: "var(--apexcharts-axis-labels-color)",
+  xTitleText: "Trades",
+  xTitleColor: "var(--apexcharts-axis-labels-color)",
+  xLabelPrefix: "Trade",
+  xLabelIndex: true,
+
+  //yaxis
+  yTooltip: false,
+  yLabels: false,
+  yLabelsColor: "var(--apexcharts-axis-labels-color)",
+  yTitleText: "Risk/Reward",
+  yTitleColor: "var(--apexcharts-axis-labels-color)",
+  yLabelPrefix: "1:",
+
+  tooltip: true,
+  dataLabels: false,
+};
+
 export const useChartStore = create((set) => ({
   charts: {
     "apex-line-chart-1": {
@@ -17,47 +58,8 @@ export const useChartStore = create((set) => ({
       filteredSeries: series,
       labelsKey: labelsKeys,
 
-      layout: {
-        title: "P&L Booked on Risk/Reward",
-        labelsKey: labelsKeys,
-        wrapperWidth: "100%",
-        chartWidth: 100,
-
-        dimensions: 100,
-
-        // grid
-        gridEnabled: true,
-        xGrid: false,
-        yGrid: true,
-
-        // bar
-        horizontal: false,
-
-        stacked: true,
-        stacked100: false,
-        barRadius: 1,
-
-        // xaxis
-        xTooltip: true,
-        xLabels: false,
-        xLabelsColor: "var(--apexcharts-axis-labels-color)",
-        xTitleText: "Trades",
-        xTitleColor: "var(--apexcharts-axis-labels-color)",
-        xLabelSeries: series.map((d) => d[labelsKeys]),
-        xLabelPrefix: "Trade",
-        xLabelIndex: true,
-
-        //yaxis
-        yTooltip: false,
-        yLabels: false,
-        yLabelsColor: "var(--apexcharts-axis-labels-color)",
-        yTitleText: "Risk/Reward",
-        yTitleColor: "var(--apexcharts-axis-labels-color)",
-        yLabelPrefix: "1:",
-
-        tooltip: true,
-        dataLabels: false,
-      },
+      tempLayout: { ...defaultLayout },
+      layout: { ...defaultLayout },
 
       seriesConfig: [
         {
@@ -114,14 +116,14 @@ export const useChartStore = create((set) => ({
   },
 
   // --- Layout
-  updateLayout: (chartId, layoutUpdates) => {
+  updateLayout: (chartId, layoutUpdates, key = "layout") => {
     set((state) => ({
       charts: {
         ...state.charts, // new root charts object
         [chartId]: {
           ...state.charts[chartId], // new chart object
-          layout: {
-            ...state.charts[chartId].layout,
+          [key]: {
+            ...state.charts[chartId][key],
             ...layoutUpdates, // updated layout
           },
         },
