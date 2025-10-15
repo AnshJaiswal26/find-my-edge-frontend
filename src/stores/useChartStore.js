@@ -1,14 +1,7 @@
 import { tradeData } from "@data";
 import { create } from "zustand";
 
-const series = tradeData.map((trade, i) => ({
-  ...trade,
-  "Risk/Reward": trade.risk ? +(trade.pnl / trade.risk).toFixed(2) : 0,
-  Risk: trade.risk ? +((trade.pnl / trade.risk) * 1.5).toFixed(2) : 0,
-  trade: `Trade ${i + 1}`,
-}));
-
-const labelsKeys = "date";
+const labelsKeys = "Date";
 
 const defaultLayout = {
   title: "P&L Booked on Risk/Reward",
@@ -16,7 +9,12 @@ const defaultLayout = {
   wrapperWidth: "100%",
   chartWidth: 100,
 
-  dimensions: 100,
+  dimensionX: 100,
+  dimensionY: 400,
+
+  selectionSelected: false,
+  selectionX: 0,
+  selectionY: 0,
 
   // grid
   gridEnabled: true,
@@ -32,7 +30,7 @@ const defaultLayout = {
 
   // xaxis
   xTooltip: true,
-  xLabels: false,
+  xLabels: true,
   xLabelsColor: "var(--apexcharts-axis-labels-color)",
   xTitleText: "Trades",
   xTitleColor: "var(--apexcharts-axis-labels-color)",
@@ -41,7 +39,7 @@ const defaultLayout = {
 
   //yaxis
   yTooltip: false,
-  yLabels: false,
+  yLabels: true,
   yLabelsColor: "var(--apexcharts-axis-labels-color)",
   yTitleText: "Risk/Reward",
   yTitleColor: "var(--apexcharts-axis-labels-color)",
@@ -54,8 +52,8 @@ const defaultLayout = {
 export const useChartStore = create((set) => ({
   charts: {
     "apex-line-chart-1": {
-      originalSeries: series,
-      filteredSeries: series,
+      originalSeries: [...tradeData],
+      filteredSeries: [...tradeData],
       labelsKey: labelsKeys,
 
       tempLayout: { ...defaultLayout },

@@ -1,23 +1,17 @@
 import { Legend } from "@layout";
 import { ToggleButton } from "../Buttons";
+import { useResolvedValue } from "@hooks";
 
 export default function ColorPicker({
   label,
   onChange,
   onToggle,
-  disableSelector = false,
-  colorSelector,
+  disable = false,
+  value,
   store,
 }) {
-  const isEnable =
-    store && typeof disableSelector === "function"
-      ? store(disableSelector)
-      : disableSelector;
-
-  const color =
-    store && typeof colorSelector === "function"
-      ? store(colorSelector)
-      : colorSelector;
+  const isEnable = useResolvedValue(store, disable);
+  const color = useResolvedValue(store, value);
 
   return (
     <div className="flex justify-between items-center">
@@ -37,7 +31,7 @@ export default function ColorPicker({
       </div>
       {onToggle && (
         <ToggleButton
-          selector={isEnable}
+          value={isEnable}
           onClick={() => (onToggle ? onToggle() : null)}
         />
       )}

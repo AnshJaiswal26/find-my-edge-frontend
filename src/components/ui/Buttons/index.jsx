@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Tooltip from "../Tooltip";
 import styles from "./Buttons.module.css";
+import { useResolvedValue } from "@hooks";
 
 export const Button = ({
   text,
@@ -33,15 +34,14 @@ export const Button = ({
 
 export const ToggleButton = ({
   label = "",
-  selector = false,
+  value = false,
   color,
   onClick,
   bothSide = false,
   className,
   store,
 }) => {
-  const toggleOn =
-    store && typeof selector === "function" ? store(selector) : selector;
+  const toggleOn = useResolvedValue(store, value);
 
   const toggleStyle = toggleOn
     ? { backgroundColor: color || "var(--color-default)" }

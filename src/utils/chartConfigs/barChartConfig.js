@@ -1,6 +1,6 @@
 import { useChartStore } from "@stores";
 import { customTooltip } from "./customTooltip";
-import { useMemo } from "react";
+import ReactApexChart from "react-apexcharts";
 
 export const getBarChartConfig = ({
   config,
@@ -13,16 +13,17 @@ export const getBarChartConfig = ({
     fontSize: "0.75rem",
   };
 
-  const xLabelsSeries = () => series.map((d) => d[config.labelsKeys]);
-
   const options = {
     chart: {
       type: "bar",
       stacked: config.stacked,
       stackType: config.stacked100 ? "100%" : "normal",
-      toolbar: { show: true, tools: { download: true } },
+      toolbar: {
+        show: true,
+        tools: { download: true, selection: series.length > 1 },
+      },
       zoom: { enabled: false },
-      selection: { enabled: series.length > 1 },
+      selection: { enabled: true },
       fontFamily: "inherit",
       events: {
         selection: (chartCtx, { xaxis }) => {
@@ -67,12 +68,14 @@ export const getBarChartConfig = ({
     xaxis: {
       categories: [],
       tooltip: { enabled: config.xTooltip },
+      tickAmount: series.length,
       labels: {
         show: config.xLabels,
-        formatter: (v, { dataPointIndex }) => {
-          return `${xLabelsSeries[dataPointIndex]}`;
+        formatter: (v, d) => {
+          console.log(v, d);
+          return series[v - 1]?.[config.labelsKey];
         },
-        style: { fontSize: style.fontSize, colors: style.xLabelsColor },
+        style: { fontSize: style.fontSize, colors: config.xLabelsColor },
       },
       title: {
         text: config.xTitleText,

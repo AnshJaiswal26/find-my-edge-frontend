@@ -13,63 +13,71 @@ export function XAxisSection({ chartId, updateLayout }) {
 
   return (
     <Section title="X-Axis">
-      {[
-        { label: "Tooltip", key: "xTooltip" },
-        { label: "Label Index", key: "xLabelIndex" },
-      ].map(({ label, key }, i) => (
-        <ToggleButton
-          className="justify-between"
-          label={label}
-          selector={(s) => s.charts[chartId].tempLayout[key]}
-          onClick={() => toggle(key)}
+      <ToggleButton
+        label={"Tooltip"}
+        value={(s) => s.charts[chartId].tempLayout.xTooltip}
+        onClick={() => toggle("xTooltip")}
+        store={useChartStore}
+      />
+
+      <Section title={"Labels"}>
+        <ColorPicker
+          label="Color"
+          value={(s) => parseColor(s.charts[chartId].tempLayout.xLabelsColor)}
+          disable={(s) => s.charts[chartId].tempLayout.xLabels === false}
+          onChange={(c) =>
+            updateLayout(chartId, { xLabelsColor: c }, "tempLayout")
+          }
           store={useChartStore}
         />
-      ))}
+        <ToggleButton
+          label={"Show"}
+          value={(s) => s.charts[chartId].tempLayout.xLabels}
+          onClick={() => toggle("xLabels")}
+          store={useChartStore}
+        />
 
-      <ColorPicker
-        label="Labels"
-        colorSelector={(s) =>
-          parseColor(s.charts[chartId].tempLayout.xLabelsColor)
-        }
-        disableSelector={(s) => !s.charts[chartId].tempLayout.xLabels}
-        onToggle={() => toggle("xLabels")}
-        onChange={(c) =>
-          updateLayout(chartId, { xLabelsColor: c }, "tempLayout")
-        }
-        store={useChartStore}
-      />
+        <ToggleButton
+          label={"Indexing"}
+          value={(s) => s.charts[chartId].tempLayout.xLabelIndex}
+          onClick={() => toggle("xLabelIndex")}
+          store={useChartStore}
+        />
 
-      <InputField
-        label="Title Text"
-        type="text"
-        selector={(s) => s.charts[chartId].tempLayout.xTitleText}
-        onChange={(v) => updateLayout(chartId, { xTitleText: v }, "tempLayout")}
-        placeholder="X-axis title"
-        store={useChartStore}
-      />
+        <InputField
+          label="Label Prefix"
+          type="text"
+          value={(s) => s.charts[chartId].tempLayout.xLabelPrefix}
+          onChange={(v) =>
+            updateLayout(chartId, { xLabelPrefix: v }, "tempLayout")
+          }
+          placeholder="Prefix for labels"
+          store={useChartStore}
+        />
+      </Section>
 
-      <ColorPicker
-        label="Title Color"
-        colorSelector={(s) =>
-          parseColor(s.charts[chartId].tempLayout.xTitleColor)
-        }
-        disableSelector={(s) => s.charts[chartId].tempLayout.xTitleText === ""}
-        onChange={(c) =>
-          updateLayout(chartId, { xLabelsColor: c }, "tempLayout")
-        }
-        store={useChartStore}
-      />
+      <Section title={"Title"}>
+        <InputField
+          label="Text"
+          type="text"
+          value={(s) => s.charts[chartId].tempLayout.xTitleText}
+          onChange={(v) =>
+            updateLayout(chartId, { xTitleText: v }, "tempLayout")
+          }
+          placeholder="X-axis title"
+          store={useChartStore}
+        />
 
-      <InputField
-        label="Label Prefix"
-        type="text"
-        selector={(s) => s.charts[chartId].tempLayout.xLabelPrefix}
-        onChange={(v) =>
-          updateLayout(chartId, { xLabelPrefix: v }, "tempLayout")
-        }
-        placeholder="Prefix for labels"
-        store={useChartStore}
-      />
+        <ColorPicker
+          label="Color"
+          value={(s) => parseColor(s.charts[chartId].tempLayout.xTitleColor)}
+          disable={(s) => s.charts[chartId].tempLayout.xTitleText === ""}
+          onChange={(c) =>
+            updateLayout(chartId, { xLabelsColor: c }, "tempLayout")
+          }
+          store={useChartStore}
+        />
+      </Section>
     </Section>
   );
 }

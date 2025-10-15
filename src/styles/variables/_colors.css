@@ -32,6 +32,7 @@
   --color-text-card-title: #6c757d;
   --color-text-charts: #34495e;
   --color-text-disabled: #b3b3b3;
+  font-size: 17px;
 }
 
 .dark-theme {

@@ -69,7 +69,7 @@ export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
   );
 
   return (
-    <div className="flex-box gap-0.5 bg-[inherit]] mr-2 z-100">
+    <div className="apexcharts-custom-toolbar">
       <IconButton
         className="rounded-none p-2.5"
         icon={<Pin size={15} />}

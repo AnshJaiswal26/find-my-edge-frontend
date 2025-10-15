@@ -1,10 +1,11 @@
+import { useResolvedValue } from "@hooks";
 import styles from "./InputField.module.css";
 
 export default function InputField({
   label,
   labelPosition = "left",
   type = "text",
-  selector,
+  value,
   onChange,
   max,
   min,
@@ -14,8 +15,7 @@ export default function InputField({
   className,
   store,
 }) {
-  const value =
-    store && typeof selector === "function" ? store(selector) : selector;
+  const val = useResolvedValue(store, value);
 
   return (
     <div className={`${styles.field} ${styles?.[labelPosition]}`}>
@@ -23,7 +23,7 @@ export default function InputField({
       <div className="flex items-center gap-1">
         <input
           type={type}
-          value={value}
+          value={val}
           onChange={(e) => onChange(e.target.value)}
           min={min}
           max={max}
@@ -31,7 +31,7 @@ export default function InputField({
           placeholder={placeHolder}
           className={`${styles.input} ${className}`}
         />
-        {type === "range" && formatter(value)}
+        {type === "range" && formatter(val)}
       </div>
     </div>
   );

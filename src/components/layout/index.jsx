@@ -187,7 +187,7 @@ export const ChartPopup = ({
   if (!isVisible) return null;
 
   return (
-    <div className={styles.chartPopup}>
+    <div className={`${styles.chartPopup}`}>
       <header>
         <span>{title}</span>
       </header>

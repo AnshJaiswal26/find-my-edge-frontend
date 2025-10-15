@@ -84,22 +84,20 @@ export default function BarChartLayoutPopup({ chartId }) {
             <InputField
               label="Title"
               type="text"
-              selector={generalLayout.title}
+              value={generalLayout.title}
               onChange={(v) => setGeneralLayout((p) => ({ ...p, title: v }))}
               placeholder="Chart title"
             />
             <ToggleButton
               label={"Tooltip"}
-              selector={generalLayout.tooltip}
-              className="justify-between"
+              value={generalLayout.tooltip}
               onClick={() =>
                 setGeneralLayout((p) => ({ ...p, tooltip: !p.tooltip }))
               }
             />
             <ToggleButton
               label={"Data Labels"}
-              className="justify-between"
-              selector={generalLayout.dataLabels}
+              value={generalLayout.dataLabels}
               onClick={() =>
                 setGeneralLayout((p) => ({ ...p, dataLabels: !p.dataLabels }))
               }
@@ -110,7 +108,7 @@ export default function BarChartLayoutPopup({ chartId }) {
               label="Chart Width (%)"
               type="range"
               formater={(v) => `${v}%`}
-              selector={layout.dimensions}
+              value={layout.dimensions}
               onChange={(v) => setDimensions((p) => ({ ...p, dimensions: v }))}
               min={0}
               max={10}
@@ -125,8 +123,7 @@ export default function BarChartLayoutPopup({ chartId }) {
               <ToggleButton
                 key={i}
                 label={title}
-                className="justify-between"
-                selector={gridLayout[key]}
+                value={gridLayout[key]}
                 onClick={() => setGridLayout((p) => ({ ...p, [key]: !p[key] }))}
               />
             ))}
@@ -139,9 +136,8 @@ export default function BarChartLayoutPopup({ chartId }) {
             ].map(({ title, key }, i) => (
               <ToggleButton
                 key={i}
-                className="justify-between"
                 label={title}
-                selector={barLayout[key]}
+                value={barLayout[key]}
                 onClick={() => setBarLayout((p) => ({ ...p, [key]: !p[key] }))}
               />
             ))}
@@ -149,27 +145,27 @@ export default function BarChartLayoutPopup({ chartId }) {
             <InputField
               label="Bar Radius"
               type="range"
-              selector={layout.barRadius}
+              value={layout.barRadius}
               onChange={(v) => setBarLayout((p) => ({ ...p, barRadius: v }))}
               min={0}
               max={10}
             />
           </Section>
+
           <XAxisSection chartId={chartId} updateLayout={updateLayout} />
 
           <Section title="Y-Axis">
             <ToggleButton
-              className="justify-between"
               label={"Tooltip"}
-              selector={yaxisLayout.tooltip}
+              value={yaxisLayout.tooltip}
               onClick={() =>
                 setYaxisLayout((p) => ({ ...p, tooltip: !p.tooltip }))
               }
             />
             <ColorPicker
               label="Labels"
-              colorSelector={parseColor(yaxisLayout.labelsColor)}
-              disableSelector={!yaxisLayout.labels}
+              value={parseColor(yaxisLayout.labelsColor)}
+              disable={!yaxisLayout.labels}
               onToggle={() => {
                 setYaxisLayout((p) => ({ ...p, labels: !p.labels }));
               }}
@@ -180,22 +176,22 @@ export default function BarChartLayoutPopup({ chartId }) {
             <InputField
               label="Title Text"
               type="text"
-              selector={yaxisLayout.titleText}
+              value={yaxisLayout.titleText}
               onChange={(v) => setYaxisLayout((p) => ({ ...p, titleText: v }))}
               placeholder="Y-axis title"
             />
 
             <ColorPicker
               label="Title Color"
-              colorSelector={parseColor(yaxisLayout.titleColor)}
-              disableSelector={!yaxisLayout.titleText}
+              value={parseColor(yaxisLayout.titleColor)}
+              disable={!yaxisLayout.titleText}
               onToggle={() => setYaxisLayout((p) => ({ ...p, titleText: v }))}
               onChange={(c) => setYaxisLayout((p) => ({ ...p, titleColor: c }))}
             />
             <InputField
               label="Label Prefix"
               type="text"
-              selector={yaxisLayout.labelPrefix}
+              value={yaxisLayout.labelPrefix}
               onChange={(v) =>
                 setYaxisLayout((p) => ({ ...p, labelPrefix: v }))
               }

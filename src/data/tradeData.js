@@ -55,17 +55,22 @@ export const tradeData = Array.from({ length: days }).map((_, i) => {
   const entryTime = entry;
   const exitTime = exit;
   const charges = fix(65 + num * 10);
+  const trade = `Trade ${i + 1}`;
+  const rr = fix(pnl / risk);
 
   return {
-    tradeId,
-    date,
-    entryTime,
-    exitTime,
-    pnl,
-    risk,
-    charges,
+    idx: i + 1,
+    "Trade Id": tradeId,
+    Date: date,
+    "Entry Time": entryTime,
+    "Exit Time": exitTime,
+    Pnl: pnl,
+    Risk: risk,
+    Charges: charges,
+    Trade: trade,
+    "Risk/Reward": rr,
   };
 });
 
 console.log(tradeData);
-console.log(+tradeData.reduce((acc, r) => r.pnl + acc, 0).toFixed(2));
+console.log(+tradeData.reduce((acc, r) => r.Pnl + acc, 0).toFixed(2));

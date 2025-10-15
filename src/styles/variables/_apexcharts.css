@@ -158,3 +158,17 @@
   height: 10px;
   border-radius: 50%;
 }
+
+.apexcharts-toolbar {
+  display: none !important;
+}
+
+.apexcharts-custom-toolbar {
+  position: relative;
+  display: flex;
+  gap: 0.125rem;
+  background-color: inherit;
+  margin-right: 0.5rem;
+  z-index: 100;
+  flex-wrap: wrap;
+}
