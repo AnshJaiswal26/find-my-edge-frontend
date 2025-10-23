@@ -23,9 +23,8 @@
   gap: 12px;
   text-align: center;
   border-bottom: 1px solid var(--color-border-container);
-  border-top: 1px solid var(--color-border-container);
-  margin-top: 10px;
-  padding: 10px;
+  margin-top: 20px;
+  padding: 0.8rem 1rem;
 }
 
 .sidebarProfile h3 {
@@ -49,22 +48,27 @@
   flex-direction: column;
   gap: 15px;
   padding: 10px;
-  height: min(74vh, 500px);
-  overflow-y: scroll;
-  border-bottom: 1px solid var(--color-border-container);
+  height: 84vh;
+  min-height: 300px;
+  overflow-y: auto;
 }
 
 /* sidebar button */
 .sidebarButtons {
   background: none;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 5px;
+  padding: 0.4rem 0.6rem;
   border: 1px solid var(--color-border-sidebar-button);
   transition: background-color ease 0.1s;
+}
+
+.sidebarButtons svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* sidebar button active */
@@ -72,11 +76,12 @@
   background-color: var(--color-border-container);
   border: 1px solid var(--color-border-container);
   pointer-events: none;
+  background-color: var(--color-cyan);
+  color: white;
 }
 
 /* sidebar button hover */
 .sidebarButtons:hover {
   background-color: var(--color-bg-hover);
   border: 1px solid var(--color-bg-hover);
-  border-radius: 10px;
 }

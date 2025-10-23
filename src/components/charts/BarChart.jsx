@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import Chart from "react-apexcharts";
 import { getBarChartConfig } from "@utils";
 import { ChartToolbar } from "@ui";
 import { useChartStore } from "@stores";
 import { Container } from "@layout";
+import ApexCharts from "apexcharts";
 
 export default function BarChart({ chartId }) {
   const chartRef = useRef();
@@ -11,8 +12,27 @@ export default function BarChart({ chartId }) {
   const dimensionX = useChartStore((s) => s.charts[chartId].layout.dimensionX);
   const dimensionY = useChartStore((s) => s.charts[chartId].layout.dimensionY);
 
+  useEffect(() => {
+    const handleResize = () => {
+      ApexCharts.exec(chartId, "resize");
+    };
+
+    // Trigger resize on mount + window resize
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [chartId]);
+
   return (
-    <div id={chartId} style={{ width: `${dimensionX}%` }}>
+    <div
+      id={chartId}
+      style={{
+        width: `${dimensionX}%`,
+        "--chart-width": `${dimensionX}px`,
+        "--icon-dimension": `${10 + (dimensionX / 10) * 0.5}px`,
+      }}
+    >
       <Container childClassName="flex-wrap flex-col gap-0">
         <TitleAndToolBar
           chartId={chartId}
@@ -35,11 +55,6 @@ export default function BarChart({ chartId }) {
 function TitleAndToolBar({ chartId, chartRef, dimensions, chartWrapperRef }) {
   const title = useChartStore((s) => s.charts[chartId].layout.title);
 
-  const adjustFontSize = () => {
-    const fontSize = (18 * dimensions.dimensionX) / 75;
-    return Math.max(17, fontSize);
-  };
-
   return (
     <div
       className={`flex items-center flex-wrap justify-${
@@ -47,11 +62,12 @@ function TitleAndToolBar({ chartId, chartRef, dimensions, chartWrapperRef }) {
       } select-none pr-1 h-[fit-content]`}
     >
       {title && (
-        <div style={{ fontSize: adjustFontSize() }}>
+        <div style={{ fontSize: `${14 + dimensions.dimensionX / 10}px` }}>
           <span>{title}</span>
         </div>
       )}
       <ChartToolbar
+        type={"bar"}
         chartRef={chartRef}
         chartId={chartId}
         chartWrapperRef={chartWrapperRef}
@@ -113,71 +129,17 @@ function BarChartWithConfig({ chartId, chartRef, dimensions }) {
         options={options}
         series={seriesConfig.map((cfg) => ({
           name: cfg.key,
-          data: filteredSeries.map((d, i) => ({
-            x: i + 1,
-            y: d[cfg.key],
-          })),
+          data: filteredSeries.map((d) => d[cfg.key]),
           color: ({ value }) =>
             cfg.colors.reduce((a, r) => {
               r.from <= value && value <= r.to && (a = r.color);
               return a;
-            }, "var(--color-red)"),
+            }, "var(--color-default)"),
         }))}
         type="bar"
         height={`${dimensions.dimensionY}px`}
         width={`${chartWidth}%`}
       />
     </div>
-  );
-}
-
-function SelectionContainer({ chartRef, dimensions }) {
-  const selectionRef = useRef();
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-
-  const onMouseDown = (e) => {
-    setIsSelecting(true);
-    const rect = chartRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setStartPos({ x, y });
-
-    const sel = selectionRef.current;
-    sel.style.display = "block";
-    sel.style.left = `${x}px`;
-    sel.style.top = `${y}px`;
-    sel.style.width = "0px";
-    sel.style.height = "0px";
-  };
-
-  const onMouseMove = (e) => {
-    if (!isSelecting) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const sel = selectionRef.current;
-    sel.style.left = `${Math.min(x, startPos.x)}px`;
-    sel.style.top = `${Math.min(y, startPos.y)}px`;
-    sel.style.width = `${Math.abs(x - startPos.x)}px`;
-    sel.style.height = `${Math.abs(y - startPos.y)}px`;
-  };
-
-  const onMouseUp = (e) => {
-    setIsSelecting(false);
-    const sel = selectionRef.current;
-    sel.style.display = "none";
-
-    // compute selected bars here
-    const rect = sel.getBoundingClientRect();
-    selectBarsInRect(rect);
-  };
-
-  return (
-    <div
-      className="absolute w-[200px] border-1 border-dashed bg-[#0067b7] opacity-20"
-      style={{ height: `${dimensions.dimensionY}px` }}
-    ></div>
   );
 }

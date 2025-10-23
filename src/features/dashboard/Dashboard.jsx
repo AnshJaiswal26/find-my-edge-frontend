@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useUIStore } from "@stores";
 import StatCards from "./components/StatsGrid";
 import TopPieCharts from "./TopPieCharts/top-pie-charts";
@@ -12,8 +12,8 @@ import { Container, PageContainer } from "@layout";
 
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";
-import { Button } from "@ui";
-import { ChartLayoutCustomizer } from "@charts";
+import { Button, ChartLayoutPopup } from "@ui";
+import { BarChart, ChartLayoutCustomizer } from "@charts";
 
 function Dashboard() {
   const theme = useUIStore((s) => s.theme);
@@ -23,6 +23,7 @@ function Dashboard() {
 
   return (
     <PageContainer pageActive={"dashboard"}>
+      <ChartLayoutPopup />
       <Container className="rounded-[4px]">
         <div className="flex-box items-center">
           <img
@@ -30,7 +31,7 @@ function Dashboard() {
             src="Icons/others/analysis.png"
             alt="Trading Analysis"
           />
-          <div className="flex-box flex-col gap-3">
+          <div className="flex-box flex-col gap-3 text-[0.95rem]">
             <div>
               <h2>Trading Analytics Dashboard</h2>
               <p>
@@ -66,16 +67,14 @@ function Dashboard() {
         isSidebarOpen={isSidebarOpen}
       />
 
-      <ChartLayoutCustomizer />
+      {/* <ChartLayoutCustomizer /> */}
 
-      <div className="grid gap-5">
+      <div className="grid grid-cols-1 gap-5 w-[100%]">
+        <BarChart key={0} chartId={"apex-bar-chart-1"} />
+
+        <BarChart key={1} chartId={"apex-bar-chart-2"} />
+
         <CapitalGrowthLineChart
-          data={"demo"}
-          theme={theme}
-          isSidebarOpen={isSidebarOpen}
-        />
-
-        <RRPerformanceBarChart
           data={"demo"}
           theme={theme}
           isSidebarOpen={isSidebarOpen}

@@ -13,6 +13,55 @@ export const getBarChartConfig = ({
     fontSize: "0.75rem",
   };
 
+  const isXLabelPrefixIdxVisible =
+    config.xLabelPrefixIndexing && config.labelsKey !== "";
+
+  const isXLabelSuffixIdxVisible =
+    config.xLabelSuffixIndexing && config.labelsKey !== "";
+
+  const formatter1 = (v) =>
+    `${isXLabelPrefixIdxVisible ? v : ""}${config.xLabelPrefix}${
+      v === 0 ? "" : series[v - 1]?.[config.labelsKey] || v
+    }${config.xLabelSuffix}${isXLabelSuffixIdxVisible ? v : ""}`;
+  const formatter2 = (v) => `${config.yLabelPrefix}${v}${config.yLabelSuffix}`;
+
+  const axisCfg1 = {
+    categories: [],
+    tooltip: { enabled: config.xTooltip },
+    tickAmount: series.length,
+    labels: {
+      show: config.xLabels,
+      formatter: formatter1,
+      style: { fontSize: style.fontSize, colors: config.xLabelsColor },
+    },
+    title: {
+      text: config.xTitleText,
+      style: { fontSize: "0.75rem", color: config.xTitleColor },
+    },
+    min: 1,
+    max: Math.max(1, series.length),
+    axisBorder: { show: false },
+    axisTicks: { show: false },
+  };
+  const axisCfg2 = {
+    tooltip: { enabled: config.yTooltip },
+    labels: {
+      show: config.yLabels,
+      offsetY: 4,
+      offsetX: -6,
+      formatter: formatter2,
+      style: { fontSize: style.fontSize, colors: config.yLabelsColor },
+    },
+    title: {
+      text: config.yTitleText,
+      offsetX: 6,
+      style: {
+        fontSize: "0.75rem",
+        color: config.yTitleColor,
+      },
+    },
+  };
+
   const options = {
     chart: {
       type: "bar",
@@ -47,13 +96,14 @@ export const getBarChartConfig = ({
       },
     },
     grid: {
-      show: config.gridEnabled,
+      show: true,
+      strokeDashArray: 3,
       xaxis: { lines: { show: config.xGrid } },
       yaxis: { lines: { show: config.yGrid } },
       padding: {
         top: 0,
         left: 0,
-        bottom: config.xTitleText !== "" ? 0 : 15,
+        bottom: config.xTitleText !== "" ? -5 : 15,
         right: 30,
       },
     },
@@ -65,51 +115,15 @@ export const getBarChartConfig = ({
         distributed: false,
       },
     },
-    xaxis: {
-      categories: [],
-      tooltip: { enabled: config.xTooltip },
-      tickAmount: series.length,
-      labels: {
-        show: config.xLabels,
-        formatter: (v, d) => {
-          console.log(v, d);
-          return series[v - 1]?.[config.labelsKey];
-        },
-        style: { fontSize: style.fontSize, colors: config.xLabelsColor },
-      },
-      title: {
-        text: config.xTitleText,
-        style: { fontSize: "0.75rem", color: config.xTitleColor },
-      },
-      min: 0,
-      max: Math.max(1, series.length),
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-    },
-    yaxis: {
-      tooltip: { enabled: config.yTooltip },
-      labels: {
-        show: config.yLabels,
-        offsetY: 4,
-        offsetX: -6,
-        formatter: (v) => `${config.yLabelPrefix}${v}`,
-        style: { fontSize: style.fontSize, colors: config.yLabelsColor },
-      },
-      title: {
-        text: config.yTitleText,
-        offsetX: 6,
-        style: {
-          fontSize: "0.75rem",
-          color: config.yTitleColor,
-        },
-      },
-    },
+    xaxis: config.horizontal ? axisCfg2 : axisCfg1,
+    yaxis: config.horizontal ? axisCfg1 : axisCfg2,
     tooltip: {
       enabled: config.tooltip,
       intersect: false,
+      shared: true,
       custom: customTooltip(tooltipCallBack),
     },
-
+    legend: { show: false },
     colors: ["#1979ff"],
     dataLabels: { enabled: config.dataLabels, style: { fontSize: "0.75rem" } },
   };

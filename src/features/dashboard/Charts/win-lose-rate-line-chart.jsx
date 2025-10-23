@@ -88,8 +88,8 @@ function WinLoseRateBarChart({ data, theme, isSidebarOpen }) {
       grid: {
         borderColor: theme === "dark" ? "#333e47" : "#e9ecee",
         strokeDashArray: 3,
-        yaxis: { lines: { show: true } },
         xaxis: { lines: { show: false } },
+        yaxis: { lines: { show: true } },
       },
       xaxis: {
         categories,

@@ -11,9 +11,9 @@ export const PageContainer = ({
 }) => {
   return (
     <div>
-      {editor && <Editor />}
       {sidebar && <Sidebar pageActive={pageActive} />}
       <div className={`${styles.pageContainer} ${className}`}>
+        {editor && <Editor />}
         <div className={styles.mainContent}>{children}</div>
       </div>
     </div>
@@ -45,7 +45,7 @@ export const Container = ({
 
 export const Section = ({ title, children }) => (
   <div className={styles.section}>
-    <h3 className={styles.sectionTitle}>{title}</h3>
+    {title && <h3 className={styles.sectionTitle}>{title}</h3>}
     <div className={styles.sectionContent}>{children}</div>
   </div>
 );
@@ -123,50 +123,40 @@ export const Popup = ({
   large = false,
   isVisible = true,
   onClose = () => {},
-  footer = {
-    show: true,
-    buttonLeft: {
-      text: "Close",
-      onClick: () => {},
-    },
-    buttonRight: {
-      text: "Apply",
-      onClick: () => {},
-    },
-  },
+  text = { leftBtn: "Clear", rightBtn: "Apply" },
+  onLeftBtnClick,
+  onRightBtnClick,
 }) => {
   if (!isVisible) return null;
 
   return (
     <div className={styles.popupContainer}>
       <div className={`${styles.popup} ${large ? styles.popupLarge : ""}`}>
-        <div>
-          <header>
-            <div className="flex-box justify-between items-center">
-              <div>{title}</div>
-              <IconButton
-                icon={<X size={17} />}
-                className={styles.popupCloseIcon}
-                onClick={onClose}
-              />
-            </div>
-          </header>
+        <header>
+          <div className="flex-box justify-between items-center">
+            <div>{title}</div>
+            <IconButton
+              icon={<X size={17} />}
+              className={styles.popupCloseIcon}
+              onClick={onClose}
+            />
+          </div>
+        </header>
+        <main>{children}</main>
 
-          <main>{children}</main>
-        </div>
-        {footer?.show && (
+        {onLeftBtnClick && onRightBtnClick && (
           <footer className={styles.chartPopupFooter}>
             <Button
-              text={footer?.buttonLeft?.text}
+              text={text?.leftBtn}
               size="large"
-              onClick={footer?.buttonLeft?.onClick}
+              onClick={onLeftBtnClick}
               color="var(--color-bg-hover)"
               className="text-[var(--color-text-charts)]"
             />
             <Button
-              text={footer?.buttonRight?.text}
+              text={text?.rightBtn}
               size="large"
-              onClick={footer?.buttonRight?.onClick}
+              onClick={onRightBtnClick}
             />
           </footer>
         )}
@@ -187,7 +177,7 @@ export const ChartPopup = ({
   if (!isVisible) return null;
 
   return (
-    <div className={`${styles.chartPopup}`}>
+    <div className={styles.chartPopup}>
       <header>
         <span>{title}</span>
       </header>

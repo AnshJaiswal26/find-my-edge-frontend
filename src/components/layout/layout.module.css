@@ -1,6 +1,7 @@
 /* Page Container */
 .pageContainer {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   font-family: "Trebuchet MS";
@@ -8,7 +9,7 @@
   margin-left: var(--page-margin-left);
   height: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  /* overflow: hidden; */
   transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
@@ -30,7 +31,7 @@
   min-width: 360px;
   border: 1px solid var(--color-border-container);
   display: flex;
-  border-radius: 15px;
+  border-radius: 7px;
   height: fit-content;
   padding: 20px;
   box-sizing: border-box;
@@ -201,14 +202,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  color: var(--color-text-charts);
 }
 
 .popupLarge {
   max-width: 29rem;
-}
-
-.popup::-webkit-scrollbar {
-  width: var(--scrollbar-size-mid);
 }
 
 .popup header,
@@ -216,8 +214,6 @@
   background-color: var(--color-bg-chart-popup-header);
   padding: 15px;
   box-sizing: border-box;
-  position: sticky;
-  top: 0;
   color: var(--color-text-charts);
   border-bottom: 1px solid var(--color-border-container);
   z-index: 2;
@@ -228,6 +224,11 @@
   grid-template-columns: 1fr;
   gap: 1rem;
   margin-top: 10px;
+  overflow-y: auto;
+}
+
+.popup main::-webkit-scrollbar {
+  width: var(--scrollbar-size-mid);
 }
 
 .popupCloseIcon {
@@ -246,13 +247,11 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  position: sticky;
-  bottom: 0;
   border-top: 1px solid var(--color-border-container);
 }
 
 .chartPopup {
-  right: 0;
+  left: 0;
   position: absolute;
   background-color: var(--apexcharts-tooltip-background);
   border: 1px solid var(--color-border-container);
@@ -284,6 +283,7 @@
   font-size: 0.78rem;
   padding: 10px 4px;
   max-height: 300px;
+  max-width: 350px;
   overflow-y: auto;
 }
 .chartPopup main::-webkit-scrollbar,

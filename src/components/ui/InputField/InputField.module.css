@@ -1,23 +1,27 @@
 .field {
+  --_font-size: var(--font-size, 0.875rem);
+  --_padding: var(--padding, 0.375rem 0.75rem);
+  --_width: var(--width, 8rem);
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
 
-.fieldLabel {
-  font-size: 0.875rem;
+.field label {
+  font-size: var(--_font-size);
   color: var(--color-text-title);
   text-wrap: nowrap;
 }
 
-.input[type="text"],
-.input [type="number"] {
-  width: 10rem;
+.field input[type="text"],
+.field input[type="number"] {
+  width: var(--_width);
   background-color: var(--color-bg-container);
   color: var(--color-bg-text);
-  font-size: 0.875rem;
-  padding: 0.375rem 0.75rem;
+  font-size: var(--_font-size);
+  padding: var(--_padding);
   border-radius: 0.25rem;
   border: 1px solid var(--color-bg-toggle);
   outline: none;
@@ -27,12 +31,25 @@
   border-color: #3b82f6;
 }
 
-.input[type="range"] {
+.field input[type="range"] {
   width: 7rem;
+  font-size: 0.875rem;
   padding: none;
 }
 
 .input:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.field.top {
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-start;
+}
+
+.field.medium {
+  --padding: 0.3rem 0.6rem;
+  --font-size: 0.83rem;
+  --width: 7.5rem;
 }

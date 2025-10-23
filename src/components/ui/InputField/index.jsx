@@ -3,6 +3,7 @@ import styles from "./InputField.module.css";
 
 export default function InputField({
   label,
+  size = "large",
   labelPosition = "left",
   type = "text",
   value,
@@ -10,7 +11,7 @@ export default function InputField({
   max,
   min,
   step = 1,
-  placeHolder = "",
+  placeholder = "",
   formatter = (v) => v,
   className,
   store,
@@ -18,9 +19,14 @@ export default function InputField({
   const val = useResolvedValue(store, value);
 
   return (
-    <div className={`${styles.field} ${styles?.[labelPosition]}`}>
-      <label className={styles.fieldLabel}>{label}</label>
-      <div className="flex items-center gap-1">
+    <div
+      className={`${styles.field} ${styles?.[labelPosition]} ${styles?.[size]}`}
+    >
+      <label>{label}</label>
+      <div className="flex items-center gap-2">
+        {type === "range" && (
+          <span className="text-[0.85rem]">{formatter(val)}</span>
+        )}
         <input
           type={type}
           value={val}
@@ -28,10 +34,9 @@ export default function InputField({
           min={min}
           max={max}
           step={step}
-          placeholder={placeHolder}
+          placeholder={placeholder}
           className={`${styles.input} ${className}`}
         />
-        {type === "range" && formatter(val)}
       </div>
     </div>
   );

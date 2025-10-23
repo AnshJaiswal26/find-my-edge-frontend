@@ -27,7 +27,7 @@ export default function ColorPicker({
           onChange={(e) => (onChange ? onChange(e.target.value) : null)}
           className="opacity-0 left-0 top-0 w-[100%] h-[100%] absolute"
         />
-        <span>{label}</span>
+        <span className="text-[0.85rem]">{label}</span>
       </div>
       {onToggle && (
         <ToggleButton

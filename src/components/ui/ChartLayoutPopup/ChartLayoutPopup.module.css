@@ -2,7 +2,7 @@
   padding: 0.5rem;
   padding-bottom: 0px;
   max-height: 70vh;
-  overflow-y: auto;
+  overflow: none;
   display: flex;
   flex-direction: column;
   gap: 1rem;

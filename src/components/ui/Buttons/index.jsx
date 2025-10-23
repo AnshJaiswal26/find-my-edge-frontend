@@ -81,7 +81,7 @@ export const IconButton = ({
 }) => {
   const [onHover, setOnHover] = useState(false);
   return (
-    <div className="relative">
+    <div className="relative w-[fit-content]">
       <button
         className={`${styles.iconBtn} ${className} ${
           disabled

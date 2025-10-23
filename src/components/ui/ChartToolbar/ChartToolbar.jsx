@@ -1,12 +1,13 @@
 import {
   BoxSelect,
   Download,
-  FunctionSquareIcon,
   Pin,
+  PlusCircle,
   RefreshCcw,
   Trash2,
   ZoomIn,
   ZoomOut,
+  Settings2,
 } from "lucide-react";
 import { IconButton } from "../Buttons";
 import { useMemo } from "react";
@@ -20,14 +21,33 @@ import {
   handleDownloadCSV,
   handleDownloadPNG,
 } from "./handlers";
-import { BarChartLayoutPopup } from "../ChartLayoutPopup";
 
-export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
+export default function ChartToolbar({
+  chartRef,
+  chartWrapperRef,
+  chartId,
+  type,
+}) {
   const updateSeries = useChartStore((s) => s.updateSeries);
   const updateLayout = useChartStore((s) => s.updateLayout);
 
+  const updateActiveChart = useChartStore((s) => s.updateActiveChart);
+
   const IconCmpt = useMemo(
     () => [
+      {
+        icon: Settings2,
+        title: "Layout",
+        onClick: () => {
+          updateActiveChart({ id: chartId, type });
+          document.body.style.overflow = "hidden";
+        },
+      },
+      {
+        icon: PlusCircle,
+        title: "Add Series",
+        onClick: () => {},
+      },
       {
         icon: ZoomIn,
         title: "Zoom In",
@@ -65,34 +85,27 @@ export default function ChartToolbar({ chartRef, chartWrapperRef, chartId }) {
         },
       },
     ],
-    [chartRef, chartId, updateSeries, updateLayout]
+    [chartRef, chartId]
   );
 
   return (
     <div className="apexcharts-custom-toolbar">
       <IconButton
-        className="rounded-none p-2.5"
-        icon={<Pin size={15} />}
+        className={"icon-button"}
+        icon={<Pin />}
         tooltip={{
           title: "Pin Chart",
           position: "bottom",
         }}
         onClick={() => {}}
       />
-      <BarChartLayoutPopup chartId={chartId} />
-      <IconButton
-        className="rounded-none p-2.5"
-        icon={<FunctionSquareIcon size={15} />}
-        tooltip={{ title: "Functions", position: "bottom" }}
-        onClick={() => {}}
-      />
       <ChartFilterPopup chartId={chartId} />
 
       {IconCmpt.map((item, index) => (
         <IconButton
+          className={"icon-button"}
           key={index}
-          className="rounded-none p-2.5"
-          icon={<item.icon size={15} />}
+          icon={<item.icon />}
           tooltip={{ title: item.title, position: "bottom" }}
           onClick={() => (item?.onClick ? item.onClick() : {})}
         />

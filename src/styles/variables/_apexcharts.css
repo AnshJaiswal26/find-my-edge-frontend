@@ -8,7 +8,7 @@
   --apexcharts-xaxistooltip-background: #ffffff;
   --apexcharts-xaxistooltip-color: #000;
   --apexcharts-xaxistooltip-border: #e2e2e2;
-  --apexcharts-xaxistooltip-shadow: 0px 0px 43px #00000033;
+  --apexcharts-xaxistooltip-shadow: 0px 0px 30px hsla(0, 0%, 0%, 0.073);
 
   /* grid-line */
   --apexcharts-grid-lines-color: #e0e0e0;
@@ -171,4 +171,14 @@
   margin-right: 0.5rem;
   z-index: 100;
   flex-wrap: wrap;
+}
+
+.apexcharts-custom-toolbar svg {
+  width: var(--icon-dimension);
+  height: var(--icon-dimension);
+}
+
+.apexcharts-custom-toolbar .icon-button {
+  padding: 0.45rem;
+  border-radius: 0;
 }

@@ -58,9 +58,9 @@ export const SidebarToggleButton = () => {
     <IconButton
       icon={
         isSidebarOpen ? (
-          <SidebarClose color="aqua" />
+          <SidebarClose color="var(--color-cyan)" />
         ) : (
-          <SidebarOpen color="aqua" />
+          <SidebarOpen color="var(--color-cyan)" />
         )
       }
       src="Icons/others/menus.png"
