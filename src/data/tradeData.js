@@ -59,7 +59,6 @@ export const tradeData = Array.from({ length: days }).map((_, i) => {
   const rr = fix(pnl / risk);
 
   return {
-    idx: i + 1,
     "Trade Id": tradeId,
     Date: date,
     "Entry Time": entryTime,

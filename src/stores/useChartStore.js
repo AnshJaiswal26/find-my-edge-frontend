@@ -9,8 +9,8 @@ const defaultLayout = {
   wrapperWidth: "100%",
   chartWidth: 100,
 
-  dimensionX: 100,
-  dimensionY: 400,
+  dimensionX: 70,
+  dimensionY: 350,
 
   isVisible: false,
 
@@ -37,7 +37,6 @@ const defaultLayout = {
   xLabelSuffixIndexing: false,
 
   //yaxis
-  yTooltip: false,
   yLabels: true,
   yLabelsColor: "var(--apexcharts-axis-labels-color)",
   yTitleText: "Risk/Reward",
@@ -50,49 +49,17 @@ const defaultLayout = {
 };
 
 const defaultLayoutWinRate = {
+  ...defaultLayout,
   title: "Win and Lose Rate Over Time",
   labelsKey: "day",
-  wrapperWidth: "100%",
-  chartWidth: 100,
-
-  dimensionX: 100,
-  dimensionY: 300,
-
-  isVisible: false,
-
-  // grid
-  xGrid: false,
-  yGrid: true,
-
-  // bar
-  horizontal: false,
-
-  stacked: false,
-  stacked100: false,
-  barRadius: 1,
 
   // xaxis
-  xTooltip: true,
-  xLabels: false,
-  xLabelsColor: "var(--apexcharts-axis-labels-color)",
   xTitleText: "Days",
-  xTitleColor: "var(--apexcharts-axis-labels-color)",
-  xLabelPrefix: "",
-  xLabelSuffix: "",
-  xLabelPrefixIndexing: false,
-  xLabelSuffixIndexing: false,
 
   //yaxis
-  yTooltip: false,
-  yLabels: true,
-  yLabelsColor: "var(--apexcharts-axis-labels-color)",
   yTitleText: "Rate",
-  yTitleColor: "var(--apexcharts-axis-labels-color)",
   yLabelPrefix: "",
   yLabelSuffix: "%",
-
-  tooltip: true,
-  dataLabels: false,
 };
 
 const defaultSeriesCfg = [
@@ -114,7 +81,7 @@ const defaultSeriesCfg = [
       },
       {
         from: Number.MIN_SAFE_INTEGER,
-        to: -0.00001,
+        to: -0.01,
         color: "var(--color-red)",
         label: "Risk Taken",
       },
@@ -250,29 +217,71 @@ export const useChartStore = create((set) => ({
   },
 
   // --- Series Config
-  updateSeriesConfig: (chartId, configUpdates) => {
+  updateSeriesConfig: (chartId, action) => {
     set((s) => {
-      const prevSeriesCfg = s.charts[chartId].tempSeriesConfig;
+      const prevSeriesCfg = s.charts[chartId].tempSeriesConfig || [];
+
+      let updatedSeriesCfg = prevSeriesCfg;
+
+      switch (action.type) {
+        // 🟢 CREATE: Add a new series config
+        case "create":
+          updatedSeriesCfg = prevSeriesCfg.map((p) =>
+            p.key === action.key
+              ? {
+                  ...p,
+                  colors: [
+                    ...p.colors,
+                    {
+                      from: 0,
+                      to: 0,
+                      color: "var(--color-default)",
+                      label: p.key,
+                    },
+                  ],
+                }
+              : p
+          );
+          break;
+
+        // 🟡 UPDATE: Modify an existing series config
+        case "update":
+          updatedSeriesCfg = prevSeriesCfg.map((p) =>
+            p.key === action.key
+              ? {
+                  ...p,
+                  colors: p.colors.map((range, i) =>
+                    i === action.index ? { ...range, ...action.payload } : range
+                  ),
+                }
+              : p
+          );
+          break;
+
+        // 🔴 DELETE: Remove a series config by key
+        case "delete":
+          updatedSeriesCfg = prevSeriesCfg.map((p) => {
+            return p.key === action.key
+              ? { ...p, colors: p.colors.filter((_, i) => i !== action.index) }
+              : p;
+          });
+          break;
+
+        // optional: CLEAR ALL
+        case "clear":
+          updatedSeriesCfg = [];
+          break;
+
+        default:
+          console.warn("Unknown action type:", action.type);
+      }
 
       return {
         charts: {
-          ...s.charts, // new root charts object
+          ...s.charts,
           [chartId]: {
-            ...s.charts[chartId], // new chart object
-            tempSeriesConfig: prevSeriesCfg.map((p) =>
-              p.key === configUpdates.key
-                ? p.type === "bar"
-                  ? {
-                      ...p,
-                      colors: p.colors.map((item, i) =>
-                        i === configUpdates?.index
-                          ? { ...item, ...configUpdates.payload }
-                          : item
-                      ),
-                    }
-                  : { ...p, colors: configUpdates }
-                : p
-            ),
+            ...s.charts[chartId],
+            tempSeriesConfig: updatedSeriesCfg,
           },
         },
       };

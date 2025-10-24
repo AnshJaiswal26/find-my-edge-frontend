@@ -14,7 +14,6 @@ export default function BarChartLayoutPopup({ chartId }) {
     (s) => s.updateSeriesConfigMerge
   );
   const updateActiveChart = useChartStore((s) => s.updateActiveChart);
-
   const [isAnyChange, setIsAnyChange] = useState(true);
 
   const handlePopupClose = useCallback((key) => {
@@ -25,6 +24,9 @@ export default function BarChartLayoutPopup({ chartId }) {
     updateActiveChart({ id: "" });
   }, []);
 
+  const isHorizontal =
+    useChartStore.getState().charts[chartId].layout.horizontal;
+
   return (
     <Popup
       title={"Layout"}
@@ -32,10 +34,7 @@ export default function BarChartLayoutPopup({ chartId }) {
       text={{ leftBtn: "Cancel", rightBtn: isAnyChange ? "Apply" : "Ok" }}
       onLeftBtnClick={() => handlePopupClose("tempLayout")}
       onRightBtnClick={handlePopupClose}
-      onClose={() => {
-        document.body.style.overflow = "";
-        updateActiveChart({ id: "" });
-      }}
+      onClose={() => handlePopupClose("tempLayout")}
     >
       <div className={styles.contentWrapper}>
         <GeneralSection chartId={chartId} updateLayout={updateLayout} />
@@ -59,9 +58,17 @@ export default function BarChartLayoutPopup({ chartId }) {
         </Section>
         <BarSettingsSection chartId={chartId} updateLayout={updateLayout} />
 
-        <XAxisSection chartId={chartId} updateLayout={updateLayout} />
+        <XAxisSection
+          chartId={chartId}
+          updateLayout={updateLayout}
+          isHorizontal={isHorizontal}
+        />
 
-        <YAxisSection chartId={chartId} updateLayout={updateLayout} />
+        <YAxisSection
+          chartId={chartId}
+          updateLayout={updateLayout}
+          isHorizontal={isHorizontal}
+        />
       </div>
     </Popup>
   );

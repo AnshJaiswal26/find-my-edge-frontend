@@ -100,7 +100,11 @@ function BarChartWithConfig({ chartId, chartRef, dimensions }) {
             return a;
           }, {});
 
-          return { value, label, color };
+          return {
+            value: layoutCfg.yLabelPrefix + value + layoutCfg.yLabelSuffix,
+            label,
+            color,
+          };
         }),
       };
     },
@@ -122,7 +126,7 @@ function BarChartWithConfig({ chartId, chartRef, dimensions }) {
   return (
     <div
       style={{ maxWidth: `${wrapperWidth}px` }}
-      className="relative overflow-x-auto overflow-y-hidden box-border w-[100%]"
+      className="overflow-x-auto overflow-y-hidden box-border w-[100%]"
     >
       <Chart
         key={chartWidth + dimensions}

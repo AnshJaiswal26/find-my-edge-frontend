@@ -51,3 +51,10 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.colorRangeGrid {
+  display: grid;
+  grid-template-columns: 120px 120px 120px 30px;
+  align-items: flex-end;
+  gap: 0.5rem;
+}

@@ -1,11 +1,12 @@
 import InputField from "../../InputField";
-import { IconButton, ToggleButton } from "../../Buttons";
+import { Button, IconButton, ToggleButton } from "../../Buttons";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import ColorPicker from "../../ColorPicker";
 import { Fragment } from "react";
 import { parseColor } from "@utils";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
+import styles from "../ChartLayoutPopup.module.css";
 
 export default function BarSettingsSection({ chartId, updateLayout }) {
   return (
@@ -22,7 +23,14 @@ export default function BarSettingsSection({ chartId, updateLayout }) {
           onClick={() => {
             const current =
               useChartStore.getState().charts[chartId].tempLayout[key];
-            updateLayout(chartId, { [key]: !current }, "tempLayout");
+            updateLayout(
+              chartId,
+              {
+                [key]: !current,
+                ...(key === "stacked100" ? { stacked: !current } : {}),
+              },
+              "tempLayout"
+            );
           }}
           store={useChartStore}
         />
@@ -53,114 +61,77 @@ function ConditionalColoring({ chartId }) {
         <Section title={`Range Colors - ${key}`} key={i}>
           {colors.map(({ color, label, from, to }, idx) => (
             <Fragment key={idx}>
-              <div className="grid grid-cols-3 gap-4 items-end">
+              <div className={styles.colorRangeGrid}>
                 <InputField
                   labelPosition="top"
-                  size="medium"
+                  size="small"
                   label="From"
                   type="number"
                   value={from}
                   onChange={(v) =>
-                    updateSeriesConfig(
-                      chartId,
-                      {
-                        key,
-                        payload: { from: v },
-                        index: idx,
-                      },
-                      "tempSeriesConfig"
-                    )
+                    updateSeriesConfig(chartId, {
+                      type: "update",
+                      key,
+                      payload: { from: v },
+                      index: idx,
+                    })
                   }
                 />
 
                 <InputField
                   labelPosition="top"
-                  size="medium"
+                  size="small"
                   label="To"
                   type="number"
                   value={to}
                   onChange={(v) =>
-                    updateSeriesConfig(
-                      chartId,
-                      {
-                        key,
-                        payload: { to: v },
-                        index: idx,
-                      },
-                      "tempSeriesConfig"
-                    )
+                    updateSeriesConfig(chartId, {
+                      type: "update",
+                      key,
+                      payload: { to: v },
+                      index: idx,
+                    })
                   }
+                />
+
+                <InputField
+                  labelPosition="top"
+                  size="small"
+                  label="Tooltip Label"
+                  type="text"
+                  value={label}
+                  onChange={(v) =>
+                    updateSeriesConfig(chartId, {
+                      type: "update",
+                      key,
+                      payload: { label: v },
+                      index: idx,
+                    })
+                  }
+                />
+                <IconButton
+                  icon={<Trash2 size={15} />}
+                  onClick={() =>
+                    updateSeriesConfig(chartId, {
+                      type: "delete",
+                      key,
+                      index: idx,
+                    })
+                  }
+                  className="p-2"
                 />
                 <ColorPicker
                   label="Color"
                   value={parseColor(color)}
                   onChange={(c) =>
-                    updateSeriesConfig(
-                      chartId,
-                      {
-                        key,
-                        payload: { color: c },
-                        index: idx,
-                      },
-                      "tempSeriesConfig"
-                    )
+                    updateSeriesConfig(chartId, {
+                      type: "update",
+                      key,
+                      payload: { color: c },
+                      index: idx,
+                    })
                   }
                   store={useChartStore}
-                />
-
-                <InputField
-                  labelPosition="top"
-                  size="medium"
-                  label="Tooltip Label"
-                  type="text"
-                  value={label}
-                  onChange={(v) =>
-                    updateSeriesConfig(
-                      chartId,
-                      {
-                        key,
-                        payload: { label: v },
-                        index: idx,
-                      },
-                      "tempSeriesConfig"
-                    )
-                  }
-                />
-                <InputField
-                  labelPosition="top"
-                  size="medium"
-                  label="Value Prefix"
-                  type="text"
-                  value={label}
-                  onChange={(v) =>
-                    updateSeriesConfig(
-                      chartId,
-                      {
-                        key,
-                        payload: { label: v },
-                        index: idx,
-                      },
-                      "tempSeriesConfig"
-                    )
-                  }
-                />
-                <InputField
-                  labelPosition="top"
-                  size="medium"
-                  label="Value Suffix"
-                  type="text"
-                  value={label}
-                  onChange={(v) =>
-                    updateSeriesConfig(
-                      chartId,
-                      {
-                        key,
-                        payload: { label: v },
-                        index: idx,
-                      },
-                      "tempSeriesConfig"
-                    )
-                  }
                 />
               </div>
 
@@ -169,11 +140,15 @@ function ConditionalColoring({ chartId }) {
               )}
             </Fragment>
           ))}
-          <IconButton
-            icon={<Plus size={15} />}
-            tooltip={{ title: "Add Condition", position: "bottom" }}
-            className="p-2"
-          />
+          <div className="flex justify-end flex-1">
+            <Button
+              text={"Add"}
+              size="medium"
+              onClick={() =>
+                updateSeriesConfig(chartId, { type: "create", key })
+              }
+            />
+          </div>
         </Section>
       ))}
     </>

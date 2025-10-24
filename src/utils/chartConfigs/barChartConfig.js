@@ -1,6 +1,5 @@
 import { useChartStore } from "@stores";
 import { customTooltip } from "./customTooltip";
-import ReactApexChart from "react-apexcharts";
 
 export const getBarChartConfig = ({
   config,
@@ -27,8 +26,8 @@ export const getBarChartConfig = ({
 
   const axisCfg1 = {
     categories: [],
-    tooltip: { enabled: config.xTooltip },
-    tickAmount: series.length,
+    tooltip: { enabled: !config.horizontal && config.xTooltip },
+    tickAmount: series.length - 1,
     labels: {
       show: config.xLabels,
       formatter: formatter1,
@@ -38,13 +37,13 @@ export const getBarChartConfig = ({
       text: config.xTitleText,
       style: { fontSize: "0.75rem", color: config.xTitleColor },
     },
-    min: 1,
-    max: Math.max(1, series.length),
+
     axisBorder: { show: false },
     axisTicks: { show: false },
   };
+
   const axisCfg2 = {
-    tooltip: { enabled: config.yTooltip },
+    tooltip: { enabled: config.horizontal },
     labels: {
       show: config.yLabels,
       offsetY: 4,
@@ -60,6 +59,9 @@ export const getBarChartConfig = ({
         color: config.yTitleColor,
       },
     },
+
+    axisBorder: { show: false },
+    axisTicks: { show: false },
   };
 
   const options = {
@@ -77,7 +79,7 @@ export const getBarChartConfig = ({
       events: {
         selection: (chartCtx, { xaxis }) => {
           const min = Math.max(0, Math.floor(xaxis.min || 0));
-          const max = Math.floor(xaxis.max || 0);
+          const max = Math.floor(xaxis.max - 1 || 0);
 
           const state = useChartStore.getState();
           const updateSeries = state.updateSeries;
@@ -102,9 +104,9 @@ export const getBarChartConfig = ({
       yaxis: { lines: { show: config.yGrid } },
       padding: {
         top: 0,
-        left: 0,
+        left: config.horizontal ? 10 : 0,
         bottom: config.xTitleText !== "" ? -5 : 15,
-        right: 30,
+        right: 40,
       },
     },
     plotOptions: {
@@ -120,7 +122,7 @@ export const getBarChartConfig = ({
     tooltip: {
       enabled: config.tooltip,
       intersect: false,
-      shared: true,
+      followCursor: true,
       custom: customTooltip(tooltipCallBack),
     },
     legend: { show: false },

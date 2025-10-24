@@ -8,9 +8,9 @@
   --color-cyan: #00aeae;
 
   /* background-colors */
-  --color-bg-body: #ffff;
-  --color-bg-main: #fafcff;
-  --color-bg-container: #ffff;
+  --color-bg-body: #ffffff;
+  --color-bg-main: #ffffff;
+  --color-bg-container: #ffffff;
   --color-bg-editor: rgba(255, 255, 255, 0.2);
   --color-bg-sidebar: #ffff;
   --color-bg-disabled: #f5f5f5;

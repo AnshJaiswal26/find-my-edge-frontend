@@ -5,20 +5,22 @@ import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 import ColorPicker from "../../ColorPicker";
 
-export default function XAxisSection({ chartId, updateLayout }) {
+export default function XAxisSection({ chartId, updateLayout, isHorizontal }) {
   const toggle = (key) => {
     const current = useChartStore.getState().charts[chartId].tempLayout[key];
     updateLayout(chartId, { [key]: !current }, "tempLayout");
   };
 
   return (
-    <Section title="X-Axis">
-      <ToggleButton
-        label={"Tooltip"}
-        value={(s) => s.charts[chartId].tempLayout.xTooltip}
-        onClick={() => toggle("xTooltip")}
-        store={useChartStore}
-      />
+    <Section title={isHorizontal ? "Y-Axis" : "X-Axis"}>
+      {!isHorizontal && (
+        <ToggleButton
+          label={"Tooltip"}
+          value={(s) => s.charts[chartId].tempLayout.xTooltip}
+          onClick={() => toggle("xTooltip")}
+          store={useChartStore}
+        />
+      )}
 
       <Section title={"Labels"}>
         <ColorPicker

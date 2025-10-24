@@ -5,7 +5,7 @@ import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
 
-export default function YAxisSection({ chartId, updateLayout }) {
+export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
   const toggle = (key) => {
     const current = useChartStore.getState().charts[chartId].tempLayout[key];
     console.log(current);
@@ -13,13 +13,15 @@ export default function YAxisSection({ chartId, updateLayout }) {
   };
 
   return (
-    <Section title="Y-Axis">
-      <ToggleButton
-        label={"Tooltip"}
-        value={(s) => s.charts[chartId].tempLayout.yTooltip}
-        onClick={() => toggle("yTooltip")}
-        store={useChartStore}
-      />
+    <Section title={isHorizontal ? "X-Axis" : "Y-Axis"}>
+      {!isHorizontal && (
+        <ToggleButton
+          label={"Tooltip"}
+          value={(s) => s.charts[chartId].tempLayout.xTooltip}
+          onClick={() => toggle("xTooltip")}
+          store={useChartStore}
+        />
+      )}
 
       <Section title={"Labels"}>
         <ColorPicker
