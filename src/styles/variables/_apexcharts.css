@@ -92,11 +92,11 @@
 }
 
 .apexcharts-gridline {
-  stroke: var(--apexcharts-grid-lines-color);
+  stroke: var(--apexcharts-grid-lines-color) !important;
 }
 
 .apexcharts-gridline {
-  stroke: var(--apexcharts-grid-lines-color);
+  stroke: var(--apexcharts-grid-lines-color) !important;
 }
 
 .apexcharts-menu-icon,
@@ -181,4 +181,8 @@
 .apexcharts-custom-toolbar .icon-button {
   padding: 0.45rem;
   border-radius: 0;
+}
+.react-resizable-handle {
+  margin-top: -10px;
+  background-color: var(--color-text-heading) !important;
 }

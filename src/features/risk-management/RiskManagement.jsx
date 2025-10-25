@@ -1,5 +1,4 @@
 import "./RiskManagement.css";
-import { PageContainer } from "@layout";
 import {
   CapitalInputContainer,
   SummaryContainer,
@@ -9,7 +8,7 @@ import {
 
 function RiskManagement() {
   return (
-    <PageContainer pageActive={"riskmanagement"}>
+    <>
       <Settings />
       <div className="flex-box">
         <div className="flex-box flex-col flex-1">
@@ -18,7 +17,7 @@ function RiskManagement() {
         </div>
         <CalculatorAndPositionsContainer />
       </div>
-    </PageContainer>
+    </>
   );
 }
 

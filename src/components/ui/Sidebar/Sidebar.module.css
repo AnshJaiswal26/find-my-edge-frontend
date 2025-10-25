@@ -1,6 +1,6 @@
 .sidebar {
   width: var(--sidebar-width);
-  background-color: var(--color-bg-container);
+  background-color: var(--color-bg-sidebar);
   color: var(--color-text-heading);
   height: 100%;
   position: fixed;

@@ -6,11 +6,7 @@ import SetupBarChart from "./SetupBarChart";
 import { StatCard } from "@ui";
 import { DashboardStatsGrid } from "../layout";
 import { Bar, Container, Legend } from "@layout";
-import {
-  customTooltip,
-  getBarChartConfig,
-  getMiniBarChartConfig,
-} from "@utils";
+import { getMiniBarChartConfig } from "@utils";
 
 function TopPieCharts({ data, theme, isDarkTheme, isSidebarOpen }) {
   const pieChartTradeData = [

@@ -43,6 +43,9 @@ function getRandomTradingDuration() {
 const days = 100;
 const dateBeforeDays = getDateBeforeDays(days);
 
+let cumulativePnl = 0;
+let capital = 15000;
+
 export const tradeData = Array.from({ length: days }).map((_, i) => {
   const fix = (v) => +parseFloat(v).toFixed(2);
 
@@ -58,16 +61,23 @@ export const tradeData = Array.from({ length: days }).map((_, i) => {
   const trade = `Trade ${i + 1}`;
   const rr = fix(pnl / risk);
 
+  cumulativePnl = fix(cumulativePnl + pnl);
+  capital = fix(capital + pnl);
+
   return {
     "Trade Id": tradeId,
     Date: date,
     "Entry Time": entryTime,
     "Exit Time": exitTime,
     Pnl: pnl,
+    "Cummulative Pnl": cumulativePnl,
+    Profit: pnl > 0 ? pnl : 0,
+    Loss: pnl < 0 ? pnl : 0,
     Risk: risk,
     Charges: charges,
     Trade: trade,
     "Risk/Reward": rr,
+    Capital: capital,
   };
 });
 

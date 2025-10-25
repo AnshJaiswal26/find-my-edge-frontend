@@ -31,6 +31,8 @@ export default function ChartToolbar({
   const updateSeries = useChartStore((s) => s.updateSeries);
   const updateLayout = useChartStore((s) => s.updateLayout);
 
+  const deleteChart = useChartStore((s) => s.deleteChart);
+
   const updateActiveChart = useChartStore((s) => s.updateActiveChart);
 
   const IconCmpt = useMemo(
@@ -80,8 +82,7 @@ export default function ChartToolbar({
         icon: Trash2,
         title: "Remove Chart",
         onClick: () => {
-          handleDownloadCSV(chartId);
-          handleDownloadPNG(chartRef);
+          deleteChart(chartId);
         },
       },
     ],

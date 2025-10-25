@@ -1,5 +1,4 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUIStore } from "@stores";
 import styles from "./Sidebar.module.css";
 import {
@@ -13,93 +12,42 @@ import {
   Scale,
   FileSpreadsheet,
 } from "lucide-react";
+import { pageRoute } from "@data";
 
 const sidebarItems = [
-  {
-    label: "Dashboard",
-    icon: LayoutDashboardIcon,
-    alt: "Dashboard",
-    route: "/",
-    key: "dashboard",
-  },
-  {
-    label: "Sheet Integration",
-    icon: FileSpreadsheet,
-    alt: "Find Your Edge",
-    route: "/edge",
-    key: "edge",
-  },
-  {
-    label: "Trade Metrics",
-    icon: Table,
-    alt: "Find Your Edge",
-    route: "/edge",
-    key: "trademetrics",
-  },
-  {
-    label: "Monthly Overview",
-    icon: Calendar,
-    alt: "Month Records",
-    route: "/yearly-calendar",
-    key: "yearlycalender",
-  },
-  {
-    label: "Strategy Rules",
-    icon: FileCheck,
-    alt: "Setup Rules",
-    route: "/setup-rules",
-    key: "setuprules",
-  },
+  { label: "Dashboard", icon: LayoutDashboardIcon, route: pageRoute.dashboard },
+  { label: "Sheet Integration", icon: FileSpreadsheet, route: pageRoute.edge },
+  { label: "Trade Metrics", icon: Table, route: pageRoute.edge },
+  { label: "Monthly Overview", icon: Calendar, route: pageRoute.calendar },
+  { label: "Strategy Rules", icon: FileCheck, route: pageRoute.setupRules },
   {
     label: "Captured Strategies",
     icon: NotepadText,
-    alt: "Back-Tested Data",
-    route: "/backtest",
-    key: "backtest",
+    route: pageRoute.backtest,
   },
-
-  {
-    label: "Strategy Analysis",
-    icon: ChartNoAxesCombined,
-    alt: "Strategy Analysis",
-    route: null,
-    key: "strategyanalysis",
-  },
-
-  {
-    label: "Mistakes To Avoid",
-    icon: CircleX,
-    alt: "Mistakes To Avoid",
-    route: "/mistakes",
-    key: "mistakes",
-  },
-  {
-    label: "Risk Management",
-    icon: Scale,
-    alt: "Risk Management",
-    route: "/risk-management",
-    key: "riskmanagement",
-  },
+  { label: "Strategy Analysis", icon: ChartNoAxesCombined, route: null },
+  { label: "Mistakes To Avoid", icon: CircleX, route: pageRoute.mistakes },
+  { label: "Risk Management", icon: Scale, route: pageRoute.riskManagement },
 ];
 
-export default function Sidebar({ pageActive }) {
+export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className={styles.sidebar}>
       <Profile />
       <div className={styles.sidebarMenu}>
-        {sidebarItems.map((item) => (
+        {sidebarItems.map((item, index) => (
           <button
-            key={item.key}
+            key={index}
             className={`${styles.sidebarButtons} ${
-              pageActive === item.key ? styles.buttonActive : ""
+              location.pathname === item.route ? styles.buttonActive : ""
             }`}
             onClick={() => item.route && navigate(item.route)}
           >
             <div className="flex items-center gap-2">
               <item.icon />
-              {/* <img className="w-7" src={item.icon} alt={item.alt} /> */}
               <span>{item.label}</span>
             </div>
           </button>

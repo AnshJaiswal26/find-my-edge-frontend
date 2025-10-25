@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton } from "@ui";
-import { Bell, ChevronDown, ChevronUp, Settings } from "lucide-react";
+import { Bell, Search, Settings } from "lucide-react";
 import { useUIStore } from "@stores";
-import { FliterButton, SidebarToggleButton, ThemeButton } from "./Components";
+import { SidebarToggleButton, ThemeButton } from "./Components";
 import styles from "./Editor.module.css";
 
 export default function Editor() {
@@ -19,7 +19,10 @@ function EditorLeftActions() {
   return (
     <div className="flex gap-4 items-center">
       <SidebarToggleButton />
-      <FliterButton />
+      <div className={styles.searchBar}>
+        <Search />
+        <input placeholder="Search" type="search" />
+      </div>
     </div>
   );
 }
@@ -30,13 +33,13 @@ function EditorRightActions() {
   const username = useUIStore((s) => s.username);
 
   return (
-    <div className="flex items-center gap-3">
-      <img src={selectedAvatar} alt="Profile" className="w-8 h-8" />
+    <div className="flex items-center gap-4">
+      <img src={selectedAvatar} alt="Profile" className="w-6 h-6" />
       <div>
         <strong>{username}</strong>
       </div>
 
-      <div className="flex gap-1">
+      <div className="flex gap-2">
         <ThemeButton />
         <IconButton
           icon={<Bell color="#ffd000" fill="#ffd000" />}

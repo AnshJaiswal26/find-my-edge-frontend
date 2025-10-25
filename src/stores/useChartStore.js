@@ -3,14 +3,14 @@ import { create } from "zustand";
 
 const labelsKeys = "Date";
 
-const defaultLayout = {
+const defaultBarLayout = {
   title: "P&L Booked on Risk/Reward",
   labelsKey: labelsKeys,
   wrapperWidth: "100%",
   chartWidth: 100,
 
-  dimensionX: 70,
-  dimensionY: 350,
+  dimensionX: 100,
+  dimensionY: 250,
 
   isVisible: false,
 
@@ -48,8 +48,8 @@ const defaultLayout = {
   dataLabels: false,
 };
 
-const defaultLayoutWinRate = {
-  ...defaultLayout,
+const winRateLayout = {
+  ...defaultBarLayout,
   title: "Win and Lose Rate Over Time",
   labelsKey: "day",
 
@@ -62,7 +62,7 @@ const defaultLayoutWinRate = {
   yLabelSuffix: "%",
 };
 
-const defaultSeriesCfg = [
+const defaultBarSeriesCfg = [
   {
     key: "Risk/Reward",
     type: "bar",
@@ -86,6 +86,69 @@ const defaultSeriesCfg = [
         label: "Risk Taken",
       },
     ],
+  },
+];
+
+const defaultLineLayout = {
+  title: "P&L Over Time",
+  labelsKey: labelsKeys, // same as bar chart
+  wrapperWidth: "100%",
+  chartWidth: 100,
+
+  dimensionX: 100,
+  dimensionY: 250,
+
+  isVisible: false,
+
+  // grid
+  xGrid: false,
+  yGrid: true,
+
+  // line
+  curve: "smooth", // straight, smooth, stepline
+  strokeWidth: 2,
+
+  // xaxis
+  xTooltip: true,
+  xLabels: false,
+  xLabelsColor: "var(--apexcharts-axis-labels-color)",
+  xTitleText: "Date",
+  xTitleColor: "var(--apexcharts-axis-labels-color)",
+  xLabelPrefix: "",
+  xLabelSuffix: "",
+  xLabelPrefixIndexing: false,
+  xLabelSuffixIndexing: false,
+
+  // yaxis
+  yLabels: true,
+  yLabelsColor: "var(--apexcharts-axis-labels-color)",
+  yTitleText: "Pnl",
+  yTitleColor: "var(--apexcharts-axis-labels-color)",
+  yLabelPrefix: "₹",
+  yLabelSuffix: "",
+
+  tooltip: true,
+  dataLabels: false,
+
+  // markers
+  markerSize: 3,
+  markerColors: ["var(--color-cyan)", "var(--color-yellow)"],
+  markerHoverSize: 5,
+};
+
+const defaultLineSeriesCfg = [
+  {
+    key: "Pnl",
+    type: "line",
+    label: "Pnl",
+    colors: "var(--color-cyan)",
+  },
+
+  {
+    key: "Cummulative Pnl",
+    type: "line",
+    label: "Cummulative Pnl",
+    colors: "var(--color-yellow)",
   },
 ];
 
@@ -134,15 +197,14 @@ export const useChartStore = create((set) => ({
       filteredSeries: [...tradeData],
       labelsKey: labelsKeys,
 
-      tempLayout: { ...defaultLayout },
-      layout: { ...defaultLayout },
+      tempLayout: { ...defaultBarLayout },
+      layout: { ...defaultBarLayout },
 
-      seriesConfig: [...defaultSeriesCfg],
-      tempSeriesConfig: [...defaultSeriesCfg],
+      seriesConfig: [...defaultBarSeriesCfg],
+      tempSeriesConfig: [...defaultBarSeriesCfg],
 
       filters: {
         filterKey: "Risk/Reward",
-        visible: false,
         selectedFilter: "none",
         selectedSort: "none",
         value: "",
@@ -156,15 +218,35 @@ export const useChartStore = create((set) => ({
       filteredSeries: [...demoWinRateData],
       labelsKey: "day",
 
-      tempLayout: { ...defaultLayoutWinRate },
-      layout: { ...defaultLayoutWinRate },
+      tempLayout: { ...winRateLayout },
+      layout: { ...winRateLayout },
 
       seriesConfig: [...seriesCfgRate],
       tempSeriesConfig: [...seriesCfgRate],
 
       filters: {
         filterKey: "Win Rate",
-        visible: false,
+        selectedFilter: "none",
+        selectedSort: "none",
+        value: "",
+        from: "",
+        to: "",
+      },
+    },
+
+    "apex-line-chart-1": {
+      originalSeries: [...tradeData],
+      filteredSeries: [...tradeData],
+      labelsKey: labelsKeys,
+
+      tempLayout: { ...defaultLineLayout },
+      layout: { ...defaultLineLayout },
+
+      seriesConfig: [...defaultLineSeriesCfg],
+      tempSeriesConfig: [...defaultLineSeriesCfg],
+
+      filters: {
+        filterKey: "Pnl",
         selectedFilter: "none",
         selectedSort: "none",
         value: "",
@@ -174,7 +256,11 @@ export const useChartStore = create((set) => ({
     },
   },
 
-  order: [],
+  order: [
+    { id: "apex-bar-chart-1", type: "bar" },
+    { id: "apex-bar-chart-2", type: "bar" },
+    { id: "apex-line-chart-1", type: "line" },
+  ],
 
   updateActiveChart: (updates) => {
     set((s) => ({
@@ -334,6 +420,22 @@ export const useChartStore = create((set) => ({
         },
       },
     }));
+  },
+
+  deleteChart: (chartId) => {
+    set((s) => {
+      // create a shallow copy of the charts object
+      const updatedCharts = { ...s.charts };
+
+      // delete the specific chart key
+      delete updatedCharts[chartId];
+
+      // return the new state
+      return {
+        charts: updatedCharts,
+        order: s.order.filter((chart) => chart.id !== chartId),
+      };
+    });
   },
 
   // --- Reset Series

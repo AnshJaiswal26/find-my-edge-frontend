@@ -1,11 +1,4 @@
-import {
-  Filter,
-  FilterX,
-  Moon,
-  SidebarClose,
-  SidebarOpen,
-  Sun,
-} from "lucide-react";
+import { Moon, SidebarClose, SidebarOpen, Sun } from "lucide-react";
 import { IconButton } from "@ui";
 import { useUIStore } from "@stores";
 import styles from "./Editor.module.css";
@@ -25,27 +18,6 @@ export const ThemeButton = () => {
       }
       src="Icons/others/themes.png"
       onClick={toggleTheme}
-    />
-  );
-};
-
-export const FliterButton = () => {
-  const isFilterApplied = true;
-
-  return (
-    <IconButton
-      icon={
-        <div className="flex gap-2 items-center invert-on-theme">
-          {isFilterApplied ? (
-            <FilterX className="invert-on-theme" size={20} />
-          ) : (
-            <Filter className="invert-on-theme" size={20} />
-          )}
-          <div>
-            <strong>Apply Filters</strong>
-          </div>
-        </div>
-      }
     />
   );
 };

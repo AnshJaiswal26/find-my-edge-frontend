@@ -1,31 +1,23 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import Chart from "react-apexcharts";
 import { getBarChartConfig } from "@utils";
 import { ChartToolbar } from "@ui";
 import { useChartStore } from "@stores";
 import { Container } from "@layout";
-import ApexCharts from "apexcharts";
 
 export default function BarChart({ chartId }) {
   const chartRef = useRef();
   const chartWrapperRef = useRef();
-  const dimensionX = useChartStore((s) => s.charts[chartId].layout.dimensionX);
-  const dimensionY = useChartStore((s) => s.charts[chartId].layout.dimensionY);
-
-  useEffect(() => {
-    const handleResize = () => {
-      ApexCharts.exec(chartId, "resize");
-    };
-
-    // Trigger resize on mount + window resize
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [chartId]);
+  const dimensionX = useChartStore(
+    (s) => s.charts?.[chartId]?.layout?.dimensionX
+  );
+  const dimensionY = useChartStore(
+    (s) => s.charts?.[chartId]?.layout?.dimensionY
+  );
 
   return (
     <div
+      className="w-[100%] h-[100%] resize"
       id={chartId}
       style={{
         width: `${dimensionX}%`,
@@ -57,12 +49,12 @@ function TitleAndToolBar({ chartId, chartRef, dimensions, chartWrapperRef }) {
 
   return (
     <div
-      className={`flex items-center flex-wrap justify-${
+      className={`flex items-center flex-wrap gap-2.5 justify-${
         title ? "between" : "end"
       } select-none pr-1 h-[fit-content]`}
     >
       {title && (
-        <div style={{ fontSize: `${14 + dimensions.dimensionX / 10}px` }}>
+        <div style={{ fontSize: `${10 + dimensions.dimensionX / 10}px` }}>
           <span>{title}</span>
         </div>
       )}
@@ -133,7 +125,7 @@ function BarChartWithConfig({ chartId, chartRef, dimensions }) {
         options={options}
         series={seriesConfig.map((cfg) => ({
           name: cfg.key,
-          data: filteredSeries.map((d) => d[cfg.key]),
+          data: filteredSeries.map((d) => d?.[cfg.key]),
           color: ({ value }) =>
             cfg.colors.reduce((a, r) => {
               r.from <= value && value <= r.to && (a = r.color);
