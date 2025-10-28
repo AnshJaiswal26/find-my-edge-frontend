@@ -22,9 +22,9 @@ export const baseChartConfig = ({
   const formatterY = (v) => `${config.yLabelPrefix}${v}${config.yLabelSuffix}`;
 
   const axisX = {
-    categories: [],
-    tooltip: { enabled: config.xTooltip },
-    tickAmount: series.length - 1,
+    categories: series.map((s) => s[config.labelsKey] || ""),
+    tooltip: { enabled: !config.horizontal && config.xTooltip },
+    // tickAmount: series.length - 1,
     labels: {
       show: config.xLabels,
       formatter: formatterX,
@@ -60,23 +60,128 @@ export const baseChartConfig = ({
       fontFamily: "inherit",
       toolbar: { show: true, tools: { download: true, selection: false } },
       zoom: { enabled: false },
-      selection: { enabled: true },
+      selection: { enabled: false },
       events: {
-        selection: (chartCtx, { xaxis }) => {
-          if (!xaxis) return;
-          const min = Math.max(0, Math.floor(xaxis.min || 0));
-          const max = Math.floor(xaxis.max - 1 || 0);
-
+        click: (e, t, { dataPointIndex }) => {
           const state = useChartStore.getState();
-          const updateSeries = state.updateSeries;
-          const filteredSeries = [...state.charts[chartId].filteredSeries];
-          const sliced = filteredSeries.slice(
-            min,
-            Math.min(max + 1, filteredSeries.length)
-          );
-          const updatedSeries = sliced.length < 2 ? filteredSeries : sliced;
-          updateSeries(chartId, updatedSeries);
+          const chart = state.charts[chartId];
+          const isSelecting = chart.layout.selection;
+          if (!isSelecting) return;
+
+          const svgRect = t.el.getBoundingClientRect();
+          const gridRect = t.el
+            .querySelector(".apexcharts-grid")
+            ?.getBoundingClientRect();
+          if (!gridRect) return;
+
+          let selection = t.el.querySelector(".apexcharts-custom-select");
+
+          // --- Start selection ---
+          if (!selection) {
+            t.el.style.position = "relative";
+
+            selection = document.createElement("div");
+            selection.classList.add("apexcharts-custom-select");
+
+            // Base styles
+            selection.style.position = "absolute";
+            selection.style.backgroundColor = "#89d4ff";
+            selection.style.opacity = "0.3";
+            selection.style.pointerEvents = "none";
+
+            // Align selection start
+            const startX = e.clientX - svgRect.left;
+            const startY = e.clientY - svgRect.top;
+
+            if (config.horizontal) {
+              selection.style.left = "0px";
+              selection.style.width = `${gridRect.width}px`;
+              selection.style.top = `${startY}px`;
+              selection.dataset.startY = startY;
+              selection.style.height = "0px";
+            } else {
+              selection.style.top = `${gridRect.top - svgRect.top}px`;
+              selection.style.height = `${gridRect.height}px`;
+              selection.style.left = `${startX}px`;
+              selection.dataset.startX = startX;
+              selection.style.width = "0px";
+            }
+
+            t.el.prepend(selection);
+
+            state.updateLayout(
+              chartId,
+              { startIndex: Number(dataPointIndex) },
+              "tempLayout"
+            );
+            console.log("Selection started at index:", dataPointIndex);
+          }
+          // --- End selection ---
+          else {
+            const startIndex = chart.tempLayout.startIndex;
+            if (startIndex === dataPointIndex) return;
+
+            console.log(`Selection from ${startIndex} to ${dataPointIndex}`);
+
+            if (startIndex >= Number(dataPointIndex)) {
+              state.updateLayout(chartId, { startIndex: null }, "tempLayout");
+              selection.remove();
+              return;
+            }
+
+            const filteredSeries = [...chart.filteredSeries];
+            const sliced = filteredSeries.slice(
+              startIndex,
+              Number(dataPointIndex) + 1
+            );
+            const updatedSeries = sliced.length < 1 ? filteredSeries : sliced;
+
+            state.updateSeries(chartId, updatedSeries);
+            state.updateLayout(chartId, { startIndex: null }, "tempLayout");
+
+            selection.remove();
+          }
         },
+
+        // --- Handle mouse drag / movement ---
+        mouseMove: function (e, t) {
+          const chart = useChartStore.getState().charts[chartId];
+          const isSelecting = chart.layout.selection;
+          if (!isSelecting) return;
+
+          const svgRect = t.el.getBoundingClientRect();
+          const selection = t.el.querySelector(".apexcharts-custom-select");
+          if (!selection) return;
+
+          if (config.horizontal) {
+            const startY = parseFloat(selection.dataset.startY);
+            const currentY = e.clientY - svgRect.top;
+            const height = currentY - startY;
+            selection.style.height = `${Math.abs(height)}px`;
+            selection.style.top = `${height < 0 ? currentY : startY}px`;
+          } else {
+            const startX = parseFloat(selection.dataset.startX);
+            const currentX = e.clientX - svgRect.left;
+            const width = currentX - startX;
+            selection.style.width = `${Math.abs(width)}px`;
+            selection.style.left = `${width < 0 ? currentX : startX}px`;
+          }
+        },
+        // selection: (chartCtx, { xaxis }) => {
+        //   if (!xaxis) return;
+        //   const min = Math.max(0, Math.floor(xaxis.min || 0));
+        //   const max = Math.floor(xaxis.max - 1 || 0);
+
+        //   const state = useChartStore.getState();
+        //   const updateSeries = state.updateSeries;
+        //   const filteredSeries = [...state.charts[chartId].filteredSeries];
+        //   const sliced = filteredSeries.slice(
+        //     min,
+        //     Math.min(max + 1, filteredSeries.length)
+        //   );
+        //   const updatedSeries = sliced.length < 2 ? filteredSeries : sliced;
+        //   updateSeries(chartId, updatedSeries);
+        // },
         mounted: (chartCtx) => (chartRef.current = chartCtx.el),
       },
     },

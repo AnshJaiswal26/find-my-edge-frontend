@@ -1,6 +1,4 @@
-import InputField from "../../InputField";
-import { ToggleButton } from "../../Buttons";
-import ColorPicker from "../../ColorPicker";
+import { ToggleButton, ColorPicker, InputField } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";

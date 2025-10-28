@@ -1,5 +1,4 @@
-import InputField from "../../InputField";
-import { ToggleButton } from "../../Buttons";
+import { ToggleButton, InputField } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 

@@ -9,6 +9,9 @@ const defaultBarLayout = {
   wrapperWidth: "100%",
   chartWidth: 100,
 
+  selection: true,
+  startIndex: null,
+
   dimensionX: 100,
   dimensionY: 250,
 
@@ -100,6 +103,8 @@ const defaultLineLayout = {
 
   isVisible: false,
 
+  selection: true,
+
   // grid
   xGrid: false,
   yGrid: true,
@@ -107,6 +112,11 @@ const defaultLineLayout = {
   // line
   curve: "smooth", // straight, smooth, stepline
   strokeWidth: 2,
+
+  // markers
+  markerSize: 3,
+  markerColors: ["var(--color-cyan)", "var(--color-yellow)"],
+  markerHoverSize: 5,
 
   // xaxis
   xTooltip: true,
@@ -129,11 +139,6 @@ const defaultLineLayout = {
 
   tooltip: true,
   dataLabels: false,
-
-  // markers
-  markerSize: 3,
-  markerColors: ["var(--color-cyan)", "var(--color-yellow)"],
-  markerHoverSize: 5,
 };
 
 const defaultLineSeriesCfg = [

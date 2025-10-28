@@ -186,3 +186,9 @@
   margin-top: -10px;
   background-color: var(--color-text-heading) !important;
 }
+
+.apexcharts-custom-select {
+  position: absolute;
+  background-color: #00a2ff15;
+  border: 1px dashed var(--color-text-heading);
+}

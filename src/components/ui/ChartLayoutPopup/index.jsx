@@ -1,5 +1,5 @@
 import { useChartStore } from "@stores";
-import BarChartLayoutPopup from "./BarChartLayoutPopup";
+import CartesianLayoutPopup from "./cartesian/CartesianLayoutPopup";
 
 export default function ChartLayoutPopup() {
   const activeChart = useChartStore((s) => s.charts.activeChart);
@@ -7,7 +7,7 @@ export default function ChartLayoutPopup() {
 
   return (
     activeChart.type === "bar" && (
-      <BarChartLayoutPopup chartId={activeChart.id} />
+      <CartesianLayoutPopup chartId={activeChart.id} type={activeChart.type} />
     )
   );
 }

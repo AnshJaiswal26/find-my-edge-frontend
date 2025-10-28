@@ -1,9 +1,7 @@
 import { Section } from "@layout";
-import { ToggleButton } from "../../Buttons";
-import InputField from "../../InputField";
+import { ToggleButton, ColorPicker, InputField } from "@ui";
 import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
-import ColorPicker from "../../ColorPicker";
 
 export default function XAxisSection({ chartId, updateLayout, isHorizontal }) {
   const toggle = (key) => {

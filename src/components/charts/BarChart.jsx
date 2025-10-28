@@ -16,30 +16,33 @@ export default function BarChart({ chartId }) {
   );
 
   return (
-    <div
-      className="w-[100%] h-[100%] resize"
-      id={chartId}
-      style={{
-        width: `${dimensionX}%`,
-        "--chart-width": `${dimensionX}px`,
-        "--icon-dimension": `${10 + (dimensionX / 10) * 0.5}px`,
-      }}
-    >
-      <Container childClassName="flex-wrap flex-col gap-0">
-        <TitleAndToolBar
-          chartId={chartId}
-          chartRef={chartRef}
-          chartWrapperRef={chartWrapperRef}
-          dimensions={{ dimensionX, dimensionY }}
-        />
-        <div ref={chartWrapperRef} id="apexcharts-custom-wrapper">
-          <BarChartWithConfig
+    <div>
+      {" "}
+      <div
+        className="w-[100%] h-[100%] resize"
+        id={chartId}
+        style={{
+          width: `${dimensionX}%`,
+          "--chart-width": `${dimensionX}px`,
+          "--icon-dimension": `${10 + (dimensionX / 10) * 0.5}px`,
+        }}
+      >
+        <Container childClassName="flex-wrap flex-col gap-0">
+          <TitleAndToolBar
             chartId={chartId}
             chartRef={chartRef}
+            chartWrapperRef={chartWrapperRef}
             dimensions={{ dimensionX, dimensionY }}
           />
-        </div>
-      </Container>
+          <div ref={chartWrapperRef} id="apexcharts-custom-wrapper">
+            <BarChartWithConfig
+              chartId={chartId}
+              chartRef={chartRef}
+              dimensions={{ dimensionX, dimensionY }}
+            />
+          </div>
+        </Container>
+      </div>
     </div>
   );
 }
@@ -118,7 +121,7 @@ function BarChartWithConfig({ chartId, chartRef, dimensions }) {
   return (
     <div
       style={{ maxWidth: `${wrapperWidth}px` }}
-      className="overflow-x-auto overflow-y-hidden box-border w-[100%]"
+      className="relative overflow-x-auto overflow-y-hidden box-border w-[100%]"
     >
       <Chart
         key={chartWidth + dimensions}

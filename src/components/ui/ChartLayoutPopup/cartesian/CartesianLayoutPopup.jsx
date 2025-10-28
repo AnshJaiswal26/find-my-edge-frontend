@@ -1,14 +1,18 @@
 import { useCallback, useState } from "react";
-import { ToggleButton } from "../../Buttons";
+import { ToggleButton } from "@ui";
 import { Popup, Section } from "@layout";
 import { useChartStore } from "@stores";
-import styles from "../ChartLayoutPopup.module.css";
-import XAxisSection from "./XAxisSection";
-import YAxisSection from "./YAxisSection";
-import GeneralSection from "./GeneralSection";
-import BarSettingsSection from "./BarSettingsSection";
+import styles from "./CartesianLayoutPopup.module.css";
 
-export default function BarChartLayoutPopup({ chartId }) {
+import {
+  GeneralSection,
+  XAxisSection,
+  YAxisSection,
+  BarSettingsSection,
+  LineSettingsSection,
+} from "./sections";
+
+export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
   const updateLayout = useChartStore((s) => s.updateLayout);
   const updateSeriesConfigMerge = useChartStore(
     (s) => s.updateSeriesConfigMerge
@@ -56,7 +60,12 @@ export default function BarChartLayoutPopup({ chartId }) {
             />
           ))}
         </Section>
-        <BarSettingsSection chartId={chartId} updateLayout={updateLayout} />
+
+        {type === "line" ? (
+          <LineSettingsSection chartId={chartId} updateLayout={updateLayout} />
+        ) : type === "bar" ? (
+          <BarSettingsSection chartId={chartId} updateLayout={updateLayout} />
+        ) : null}
 
         <XAxisSection
           chartId={chartId}

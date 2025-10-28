@@ -1,12 +1,10 @@
-import InputField from "../../InputField";
-import { Button, IconButton, ToggleButton } from "../../Buttons";
+import { ToggleButton, Button, ColorPicker, InputField, IconButton } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
-import ColorPicker from "../../ColorPicker";
 import { Fragment } from "react";
 import { parseColor } from "@utils";
-import { Plus, Trash2 } from "lucide-react";
-import styles from "../ChartLayoutPopup.module.css";
+import { Trash2 } from "lucide-react";
+import styles from "../CartesianLayoutPopup.module.css";
 
 export default function BarSettingsSection({ chartId, updateLayout }) {
   return (

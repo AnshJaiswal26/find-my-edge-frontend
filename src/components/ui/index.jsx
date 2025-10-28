@@ -16,4 +16,6 @@ export { default as ChartToolbar } from "./ChartToolbar/ChartToolbar.jsx";
 export { default as ChartFilter } from "./ChartFilterPopup";
 export { default as Input } from "./InputField";
 export { default as ColorPicker } from "./ColorPicker";
+export { default as InputField } from "./InputField";
+
 export { default as ChartLayoutPopup } from "./ChartLayoutPopup";
