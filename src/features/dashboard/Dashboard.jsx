@@ -1,27 +1,22 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React from "react";
 import { useChartStore, useUIStore } from "@stores";
 import StatCards from "./components/StatsGrid";
 import TopPieCharts from "./TopPieCharts/top-pie-charts";
 import OverAllLineChart from "./Charts/overall-line-chart";
 import LastWeekPerformanceLineGraph from "./Charts/last-week-performance-line-chart";
-import CapitalGrowthLineChart from "./Charts/capital-growth-line-chart";
-import WonLoseRateBarChart from "./Charts/win-lose-rate-line-chart";
-import CumulativeProfitLineChart from "./Charts/cumulative-profit-line-chart";
 import { Container } from "@layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";
 import { Button, ChartLayoutPopup } from "@ui";
 import { BarChart, LineChart } from "@charts";
-import ReactGridLayout from "react-grid-layout";
 
 function Dashboard() {
-  const theme = useUIStore((s) => s.theme);
+  // const theme = useUIStore((s) => s.theme);
   const isSidebarOpen = useUIStore((s) => s.isSidebarOpen);
 
-  const isDarkTheme = theme === "dark" ? true : false;
+  const isDarkTheme = true;
 
   return (
     <>
@@ -50,7 +45,7 @@ function Dashboard() {
 
       <TopPieCharts
         data={"demo"}
-        theme={theme}
+        theme={"dark"}
         isDarkTheme={isDarkTheme}
         isSidebarOpen={isSidebarOpen}
       />
@@ -58,40 +53,20 @@ function Dashboard() {
       <div style={{ width: "100%", marginBottom: "20px" }}>
         <OverAllLineChart
           data={"demo"}
-          theme={theme}
+          theme={"dark"}
           isSidebarOpen={isSidebarOpen}
         />
       </div>
 
       <LastWeekPerformanceLineGraph
         data={"demo"}
-        theme={theme}
+        theme={"dark"}
         isSidebarOpen={isSidebarOpen}
       />
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(450px,1fr))] place-items-center gap-5 w-[100%]">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(850px,1fr))] place-items-center gap-5 w-[100%]">
         <Charts />
-
-        <CapitalGrowthLineChart
-          data={"demo"}
-          theme={theme}
-          isSidebarOpen={isSidebarOpen}
-        />
-
-        {/* <WonLoseRateBarChart
-          data={"demo"}
-          theme={theme}
-          isSidebarOpen={isSidebarOpen}
-        /> */}
-
-        <CumulativeProfitLineChart
-          data={"demo"}
-          theme={theme}
-          isSidebarOpen={isSidebarOpen}
-        />
       </div>
-
-      {/* <DashboardLayout theme={theme} isSidebarOpen={isSidebarOpen} /> */}
     </>
   );
 }
@@ -100,13 +75,13 @@ function Charts() {
   const order = useChartStore((s) => s.order);
 
   return order.map((chart, index) => (
-    <Fragment key={index}>
+    <div key={index} className="w-[100%]">
       {chart.type === "bar" ? (
         <BarChart chartId={chart.id} />
       ) : (
         <LineChart chartId={chart.id} />
       )}
-    </Fragment>
+    </div>
   ));
 }
 

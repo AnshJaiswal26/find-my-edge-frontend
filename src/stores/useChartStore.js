@@ -1,21 +1,18 @@
 import { tradeData } from "@data";
 import { create } from "zustand";
 
-const labelsKeys = "Date";
+const xLabelsKeys = "Date";
 
-const defaultBarLayout = {
+const defaultLayoutBar1 = {
   title: "P&L Booked on Risk/Reward",
-  labelsKey: labelsKeys,
+  xLabelsKey: xLabelsKeys,
   wrapperWidth: "100%",
   chartWidth: 100,
 
-  selection: true,
-  startIndex: null,
+  selection: false,
 
   dimensionX: 100,
   dimensionY: 250,
-
-  isVisible: false,
 
   // grid
   xGrid: false,
@@ -23,7 +20,6 @@ const defaultBarLayout = {
 
   // bar
   horizontal: false,
-
   stacked: false,
   stacked100: false,
   barRadius: 1,
@@ -51,10 +47,10 @@ const defaultBarLayout = {
   dataLabels: false,
 };
 
-const winRateLayout = {
-  ...defaultBarLayout,
+const defaultLayoutBar2 = {
+  ...defaultLayoutBar1,
   title: "Win and Lose Rate Over Time",
-  labelsKey: "day",
+  xLabelsKey: "day",
 
   // xaxis
   xTitleText: "Days",
@@ -65,43 +61,37 @@ const winRateLayout = {
   yLabelSuffix: "%",
 };
 
-const defaultBarSeriesCfg = [
-  {
-    key: "Risk/Reward",
-    type: "bar",
-    colors: [
-      {
-        from: 0.61,
-        to: Number.MAX_SAFE_INTEGER,
-        color: "var(--color-green)",
-        label: "Reward Taken",
-      },
-      {
-        from: 0,
-        to: 0.6,
-        color: "var(--color-yellow)",
-        label: "Breakeven",
-      },
-      {
-        from: Number.MIN_SAFE_INTEGER,
-        to: -0.01,
-        color: "var(--color-red)",
-        label: "Risk Taken",
-      },
-    ],
-  },
-];
+const seriesColorBar1 = {
+  "Risk/Reward": [
+    {
+      from: 0.61,
+      to: Number.MAX_SAFE_INTEGER,
+      color: "var(--color-green)",
+      label: "Reward Taken",
+    },
+    {
+      from: 0,
+      to: 0.6,
+      color: "var(--color-yellow)",
+      label: "Breakeven",
+    },
+    {
+      from: Number.MIN_SAFE_INTEGER,
+      to: -0.01,
+      color: "var(--color-red)",
+      label: "Risk Taken",
+    },
+  ],
+};
 
-const defaultLineLayout = {
+const defaultLayoutLine1 = {
   title: "P&L Over Time",
-  labelsKey: labelsKeys, // same as bar chart
+  xLabelsKey: xLabelsKeys, // same as bar chart
   wrapperWidth: "100%",
   chartWidth: 100,
 
   dimensionX: 100,
   dimensionY: 250,
-
-  isVisible: false,
 
   selection: true,
 
@@ -114,9 +104,16 @@ const defaultLineLayout = {
   strokeWidth: 2,
 
   // markers
-  markerSize: 3,
+  markerSize: 0,
   markerColors: ["var(--color-cyan)", "var(--color-yellow)"],
   markerHoverSize: 5,
+
+  // area settings
+  area: true, // enable/disable area fill
+  areaColors: ["var(--color-cyan)", "var(--color-yellow)"], // per series
+  areaGradientHorizontal: false, // or 'vertical'
+  areaOpacityFrom: 0.3,
+  areaOpacityTo: 0.05,
 
   // xaxis
   xTooltip: true,
@@ -141,23 +138,7 @@ const defaultLineLayout = {
   dataLabels: false,
 };
 
-const defaultLineSeriesCfg = [
-  {
-    key: "Pnl",
-    type: "line",
-    label: "Pnl",
-    colors: "var(--color-cyan)",
-  },
-
-  {
-    key: "Cummulative Pnl",
-    type: "line",
-    label: "Cummulative Pnl",
-    colors: "var(--color-yellow)",
-  },
-];
-
-const demoWinRateData = [
+const seriesBar2 = [
   { day: "Day 1", "Win Rate": 55, "Lose Rate": 45 },
   { day: "Day 2", "Win Rate": 60, "Lose Rate": 40 },
   { day: "Day 3", "Win Rate": 70, "Lose Rate": 30 },
@@ -167,32 +148,24 @@ const demoWinRateData = [
   { day: "Day 7", "Win Rate": 62, "Lose Rate": 38 },
 ];
 
-const seriesCfgRate = [
-  {
-    key: "Win Rate",
-    type: "bar",
-    colors: [
-      {
-        from: 0,
-        to: Math.max(...demoWinRateData.map((item) => item["Win Rate"])),
-        color: "var(--color-green)",
-        label: "Win Rate",
-      },
-    ],
-  },
-  {
-    key: "Lose Rate",
-    type: "bar",
-    colors: [
-      {
-        from: 0,
-        to: Math.max(...demoWinRateData.map((item) => item["Lose Rate"])),
-        color: "var(--color-red)",
-        label: "Lose Rate",
-      },
-    ],
-  },
-];
+const seriesColorBar2 = {
+  "Win Rate": [
+    {
+      from: 0,
+      to: Number.MAX_SAFE_INTEGER,
+      color: "var(--color-green)",
+      label: "Win Rate",
+    },
+  ],
+  "Lose Rate": [
+    {
+      from: 0,
+      to: Number.MAX_SAFE_INTEGER,
+      color: "var(--color-red)",
+      label: "Lose Rate",
+    },
+  ],
+};
 
 export const useChartStore = create((set) => ({
   charts: {
@@ -200,16 +173,19 @@ export const useChartStore = create((set) => ({
     "apex-bar-chart-1": {
       originalSeries: [...tradeData],
       filteredSeries: [...tradeData],
-      labelsKey: labelsKeys,
+      xLabelsKey: xLabelsKeys,
 
-      tempLayout: { ...defaultBarLayout },
-      layout: { ...defaultBarLayout },
+      tempLayout: { ...defaultLayoutBar1 },
+      layout: { ...defaultLayoutBar1 },
 
-      seriesConfig: [...defaultBarSeriesCfg],
-      tempSeriesConfig: [...defaultBarSeriesCfg],
+      series: ["Risk/Reward"],
+      tempSeries: ["Risk/Reward"],
+
+      seriesColors: { ...seriesColorBar1 },
+      tempSeriesColors: { ...seriesColorBar1 },
 
       filters: {
-        filterKey: "Risk/Reward",
+        selectedSeries: "Risk/Reward",
         selectedFilter: "none",
         selectedSort: "none",
         value: "",
@@ -219,18 +195,21 @@ export const useChartStore = create((set) => ({
     },
 
     "apex-bar-chart-2": {
-      originalSeries: [...demoWinRateData],
-      filteredSeries: [...demoWinRateData],
-      labelsKey: "day",
+      originalSeries: [...seriesBar2],
+      filteredSeries: [...seriesBar2],
+      xLabelsKey: "day",
 
-      tempLayout: { ...winRateLayout },
-      layout: { ...winRateLayout },
+      tempLayout: { ...defaultLayoutBar2 },
+      layout: { ...defaultLayoutBar2 },
 
-      seriesConfig: [...seriesCfgRate],
-      tempSeriesConfig: [...seriesCfgRate],
+      series: ["Win Rate", "Lose Rate"],
+      tempSeries: ["Win Rate", "Lose Rate"],
+
+      seriesColors: { ...seriesColorBar2 },
+      tempSeriesColors: { ...seriesColorBar2 },
 
       filters: {
-        filterKey: "Win Rate",
+        selectedSeries: "Win Rate",
         selectedFilter: "none",
         selectedSort: "none",
         value: "",
@@ -242,16 +221,87 @@ export const useChartStore = create((set) => ({
     "apex-line-chart-1": {
       originalSeries: [...tradeData],
       filteredSeries: [...tradeData],
-      labelsKey: labelsKeys,
+      xLabelsKey: xLabelsKeys,
 
-      tempLayout: { ...defaultLineLayout },
-      layout: { ...defaultLineLayout },
+      tempLayout: { ...defaultLayoutLine1 },
+      layout: { ...defaultLayoutLine1 },
 
-      seriesConfig: [...defaultLineSeriesCfg],
-      tempSeriesConfig: [...defaultLineSeriesCfg],
+      series: ["Pnl", "Cummulative Pnl"],
+      tempSeries: ["Pnl", "Cummulative Pnl"],
+
+      seriesColors: {
+        Pnl: { color: "var(--color-cyan)", label: "Pnl" },
+        "Cummulative Pnl": {
+          color: "var(--color-yellow)",
+          label: "Cummulative Pnl",
+        },
+      },
+
+      tempSeriesColors: {
+        Pnl: { color: "var(--color-cyan)", label: "Pnl" },
+        "Cummulative Pnl": {
+          color: "var(--color-yellow)",
+          label: "Cummulative Pnl",
+        },
+      },
 
       filters: {
-        filterKey: "Pnl",
+        selectedSeries: "Pnl",
+        selectedFilter: "none",
+        selectedSort: "none",
+        value: "",
+        from: "",
+        to: "",
+      },
+    },
+
+    "apex-line-chart-2": {
+      originalSeries: [...tradeData],
+      filteredSeries: [...tradeData],
+      xLabelsKey: xLabelsKeys,
+
+      tempLayout: {
+        ...defaultLayoutLine1,
+        title: "Capital Growth",
+        markerColors: ["var(--color-yellow)"],
+        areaColors: ["var(--color-yellow)"],
+      },
+      layout: {
+        ...defaultLayoutLine1,
+        title: "Capital Growth",
+        markerColors: ["var(--color-yellow)"],
+        areaColors: ["var(--color-yellow)"],
+      },
+
+      seriesConfig: [
+        {
+          key: "Capital",
+          type: "line",
+          label: "Captial",
+          colors: "var(--color-yellow)",
+        },
+      ],
+      tempSeriesConfig: [
+        {
+          key: "Capital",
+          type: "line",
+          label: "Captial",
+          colors: "var(--color-yellow)",
+        },
+      ],
+
+      series: ["Capital"],
+      tempSeries: ["Capital"],
+
+      seriesColors: {
+        Capital: { color: "var(--color-yellow)", label: "Capital" },
+      },
+      tempSeriesColors: {
+        Capital: { color: "var(--color-yellow)", label: "Capital" },
+      },
+
+      filters: {
+        selectedSeries: "Capital",
         selectedFilter: "none",
         selectedSort: "none",
         value: "",
@@ -265,6 +315,7 @@ export const useChartStore = create((set) => ({
     { id: "apex-bar-chart-1", type: "bar" },
     { id: "apex-bar-chart-2", type: "bar" },
     { id: "apex-line-chart-1", type: "line" },
+    { id: "apex-line-chart-2", type: "line" },
   ],
 
   updateActiveChart: (updates) => {
@@ -310,58 +361,45 @@ export const useChartStore = create((set) => ({
   // --- Series Config
   updateSeriesConfig: (chartId, action) => {
     set((s) => {
-      const prevSeriesCfg = s.charts[chartId].tempSeriesConfig || [];
+      const chart = s.charts[chartId];
+      const prevSeriesColors = chart.tempSeriesColors || {};
 
-      let updatedSeriesCfg = prevSeriesCfg;
+      // Clone to avoid mutating state
+      const updatedSeriesColors = { ...prevSeriesColors };
 
       switch (action.type) {
-        // 🟢 CREATE: Add a new series config
-        case "create":
-          updatedSeriesCfg = prevSeriesCfg.map((p) =>
-            p.key === action.key
-              ? {
-                  ...p,
-                  colors: [
-                    ...p.colors,
-                    {
-                      from: 0,
-                      to: 0,
-                      color: "var(--color-default)",
-                      label: p.key,
-                    },
-                  ],
-                }
-              : p
+        // 🟢 CREATE: Add a new color range for the given series key
+        case "create": {
+          const prevColors = prevSeriesColors[action.key] || [];
+          updatedSeriesColors[action.key] = [
+            ...prevColors,
+            {
+              from: 0,
+              to: 0,
+              color: "var(--color-default)",
+              label: "",
+            },
+          ];
+          break;
+        }
+
+        // 🟡 UPDATE: Update specific color range at index
+        case "update": {
+          const prevColors = prevSeriesColors[action.key] || [];
+          updatedSeriesColors[action.key] = prevColors.map((range, i) =>
+            i === action.index ? { ...range, ...action.payload } : range
           );
           break;
+        }
 
-        // 🟡 UPDATE: Modify an existing series config
-        case "update":
-          updatedSeriesCfg = prevSeriesCfg.map((p) =>
-            p.key === action.key
-              ? {
-                  ...p,
-                  colors: p.colors.map((range, i) =>
-                    i === action.index ? { ...range, ...action.payload } : range
-                  ),
-                }
-              : p
+        // 🔴 DELETE: Remove color range by index for a specific key
+        case "delete": {
+          const prevColors = prevSeriesColors[action.key] || [];
+          updatedSeriesColors[action.key] = prevColors.filter(
+            (_, i) => i !== action.index
           );
           break;
-
-        // 🔴 DELETE: Remove a series config by key
-        case "delete":
-          updatedSeriesCfg = prevSeriesCfg.map((p) => {
-            return p.key === action.key
-              ? { ...p, colors: p.colors.filter((_, i) => i !== action.index) }
-              : p;
-          });
-          break;
-
-        // optional: CLEAR ALL
-        case "clear":
-          updatedSeriesCfg = [];
-          break;
+        }
 
         default:
           console.warn("Unknown action type:", action.type);
@@ -371,8 +409,8 @@ export const useChartStore = create((set) => ({
         charts: {
           ...s.charts,
           [chartId]: {
-            ...s.charts[chartId],
-            tempSeriesConfig: updatedSeriesCfg,
+            ...chart,
+            tempSeriesColors: updatedSeriesColors,
           },
         },
       };
@@ -382,7 +420,7 @@ export const useChartStore = create((set) => ({
   // --- Series Config Merge
   updateSeriesConfigMerge: (chartId, key = "merge") => {
     set((s) => {
-      const field = key === "reset" ? "tempSeriesConfig" : "seriesConfig";
+      const field = key === "reset" ? "tempSeriesColor" : "seriesColor";
       const chart = s.charts[chartId];
 
       return {
@@ -391,7 +429,7 @@ export const useChartStore = create((set) => ({
           [chartId]: {
             ...s.charts[chartId], // new chart object
             [field]:
-              key === "reset" ? chart.seriesConfig : chart.tempSeriesConfig,
+              key === "reset" ? chart.seriesColor : chart.tempSeriesColors,
           },
         },
       };
@@ -454,5 +492,43 @@ export const useChartStore = create((set) => ({
         },
       },
     }));
+  },
+
+  updateChart: (chartId, updates) => {
+    set((s) => {
+      const chart = s.charts[chartId];
+      if (!chart) return s;
+
+      const chartUpdate = {};
+
+      const entries = Object.entries(updates);
+
+      entries.forEach(([key, value]) => {
+        console.log(key, value);
+        if (typeof value === "function") {
+          const result = value(chart[key], chart, s);
+
+          chartUpdate[key] = Array.isArray(result)
+            ? result
+            : { ...chart[key], ...value(chart[key], chart, s) };
+        } else {
+          chartUpdate[key] = Array.isArray(value)
+            ? value
+            : { ...chart[key], ...value };
+        }
+      });
+
+      return entries.length
+        ? {
+            charts: {
+              ...s.charts,
+              [chartId]: {
+                ...chart,
+                ...chartUpdate,
+              },
+            },
+          }
+        : s;
+    });
   },
 }));

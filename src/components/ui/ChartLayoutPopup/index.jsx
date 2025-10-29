@@ -6,8 +6,6 @@ export default function ChartLayoutPopup() {
   if (activeChart.id === "") return null;
 
   return (
-    activeChart.type === "bar" && (
-      <CartesianLayoutPopup chartId={activeChart.id} type={activeChart.type} />
-    )
+    <CartesianLayoutPopup chartId={activeChart.id} type={activeChart.type} />
   );
 }

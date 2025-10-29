@@ -18,13 +18,6 @@ export const handleZoomOut = (updater, ref, chartId) => {
   });
 };
 
-export const handleSelectionClick = (
-  ref,
-  className = ".apexcharts-selection-icon"
-) => {
-  ref.current?.querySelector(className)?.click();
-};
-
 export const handleDownloadPNG = (chartRef, filename = "apexchart.svg") => {
   if (!chartRef.current) return;
 
@@ -43,12 +36,12 @@ export const handleDownloadPNG = (chartRef, filename = "apexchart.svg") => {
 
 export const handleDownloadCSV = (chartId) => {
   const chart = useChartStore.getState().charts[chartId];
-  const { filteredSeries, seriesConfig, labelsKey } = chart;
+  const { filteredSeries, seriesConfig, xLabelsKey } = chart;
 
   // Build CSV header
-  const headers = [labelsKey, ...seriesConfig.map((cfg) => cfg.key)];
+  const headers = [xLabelsKey, ...seriesConfig.map((cfg) => cfg.key)];
   const rows = filteredSeries.map((row) => [
-    row[labelsKey],
+    row[xLabelsKey],
     ...seriesConfig.map((cfg) => row[cfg.key]),
   ]);
 

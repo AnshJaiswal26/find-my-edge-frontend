@@ -2,19 +2,14 @@ import { ToggleButton, InputField } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 
-export default function GeneralSection({ chartId, updateLayout }) {
-  const toggle = (key) => {
-    const current = useChartStore.getState().charts[chartId].tempLayout[key];
-    updateLayout(chartId, { [key]: !current }, "tempLayout");
-  };
-
+export default function GeneralSection({ chartId, updateChart }) {
   return (
     <Section title="General">
       <InputField
         label="Title"
         type="text"
         value={(s) => s.charts[chartId].tempLayout.title}
-        onChange={(v) => updateLayout(chartId, { title: v }, "tempLayout")}
+        onChange={(v) => updateChart(chartId, { tempLayout: { title: v } })}
         placeholder="Chart title"
         className="w-[14rem]"
         store={useChartStore}
@@ -23,13 +18,31 @@ export default function GeneralSection({ chartId, updateLayout }) {
       <ToggleButton
         label={"Tooltip"}
         value={(s) => s.charts[chartId].tempLayout.tooltip}
-        onClick={() => toggle("tooltip")}
+        onClick={() =>
+          updateChart(chartId, {
+            tempLayout: (p) => ({ tooltip: !p.tooltip }),
+          })
+        }
         store={useChartStore}
       />
       <ToggleButton
         label={"Data Labels"}
         value={(s) => s.charts[chartId].tempLayout.dataLabels}
-        onClick={() => toggle("dataLabels")}
+        onClick={() =>
+          updateChart(chartId, {
+            tempLayout: (p) => ({ dataLabels: !p.dataLabels }),
+          })
+        }
+        store={useChartStore}
+      />
+      <ToggleButton
+        label={"Selection"}
+        value={(s) => s.charts[chartId].tempLayout.selection}
+        onClick={() =>
+          updateChart(chartId, {
+            tempLayout: (p) => ({ selection: !p.selection }),
+          })
+        }
         store={useChartStore}
       />
       <InputField
@@ -37,7 +50,9 @@ export default function GeneralSection({ chartId, updateLayout }) {
         type="range"
         formatter={(v) => `${v}%`}
         value={(s) => s.charts[chartId].tempLayout.dimensionX}
-        onChange={(v) => updateLayout(chartId, { dimensionX: v }, "tempLayout")}
+        onChange={(v) =>
+          updateChart(chartId, { tempLayout: { dimensionX: v } })
+        }
         min={50}
         max={100}
         store={useChartStore}
@@ -47,7 +62,9 @@ export default function GeneralSection({ chartId, updateLayout }) {
         type="range"
         formatter={(v) => `${v}px`}
         value={(s) => s.charts[chartId].tempLayout.dimensionY}
-        onChange={(v) => updateLayout(chartId, { dimensionY: v }, "tempLayout")}
+        onChange={(v) =>
+          updateChart(chartId, { tempLayout: { dimensionY: v } })
+        }
         min={250}
         max={500}
         store={useChartStore}

@@ -189,6 +189,7 @@
 
 .apexcharts-custom-select {
   position: absolute;
-  background-color: #00a2ff15;
-  border: 1px dashed var(--color-text-heading);
+  background-color: #89d4ff;
+  opacity: 0.3;
+  pointer-events: none;
 }

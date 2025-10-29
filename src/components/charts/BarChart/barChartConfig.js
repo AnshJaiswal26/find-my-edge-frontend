@@ -1,4 +1,4 @@
-import { baseChartConfig } from "./baseChartConfig";
+import { cartesianChartConfig } from "../CartesianChart/cartesianChartConfig";
 
 export const getBarChartConfig = ({
   config,
@@ -7,7 +7,7 @@ export const getBarChartConfig = ({
   series,
   tooltipCallBack,
 }) => {
-  const base = baseChartConfig({
+  const base = cartesianChartConfig({
     config,
     chartRef,
     chartId,

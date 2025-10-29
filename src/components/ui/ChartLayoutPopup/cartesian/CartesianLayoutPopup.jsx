@@ -13,23 +13,37 @@ import {
 } from "./sections";
 
 export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
-  const updateLayout = useChartStore((s) => s.updateLayout);
-  const updateSeriesConfigMerge = useChartStore(
-    (s) => s.updateSeriesConfigMerge
-  );
-  const updateActiveChart = useChartStore((s) => s.updateActiveChart);
+  const state = useChartStore.getState();
+  const chart = state.charts[chartId];
+
+  const updateLayout = state.updateLayout;
+  const updateSeriesConfigMerge = state.updateSeriesConfigMerge;
+  const updateActiveChart = state.updateActiveChart;
+
+  const isHorizontal = chart.layout.horizontal;
+
   const [isAnyChange, setIsAnyChange] = useState(true);
 
   const handlePopupClose = useCallback((key) => {
-    const chart = useChartStore.getState().charts[chartId];
-    updateLayout(chartId, key ? chart.layout : chart.tempLayout, key);
-    updateSeriesConfigMerge(chartId, key ? "reset" : "merge");
+    updateChart(chartId, {
+      [key]: (p, chart) => chart[key === "layout" ? "tempLayout" : "layout"],
+      [key === "layout" ? "seriesColor" : "tempSeriesColor"]: (p, chart) =>
+        key === "layout" ? chart.tempSeriesColor : chart.seriesColor,
+    });
     document.body.style.overflow = "";
     updateActiveChart({ id: "" });
   }, []);
 
-  const isHorizontal =
-    useChartStore.getState().charts[chartId].layout.horizontal;
+  const handleApply = () => {
+    updateChart(chartId, {
+      seriesColors: (_, c) => c.tempSeriesColors,
+      layout: (_, c) => c.tempLayout,
+    });
+    document.body.style.overflow = "";
+    updateActiveChart({ id: "" });
+  };
+
+  const updateChart = useChartStore((s) => s.updateChart);
 
   return (
     <Popup
@@ -37,11 +51,11 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
       isVisible={true}
       text={{ leftBtn: "Cancel", rightBtn: isAnyChange ? "Apply" : "Ok" }}
       onLeftBtnClick={() => handlePopupClose("tempLayout")}
-      onRightBtnClick={handlePopupClose}
+      onRightBtnClick={handleApply}
       onClose={() => handlePopupClose("tempLayout")}
     >
       <div className={styles.contentWrapper}>
-        <GeneralSection chartId={chartId} updateLayout={updateLayout} />
+        <GeneralSection chartId={chartId} updateChart={updateChart} />
         <Section title="Grid">
           {[
             { title: "X Grid", key: "xGrid" },
@@ -52,9 +66,9 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
               label={title}
               value={(s) => s.charts[chartId].tempLayout[key]}
               onClick={() => {
-                const current =
-                  useChartStore.getState().charts[chartId].tempLayout[key];
-                updateLayout(chartId, { [key]: !current }, "tempLayout");
+                updateChart(chartId, {
+                  tempLayout: (p) => ({ [key]: !p[key] }),
+                });
               }}
               store={useChartStore}
             />
@@ -62,9 +76,13 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
         </Section>
 
         {type === "line" ? (
-          <LineSettingsSection chartId={chartId} updateLayout={updateLayout} />
+          <LineSettingsSection
+            chartId={chartId}
+            updateChart={updateChart}
+            tempLayout={chart.tempLayout}
+          />
         ) : type === "bar" ? (
-          <BarSettingsSection chartId={chartId} updateLayout={updateLayout} />
+          <BarSettingsSection chartId={chartId} updateChart={updateChart} />
         ) : null}
 
         <XAxisSection

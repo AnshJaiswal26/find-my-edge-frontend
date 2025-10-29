@@ -16,7 +16,6 @@ import { useChartStore } from "@stores";
 import {
   handleZoomIn,
   handleZoomOut,
-  handleSelectionClick,
   handleReset,
   handleDownloadCSV,
   handleDownloadPNG,
@@ -59,11 +58,6 @@ export default function ChartToolbar({
         icon: ZoomOut,
         title: "Zoom Out",
         onClick: () => handleZoomOut(updateLayout, chartWrapperRef, chartId),
-      },
-      {
-        icon: BoxSelect,
-        title: "Selection",
-        onClick: () => handleSelectionClick(chartRef),
       },
       {
         icon: RefreshCcw,

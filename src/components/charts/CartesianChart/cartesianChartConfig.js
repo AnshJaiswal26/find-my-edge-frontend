@@ -1,7 +1,7 @@
 import { useChartStore } from "@stores";
-import { customTooltip } from "./customTooltip";
+import { customTooltip } from "../../../utils/chartConfigs/customTooltip";
 
-export const baseChartConfig = ({
+export const cartesianChartConfig = ({
   config,
   chartRef,
   chartId,
@@ -10,21 +10,20 @@ export const baseChartConfig = ({
 }) => {
   const style = { fontSize: "0.75rem" };
 
-  const isPrefix = config.xLabelPrefixIndexing && config.labelsKey !== "";
-  const isSuffix = config.xLabelSuffixIndexing && config.labelsKey !== "";
+  const isPrefix = config.xLabelPrefixIndexing && config.xLabelsKey !== "";
+  const isSuffix = config.xLabelSuffixIndexing && config.xLabelsKey !== "";
 
   const formatterX = (v) => {
     return `${isPrefix ? v : ""}${config.xLabelPrefix}${
-      v === 0 ? "" : series[v - 1]?.[config.labelsKey] || v
+      v === 0 ? "" : series[v - 1]?.[config.xLabelsKey] || v
     }${config.xLabelSuffix}${isSuffix ? v : ""}`;
   };
 
   const formatterY = (v) => `${config.yLabelPrefix}${v}${config.yLabelSuffix}`;
 
   const axisX = {
-    categories: series.map((s) => s[config.labelsKey] || ""),
+    categories: series.map((s) => s[config.xLabelsKey] || ""),
     tooltip: { enabled: !config.horizontal && config.xTooltip },
-    // tickAmount: series.length - 1,
     labels: {
       show: config.xLabels,
       formatter: formatterX,
@@ -107,81 +106,72 @@ export const baseChartConfig = ({
               selection.style.width = "0px";
             }
 
+            // ✅ Store the starting data index
+            selection.dataset.startIndex = dataPointIndex;
+
+            // Add to DOM
             t.el.prepend(selection);
 
+            // Also keep it in state if needed
             state.updateLayout(
               chartId,
               { startIndex: Number(dataPointIndex) },
               "tempLayout"
             );
-            console.log("Selection started at index:", dataPointIndex);
           }
+
           // --- End selection ---
           else {
-            const startIndex = chart.tempLayout.startIndex;
+            // ✅ Prefer dataset value (fallback to state if missing)
+            const startIndex = Number(selection.dataset.startIndex);
+
             if (startIndex === dataPointIndex) return;
 
-            console.log(`Selection from ${startIndex} to ${dataPointIndex}`);
-
-            if (startIndex >= Number(dataPointIndex)) {
-              state.updateLayout(chartId, { startIndex: null }, "tempLayout");
-              selection.remove();
-              return;
-            }
+            // Allow both forward and reverse selection
+            const [from, to] = [
+              Math.min(startIndex, dataPointIndex),
+              Math.max(startIndex, dataPointIndex),
+            ];
 
             const filteredSeries = [...chart.filteredSeries];
-            const sliced = filteredSeries.slice(
-              startIndex,
-              Number(dataPointIndex) + 1
-            );
+            const sliced = filteredSeries.slice(from, to + 1);
             const updatedSeries = sliced.length < 1 ? filteredSeries : sliced;
 
             state.updateSeries(chartId, updatedSeries);
             state.updateLayout(chartId, { startIndex: null }, "tempLayout");
 
+            // ✅ Clean up DOM data
+            delete selection.dataset.startIndex;
             selection.remove();
           }
         },
 
         // --- Handle mouse drag / movement ---
         mouseMove: function (e, t) {
+          const selection = t.el.querySelector(".apexcharts-custom-select");
+          if (!selection) return;
+          const svgRect = t.el.getBoundingClientRect();
+
           const chart = useChartStore.getState().charts[chartId];
           const isSelecting = chart.layout.selection;
           if (!isSelecting) return;
-
-          const svgRect = t.el.getBoundingClientRect();
-          const selection = t.el.querySelector(".apexcharts-custom-select");
-          if (!selection) return;
 
           if (config.horizontal) {
             const startY = parseFloat(selection.dataset.startY);
             const currentY = e.clientY - svgRect.top;
             const height = currentY - startY;
+
             selection.style.height = `${Math.abs(height)}px`;
             selection.style.top = `${height < 0 ? currentY : startY}px`;
           } else {
             const startX = parseFloat(selection.dataset.startX);
             const currentX = e.clientX - svgRect.left;
             const width = currentX - startX;
+
             selection.style.width = `${Math.abs(width)}px`;
             selection.style.left = `${width < 0 ? currentX : startX}px`;
           }
         },
-        // selection: (chartCtx, { xaxis }) => {
-        //   if (!xaxis) return;
-        //   const min = Math.max(0, Math.floor(xaxis.min || 0));
-        //   const max = Math.floor(xaxis.max - 1 || 0);
-
-        //   const state = useChartStore.getState();
-        //   const updateSeries = state.updateSeries;
-        //   const filteredSeries = [...state.charts[chartId].filteredSeries];
-        //   const sliced = filteredSeries.slice(
-        //     min,
-        //     Math.min(max + 1, filteredSeries.length)
-        //   );
-        //   const updatedSeries = sliced.length < 2 ? filteredSeries : sliced;
-        //   updateSeries(chartId, updatedSeries);
-        // },
         mounted: (chartCtx) => (chartRef.current = chartCtx.el),
       },
     },

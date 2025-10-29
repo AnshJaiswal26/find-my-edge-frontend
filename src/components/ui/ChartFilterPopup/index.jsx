@@ -12,30 +12,29 @@ import { handleApply } from "./handlers";
 export default function ChartFilterPopup({ chartId }) {
   const [showFilter, setShowFilter] = useState(false);
   const ref = useRef();
+
   useClickOutside(ref, () => {
     setShowFilter(false);
   });
 
-  const updateSeries = useChartStore((s) => s.updateSeries);
-
-  const resetSeries = useChartStore((s) => s.resetSeries);
-
-  const updateFilters = useChartStore((s) => s.updateFilters);
+  const updateChart = useChartStore((s) => s.updateChart);
 
   const filters = useChartStore((s) => s.charts[chartId].filters);
 
-  const { selectedSort, selectedFilter, value, from, to, filterKey } = filters;
+  const { selectedSort, selectedFilter, value, from, to, selectedSeries } =
+    filters;
 
   const sections = useMemo(
     () => [
       {
-        onSelect: (v) => updateFilters(chartId, { selectedSort: v }),
+        onSelect: (v) => updateChart(chartId, { filters: { selectedSort: v } }),
         selected: selectedSort,
         title: "Sort In Order",
         list: sortOptions,
       },
       {
-        onSelect: (v) => updateFilters(chartId, { selectedFilter: v }),
+        onSelect: (v) =>
+          updateChart(chartId, { filters: { selectedFilter: v } }),
         selected: selectedFilter,
         title: "Filter By Condition",
         list: filterOptions,
@@ -57,19 +56,27 @@ export default function ChartFilterPopup({ chartId }) {
         title={"Filter"}
         isVisible={showFilter}
         onLeftBtnClick={() => {
-          resetSeries(chartId);
+          updateChart(chartId, {
+            filteredSeries: (_, c) => c.originalSeries,
+            filters: {
+              selectedFilter: "none",
+              selectedSort: "none",
+              value: "",
+              from: "",
+              to: "",
+            },
+          });
           setShowFilter(false);
-          updateFilters(chartId, "reset");
         }}
         onRightBtnClick={() =>
-          handleApply(chartId, filters, updateSeries, setShowFilter)
+          handleApply(chartId, filters, updateChart, setShowFilter)
         }
         className={styles.filterPopupContent}
       >
         <SeriesSelector
           chartId={chartId}
-          updateFilters={updateFilters}
-          filterKey={filterKey}
+          updateChart={updateChart}
+          selectedSeries={selectedSeries}
         />
         {sections.map((item, i) => (
           <ExpandableSection
@@ -79,7 +86,7 @@ export default function ChartFilterPopup({ chartId }) {
             selected={item.selected}
             options={item.list}
             values={{ value, from, to }}
-            onChange={(k, v) => updateFilters(chartId, { [k]: v })}
+            onChange={(k, v) => updateChart(chartId, { filters: { [k]: v } })}
           />
         ))}
       </ChartPopup>
@@ -87,15 +94,15 @@ export default function ChartFilterPopup({ chartId }) {
   );
 }
 
-function SeriesSelector({ chartId, updateFilters, filterKey }) {
-  const seriesConfig = useChartStore((s) => s.charts[chartId].seriesConfig);
+function SeriesSelector({ chartId, updateChart, selectedSeries }) {
+  const series = useChartStore((s) => s.charts[chartId].series);
 
   return (
     <ExpandableSection
-      onSelect={(v) => updateFilters(chartId, { filterKey: v })}
+      onSelect={(v) => updateChart(chartId, { filters: { selectedSeries: v } })}
       title={"Series"}
-      selected={filterKey}
-      options={seriesConfig.map((cfg) => cfg.key)}
+      selected={selectedSeries}
+      options={series}
     />
   );
 }
