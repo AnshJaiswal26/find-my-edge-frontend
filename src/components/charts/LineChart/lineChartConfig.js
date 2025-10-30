@@ -1,17 +1,19 @@
 import { cartesianChartConfig } from "../CartesianChart/cartesianChartConfig";
 
 export const getLineChartConfig = ({
-  config,
-  chartRef,
+  chart,
   chartId,
-  series,
+  chartRef,
   tooltipCallBack,
 }) => {
+  const config = chart.layout;
+  const series = chart.filteredSeries;
+  const seriesConfig = chart.seriesConfig;
+
   const base = cartesianChartConfig({
-    config,
-    chartRef,
+    chart,
     chartId,
-    series,
+    chartRef,
     tooltipCallBack,
   });
 
@@ -19,7 +21,7 @@ export const getLineChartConfig = ({
     ...base,
     chart: {
       ...base.chart,
-      type: config.area ? "area" : "line",
+      type: config?.area ? "area" : "line",
       stacked: false,
       toolbar: {
         ...base.chart.toolbar,
@@ -29,7 +31,9 @@ export const getLineChartConfig = ({
     stroke: { curve: config.curve || "smooth", width: config.strokeWidth || 2 },
     markers: {
       size: config.markerSize || 0,
-      colors: config.markerColors || ["var(--color-default)"],
+      colors: seriesConfig?.map((s) => s.markerColor) || [
+        "var(--color-default)",
+      ],
       strokeWidth: 0,
       hover: { size: config.markerHoverSize || 6 },
     },
@@ -45,10 +49,9 @@ export const getLineChartConfig = ({
               shade: "light",
               type: config.areaGradientHorizontal ? "horizontal" : "vertical", // horizontal or vertical
               shadeIntensity: 0,
-              gradientToColors:
-                config.areaColors?.length > 0
-                  ? config.areaColors
-                  : ["var(--color-cyan)"],
+              gradientToColors: seriesConfig?.map((s) => s.areaColor) || [
+                "var(--color-default)",
+              ],
               opacityFrom: config.areaOpacityFrom || 0.3,
               opacityTo: config.areaOpacityTo || 0.05,
               stops: [0, 100],

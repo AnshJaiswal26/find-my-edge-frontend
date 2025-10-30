@@ -9,7 +9,11 @@ export default function GeneralSection({ chartId, updateChart }) {
         label="Title"
         type="text"
         value={(s) => s.charts[chartId].tempLayout.title}
-        onChange={(v) => updateChart(chartId, { tempLayout: { title: v } })}
+        onChange={(v) =>
+          updateChart(chartId, (chart) => {
+            chart.tempLayout.title = v;
+          })
+        }
         placeholder="Chart title"
         className="w-[14rem]"
         store={useChartStore}
@@ -19,8 +23,8 @@ export default function GeneralSection({ chartId, updateChart }) {
         label={"Tooltip"}
         value={(s) => s.charts[chartId].tempLayout.tooltip}
         onClick={() =>
-          updateChart(chartId, {
-            tempLayout: (p) => ({ tooltip: !p.tooltip }),
+          updateChart(chartId, (chart) => {
+            chart.tempLayout.tooltip = !chart.tempLayout.tooltip;
           })
         }
         store={useChartStore}
@@ -29,8 +33,8 @@ export default function GeneralSection({ chartId, updateChart }) {
         label={"Data Labels"}
         value={(s) => s.charts[chartId].tempLayout.dataLabels}
         onClick={() =>
-          updateChart(chartId, {
-            tempLayout: (p) => ({ dataLabels: !p.dataLabels }),
+          updateChart(chartId, (chart) => {
+            chart.tempLayout.dataLabels = !chart.tempLayout.dataLabels;
           })
         }
         store={useChartStore}
@@ -39,8 +43,8 @@ export default function GeneralSection({ chartId, updateChart }) {
         label={"Selection"}
         value={(s) => s.charts[chartId].tempLayout.selection}
         onClick={() =>
-          updateChart(chartId, {
-            tempLayout: (p) => ({ selection: !p.selection }),
+          updateChart(chartId, (chart) => {
+            chart.tempLayout.selection = !chart.tempLayout.selection;
           })
         }
         store={useChartStore}
@@ -51,7 +55,9 @@ export default function GeneralSection({ chartId, updateChart }) {
         formatter={(v) => `${v}%`}
         value={(s) => s.charts[chartId].tempLayout.dimensionX}
         onChange={(v) =>
-          updateChart(chartId, { tempLayout: { dimensionX: v } })
+          updateChart(chartId, (chart) => {
+            chart.tempLayout.dimensionX = v;
+          })
         }
         min={50}
         max={100}
@@ -63,7 +69,9 @@ export default function GeneralSection({ chartId, updateChart }) {
         formatter={(v) => `${v}px`}
         value={(s) => s.charts[chartId].tempLayout.dimensionY}
         onChange={(v) =>
-          updateChart(chartId, { tempLayout: { dimensionY: v } })
+          updateChart(chartId, (chart) => {
+            chart.tempLayout.dimensionY = v;
+          })
         }
         min={250}
         max={500}

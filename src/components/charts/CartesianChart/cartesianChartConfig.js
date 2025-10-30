@@ -2,12 +2,14 @@ import { useChartStore } from "@stores";
 import { customTooltip } from "../../../utils/chartConfigs/customTooltip";
 
 export const cartesianChartConfig = ({
-  config,
-  chartRef,
+  chart,
   chartId,
-  series,
+  chartRef,
   tooltipCallBack,
 }) => {
+  const config = chart.layout;
+  const series = chart.filteredSeries;
+
   const style = { fontSize: "0.75rem" };
 
   const isPrefix = config.xLabelPrefixIndexing && config.xLabelsKey !== "";
@@ -111,13 +113,6 @@ export const cartesianChartConfig = ({
 
             // Add to DOM
             t.el.prepend(selection);
-
-            // Also keep it in state if needed
-            state.updateLayout(
-              chartId,
-              { startIndex: Number(dataPointIndex) },
-              "tempLayout"
-            );
           }
 
           // --- End selection ---
@@ -137,8 +132,9 @@ export const cartesianChartConfig = ({
             const sliced = filteredSeries.slice(from, to + 1);
             const updatedSeries = sliced.length < 1 ? filteredSeries : sliced;
 
-            state.updateSeries(chartId, updatedSeries);
-            state.updateLayout(chartId, { startIndex: null }, "tempLayout");
+            state.updateChart(chartId, (chart) => {
+              chart.filteredSeries = updatedSeries;
+            });
 
             // ✅ Clean up DOM data
             delete selection.dataset.startIndex;
@@ -201,6 +197,5 @@ export const cartesianChartConfig = ({
     xaxis: axisX,
     yaxis: axisY,
     legend: { show: false },
-    colors: config.colors || ["var(--color-default)"],
   };
 };

@@ -3,11 +3,7 @@ import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
 
-export default function LineSettingsSection({
-  chartId,
-  updateChart,
-  tempLayout,
-}) {
+export default function LineSettingsSection({ chartId, updateChart }) {
   return (
     <>
       {/* Curve Type */}
@@ -17,7 +13,11 @@ export default function LineSettingsSection({
             key={i}
             label={curve.charAt(0).toUpperCase() + curve.slice(1)}
             value={(s) => s.charts[chartId].tempLayout.curve === curve}
-            onClick={() => updateChart(chartId, { tempLayout: { curve } })}
+            onClick={() =>
+              updateChart(chartId, (c) => {
+                c.tempLayout.curve = curve;
+              })
+            }
             store={useChartStore}
           />
         ))}
@@ -30,32 +30,21 @@ export default function LineSettingsSection({
           type="range"
           value={(s) => s.charts[chartId].tempLayout.strokeWidth}
           onChange={(v) =>
-            updateChart(chartId, { tempLayout: { strokeWidth: v } })
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.strokeWidth = v;
+            })
           }
           min={1}
           max={10}
           store={useChartStore}
         />
 
-        {tempLayout.markerColors.map((color, idx) => (
-          <ColorPicker
-            key={idx}
-            label={`Series ${idx + 1}`}
-            value={(s) =>
-              parseColor(s.charts[chartId].tempLayout.markerColors[idx])
-            }
-            onChange={(c) =>
-              updateChart(chartId, {
-                tempLayout: (p) => {
-                  const updated = [...p.markerColors];
-                  updated[idx] = c;
-                  return { markerColors: updated };
-                },
-              })
-            }
-            store={useChartStore}
-          />
-        ))}
+        <SeriesColors
+          title={"Stroke Colors"}
+          chartId={chartId}
+          updateChart={updateChart}
+          type="color"
+        />
       </Section>
 
       {/* Marker Settings */}
@@ -65,7 +54,9 @@ export default function LineSettingsSection({
           type="range"
           value={(s) => s.charts[chartId].tempLayout.markerSize}
           onChange={(v) =>
-            updateLayout(chartId, { tempLayout: { markerSize: Number(v) } })
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.markerSize = Number(v);
+            })
           }
           min={1}
           max={10}
@@ -77,8 +68,8 @@ export default function LineSettingsSection({
           type="range"
           value={(s) => s.charts[chartId].tempLayout.markerHoverSize}
           onChange={(v) =>
-            updateLayout(chartId, {
-              tempLayout: { markerHoverSize: Number(v) },
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.markerHoverSize = Number(v);
             })
           }
           min={1}
@@ -86,38 +77,35 @@ export default function LineSettingsSection({
           store={useChartStore}
         />
 
-        <MarkerColors
-          chartId={chartId}
+        <SeriesColors
+          title={"Marker Colors"}
           updateChart={updateChart}
-          tempLayout={tempLayout}
-        />
-
-        {/* Area Settings */}
-        <AreaSettingsSection
           chartId={chartId}
-          updateChart={updateChart}
-          tempLayout={tempLayout}
         />
       </Section>
+      {/* Area Settings */}
+      <AreaSettingsSection chartId={chartId} updateChart={updateChart} />
     </>
   );
 }
 
-function AreaSettingsSection({ chartId, updateChart, tempLayout }) {
+function AreaSettingsSection({ chartId, updateChart }) {
+  const isAreaVisible = useChartStore((s) => s.charts[chartId].tempLayout.area);
+
   return (
     <Section title="Area Settings">
       <ToggleButton
         label="Show Area"
         value={(s) => s.charts[chartId].tempLayout.area}
         onClick={() =>
-          updateChart(chartId, {
-            tempLayout: (p) => ({ area: !p.area }),
+          updateChart(chartId, (chart) => {
+            chart.tempLayout.area = !chart.tempLayout.area;
           })
         }
         store={useChartStore}
       />
 
-      {tempLayout.area && (
+      {isAreaVisible && (
         <>
           <InputField
             label="Area Opacity From"
@@ -127,8 +115,8 @@ function AreaSettingsSection({ chartId, updateChart, tempLayout }) {
             step={0.05}
             value={(s) => s.charts[chartId].tempLayout.areaOpacityFrom}
             onChange={(v) =>
-              updateChart(chartId, {
-                tempLayout: { areaOpacityFrom: parseFloat(v) },
+              updateChart(chartId, (chart) => {
+                chart.tempLayout.areaOpacityFrom = parseFloat(v);
               })
             }
             store={useChartStore}
@@ -142,72 +130,54 @@ function AreaSettingsSection({ chartId, updateChart, tempLayout }) {
             step={0.05}
             value={(s) => s.charts[chartId].tempLayout.areaOpacityTo}
             onChange={(v) =>
-              updateChart(chartId, {
-                tempLayout: { areaOpacityTo: parseFloat(v) },
+              updateChart(chartId, (chart) => {
+                chart.tempLayout.areaOpacityTo = parseFloat(v);
               })
             }
             store={useChartStore}
           />
 
-          <Section title="Area Gradient Type">
-            <ToggleButton
-              label={"Horizontal"}
-              value={(s) => s.charts[chartId].tempLayout.areaGradientHorizontal}
-              onClick={() =>
-                updateChart(chartId, {
-                  tempLayout: (p) => ({
-                    areaGradientHorizontal: !p.areaGradientHorizontal,
-                  }),
-                })
-              }
-              store={useChartStore}
-            />
-          </Section>
+          <ToggleButton
+            label={"Area Horizontal"}
+            value={(s) => s.charts[chartId].tempLayout.areaGradientHorizontal}
+            onClick={() =>
+              updateChart(chartId, (chart) => {
+                chart.tempLayout.areaGradientHorizontal =
+                  !chart.tempLayout.areaGradientHorizontal;
+              })
+            }
+            store={useChartStore}
+          />
 
-          <Section title="Area Colors">
-            {tempLayout.areaColors.map((color, idx) => (
-              <ColorPicker
-                key={idx}
-                label={`Series ${idx + 1}`}
-                value={(s) =>
-                  parseColor(s.charts[chartId].tempLayout.areaColors[idx])
-                }
-                onChange={(c) => {
-                  updateChart(chartId, {
-                    tempLayout: (p) => {
-                      const updated = [...p.areaColors];
-                      updated[idx] = c;
-                      return { areaColors: updated };
-                    },
-                  });
-                }}
-                store={useChartStore}
-              />
-            ))}
-          </Section>
+          <SeriesColors
+            title={"Area Colors"}
+            chartId={chartId}
+            updateChart={updateChart}
+            type="areaColor"
+          />
         </>
       )}
     </Section>
   );
 }
 
-function MarkerColors({ chartId, updateChart, tempLayout }) {
+function SeriesColors({ title, chartId, updateChart, type = "markerColor" }) {
+  const length = useChartStore(
+    (s) => s.charts[chartId].tempSeriesConfig.length
+  );
+
   return (
-    <Section title="Marker Colors">
-      {tempLayout.markerColors.map((color, idx) => (
+    <Section title={title}>
+      {Array.from({ length }).map((_, index) => (
         <ColorPicker
-          key={idx}
-          label={`Series ${idx + 1}`}
+          key={index}
+          label={`Series ${index + 1}`}
           value={(s) =>
-            parseColor(s.charts[chartId].tempLayout.markerColors[idx])
+            parseColor(s.charts[chartId].tempSeriesConfig[index][type])
           }
           onChange={(c) => {
-            updateChart(chartId, {
-              tempLayout: (p) => {
-                const updated = [...p.markerColors];
-                updated[idx] = c;
-                return { markerColors: updated };
-              },
+            updateChart(chartId, (chart) => {
+              chart.tempSeriesConfig[index][type] = c;
             });
           }}
           store={useChartStore}

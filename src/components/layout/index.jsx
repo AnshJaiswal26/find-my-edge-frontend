@@ -58,10 +58,20 @@ export const Legend = ({ color, label }) => {
   return (
     <div className={styles.legendWrapper}>
       <div className={styles.legendIndicatorLabelWrapper}>
-        <div
-          className={styles.legendIndicator}
-          style={{ backgroundColor: color }}
-        ></div>
+        {Array.isArray(color) ? (
+          color.map((c, i) => (
+            <div
+              key={i}
+              className={styles.legendIndicator}
+              style={{ backgroundColor: c }}
+            ></div>
+          ))
+        ) : (
+          <div
+            className={styles.legendIndicator}
+            style={{ backgroundColor: color }}
+          ></div>
+        )}
         <span> {label}</span>
       </div>
     </div>

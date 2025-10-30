@@ -1,20 +1,24 @@
 import { useChartStore } from "@stores";
 
 export const handleZoomIn = (updater, ref, chartId) => {
-  const prev = useChartStore.getState().charts[chartId].layout.chartWidth;
-  if (prev === 1000) return;
-  updater(chartId, {
-    wrapperWidth: ref.current.getBoundingClientRect().width,
-    chartWidth: typeof prev === "string" ? 200 : prev + 100,
+  updater(chartId, (chart) => {
+    const prev = chart.layout.chartWidth;
+
+    if (prev === 1000) return;
+
+    chart.layout.wrapperWidth = ref.current.getBoundingClientRect().width;
+    chart.layout.chartWidth = typeof prev === "string" ? 200 : prev + 100;
   });
 };
 
 export const handleZoomOut = (updater, ref, chartId) => {
-  const prev = useChartStore.getState().charts[chartId].layout.chartWidth;
-  if (prev === 100) return;
-  updater(chartId, {
-    wrapperWidth: ref.current.getBoundingClientRect().width,
-    chartWidth: prev - 100,
+  updater(chartId, (chart) => {
+    const prev = chart.layout.chartWidth;
+
+    if (prev === 100 || typeof prev === "string") return;
+
+    chart.layout.wrapperWidth = ref.current.getBoundingClientRect().width;
+    chart.layout.chartWidth = prev - 100;
   });
 };
 

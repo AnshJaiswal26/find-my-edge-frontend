@@ -19,11 +19,12 @@ export default function BarSettingsSection({ chartId, updateChart }) {
           label={title}
           value={(s) => s.charts[chartId].tempLayout[key]}
           onClick={() => {
-            updateChart(chartId, {
-              tempSeriesColors: (p) => ({
-                [key]: !p[key],
-                ...(key === "stacked100" ? { stacked: !p[key] } : {}),
-              }),
+            updateChart(chartId, (chart) => {
+              chart.tempLayout[key] = !chart.tempLayout[key];
+              if (key === "stacked100")
+                chart.tempLayout.stacked = chart.tempLayout[key];
+              if (key === "stacked" && chart.tempLayout.stacked100)
+                chart.tempLayout.stacked100 = false;
             });
           }}
           store={useChartStore}
@@ -34,26 +35,32 @@ export default function BarSettingsSection({ chartId, updateChart }) {
         label="Bar Radius"
         type="range"
         value={(s) => s.charts[chartId].tempLayout.barRadius}
-        onChange={(v) => updateChart(chartId, { tempLayout: { barRadius: v } })}
+        onChange={(v) =>
+          updateChart(chartId, (chart) => {
+            chart.tempLayout.barRadius = v;
+          })
+        }
         min={0}
         max={10}
         store={useChartStore}
       />
 
-      <ConditionalColoring chartId={chartId} updateChart={updateChart} />
+      <ConditionalColorRange chartId={chartId} updateChart={updateChart} />
     </Section>
   );
 }
-function ConditionalColoring({ chartId, updateChart }) {
-  const series = useChartStore((s) => s.charts[chartId].tempSeries);
+function ConditionalColorRange({ chartId, updateChart }) {
+  const length = useChartStore(
+    (s) => s.charts[chartId].tempSeriesConfig.length
+  );
 
   return (
     <>
-      {series.map((seriesKey, i) => (
-        <ConditionalColoringSection
-          key={i}
+      {Array.from({ length }).map((_, index) => (
+        <ConditionalBarColor
+          key={index}
+          seriesIndex={index}
           chartId={chartId}
-          seriesKey={seriesKey}
           updateChart={updateChart}
         />
       ))}
@@ -61,74 +68,66 @@ function ConditionalColoring({ chartId, updateChart }) {
   );
 }
 
-function ConditionalColoringSection({ chartId, seriesKey, updateChart }) {
-  const colorsLength = useChartStore(
-    (s) => s.charts[chartId].tempSeriesColors[seriesKey]?.length || 0
+function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
+  const length = useChartStore(
+    (s) => s.charts[chartId].tempSeriesConfig[seriesIndex]?.colors.length || 0
   );
 
+  if (length === 0) return null;
+
   return (
-    <Section title={`Range Colors - ${seriesKey}`}>
-      {Array.from({ length: colorsLength }).map((_, index) => (
+    <Section title={`Range Colors Series ${seriesIndex + 1}`}>
+      {Array.from({ length }).map((_, index) => (
         <Fragment key={index}>
           <div className={styles.colorRangeGrid}>
             {[
-              { k: "from", v: "From" },
-              { k: "to", v: "To" },
-              { k: "label", v: "Tooltip Label" },
-            ].map(({ k, v }, i) => (
+              { key: "from", label: "From" },
+              { key: "to", label: "To" },
+              { key: "label", label: "Tooltip Label" },
+            ].map(({ key, label }, idx) => (
               <InputField
-                key={i}
+                key={idx}
                 labelPosition="top"
                 size="small"
-                label={v}
-                type={k === "label" ? "text" : "number"}
+                label={label}
+                type={key === "label" ? "text" : "number"}
                 value={(s) =>
-                  s.charts[chartId].tempSeriesColors[seriesKey][index][k]
+                  s.charts[chartId].tempSeriesConfig[seriesIndex].colors[index][
+                    key
+                  ]
                 }
                 onChange={(v) =>
-                  updateChart(chartId, {
-                    tempSeriesColors: (p) => ({
-                      [seriesKey]: p[seriesKey].map((r, i) =>
-                        index === i
-                          ? { ...r, [k]: k === "label" ? v : Number(v) }
-                          : r
-                      ),
-                    }),
+                  updateChart(chartId, (chart) => {
+                    chart.tempSeriesConfig[seriesIndex].colors[index][key] = v;
                   })
                 }
                 store={useChartStore}
               />
             ))}
 
-            <IconButton
-              icon={<Trash2 size={15} />}
-              onClick={() =>
-                updateChart(chartId, {
-                  tempSeriesColors: (p) => ({
-                    [seriesKey]: p[seriesKey].filter((_, i) => index !== i),
-                  }),
-                })
-              }
-              className="p-2"
-              store={useChartStore}
-            />
-
             <ColorPicker
               label="Color"
               value={(s) =>
                 parseColor(
-                  s.charts[chartId].tempSeriesColors[seriesKey][index].color
+                  s.charts[chartId].tempSeriesConfig[seriesIndex].colors[index]
+                    .color
                 )
               }
               onChange={(c) =>
-                updateChart(chartId, {
-                  tempSeriesColors: (p) => ({
-                    [seriesKey]: p[seriesKey].map((r, i) =>
-                      index === i ? { ...r, color: c } : r
-                    ),
-                  }),
+                updateChart(chartId, (chart) => {
+                  chart.tempSeriesConfig[seriesIndex].colors[index].color = c;
                 })
               }
+              store={useChartStore}
+            />
+            <IconButton
+              icon={<Trash2 size={15} />}
+              onClick={() =>
+                updateChart(chartId, (chart) => {
+                  chart.tempSeriesConfig[seriesIndex].colors.splice(index, 1);
+                })
+              }
+              className="p-2"
               store={useChartStore}
             />
           </div>
@@ -143,18 +142,13 @@ function ConditionalColoringSection({ chartId, seriesKey, updateChart }) {
           text={"Add"}
           size="medium"
           onClick={() =>
-            updateChart(chartId, {
-              tempSeriesColors: (p) => ({
-                [seriesKey]: [
-                  ...p[seriesKey],
-                  {
-                    from: 0,
-                    to: 0,
-                    color: "var(--color-default)",
-                    label: "",
-                  },
-                ],
-              }),
+            updateChart(chartId, (chart) => {
+              chart.tempSeriesConfig[seriesIndex].colors.push({
+                from: 0,
+                to: 0,
+                color: "var(--color-default)",
+                label: "",
+              });
             })
           }
         />

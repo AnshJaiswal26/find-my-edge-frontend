@@ -10,7 +10,7 @@ import "react-resizable/css/styles.css";
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";
 import { Button, ChartLayoutPopup } from "@ui";
-import { BarChart, LineChart } from "@charts";
+import { BarChart, LineChart, RadialBarChart } from "@charts";
 
 function Dashboard() {
   // const theme = useUIStore((s) => s.theme);
@@ -43,12 +43,14 @@ function Dashboard() {
 
       <StatCards />
 
-      <TopPieCharts
+      {/* <TopPieCharts
         data={"demo"}
         theme={"dark"}
         isDarkTheme={isDarkTheme}
         isSidebarOpen={isSidebarOpen}
-      />
+      /> */}
+
+      <RadialBarChart chartId={"radial-bar-chart-1"} />
 
       <div style={{ width: "100%", marginBottom: "20px" }}>
         <OverAllLineChart
@@ -58,13 +60,13 @@ function Dashboard() {
         />
       </div>
 
-      <LastWeekPerformanceLineGraph
+      {/* <LastWeekPerformanceLineGraph
         data={"demo"}
         theme={"dark"}
         isSidebarOpen={isSidebarOpen}
-      />
+      /> */}
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(850px,1fr))] place-items-center gap-5 w-[100%]">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(550px,1fr))] place-items-center gap-5 w-[100%]">
         <Charts />
       </div>
     </>

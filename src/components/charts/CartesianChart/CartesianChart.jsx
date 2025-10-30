@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef } from "react";
-import Chart from "react-apexcharts";
+import ReactApexChart from "react-apexcharts";
 import { ChartToolbar } from "@ui";
 import { useChartStore } from "@stores";
-import { Container } from "@layout";
+import { Container, Legend } from "@layout";
 import { getBarChartConfig } from "../BarChart/barChartConfig";
 import { getLineChartConfig } from "../LineChart/lineChartConfig";
 
@@ -78,30 +78,27 @@ function ChartWithConfig({ chartId, chartRef, dimensions, type }) {
   const layout = useChartStore((s) => s.charts[chartId].layout);
   const filteredSeries = useChartStore((s) => s.charts[chartId].filteredSeries);
   const series = useChartStore((s) => s.charts[chartId].series);
-  const seriesColors = useChartStore((s) => s.charts[chartId].seriesColors);
+  const seriesConfig = useChartStore((s) => s.charts[chartId].seriesConfig);
 
   const { wrapperWidth, chartWidth } = layout;
 
   // --- Tooltip callback ---
   const tooltipCallBack = useCallback(
     (seriesValue, index, w) => {
-      const { filteredSeries, xLabelsKey, series, seriesColors } =
+      const { filteredSeries, xLabelsKey, seriesConfig } =
         useChartStore.getState().charts[chartId];
 
       if (type === "bar") {
         return {
           title: filteredSeries?.[index]?.[xLabelsKey],
           dataArray: seriesValue?.map((value, i) => {
-            const { color, label } = seriesColors[series?.[i]].reduce(
-              (a, r) => {
-                if (r.from <= value && value <= r.to) {
-                  a.color = r.color;
-                  a.label = r.label;
-                }
-                return a;
-              },
-              {}
-            );
+            const { color, label } = seriesConfig[i].colors.reduce((a, r) => {
+              if (r.from <= value && value <= r.to) {
+                a.color = r.color;
+                a.label = r.label;
+              }
+              return a;
+            }, {});
             return {
               value: layout.yLabelPrefix + value + layout.yLabelSuffix,
               label,
@@ -116,8 +113,8 @@ function ChartWithConfig({ chartId, chartRef, dimensions, type }) {
         title: filteredSeries[index][xLabelsKey],
         dataArray: seriesValue.map((value, i) => ({
           value: layout.yLabelPrefix + value + layout.yLabelSuffix,
-          label: seriesColors[series[i]].label,
-          color: seriesColors[series[i]].color,
+          label: seriesConfig[i].name,
+          color: seriesConfig[i].color,
         })),
       };
     },
@@ -131,42 +128,31 @@ function ChartWithConfig({ chartId, chartRef, dimensions, type }) {
   const options = useMemo(
     () =>
       configGenerator({
-        config: layout,
+        chart: useChartStore.getState().charts[chartId],
         chartRef,
         chartId,
         tooltipCallBack,
-        series: filteredSeries,
       }),
-    [
-      layout,
-      series,
-      seriesColors,
-      tooltipCallBack,
-      filteredSeries,
-      chartId,
-      chartRef,
-      type,
-    ]
+    [layout, seriesConfig, filteredSeries, chartRef]
   );
 
   // --- Series ---
   const computedSeries =
     type === "bar"
-      ? series.map((s) => ({
-          name: s,
-          data: filteredSeries.map((d) => d?.[s]),
+      ? seriesConfig.map((s) => ({
+          name: s.name,
+          data: filteredSeries.map((d) => d?.[s.key]),
           color: ({ value }) =>
-            seriesColors[s].reduce((a, r) => {
+            s.colors.reduce((a, r) => {
               r.from <= value && value <= r.to && (a = r.color);
               return a;
             }, "var(--color-default)"),
         }))
-      : series.map((s, i) => {
-          console.log(s, i);
+      : seriesConfig.map((s) => {
           return {
-            name: s,
-            data: filteredSeries.map((d) => d?.[s]),
-            color: seriesColors?.[s]?.color,
+            name: s.name,
+            data: filteredSeries.map((d) => d?.[s.key]),
+            color: s.color,
           };
         });
 
@@ -175,16 +161,23 @@ function ChartWithConfig({ chartId, chartRef, dimensions, type }) {
       style={{ maxWidth: `${wrapperWidth}px` }}
       className="relative overflow-x-auto overflow-y-hidden box-border w-[100%]"
     >
-      <Chart
+      {/* {seriesConfig.map((s, i) => (
+        <Legend
+          key={i}
+          color={type === "line" ? s.color : s.colors.map((r) => r.color)}
+          label={s}
+        />
+      ))} */}
+      <ReactApexChart
         key={
           chartWidth +
           dimensions.dimensionX +
           dimensions.dimensionY +
-          layout.area
+          layout?.area
         }
         options={options}
         series={computedSeries}
-        type={layout.area && type === "line" ? "area" : type}
+        type={layout?.area && type === "line" ? "area" : type}
         height={`${dimensions.dimensionY}px`}
         width={`${chartWidth}%`}
       />

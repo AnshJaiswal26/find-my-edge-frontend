@@ -2,7 +2,7 @@ import React, { useMemo, memo, useState } from "react";
 import Chart from "react-apexcharts";
 import { getRadialBarChartConfig } from "@utils";
 
-export default function RadialBarChart({ data, totalTrades }) {
+function RadialBarChart({ data, totalTrades }) {
   const [activeIndex, setActiveIndex] = useState();
   const series = useMemo(
     () => data.map((item) => parseFloat(item.percentage)),

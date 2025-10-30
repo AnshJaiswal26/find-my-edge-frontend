@@ -3,19 +3,18 @@ import { ToggleButton, ColorPicker, InputField } from "@ui";
 import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 
-export default function XAxisSection({ chartId, updateLayout, isHorizontal }) {
-  const toggle = (key) => {
-    const current = useChartStore.getState().charts[chartId].tempLayout[key];
-    updateLayout(chartId, { [key]: !current }, "tempLayout");
-  };
-
+export default function XAxisSection({ chartId, updateChart, isHorizontal }) {
   return (
     <Section title={isHorizontal ? "Y-Axis" : "X-Axis"}>
       {!isHorizontal && (
         <ToggleButton
           label={"Tooltip"}
           value={(s) => s.charts[chartId].tempLayout.xTooltip}
-          onClick={() => toggle("xTooltip")}
+          onClick={() =>
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xTooltip = !chart.tempLayout.xTooltip;
+            })
+          }
           store={useChartStore}
         />
       )}
@@ -26,28 +25,42 @@ export default function XAxisSection({ chartId, updateLayout, isHorizontal }) {
           value={(s) => parseColor(s.charts[chartId].tempLayout.xLabelsColor)}
           disable={(s) => s.charts[chartId].tempLayout.xLabels === false}
           onChange={(c) =>
-            updateLayout(chartId, { xLabelsColor: c }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xLabels = c;
+            })
           }
           store={useChartStore}
         />
         <ToggleButton
           label={"Show"}
           value={(s) => s.charts[chartId].tempLayout.xLabels}
-          onClick={() => toggle("xLabels")}
+          onClick={() =>
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xLabels = !chart.tempLayout.xLabels;
+            })
+          }
           store={useChartStore}
         />
 
         <ToggleButton
           label={"Prefix Indexing"}
           value={(s) => s.charts[chartId].tempLayout.xLabelPrefixIndexing}
-          onClick={() => toggle("xLabelPrefixIndexing")}
+          onClick={() =>
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xLabels = !chart.tempLayout.xLabelPrefixIndexing;
+            })
+          }
           store={useChartStore}
         />
 
         <ToggleButton
           label={"Suffix Indexing"}
           value={(s) => s.charts[chartId].tempLayout.xLabelSuffixIndexing}
-          onClick={() => toggle("xLabelSuffixIndexing")}
+          onClick={() =>
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xLabels = !chart.tempLayout.xLabelSuffixIndexing;
+            })
+          }
           store={useChartStore}
         />
 
@@ -56,7 +69,9 @@ export default function XAxisSection({ chartId, updateLayout, isHorizontal }) {
           type="text"
           value={(s) => s.charts[chartId].tempLayout.xLabelPrefix}
           onChange={(v) =>
-            updateLayout(chartId, { xLabelPrefix: v }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xLabelPrefix = v;
+            })
           }
           placeholder="Enter Prefix"
           store={useChartStore}
@@ -67,7 +82,9 @@ export default function XAxisSection({ chartId, updateLayout, isHorizontal }) {
           type="text"
           value={(s) => s.charts[chartId].tempLayout.xLabelSuffix}
           onChange={(v) =>
-            updateLayout(chartId, { xLabelSuffix: v }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xLabelSuffix = v;
+            })
           }
           placeholder="Enter Suffix"
           store={useChartStore}
@@ -83,7 +100,9 @@ export default function XAxisSection({ chartId, updateLayout, isHorizontal }) {
           type="text"
           value={(s) => s.charts[chartId].tempLayout.xTitleText}
           onChange={(v) =>
-            updateLayout(chartId, { xTitleText: v }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xTitleText = v;
+            })
           }
           placeholder={"X-axis title"}
           store={useChartStore}
@@ -94,7 +113,9 @@ export default function XAxisSection({ chartId, updateLayout, isHorizontal }) {
           value={(s) => parseColor(s.charts[chartId].tempLayout.xTitleColor)}
           disable={(s) => s.charts[chartId].tempLayout.xTitleText === ""}
           onChange={(c) =>
-            updateLayout(chartId, { xTitleColor: c }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xTitleColor = c;
+            })
           }
           store={useChartStore}
         />

@@ -1,5 +1,4 @@
 import {
-  BoxSelect,
   Download,
   Pin,
   PlusCircle,
@@ -16,7 +15,6 @@ import { useChartStore } from "@stores";
 import {
   handleZoomIn,
   handleZoomOut,
-  handleReset,
   handleDownloadCSV,
   handleDownloadPNG,
 } from "./handlers";
@@ -27,12 +25,7 @@ export default function ChartToolbar({
   chartId,
   type,
 }) {
-  const updateSeries = useChartStore((s) => s.updateSeries);
-  const updateLayout = useChartStore((s) => s.updateLayout);
-
-  const deleteChart = useChartStore((s) => s.deleteChart);
-
-  const updateActiveChart = useChartStore((s) => s.updateActiveChart);
+  const updateChart = useChartStore((s) => s.updateChart);
 
   const IconCmpt = useMemo(
     () => [
@@ -40,7 +33,10 @@ export default function ChartToolbar({
         icon: Settings2,
         title: "Layout",
         onClick: () => {
-          updateActiveChart({ id: chartId, type });
+          updateChart((s) => {
+            s.charts.activeChart.id = chartId;
+            s.charts.activeChart.type = type;
+          });
           document.body.style.overflow = "hidden";
         },
       },
@@ -52,17 +48,20 @@ export default function ChartToolbar({
       {
         icon: ZoomIn,
         title: "Zoom In",
-        onClick: () => handleZoomIn(updateLayout, chartWrapperRef, chartId),
+        onClick: () => handleZoomIn(updateChart, chartWrapperRef, chartId),
       },
       {
         icon: ZoomOut,
         title: "Zoom Out",
-        onClick: () => handleZoomOut(updateLayout, chartWrapperRef, chartId),
+        onClick: () => handleZoomOut(updateChart, chartWrapperRef, chartId),
       },
       {
         icon: RefreshCcw,
         title: "Reset Series",
-        onClick: () => handleReset(chartId, updateSeries),
+        onClick: () =>
+          updateChart(chartId, (chart) => {
+            chart.filteredSeries = chart.originalSeries;
+          }),
       },
       {
         icon: Download,
@@ -76,7 +75,7 @@ export default function ChartToolbar({
         icon: Trash2,
         title: "Remove Chart",
         onClick: () => {
-          deleteChart(chartId);
+          updateChart((s) => delete s.chart[chartId]);
         },
       },
     ],

@@ -30,7 +30,11 @@ export default function InputField({
         <input
           type={type}
           value={val}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) =>
+            onChange(
+              type === "number" ? Number(e.target.value) : e.target.value
+            )
+          }
           min={min}
           max={max}
           step={step}

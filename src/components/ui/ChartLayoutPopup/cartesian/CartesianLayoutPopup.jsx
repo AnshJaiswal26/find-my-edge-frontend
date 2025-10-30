@@ -34,13 +34,22 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
     updateActiveChart({ id: "" });
   }, []);
 
-  const handleApply = () => {
-    updateChart(chartId, {
-      seriesColors: (_, c) => c.tempSeriesColors,
-      layout: (_, c) => c.tempLayout,
+  const handleClose = () => {
+    updateChart(chartId, (chart, s) => {
+      s.charts.activeChart.id = "";
+      chart.tempLayout = chart.layout;
+      chart.tempSeriesConfig = chart.seriesConfig;
     });
     document.body.style.overflow = "";
-    updateActiveChart({ id: "" });
+  };
+
+  const handleApply = () => {
+    updateChart(chartId, (chart, s) => {
+      s.charts.activeChart.id = "";
+      chart.layout = chart.tempLayout;
+      chart.seriesConfig = chart.tempSeriesConfig;
+    });
+    document.body.style.overflow = "";
   };
 
   const updateChart = useChartStore((s) => s.updateChart);
@@ -50,9 +59,9 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
       title={"Layout"}
       isVisible={true}
       text={{ leftBtn: "Cancel", rightBtn: isAnyChange ? "Apply" : "Ok" }}
-      onLeftBtnClick={() => handlePopupClose("tempLayout")}
+      onLeftBtnClick={handleClose}
       onRightBtnClick={handleApply}
-      onClose={() => handlePopupClose("tempLayout")}
+      onClose={handleClose}
     >
       <div className={styles.contentWrapper}>
         <GeneralSection chartId={chartId} updateChart={updateChart} />
@@ -65,11 +74,11 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
               key={i}
               label={title}
               value={(s) => s.charts[chartId].tempLayout[key]}
-              onClick={() => {
-                updateChart(chartId, {
-                  tempLayout: (p) => ({ [key]: !p[key] }),
-                });
-              }}
+              onClick={() =>
+                updateChart(chartId, (chart) => {
+                  chart.tempLayout[key] = !chart.tempLayout[key];
+                })
+              }
               store={useChartStore}
             />
           ))}
@@ -79,7 +88,7 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
           <LineSettingsSection
             chartId={chartId}
             updateChart={updateChart}
-            tempLayout={chart.tempLayout}
+            chart={chart}
           />
         ) : type === "bar" ? (
           <BarSettingsSection chartId={chartId} updateChart={updateChart} />
@@ -87,13 +96,13 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
 
         <XAxisSection
           chartId={chartId}
-          updateLayout={updateLayout}
+          updateChart={updateChart}
           isHorizontal={isHorizontal}
         />
 
         <YAxisSection
           chartId={chartId}
-          updateLayout={updateLayout}
+          updateChart={updateChart}
           isHorizontal={isHorizontal}
         />
       </div>

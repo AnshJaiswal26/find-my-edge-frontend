@@ -54,7 +54,7 @@
 
 .colorRangeGrid {
   display: grid;
-  grid-template-columns: 120px 120px 120px 30px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   align-items: flex-end;
   gap: 0.5rem;
 }

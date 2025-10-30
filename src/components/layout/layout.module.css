@@ -197,7 +197,7 @@
   box-sizing: border-box;
   margin: 1rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  height: 500px;
+  height: 80vh;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -224,10 +224,12 @@
   grid-template-columns: 1fr;
   gap: 1rem;
   overflow-y: auto;
+  width: 100%;
 }
 
 .popup main::-webkit-scrollbar {
   width: var(--scrollbar-size-mid);
+  height: var(--scrollbar-size-mid);
 }
 
 .popupCloseIcon {

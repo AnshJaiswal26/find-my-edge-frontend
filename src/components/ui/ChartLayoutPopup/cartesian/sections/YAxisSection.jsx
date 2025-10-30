@@ -16,7 +16,11 @@ export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
         <ToggleButton
           label={"Tooltip"}
           value={(s) => s.charts[chartId].tempLayout.xTooltip}
-          onClick={() => toggle("xTooltip")}
+          onClick={() =>
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.xTooltip = !chart.tempLayout.xTooltip;
+            })
+          }
           store={useChartStore}
         />
       )}
@@ -27,7 +31,9 @@ export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
           value={(s) => parseColor(s.charts[chartId].tempLayout.yLabelsColor)}
           disable={(s) => s.charts[chartId].tempLayout.yLabels === false}
           onChange={(c) =>
-            updateLayout(chartId, { yLabelsColor: c }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.yLabelsColor = c;
+            })
           }
           store={useChartStore}
         />
@@ -35,7 +41,11 @@ export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
         <ToggleButton
           label={"Show"}
           value={(s) => s.charts[chartId].tempLayout.yLabels}
-          onClick={() => toggle("yLabels")}
+          onClick={() =>
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.yLabels = !chart.tempLayout.yLabels;
+            })
+          }
           store={useChartStore}
         />
 
@@ -44,7 +54,9 @@ export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
           type="text"
           value={(s) => s.charts[chartId].tempLayout.yLabelPrefix}
           onChange={(v) =>
-            updateLayout(chartId, { yLabelPrefix: v }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.yLabels = v;
+            })
           }
           placeholder="Enter Prefix"
           store={useChartStore}
@@ -55,7 +67,9 @@ export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
           type="text"
           value={(s) => s.charts[chartId].tempLayout.yLabelSuffix}
           onChange={(v) =>
-            updateLayout(chartId, { yLabelSuffix: v }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.yLabelSuffix = v;
+            })
           }
           placeholder="Enter Suffix"
           store={useChartStore}
@@ -71,7 +85,9 @@ export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
           type="text"
           value={(s) => s.charts[chartId].tempLayout.yTitleText}
           onChange={(v) =>
-            updateLayout(chartId, { yTitleText: v }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.yTitleText = v;
+            })
           }
           placeholder={"Y-axis title"}
           store={useChartStore}
@@ -82,7 +98,9 @@ export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
           value={(s) => parseColor(s.charts[chartId].tempLayout.yTitleColor)}
           disable={(s) => s.charts[chartId].tempLayout.yTitleText === ""}
           onChange={(c) =>
-            updateLayout(chartId, { yTitleColor: c }, "tempLayout")
+            updateChart(chartId, (chart) => {
+              chart.tempLayout.yTitleColor = c;
+            })
           }
           store={useChartStore}
         />
