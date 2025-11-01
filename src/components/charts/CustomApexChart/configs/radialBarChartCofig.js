@@ -22,10 +22,13 @@ export const getRadialBarChartConfig = ({ chartId, chart, chartRef }) => {
     },
 
     legend: {
-      show: false,
-      position: "bottom",
+      show: true,
+      position: "left",
+      horizontalAlign: "center",
       labels: {
+        fontSize: "1rem",
         colors: "#ffffff",
+        marginBottom: "5px",
       },
       onItemClick: {
         toggleDataSeries: false,
@@ -75,7 +78,7 @@ export const getRadialBarChartConfig = ({ chartId, chart, chartRef }) => {
           },
           total: {
             show: config.total ?? true,
-            formatter: () => 70,
+            formatter: (v) => parseFloat(v).toFixed(2),
           },
         },
       },

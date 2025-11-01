@@ -118,7 +118,6 @@ export const cartesianChartConfig = ({
 
           // --- End selection ---
           else {
-            // ✅ Prefer dataset value (fallback to state if missing)
             const startIndex = Number(selection.dataset.startIndex);
 
             if (startIndex === dataPointIndex) return;

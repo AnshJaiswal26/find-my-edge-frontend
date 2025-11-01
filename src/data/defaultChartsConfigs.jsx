@@ -10,9 +10,7 @@ export const defaultLayoutBar1 = {
   chartWidth: 100,
 
   selection: false,
-
-  dimensionX: 100,
-  dimensionY: 250,
+  selectedLegendIndex: null,
 
   // grid
   xGrid: false,
@@ -66,13 +64,11 @@ export const defaultLayoutBar2 = {
 export const defaultLayoutLine1 = {
   title: "P&L Over Time",
   xLabelsKey: xLabelsKeys, // same as bar chart
-  wrapperWidth: "100%",
+
   chartWidth: 100,
 
-  dimensionX: 100,
-  dimensionY: 250,
-
   selection: true,
+  selectedLegendIndex: null,
 
   // grid
   xGrid: false,
@@ -127,21 +123,28 @@ export const defaultLayoutLine3 = {
 
 export const defaultLayoutRadial1 = {
   title: "Radial Progress",
-  wrapperWidth: 800,
   chartWidth: 100,
-  dimensionX: 100,
-  dimensionY: 260,
-  area: false,
-  horizontal: false,
+
+  selectedLegendIndex: null,
+
   tooltip: true,
   dataLabels: true,
-  legend: true,
-  selection: false,
-  // radial specifics
+  legend: false,
+
+  // Radial specifics
   hollowSize: "50%",
   trackBackground: "var(--color-gray-100)",
+  strokeWidth: "50%",
   startAngle: 0,
   endAngle: 360,
+
+  // Data label parts
+  name: true,
+  value: true,
+  total: true,
+
+  // Legend behavior
+  legendToggle: false,
 };
 
 // --series configs

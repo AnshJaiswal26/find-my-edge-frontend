@@ -9,7 +9,7 @@ import {
   Settings2,
 } from "lucide-react";
 import { IconButton } from "@ui";
-import { ChartFilterPopup } from "@ui";
+import { FilterPopup } from "../Popups";
 import { useChartStore } from "@stores";
 import {
   handleZoomIn,
@@ -78,7 +78,7 @@ export default function Toolbar({ chartRef, chartId, type }) {
 
   return (
     <div className="apexcharts-custom-toolbar">
-      <ChartFilterPopup chartId={chartId} />
+      <FilterPopup chartId={chartId} />
 
       {IconCmpt.map((item, index) => (
         <IconButton

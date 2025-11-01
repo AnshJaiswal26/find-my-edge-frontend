@@ -1,16 +1,15 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useMemo } from "react";
 import { useChartStore, useUIStore } from "@stores";
 import StatCards from "./components/StatsGrid";
 import TopPieCharts from "./TopPieCharts/top-pie-charts";
 import OverAllLineChart from "./Charts/overall-line-chart";
-import LastWeekPerformanceLineGraph from "./Charts/last-week-performance-line-chart";
 import { Container } from "@layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";
 import { Button, ChartLayoutPopup } from "@ui";
-import { BarChart, LineChart, RadialBarChart, CustomApexChart } from "@charts";
+import { CustomApexChart } from "@charts";
 import { WidthProvider, Responsive } from "react-grid-layout";
 
 const ReactGridLayout = WidthProvider(Responsive);
@@ -114,7 +113,6 @@ function ChartDashboard() {
         isDraggable
         draggableHandle=".chart-toolbar"
         onResizeStop={(layout, oldItem, newItem) => {
-          // 🔹 Trigger only the resized chart
           window.dispatchEvent(
             new CustomEvent("chart-resize", { detail: { chartId: newItem.i } })
           );

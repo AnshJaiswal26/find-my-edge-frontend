@@ -188,6 +188,11 @@
   pointer-events: none;
 }
 
+.apexcharts-legend-marker svg {
+  fill: var(--color-bg-container) !important;
+  stroke-width: 0 !important;
+}
+
 .react-resizable-handle-se {
   background-color: var(--color-bg-container) !important;
   width: 15px !important;

@@ -16,6 +16,11 @@ export default function useChartCfgGenerator({ chartId, chartRef, type }) {
       return {
         title: filteredSeries?.[index]?.[xLabelsKey],
         dataArray: seriesValue?.map((value, i) => {
+          if (
+            layout.selectedLegendIndex !== null &&
+            layout.selectedLegendIndex !== i
+          )
+            return null;
           const { color, label } = seriesConfig[i].colors.reduce((a, r) => {
             if (r.from <= value && value <= r.to) {
               a.color = r.color;
@@ -35,11 +40,19 @@ export default function useChartCfgGenerator({ chartId, chartRef, type }) {
     // line / area tooltip
     return {
       title: filteredSeries[index][xLabelsKey],
-      dataArray: seriesValue.map((value, i) => ({
-        value: layout.yLabelPrefix + value + layout.yLabelSuffix,
-        label: seriesConfig[i].name,
-        color: seriesConfig[i].color,
-      })),
+      dataArray: seriesValue.map((value, i) => {
+        if (
+          layout.selectedLegendIndex != null &&
+          layout.selectedLegendIndex !== i
+        )
+          return;
+
+        return {
+          value: layout.yLabelPrefix + value + layout.yLabelSuffix,
+          label: seriesConfig[i].name,
+          color: seriesConfig[i].color,
+        };
+      }),
     };
   }, []);
 
@@ -57,23 +70,62 @@ export default function useChartCfgGenerator({ chartId, chartRef, type }) {
   // --- Series ---
   const computedSeries =
     type === "bar"
-      ? seriesConfig.map((s) => ({
-          name: s.name,
-          data: filteredSeries.map((d) => d?.[s.key]),
-          color: ({ value }) =>
-            s.colors.reduce((a, r) => {
-              r.from <= value && value <= r.to && (a = r.color);
-              return a;
-            }, "var(--color-default)"),
-        }))
+      ? layout.selectedLegendIndex !== null
+        ? [
+            {
+              name: seriesConfig[layout.selectedLegendIndex].name,
+              data: filteredSeries.map(
+                (d) => d[seriesConfig[layout.selectedLegendIndex].key]
+              ),
+              color: ({ value }) =>
+                seriesConfig[layout.selectedLegendIndex].colors.reduce(
+                  (a, r) => {
+                    r.from <= value && value <= r.to && (a = r.color);
+                    return a;
+                  },
+                  "var(--color-default)"
+                ),
+            },
+          ]
+        : seriesConfig.map((s, i) => {
+            return {
+              name: s.name,
+              data: filteredSeries.map((d) => d?.[s.key]),
+              color: ({ value }) =>
+                s.colors.reduce((a, r) => {
+                  r.from <= value && value <= r.to && (a = r.color);
+                  return a;
+                }, "var(--color-default)"),
+            };
+          })
       : type === "line"
-      ? seriesConfig.map((s) => ({
-          name: s.name,
-          data: filteredSeries.map((d) => d?.[s.key]),
-          color: s.color,
-        }))
+      ? layout.selectedLegendIndex !== null
+        ? [
+            {
+              name: seriesConfig[layout.selectedLegendIndex].name,
+              data: filteredSeries.map(
+                (d) => d[seriesConfig[layout.selectedLegendIndex].key]
+              ),
+              color: seriesConfig[layout.selectedLegendIndex].color,
+            },
+          ]
+        : seriesConfig.map((s, i) => {
+            return {
+              name: s.name,
+              data: filteredSeries.map((d) => d?.[s.key]),
+              color: s.color,
+            };
+          })
       : type === "radialBar"
-      ? seriesConfig.map((s, i) => filteredSeries[i][s.key])
+      ? layout.selectedLegendIndex !== null
+        ? [
+            filteredSeries[layout.selectedLegendIndex][
+              seriesConfig[layout.selectedLegendIndex].key
+            ],
+          ]
+        : seriesConfig.map((s, i) => {
+            return filteredSeries[i][s.key];
+          })
       : null;
 
   return { options, computedSeries, seriesConfig, layout };

@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { IconButton } from "../Buttons";
+import { IconButton } from "../../../../ui/Buttons";
 import { Filter } from "lucide-react";
 import { useClickOutside } from "@hooks";
 import { ChartPopup } from "@layout";
@@ -9,7 +9,7 @@ import ExpandableSection from "./ExpandableSection";
 import styles from "./ChartFilterPopup.module.css";
 import { handleApply } from "./handlers";
 
-export default function ChartFilterPopup({ chartId }) {
+export default function FilterPopup({ chartId }) {
   const [showFilter, setShowFilter] = useState(false);
   const ref = useRef();
 

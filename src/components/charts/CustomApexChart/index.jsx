@@ -64,15 +64,26 @@ function ChartWithConfig({ chartId, chartRef, type }) {
       }}
       className={styles.chartWrapper}
     >
-      <div className={styles.chartLegendWrapper}>
-        {seriesConfig.map((s, i) => (
-          <Legend
-            key={i}
-            color={type === "bar" ? s.colors.map((r) => r.color) : s.color}
-            label={s.name ?? s.label}
-          />
-        ))}
-      </div>
+      {type !== "radialBar" && (
+        <div className={styles.chartLegendWrapper}>
+          {seriesConfig.map((s, i) => (
+            <Legend
+              key={i}
+              color={type === "bar" ? s.colors.map((r) => r.color) : s.color}
+              label={s.name ?? s.label}
+              selected={layout.selectedLegendIndex === i}
+              onClick={() =>
+                useChartStore.getState().updateChart(chartId, (chart) => {
+                  if (chart.seriesConfig.length === 0) return;
+                  const idx = chart.layout.selectedLegendIndex;
+                  chart.layout.selectedLegendIndex =
+                    idx === i && idx != null ? null : i;
+                })
+              }
+            />
+          ))}
+        </div>
+      )}
       <div className="h-full" style={{ width: `${chartWidth}%` }}>
         <ReactApexChart
           key={`${layout?.area}`}

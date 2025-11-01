@@ -15,42 +15,27 @@ import {
 export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
   const state = useChartStore.getState();
   const chart = state.charts[chartId];
-
-  const updateLayout = state.updateLayout;
-  const updateSeriesConfigMerge = state.updateSeriesConfigMerge;
-  const updateActiveChart = state.updateActiveChart;
-
   const isHorizontal = chart.layout.horizontal;
 
   const [isAnyChange, setIsAnyChange] = useState(true);
 
-  const handlePopupClose = useCallback((key) => {
-    updateChart(chartId, {
-      [key]: (p, chart) => chart[key === "layout" ? "tempLayout" : "layout"],
-      [key === "layout" ? "seriesColor" : "tempSeriesColor"]: (p, chart) =>
-        key === "layout" ? chart.tempSeriesColor : chart.seriesColor,
-    });
-    document.body.style.overflow = "";
-    updateActiveChart({ id: "" });
-  }, []);
-
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     updateChart(chartId, (chart, s) => {
       s.charts.activeChart.id = "";
       chart.tempLayout = chart.layout;
       chart.tempSeriesConfig = chart.seriesConfig;
     });
     document.body.style.overflow = "";
-  };
+  }, []);
 
-  const handleApply = () => {
+  const handleApply = useCallback(() => {
     updateChart(chartId, (chart, s) => {
       s.charts.activeChart.id = "";
       chart.layout = chart.tempLayout;
       chart.seriesConfig = chart.tempSeriesConfig;
     });
     document.body.style.overflow = "";
-  };
+  }, []);
 
   const updateChart = useChartStore((s) => s.updateChart);
 
