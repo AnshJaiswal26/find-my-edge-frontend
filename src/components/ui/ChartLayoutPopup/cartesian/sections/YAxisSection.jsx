@@ -3,13 +3,7 @@ import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
 
-export default function YAxisSection({ chartId, updateLayout, isHorizontal }) {
-  const toggle = (key) => {
-    const current = useChartStore.getState().charts[chartId].tempLayout[key];
-    console.log(current);
-    updateLayout(chartId, { [key]: !current }, "tempLayout");
-  };
-
+export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
   return (
     <Section title={isHorizontal ? "X-Axis" : "Y-Axis"}>
       {!isHorizontal && (

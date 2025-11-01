@@ -1,4 +1,4 @@
-import { cartesianChartConfig } from "../CartesianChart/cartesianChartConfig";
+import { cartesianChartConfig } from "./cartesianChartConfig";
 
 export const getBarChartConfig = ({
   chart,
@@ -28,6 +28,7 @@ export const getBarChartConfig = ({
         tools: { ...base.chart.toolbar.tools, selection: series.length > 1 },
       },
     },
+
     plotOptions: {
       bar: {
         horizontal: config.horizontal,

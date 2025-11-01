@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 
-function OverAllLineChart({ data, theme, isSidebarOpen }) {
+function OverAllLineChart({ data, theme }) {
   const [isDayData, setIsDayData] = useState(true);
 
   const [audienceMetricsData, setAudienceMetricsData] = useState([

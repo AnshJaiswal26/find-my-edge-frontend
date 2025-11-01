@@ -1,31 +1,29 @@
 import { useChartStore } from "@stores";
 
-export const handleZoomIn = (updater, ref, chartId) => {
+export const handleZoomIn = (updater, chartId) => {
   updater(chartId, (chart) => {
     const prev = chart.layout.chartWidth;
 
     if (prev === 1000) return;
 
-    chart.layout.wrapperWidth = ref.current.getBoundingClientRect().width;
     chart.layout.chartWidth = typeof prev === "string" ? 200 : prev + 100;
   });
 };
 
-export const handleZoomOut = (updater, ref, chartId) => {
+export const handleZoomOut = (updater, chartId) => {
   updater(chartId, (chart) => {
     const prev = chart.layout.chartWidth;
 
     if (prev === 100 || typeof prev === "string") return;
 
-    chart.layout.wrapperWidth = ref.current.getBoundingClientRect().width;
     chart.layout.chartWidth = prev - 100;
   });
 };
 
-export const handleDownloadPNG = (chartRef, filename = "apexchart.svg") => {
-  if (!chartRef.current) return;
-
-  const svg = chartRef.current.querySelector("svg");
+export const handleDownloadPNG = (chartId, filename = "apexchart.svg") => {
+  const svg = document
+    .getElementById(`apexcharts${chartId}`)
+    .querySelector("svg");
   if (!svg) return;
 
   const serializer = new XMLSerializer();

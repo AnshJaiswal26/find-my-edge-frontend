@@ -1,5 +1,5 @@
 import { useChartStore } from "@stores";
-import { customTooltip } from "../../../utils/chartConfigs/customTooltip";
+import { customTooltip } from "./customTooltip";
 
 export const cartesianChartConfig = ({
   chart,
@@ -58,6 +58,7 @@ export const cartesianChartConfig = ({
 
   return {
     chart: {
+      id: chartId,
       fontFamily: "inherit",
       toolbar: { show: true, tools: { download: true, selection: false } },
       zoom: { enabled: false },

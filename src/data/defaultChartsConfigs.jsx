@@ -130,7 +130,7 @@ export const defaultLayoutRadial1 = {
   wrapperWidth: 800,
   chartWidth: 100,
   dimensionX: 100,
-  dimensionY: 320,
+  dimensionY: 260,
   area: false,
   horizontal: false,
   tooltip: true,
@@ -253,21 +253,15 @@ export const seriesConfigRadial1 = [
   },
 
   {
-    key: "Completion",
-    name: "Completion",
-    color: "var(--color-green)",
+    key: "Percentage",
+    name: "Percentage",
+    color: "var(--color-red)",
     label: "Completion %", // used in tooltip
   },
   {
-    key: "Completion",
-    name: "Completion",
-    color: "var(--color-green)",
-    label: "Completion %", // used in tooltip
-  },
-  {
-    key: "Completion",
-    name: "Completion",
-    color: "var(--color-green)",
+    key: "Ratio",
+    name: "Ratio",
+    color: "var(--color-yellow)",
     label: "Completion %", // used in tooltip
   },
 ];
@@ -287,9 +281,8 @@ export const seriesBar2 = [
 // -- radialbar chart 1
 export const radialData = [
   { Date: "2025-10-01", Completion: 65 },
-  { Date: "2025-10-02", Completion: 75 },
-  { Date: "2025-10-03", Completion: 75 },
-  { Date: "2025-10-03", Completion: 75 },
+  { Date: "2025-10-02", Percentage: 75 },
+  { Date: "2025-10-03", Ratio: 75 },
 ];
 
 // -- radar chart 1

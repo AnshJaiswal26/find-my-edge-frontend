@@ -23,6 +23,7 @@ const xLabelsKeys = "Date";
 export const useChartStore = create(
   immer((set) => ({
     charts: {
+      gridLayout: null,
       activeChart: { id: "", type: "" },
       "apex-bar-chart-1": {
         originalSeries: [...tradeData],

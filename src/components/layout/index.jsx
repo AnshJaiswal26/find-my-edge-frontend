@@ -21,6 +21,7 @@ export const PageContainer = ({
 };
 
 export const Container = ({
+  id,
   children,
   className = "",
   title,
@@ -28,7 +29,7 @@ export const Container = ({
   childClassName,
 }) => {
   return (
-    <div className={`${styles.container} ${className}`}>
+    <div id={id} className={`${styles.container} ${className}`}>
       <div className={`${styles.innerContainer} ${className}`}>
         <div className="flex-box justify-between">
           {title && <div className={styles.title}>{title}</div>}

@@ -1,4 +1,4 @@
-import { cartesianChartConfig } from "../CartesianChart/cartesianChartConfig";
+import { cartesianChartConfig } from "./cartesianChartConfig";
 
 export const getLineChartConfig = ({
   chart,

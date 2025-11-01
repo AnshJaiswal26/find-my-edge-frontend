@@ -1,4 +1,6 @@
 :root {
+  --resize-border: var(--color-bg-main);
+
   /* main-tooltip */
   --apexcharts-tooltip-background: #ffffff;
   --apexcharts-tooltip-title-background: #ecf0f4;
@@ -41,8 +43,8 @@
   color: var(--apexcharts-xaxistooltip-color) !important;
   border: 1px solid var(--apexcharts-xaxistooltip-border) !important;
   box-shadow: var(--apexcharts-xaxistooltip-shadow) !important;
-  border-radius: 12px !important;
-  padding: 10px 12px !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
   font-size: 12px !important;
 }
 
@@ -116,13 +118,9 @@
   stroke: #e0e0e0;
 }
 
-#apexcharts-custom-wrapper ::-webkit-scrollbar {
+#apexcharts-custom-wrapper::-webkit-scrollbar {
   height: var(--scrollbar-size-mid) !important;
 }
-
-/* .apexcharts-canvas {
-  pointer-events: unset !important;
-} */
 
 .apexcharts-menu.apexcharts-menu-open {
   background-color: var(--apexcharts-tooltip-background) !important;
@@ -174,17 +172,13 @@
 }
 
 .apexcharts-custom-toolbar svg {
-  width: var(--icon-dimension);
-  height: var(--icon-dimension);
+  width: clamp(0.75rem, 1.2vw, 1.25rem);
+  height: clamp(0.75rem, 1.2vw, 1.25rem);
 }
 
 .apexcharts-custom-toolbar .icon-button {
   padding: 0.45rem;
   border-radius: 0;
-}
-.react-resizable-handle {
-  margin-top: -10px;
-  background-color: var(--color-text-heading) !important;
 }
 
 .apexcharts-custom-select {
@@ -192,4 +186,25 @@
   background-color: #89d4ff;
   opacity: 0.3;
   pointer-events: none;
+}
+
+.react-resizable-handle-se {
+  background-color: var(--color-bg-container) !important;
+  width: 15px !important;
+  height: 15px !important;
+  border: 1px dashed var(--color-text-heading) !important;
+  color: var(--color-text-heading) !important;
+  --resize-border: var(--color-bg-main);
+}
+
+.grid-chart-wrapper .react-resizable-handle-se {
+  visibility: hidden;
+}
+
+.grid-chart-wrapper:hover .react-resizable-handle-se {
+  visibility: visible;
+}
+
+.grid-chart-wrapper:has(.react-resizable-handle-se:active) {
+  --resize-border: var(--color-default) !important;
 }

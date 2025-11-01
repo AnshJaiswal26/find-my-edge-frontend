@@ -3,11 +3,12 @@
   --sidebar-width: 230px;
   --page-width: 100%;
   --page-margin-left: 0;
-  --sidebar-left: -300px;
+  --sidebar-left: translateX(-100%);
 }
 
 .sidebar-open {
-  --page-width: calc(100% - var(--sidebar-width));
-  --page-margin-left: var(--sidebar-width);
-  --sidebar-left: 0;
+  /* --page-width: calc(100% - var(--sidebar-width));
+  --page-margin-left: var(--sidebar-width); */
+  --page-bg: #070f2e32;
+  --sidebar-left: translateX(0);
 }

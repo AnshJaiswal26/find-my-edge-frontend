@@ -1,10 +1,9 @@
-import { useChartStore } from "@stores";
 import { filterOperationMap, sortOperationMap } from "@utils";
 
-export const handleApply = (chartId, filters, updateChart, setShowFilter) => {
+export const handleApply = (chart) => {
   const { selectedSeries, selectedFilter, selectedSort, value, from, to } =
-    filters;
-  let filtered = [...useChartStore.getState().charts[chartId].originalSeries];
+    chart.filters;
+  let filtered = [...chart.originalSeries];
 
   const sortFn = sortOperationMap?.[selectedSort];
   const filterFn = filterOperationMap?.[selectedFilter];
@@ -21,7 +20,5 @@ export const handleApply = (chartId, filters, updateChart, setShowFilter) => {
       sortFn(a[selectedSeries], b[selectedSeries])
     );
   }
-
-  updateChart(chartId, { filteredSeries: filtered });
-  setShowFilter(false);
+  chart.filteredSeries = filtered;
 };

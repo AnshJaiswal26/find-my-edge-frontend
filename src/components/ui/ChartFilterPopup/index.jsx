@@ -27,14 +27,19 @@ export default function ChartFilterPopup({ chartId }) {
   const sections = useMemo(
     () => [
       {
-        onSelect: (v) => updateChart(chartId, { filters: { selectedSort: v } }),
+        onSelect: (v) =>
+          updateChart(chartId, (chart) => {
+            chart.filters.selectedSort = v;
+          }),
         selected: selectedSort,
         title: "Sort In Order",
         list: sortOptions,
       },
       {
         onSelect: (v) =>
-          updateChart(chartId, { filters: { selectedFilter: v } }),
+          updateChart(chartId, (chart) => {
+            chart.filters.selectedFilter = v;
+          }),
         selected: selectedFilter,
         title: "Filter By Condition",
         list: filterOptions,
@@ -56,21 +61,23 @@ export default function ChartFilterPopup({ chartId }) {
         title={"Filter"}
         isVisible={showFilter}
         onLeftBtnClick={() => {
-          updateChart(chartId, {
-            filteredSeries: (_, c) => c.originalSeries,
-            filters: {
+          updateChart(chartId, (chart) => {
+            chart.filteredSeries = chart.originalSeries;
+            chart.filters = {
+              ...chart.filters,
               selectedFilter: "none",
               selectedSort: "none",
               value: "",
               from: "",
               to: "",
-            },
+            };
           });
           setShowFilter(false);
         }}
-        onRightBtnClick={() =>
-          handleApply(chartId, filters, updateChart, setShowFilter)
-        }
+        onRightBtnClick={() => {
+          updateChart(chartId, handleApply);
+          setShowFilter(false);
+        }}
         className={styles.filterPopupContent}
       >
         <SeriesSelector
@@ -86,7 +93,11 @@ export default function ChartFilterPopup({ chartId }) {
             selected={item.selected}
             options={item.list}
             values={{ value, from, to }}
-            onChange={(k, v) => updateChart(chartId, { filters: { [k]: v } })}
+            onChange={(k, v) =>
+              updateChart(chartId, (chart) => {
+                chart.filters[k] = v;
+              })
+            }
           />
         ))}
       </ChartPopup>
@@ -99,7 +110,11 @@ function SeriesSelector({ chartId, updateChart, selectedSeries }) {
 
   return (
     <ExpandableSection
-      onSelect={(v) => updateChart(chartId, { filters: { selectedSeries: v } })}
+      onSelect={(v) =>
+        updateChart(chartId, (chart) => {
+          chart.filters.selectedSeries = v;
+        })
+      }
       title={"Series"}
       selected={selectedSeries}
       options={series}

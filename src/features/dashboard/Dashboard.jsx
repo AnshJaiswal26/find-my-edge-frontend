@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useChartStore, useUIStore } from "@stores";
 import StatCards from "./components/StatsGrid";
 import TopPieCharts from "./TopPieCharts/top-pie-charts";
@@ -10,10 +10,12 @@ import "react-resizable/css/styles.css";
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";
 import { Button, ChartLayoutPopup } from "@ui";
-import { BarChart, LineChart, RadialBarChart } from "@charts";
+import { BarChart, LineChart, RadialBarChart, CustomApexChart } from "@charts";
+import { WidthProvider, Responsive } from "react-grid-layout";
+
+const ReactGridLayout = WidthProvider(Responsive);
 
 function Dashboard() {
-  // const theme = useUIStore((s) => s.theme);
   const isSidebarOpen = useUIStore((s) => s.isSidebarOpen);
 
   const isDarkTheme = true;
@@ -50,8 +52,6 @@ function Dashboard() {
         isSidebarOpen={isSidebarOpen}
       /> */}
 
-      <RadialBarChart chartId={"radial-bar-chart-1"} />
-
       <div style={{ width: "100%", marginBottom: "20px" }}>
         <OverAllLineChart
           data={"demo"}
@@ -60,31 +60,79 @@ function Dashboard() {
         />
       </div>
 
-      {/* <LastWeekPerformanceLineGraph
-        data={"demo"}
-        theme={"dark"}
-        isSidebarOpen={isSidebarOpen}
-      /> */}
-
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(550px,1fr))] place-items-center gap-5 w-[100%]">
-        <Charts />
-      </div>
+      <ChartDashboard />
     </>
   );
 }
 
-function Charts() {
+function ChartDashboard() {
+  const containerRef = useRef(null);
+
   const order = useChartStore((s) => s.order);
 
-  return order.map((chart, index) => (
-    <div key={index} className="w-[100%]">
-      {chart.type === "bar" ? (
-        <BarChart chartId={chart.id} />
-      ) : (
-        <LineChart chartId={chart.id} />
-      )}
+  const gridLayout = useChartStore.getState().charts.gridLayout;
+
+  const layout = useMemo(() => {
+    if (gridLayout) return gridLayout;
+    return order.map(({ id }, index) => ({
+      i: id,
+      x: (index * 4) % 12,
+      y: Math.floor(index / 3),
+      w: 4,
+      h: 20,
+      minW: 3,
+      minH: 20,
+    }));
+  }, [gridLayout, order]);
+
+  const layouts = useMemo(
+    () => ({
+      lg: layout,
+      md: layout,
+      sm: layout,
+      xs: layout,
+      xxs: layout,
+    }),
+    [layout]
+  );
+
+  const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
+  const cols = { lg: 8, md: 8, sm: 6, xs: 4, xxs: 2 };
+
+  return (
+    <div className="w-full h-full  bg-[inherit]" ref={containerRef}>
+      <ReactGridLayout
+        className="layout"
+        layouts={layouts}
+        breakpoints={breakpoints}
+        onLayoutChange={(l) =>
+          useChartStore.getState().updateChart((s) => (s.charts.gridLayout = l))
+        }
+        cols={cols}
+        rowHeight={10}
+        isResizable
+        isDraggable
+        draggableHandle=".chart-toolbar"
+        onResizeStop={(layout, oldItem, newItem) => {
+          // 🔹 Trigger only the resized chart
+          window.dispatchEvent(
+            new CustomEvent("chart-resize", { detail: { chartId: newItem.i } })
+          );
+        }}
+      >
+        {order.map(({ id, type }) => (
+          <div
+            key={id}
+            className="bg-[inherit] border-dashed border-1 border-[var(--resize-border)] rounded-xl min-h-[fit-content] grid-chart-wrapper"
+          >
+            <div className="p-1 box-border h-full relative">
+              <CustomApexChart chartId={id} type={type} />
+            </div>
+          </div>
+        ))}
+      </ReactGridLayout>
     </div>
-  ));
+  );
 }
 
 export default Dashboard;

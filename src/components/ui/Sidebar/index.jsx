@@ -33,27 +33,31 @@ const sidebarItems = [
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
 
   return (
-    <div className={styles.sidebar}>
-      <Profile />
-      <div className={styles.sidebarMenu}>
-        {sidebarItems.map((item, index) => (
-          <button
-            key={index}
-            className={`${styles.sidebarButtons} ${
-              location.pathname === item.route ? styles.buttonActive : ""
-            }`}
-            onClick={() => item.route && navigate(item.route)}
-          >
-            <div className="flex items-center gap-2">
-              <item.icon />
-              <span>{item.label}</span>
-            </div>
-          </button>
-        ))}
+    <>
+      <div className={styles.sidebarOverlay} onClick={toggleSidebar}></div>
+      <div className={styles.sidebar}>
+        <Profile />
+        <div className={styles.sidebarMenu}>
+          {sidebarItems.map((item, index) => (
+            <button
+              key={index}
+              className={`${styles.sidebarButtons} ${
+                location.pathname === item.route ? styles.buttonActive : ""
+              }`}
+              onClick={() => item.route && navigate(item.route)}
+            >
+              <div className="flex items-center gap-2">
+                <item.icon />
+                <span>{item.label}</span>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

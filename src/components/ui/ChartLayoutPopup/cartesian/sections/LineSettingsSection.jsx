@@ -58,7 +58,7 @@ export default function LineSettingsSection({ chartId, updateChart }) {
               chart.tempLayout.markerSize = Number(v);
             })
           }
-          min={1}
+          min={0}
           max={10}
           store={useChartStore}
         />

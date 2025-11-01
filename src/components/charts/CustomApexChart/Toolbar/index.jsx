@@ -1,6 +1,6 @@
+import { useMemo } from "react";
 import {
   Download,
-  Pin,
   PlusCircle,
   RefreshCcw,
   Trash2,
@@ -8,9 +8,8 @@ import {
   ZoomOut,
   Settings2,
 } from "lucide-react";
-import { IconButton } from "../Buttons";
-import { useMemo } from "react";
-import ChartFilterPopup from "../ChartFilterPopup";
+import { IconButton } from "@ui";
+import { ChartFilterPopup } from "@ui";
 import { useChartStore } from "@stores";
 import {
   handleZoomIn,
@@ -19,12 +18,7 @@ import {
   handleDownloadPNG,
 } from "./handlers";
 
-export default function ChartToolbar({
-  chartRef,
-  chartWrapperRef,
-  chartId,
-  type,
-}) {
+export default function Toolbar({ chartRef, chartId, type }) {
   const updateChart = useChartStore((s) => s.updateChart);
 
   const IconCmpt = useMemo(
@@ -48,12 +42,12 @@ export default function ChartToolbar({
       {
         icon: ZoomIn,
         title: "Zoom In",
-        onClick: () => handleZoomIn(updateChart, chartWrapperRef, chartId),
+        onClick: () => handleZoomIn(updateChart, chartId),
       },
       {
         icon: ZoomOut,
         title: "Zoom Out",
-        onClick: () => handleZoomOut(updateChart, chartWrapperRef, chartId),
+        onClick: () => handleZoomOut(updateChart, chartId),
       },
       {
         icon: RefreshCcw,
@@ -68,7 +62,7 @@ export default function ChartToolbar({
         title: "Download",
         onClick: () => {
           handleDownloadCSV(chartId);
-          handleDownloadPNG(chartRef);
+          handleDownloadPNG(chartId);
         },
       },
       {
@@ -84,15 +78,6 @@ export default function ChartToolbar({
 
   return (
     <div className="apexcharts-custom-toolbar">
-      <IconButton
-        className={"icon-button"}
-        icon={<Pin />}
-        tooltip={{
-          title: "Pin Chart",
-          position: "bottom",
-        }}
-        onClick={() => {}}
-      />
       <ChartFilterPopup chartId={chartId} />
 
       {IconCmpt.map((item, index) => (
