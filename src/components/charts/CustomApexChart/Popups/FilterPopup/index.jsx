@@ -19,7 +19,7 @@ export default function FilterPopup({ chartId }) {
 
   const updateChart = useChartStore((s) => s.updateChart);
 
-  const filters = useChartStore((s) => s.charts[chartId].filters);
+  const filters = useChartStore((s) => s[chartId].filters);
 
   const { selectedSort, selectedFilter, value, from, to, selectedSeries } =
     filters;
@@ -62,7 +62,7 @@ export default function FilterPopup({ chartId }) {
         isVisible={showFilter}
         onLeftBtnClick={() => {
           updateChart(chartId, (chart) => {
-            chart.filteredSeries = chart.originalSeries;
+            chart.series.filtered = chart.series.default;
             chart.filters = {
               ...chart.filters,
               selectedFilter: "none",
@@ -106,7 +106,7 @@ export default function FilterPopup({ chartId }) {
 }
 
 function SeriesSelector({ chartId, updateChart, selectedSeries }) {
-  const series = useChartStore((s) => s.charts[chartId].series);
+  const seriesConfig = useChartStore((s) => s[chartId].live.seriesConfig);
 
   return (
     <ExpandableSection
@@ -117,7 +117,7 @@ function SeriesSelector({ chartId, updateChart, selectedSeries }) {
       }
       title={"Series"}
       selected={selectedSeries}
-      options={series}
+      options={seriesConfig.map((s) => s.key)}
     />
   );
 }

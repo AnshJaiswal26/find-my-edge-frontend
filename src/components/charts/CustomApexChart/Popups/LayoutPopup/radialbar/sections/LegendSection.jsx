@@ -7,10 +7,10 @@ export default function RadialLegendSection({ chartId, updateChart }) {
     <Section title="Legend Settings">
       <ToggleButton
         label={"Show Legend"}
-        value={(s) => s.charts[chartId].tempLayout.legend}
+        value={(s) => s[chartId].draft.layout.legend}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.legend = !chart.tempLayout.legend;
+            chart.draft.layout.legend = !chart.draft.layout.legend;
           })
         }
         store={useChartStore}
@@ -18,10 +18,10 @@ export default function RadialLegendSection({ chartId, updateChart }) {
 
       <ToggleButton
         label={"Toggle Data Series"}
-        value={(s) => s.charts[chartId].tempLayout.legendToggle ?? false}
+        value={(s) => s[chartId].draft.layout.legendToggle ?? false}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.legendToggle = !chart.tempLayout.legendToggle;
+            chart.draft.layout.legendToggle = !chart.draft.layout.legendToggle;
           })
         }
         store={useChartStore}

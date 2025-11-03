@@ -2,131 +2,143 @@ import { useCallback, useMemo } from "react";
 import { useChartStore } from "@stores";
 import { configGenerator } from "../configs";
 
-export default function useChartCfgGenerator({ chartId, chartRef, type }) {
-  const layout = useChartStore((s) => s.charts[chartId].layout);
-  const filteredSeries = useChartStore((s) => s.charts[chartId].filteredSeries);
-  const seriesConfig = useChartStore((s) => s.charts[chartId].seriesConfig);
+const seriesGenerator = {
+  bar: (chart) => {
+    const index = chart.runtime.selectedLegendIndex;
+    const cfg =
+      index !== null
+        ? chart.live.seriesConfig.filter((_, i) => i === index)
+        : chart.live.seriesConfig;
+
+    return cfg.map((s) => ({
+      name: s.name,
+      data: chart.series.filtered.map((d) => d?.[s.key]),
+      color: ({ value }) =>
+        s.colors.reduce((a, r) => {
+          r.from <= value && value <= r.to && (a = r.color);
+          return a;
+        }, "var(--color-default)"),
+    }));
+  },
+
+  line: (chart) => {
+    const index = chart.runtime.selectedLegendIndex;
+    const cfg =
+      index !== null
+        ? chart.live.seriesConfig.filter((_, i) => i === index)
+        : chart.live.seriesConfig;
+
+    return cfg.map((s) => ({
+      name: s.name,
+      data: chart.series.filtered.map((d) => d?.[s.key]),
+      color: s.color,
+    }));
+  },
+
+  radialBar: (chart) => {
+    const index = chart.runtime.selectedLegendIndex;
+
+    if (index !== null) {
+      return [chart.series.filtered[index][chart.live.seriesConfig[index].key]];
+    }
+
+    return chart.live.seriesConfig.map(
+      (s, i) => chart.series.filtered[i][s.key]
+    );
+  },
+};
+
+export default function useChartCfgGenerator({ chartId, type }) {
+  const layout = useChartStore((s) => s[chartId].live.layout);
+  const filteredSeries = useChartStore((s) => s[chartId].series.filtered);
+  const seriesConfig = useChartStore((s) => s[chartId].live.seriesConfig);
+  const selectedLegendIndex = useChartStore(
+    (s) => s[chartId].runtime.selectedLegendIndex
+  );
 
   // --- Tooltip callback ---
-  const tooltipCallBack = useCallback((seriesValue, index, w) => {
-    const { filteredSeries, xLabelsKey, seriesConfig } =
-      useChartStore.getState().charts[chartId];
+  const tooltipCallback = useCallback((seriesValue, index, seriesIndex) => {
+    const { series, meta, live, runtime } = useChartStore.getState()[chartId];
 
     if (type === "bar") {
       return {
-        title: filteredSeries?.[index]?.[xLabelsKey],
+        title: series.filtered?.[index]?.[meta.xaxisMetric],
         dataArray: seriesValue?.map((value, i) => {
-          if (
-            layout.selectedLegendIndex !== null &&
-            layout.selectedLegendIndex !== i
-          )
-            return null;
-          const { color, label } = seriesConfig[i].colors.reduce((a, r) => {
-            if (r.from <= value && value <= r.to) {
-              a.color = r.color;
-              a.label = r.label;
-            }
-            return a;
-          }, {});
+          const legendIndex =
+            runtime.selectedLegendIndex !== null
+              ? runtime.selectedLegendIndex
+              : i;
+
+          const { color, label } = live.seriesConfig[legendIndex].colors.reduce(
+            (a, r) => {
+              if (r.from <= value && value <= r.to) {
+                a.color = r.color;
+                a.label = r.label;
+              }
+              return a;
+            },
+            {}
+          );
           return {
-            value: layout.yLabelPrefix + value + layout.yLabelSuffix,
+            value: live.layout.yLabelPrefix + value + live.layout.yLabelSuffix,
             label,
             color,
           };
         }),
       };
+    } else if (type === "radialBar") {
+      const legendIndex =
+        runtime.selectedLegendIndex !== null
+          ? runtime.selectedLegendIndex
+          : seriesIndex;
+      return {
+        title: series.filtered[legendIndex][meta.xaxisMetric],
+        dataArray: [
+          {
+            value:
+              series.filtered[legendIndex][live.seriesConfig[legendIndex].key],
+            label: live.seriesConfig[legendIndex].name,
+            color: live.seriesConfig[legendIndex].color,
+          },
+        ],
+      };
     }
 
     // line / area tooltip
     return {
-      title: filteredSeries[index][xLabelsKey],
+      title: series.filtered[index][meta.xaxisMetric],
       dataArray: seriesValue.map((value, i) => {
-        if (
-          layout.selectedLegendIndex != null &&
-          layout.selectedLegendIndex !== i
-        )
-          return;
+        const legendIndex =
+          runtime.selectedLegendIndex !== null
+            ? runtime.selectedLegendIndex
+            : i;
 
         return {
           value: layout.yLabelPrefix + value + layout.yLabelSuffix,
-          label: seriesConfig[i].name,
-          color: seriesConfig[i].color,
+          label: live.seriesConfig[legendIndex].name,
+          color: live.seriesConfig[legendIndex].color,
         };
       }),
     };
   }, []);
 
-  const options = useMemo(
-    () =>
-      configGenerator?.[type]({
-        chart: useChartStore.getState().charts[chartId],
-        chartRef,
+  const { options, computedSeries } = useMemo(
+    () => ({
+      options: configGenerator?.[type]({
+        chart: useChartStore.getState()[chartId],
         chartId,
-        tooltipCallBack,
+        tooltipCallback,
       }),
-    [layout, seriesConfig, filteredSeries]
+      computedSeries: seriesGenerator[type](useChartStore.getState()[chartId]),
+    }),
+    [layout, seriesConfig, filteredSeries, selectedLegendIndex]
   );
 
-  // --- Series ---
-  const computedSeries =
-    type === "bar"
-      ? layout.selectedLegendIndex !== null
-        ? [
-            {
-              name: seriesConfig[layout.selectedLegendIndex].name,
-              data: filteredSeries.map(
-                (d) => d[seriesConfig[layout.selectedLegendIndex].key]
-              ),
-              color: ({ value }) =>
-                seriesConfig[layout.selectedLegendIndex].colors.reduce(
-                  (a, r) => {
-                    r.from <= value && value <= r.to && (a = r.color);
-                    return a;
-                  },
-                  "var(--color-default)"
-                ),
-            },
-          ]
-        : seriesConfig.map((s, i) => {
-            return {
-              name: s.name,
-              data: filteredSeries.map((d) => d?.[s.key]),
-              color: ({ value }) =>
-                s.colors.reduce((a, r) => {
-                  r.from <= value && value <= r.to && (a = r.color);
-                  return a;
-                }, "var(--color-default)"),
-            };
-          })
-      : type === "line"
-      ? layout.selectedLegendIndex !== null
-        ? [
-            {
-              name: seriesConfig[layout.selectedLegendIndex].name,
-              data: filteredSeries.map(
-                (d) => d[seriesConfig[layout.selectedLegendIndex].key]
-              ),
-              color: seriesConfig[layout.selectedLegendIndex].color,
-            },
-          ]
-        : seriesConfig.map((s, i) => {
-            return {
-              name: s.name,
-              data: filteredSeries.map((d) => d?.[s.key]),
-              color: s.color,
-            };
-          })
-      : type === "radialBar"
-      ? layout.selectedLegendIndex !== null
-        ? [
-            filteredSeries[layout.selectedLegendIndex][
-              seriesConfig[layout.selectedLegendIndex].key
-            ],
-          ]
-        : seriesConfig.map((s, i) => {
-            return filteredSeries[i][s.key];
-          })
-      : null;
-
-  return { options, computedSeries, seriesConfig, layout };
+  return {
+    options,
+    computedSeries,
+    seriesConfig,
+    layout,
+    selectedLegendIndex,
+  };
 }

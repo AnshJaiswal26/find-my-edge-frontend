@@ -8,7 +8,7 @@
 }
 
 .chartInnerContainer {
-  margin-bottom: 1.75rem;
+  /* margin-bottom: 1.75rem; */
   gap: 0.25rem;
   height: 100%;
 }
@@ -38,12 +38,38 @@
   height: fit-content;
   box-sizing: border-box;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .chartLegendWrapper {
   display: flex;
+  position: absolute;
   gap: 0.5rem;
   flex-wrap: wrap;
+  z-index: 10;
+  width: 100%;
+}
+
+.chartLegendWrapper.top {
+  top: 70px;
+}
+
+.chartLegendWrapper.bottom {
+  bottom: 15px;
+}
+
+.chartLegendWrapper.left {
+  left: 40px;
+}
+
+.chartLegendWrapper.right {
+  right: 65px;
+  justify-content: end;
+}
+
+.chartLegendWrapper.center {
+  left: 0;
+  justify-content: center;
 }
 
 .chartWrapper {

@@ -7,10 +7,10 @@ export default function RadialDataLabelSection({ chartId, updateChart }) {
     <Section title="Data Label Settings">
       <ToggleButton
         label={"Show Name"}
-        value={(s) => s.charts[chartId].tempLayout.name}
+        value={(s) => s[chartId].draft.layout.name}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.name = !chart.tempLayout.name;
+            chart.draft.layout.name = !chart.draft.layout.name;
           })
         }
         store={useChartStore}
@@ -18,10 +18,10 @@ export default function RadialDataLabelSection({ chartId, updateChart }) {
 
       <ToggleButton
         label={"Show Value"}
-        value={(s) => s.charts[chartId].tempLayout.value}
+        value={(s) => s[chartId].draft.layout.value}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.value = !chart.tempLayout.value;
+            chart.draft.layout.value = !chart.draft.layout.value;
           })
         }
         store={useChartStore}
@@ -29,10 +29,10 @@ export default function RadialDataLabelSection({ chartId, updateChart }) {
 
       <ToggleButton
         label={"Show Total"}
-        value={(s) => s.charts[chartId].tempLayout.total}
+        value={(s) => s[chartId].draft.layout.total}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.total = !chart.tempLayout.total;
+            chart.draft.layout.total = !chart.draft.layout.total;
           })
         }
         store={useChartStore}
@@ -41,10 +41,10 @@ export default function RadialDataLabelSection({ chartId, updateChart }) {
       <InputField
         label="Total Value (static)"
         type="number"
-        value={(s) => s.charts[chartId].tempLayout.totalValue ?? 70}
+        value={(s) => s[chartId].draft.layout.totalValue ?? 70}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.totalValue = parseInt(v);
+            chart.draft.layout.totalValue = parseInt(v);
           })
         }
         store={useChartStore}

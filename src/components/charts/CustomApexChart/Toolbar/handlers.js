@@ -2,21 +2,21 @@ import { useChartStore } from "@stores";
 
 export const handleZoomIn = (updater, chartId) => {
   updater(chartId, (chart) => {
-    const prev = chart.layout.chartWidth;
+    const prev = chart.live.layout.chartWidth;
 
     if (prev === 1000) return;
 
-    chart.layout.chartWidth = typeof prev === "string" ? 200 : prev + 100;
+    chart.live.layout.chartWidth = typeof prev === "string" ? 200 : prev + 100;
   });
 };
 
 export const handleZoomOut = (updater, chartId) => {
   updater(chartId, (chart) => {
-    const prev = chart.layout.chartWidth;
+    const prev = chart.live.layout.chartWidth;
 
     if (prev === 100 || typeof prev === "string") return;
 
-    chart.layout.chartWidth = prev - 100;
+    chart.live.layout.chartWidth = prev - 100;
   });
 };
 
@@ -37,7 +37,7 @@ export const handleDownloadPNG = (chartId, filename = "apexchart.svg") => {
 };
 
 export const handleDownloadCSV = (chartId) => {
-  const chart = useChartStore.getState().charts[chartId];
+  const chart = useChartStore.getState()[chartId];
   const { filteredSeries, seriesConfig, xLabelsKey } = chart;
 
   // Build CSV header
@@ -59,7 +59,6 @@ export const handleDownloadCSV = (chartId) => {
 };
 
 export const handleReset = (chartId, updater) => {
-  const originalSeries =
-    useChartStore.getState().charts[chartId].originalSeries;
+  const originalSeries = useChartStore.getState()[chartId].originalSeries;
   updater(chartId, originalSeries);
 };

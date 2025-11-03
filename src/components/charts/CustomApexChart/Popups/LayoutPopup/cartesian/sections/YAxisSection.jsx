@@ -9,10 +9,10 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
       {!isHorizontal && (
         <ToggleButton
           label={"Tooltip"}
-          value={(s) => s.charts[chartId].tempLayout.xTooltip}
+          value={(s) => s[chartId].draft.layout.xTooltip}
           onClick={() =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.xTooltip = !chart.tempLayout.xTooltip;
+              chart.draft.layout.xTooltip = !chart.draft.layout.xTooltip;
             })
           }
           store={useChartStore}
@@ -22,11 +22,11 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
       <Section title={"Labels"}>
         <ColorPicker
           label="Color"
-          value={(s) => parseColor(s.charts[chartId].tempLayout.yLabelsColor)}
-          disable={(s) => s.charts[chartId].tempLayout.yLabels === false}
+          value={(s) => parseColor(s[chartId].draft.layout.yLabelsColor)}
+          disable={(s) => s[chartId].draft.layout.yLabels === false}
           onChange={(c) =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.yLabelsColor = c;
+              chart.draft.layout.yLabelsColor = c;
             })
           }
           store={useChartStore}
@@ -34,10 +34,10 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
 
         <ToggleButton
           label={"Show"}
-          value={(s) => s.charts[chartId].tempLayout.yLabels}
+          value={(s) => s[chartId].draft.layout.yLabels}
           onClick={() =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.yLabels = !chart.tempLayout.yLabels;
+              chart.draft.layout.yLabels = !chart.draft.layout.yLabels;
             })
           }
           store={useChartStore}
@@ -46,10 +46,10 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
         <InputField
           label="Prefix"
           type="text"
-          value={(s) => s.charts[chartId].tempLayout.yLabelPrefix}
+          value={(s) => s[chartId].draft.layout.yLabelPrefix}
           onChange={(v) =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.yLabels = v;
+              chart.draft.layout.yLabelPrefix = v;
             })
           }
           placeholder="Enter Prefix"
@@ -59,10 +59,10 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
         <InputField
           label="Suffix"
           type="text"
-          value={(s) => s.charts[chartId].tempLayout.yLabelSuffix}
+          value={(s) => s[chartId].draft.layout.yLabelSuffix}
           onChange={(v) =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.yLabelSuffix = v;
+              chart.draft.layout.yLabelSuffix = v;
             })
           }
           placeholder="Enter Suffix"
@@ -77,10 +77,10 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
         <InputField
           label="Text"
           type="text"
-          value={(s) => s.charts[chartId].tempLayout.yTitleText}
+          value={(s) => s[chartId].draft.layout.yTitleText}
           onChange={(v) =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.yTitleText = v;
+              chart.draft.layout.yTitleText = v;
             })
           }
           placeholder={"Y-axis title"}
@@ -89,11 +89,11 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
 
         <ColorPicker
           label="Color"
-          value={(s) => parseColor(s.charts[chartId].tempLayout.yTitleColor)}
-          disable={(s) => s.charts[chartId].tempLayout.yTitleText === ""}
+          value={(s) => parseColor(s[chartId].draft.layout.yTitleColor)}
+          disable={(s) => s[chartId].draft.layout.yTitleText === ""}
           onChange={(c) =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.yTitleColor = c;
+              chart.draft.layout.yTitleColor = c;
             })
           }
           store={useChartStore}

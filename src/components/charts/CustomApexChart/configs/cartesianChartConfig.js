@@ -1,30 +1,25 @@
 import { useChartStore } from "@stores";
 import { customTooltip } from "./customTooltip";
 
-export const cartesianChartConfig = ({
-  chart,
-  chartId,
-  chartRef,
-  tooltipCallBack,
-}) => {
-  const config = chart.layout;
-  const series = chart.filteredSeries;
+export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
+  const config = chart.live.layout;
+  const series = chart.series.filtered;
 
   const style = { fontSize: "0.75rem" };
 
-  const isPrefix = config.xLabelPrefixIndexing && config.xLabelsKey !== "";
-  const isSuffix = config.xLabelSuffixIndexing && config.xLabelsKey !== "";
+  const isPrefix = config.xLabelPrefixIndexing && chart.meta.xaxisMetric !== "";
+  const isSuffix = config.xLabelSuffixIndexing && chart.meta.xaxisMetric !== "";
 
   const formatterX = (v) => {
     return `${isPrefix ? v : ""}${config.xLabelPrefix}${
-      v === 0 ? "" : series[v - 1]?.[config.xLabelsKey] || v
+      v === 0 ? "" : series[v - 1]?.[chart.meta.xaxisMetric] || v
     }${config.xLabelSuffix}${isSuffix ? v : ""}`;
   };
 
   const formatterY = (v) => `${config.yLabelPrefix}${v}${config.yLabelSuffix}`;
 
   const axisX = {
-    categories: series.map((s) => s[config.xLabelsKey] || ""),
+    categories: [],
     tooltip: { enabled: !config.horizontal && config.xTooltip },
     labels: {
       show: config.xLabels,
@@ -66,8 +61,8 @@ export const cartesianChartConfig = ({
       events: {
         click: (e, t, { dataPointIndex }) => {
           const state = useChartStore.getState();
-          const chart = state.charts[chartId];
-          const isSelecting = chart.layout.selection;
+          const chart = state[chartId];
+          const isSelecting = chart.live.layout.selection;
           if (!isSelecting) return;
 
           const svgRect = t.el.getBoundingClientRect();
@@ -128,12 +123,12 @@ export const cartesianChartConfig = ({
               Math.max(startIndex, dataPointIndex),
             ];
 
-            const filteredSeries = [...chart.filteredSeries];
+            const filteredSeries = [...chart.series.filtered];
             const sliced = filteredSeries.slice(from, to + 1);
             const updatedSeries = sliced.length < 1 ? filteredSeries : sliced;
 
             state.updateChart(chartId, (chart) => {
-              chart.filteredSeries = updatedSeries;
+              chart.series.filtered = updatedSeries;
             });
 
             // ✅ Clean up DOM data
@@ -148,8 +143,8 @@ export const cartesianChartConfig = ({
           if (!selection) return;
           const svgRect = t.el.getBoundingClientRect();
 
-          const chart = useChartStore.getState().charts[chartId];
-          const isSelecting = chart.layout.selection;
+          const chart = useChartStore.getState()[chartId];
+          const isSelecting = chart.live.layout.selection;
           if (!isSelecting) return;
 
           if (config.horizontal) {
@@ -168,7 +163,6 @@ export const cartesianChartConfig = ({
             selection.style.left = `${width < 0 ? currentX : startX}px`;
           }
         },
-        mounted: (chartCtx) => (chartRef.current = chartCtx.el),
       },
     },
     grid: {
@@ -187,7 +181,7 @@ export const cartesianChartConfig = ({
       enabled: config.tooltip,
       intersect: false,
       followCursor: true,
-      custom: customTooltip(tooltipCallBack),
+      custom: customTooltip(tooltipCallback),
     },
 
     dataLabels: {

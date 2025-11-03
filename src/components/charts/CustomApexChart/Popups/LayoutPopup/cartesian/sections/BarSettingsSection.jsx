@@ -17,14 +17,14 @@ export default function BarSettingsSection({ chartId, updateChart }) {
         <ToggleButton
           key={i}
           label={title}
-          value={(s) => s.charts[chartId].tempLayout[key]}
+          value={(s) => s[chartId].draft.layout[key]}
           onClick={() => {
             updateChart(chartId, (chart) => {
-              chart.tempLayout[key] = !chart.tempLayout[key];
+              chart.draft.layout[key] = !chart.draft.layout[key];
               if (key === "stacked100")
-                chart.tempLayout.stacked = chart.tempLayout[key];
-              if (key === "stacked" && chart.tempLayout.stacked100)
-                chart.tempLayout.stacked100 = false;
+                chart.draft.layout.stacked = chart.draft.layout[key];
+              if (key === "stacked" && chart.draft.layout.stacked100)
+                chart.draft.layout.stacked100 = false;
             });
           }}
           store={useChartStore}
@@ -34,10 +34,10 @@ export default function BarSettingsSection({ chartId, updateChart }) {
       <InputField
         label="Bar Radius"
         type="range"
-        value={(s) => s.charts[chartId].tempLayout.barRadius}
+        value={(s) => s[chartId].draft.layout.barRadius}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.barRadius = v;
+            chart.draft.layout.barRadius = v;
           })
         }
         min={0}
@@ -50,9 +50,7 @@ export default function BarSettingsSection({ chartId, updateChart }) {
   );
 }
 function ConditionalColorRange({ chartId, updateChart }) {
-  const length = useChartStore(
-    (s) => s.charts[chartId].tempSeriesConfig.length
-  );
+  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
 
   return (
     <>
@@ -70,7 +68,7 @@ function ConditionalColorRange({ chartId, updateChart }) {
 
 function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
   const length = useChartStore(
-    (s) => s.charts[chartId].tempSeriesConfig[seriesIndex]?.colors.length || 0
+    (s) => s[chartId].draft.seriesConfig[seriesIndex]?.colors.length || 0
   );
 
   if (length === 0) return null;
@@ -92,13 +90,12 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
                 label={label}
                 type={key === "label" ? "text" : "number"}
                 value={(s) =>
-                  s.charts[chartId].tempSeriesConfig[seriesIndex].colors[index][
-                    key
-                  ]
+                  s[chartId].draft.seriesConfig[seriesIndex].colors[index][key]
                 }
                 onChange={(v) =>
                   updateChart(chartId, (chart) => {
-                    chart.tempSeriesConfig[seriesIndex].colors[index][key] = v;
+                    chart.draft.seriesConfig[seriesIndex].colors[index][key] =
+                      v;
                   })
                 }
                 store={useChartStore}
@@ -109,13 +106,12 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
               label="Color"
               value={(s) =>
                 parseColor(
-                  s.charts[chartId].tempSeriesConfig[seriesIndex].colors[index]
-                    .color
+                  s[chartId].draft.seriesConfig[seriesIndex].colors[index].color
                 )
               }
               onChange={(c) =>
                 updateChart(chartId, (chart) => {
-                  chart.tempSeriesConfig[seriesIndex].colors[index].color = c;
+                  chart.draft.seriesConfig[seriesIndex].colors[index].color = c;
                 })
               }
               store={useChartStore}
@@ -124,7 +120,7 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
               icon={<Trash2 size={15} />}
               onClick={() =>
                 updateChart(chartId, (chart) => {
-                  chart.tempSeriesConfig[seriesIndex].colors.splice(index, 1);
+                  chart.draft.seriesConfig[seriesIndex].colors.splice(index, 1);
                 })
               }
               className="p-2"
@@ -143,7 +139,7 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
           size="medium"
           onClick={() =>
             updateChart(chartId, (chart) => {
-              chart.tempSeriesConfig[seriesIndex].colors.push({
+              chart.draft.seriesConfig[seriesIndex].colors.push({
                 from: 0,
                 to: 0,
                 color: "var(--color-default)",

@@ -13,23 +13,23 @@ import RadialLegendSection from "./sections/LegendSection";
 
 export default function RadialLayoutPopup({ chartId }) {
   const updateChart = useChartStore((s) => s.updateChart);
-  const chart = useChartStore((s) => s.charts[chartId]);
+  const chart = useChartStore((s) => s[chartId]);
   const [isAnyChange, setIsAnyChange] = useState(true);
 
   const handleClose = useCallback(() => {
     updateChart(chartId, (chart, s) => {
-      s.charts.activeChart.id = "";
-      chart.tempLayout = chart.layout;
-      chart.tempSeriesConfig = chart.seriesConfig;
+      s.activeChart.id = "";
+      chart.draft.layout = chart.live.layout;
+      chart.draft.seriesConfig = chart.live.seriesConfig;
     });
     document.body.style.overflow = "";
   }, []);
 
   const handleApply = useCallback(() => {
     updateChart(chartId, (chart, s) => {
-      s.charts.activeChart.id = "";
-      chart.layout = chart.tempLayout;
-      chart.seriesConfig = chart.tempSeriesConfig;
+      s.activeChart.id = "";
+      chart.live.layout = chart.draft.layout;
+      chart.live.seriesConfig = chart.draft.seriesConfig;
     });
     document.body.style.overflow = "";
   }, []);

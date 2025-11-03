@@ -1,62 +1,45 @@
-import { parseColor, shadeColor } from "@utils";
+import { customTooltip, parseColor, shadeColor } from "@utils";
 
-export const getRadialBarChartConfig = ({ chartId, chart, chartRef }) => {
-  const config = chart.layout;
-  const seriesConfig = chart.seriesConfig;
+export const getRadialBarChartConfig = ({
+  chartId,
+  chart,
+  tooltipCallback,
+}) => {
+  const config = chart.live.layout;
+  const seriesConfig = chart.live.seriesConfig;
 
   return {
     chart: {
       id: chartId,
       type: "radialBar",
-
-      events: {
-        // dataPointMouseEnter: (event, chartContext, config) => {
-        //   const index = config.dataPointIndex;
-        //   setActiveIndex(index);
-        // },
-        // dataPointMouseLeave: () => {
-        //   setActiveIndex(null);
-        // },
-        mounted: (ctx) => (chartRef.current = ctx.el),
-      },
     },
 
     legend: {
-      show: true,
-      position: "left",
-      horizontalAlign: "center",
-      labels: {
-        fontSize: "1rem",
-        colors: "#ffffff",
-        marginBottom: "5px",
-      },
+      show: false,
+      position: "bottom", // top | bottom
       onItemClick: {
-        toggleDataSeries: false,
+        toggleDataSeries: true,
       },
     },
     stroke: {
-      lineCap: "round", //  "butt" | "round" | "square"
+      lineCap: "round", // "round" | "square"
     },
 
     fill: {
-      type: "gradient",
       gradient: {
-        shadeIntensity: 0.8,
-        gradientToColors: seriesConfig.map((s) =>
-          shadeColor(parseColor(s.color), 20)
-        ),
+        shadeIntensity: 0.7,
+        gradientToColors: seriesConfig.map((s) => shadeColor(s.color, 20)),
         inverseColors: false,
         opacityFrom: 1,
         opacityTo: 1,
-        stops: [0, 50, 0],
+        stops: [0, 50, 70, 50, 0],
       },
     },
-
     states: {
       hover: {
         filter: {
           type: "lighten",
-          value: 0.8,
+          value: 0.3,
         },
       },
     },
@@ -78,7 +61,10 @@ export const getRadialBarChartConfig = ({ chartId, chart, chartRef }) => {
           },
           total: {
             show: config.total ?? true,
-            formatter: (v) => parseFloat(v).toFixed(2),
+            // formatter: ({ value }) => {
+            //   console.log(value);
+            //   parseFloat(value).toFixed(2);
+            // },
           },
         },
       },
@@ -88,6 +74,7 @@ export const getRadialBarChartConfig = ({ chartId, chart, chartRef }) => {
 
     tooltip: {
       enabled: config.tooltip,
+      custom: customTooltip(tooltipCallback),
     },
   };
 };

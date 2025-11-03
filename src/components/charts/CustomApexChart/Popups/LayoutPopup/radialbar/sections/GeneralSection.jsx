@@ -8,10 +8,10 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
       <InputField
         label="Title"
         type="text"
-        value={(s) => s.charts[chartId].tempLayout.title}
+        value={(s) => s[chartId].draft.layout.title}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.title = v;
+            chart.draft.layout.title = v;
           })
         }
         placeholder="Chart title"
@@ -21,10 +21,10 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
 
       <ToggleButton
         label={"Tooltip"}
-        value={(s) => s.charts[chartId].tempLayout.tooltip}
+        value={(s) => s[chartId].draft.layout.tooltip}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.tooltip = !chart.tempLayout.tooltip;
+            chart.draft.layout.tooltip = !chart.draft.layout.tooltip;
           })
         }
         store={useChartStore}
@@ -32,10 +32,10 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
 
       <ToggleButton
         label={"Data Labels"}
-        value={(s) => s.charts[chartId].tempLayout.dataLabels}
+        value={(s) => s[chartId].draft.layout.dataLabels}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.dataLabels = !chart.tempLayout.dataLabels;
+            chart.draft.layout.dataLabels = !chart.draft.layout.dataLabels;
           })
         }
         store={useChartStore}
@@ -43,10 +43,10 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
 
       <ToggleButton
         label={"Legend"}
-        value={(s) => s.charts[chartId].tempLayout.legend}
+        value={(s) => s[chartId].draft.layout.legend}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.legend = !chart.tempLayout.legend;
+            chart.draft.layout.legend = !chart.draft.layout.legend;
           })
         }
         store={useChartStore}
@@ -56,11 +56,11 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
         label="Hollow Size (%)"
         type="range"
         value={(s) =>
-          parseInt(s.charts[chartId].tempLayout.hollowSize.replace("%", ""))
+          parseInt(s[chartId].draft.layout.hollowSize.replace("%", ""))
         }
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.hollowSize = `${v}%`;
+            chart.draft.layout.hollowSize = `${v}%`;
           })
         }
         min={20}
@@ -71,10 +71,10 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
       <InputField
         label="Start Angle"
         type="number"
-        value={(s) => s.charts[chartId].tempLayout.startAngle}
+        value={(s) => s[chartId].draft.layout.startAngle}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.startAngle = parseInt(v);
+            chart.draft.layout.startAngle = parseInt(v);
           })
         }
         store={useChartStore}
@@ -83,10 +83,10 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
       <InputField
         label="End Angle"
         type="number"
-        value={(s) => s.charts[chartId].tempLayout.endAngle}
+        value={(s) => s[chartId].draft.layout.endAngle}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.endAngle = parseInt(v);
+            chart.draft.layout.endAngle = parseInt(v);
           })
         }
         store={useChartStore}

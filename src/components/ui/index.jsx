@@ -17,4 +17,4 @@ export { default as Input } from "./InputField";
 export { default as ColorPicker } from "./ColorPicker";
 export { default as InputField } from "./InputField";
 
-export { default as ChartLayoutPopup } from "../charts/CustomApexChart/Popups/LayoutPopup";
+export { default as Select } from "./Select";

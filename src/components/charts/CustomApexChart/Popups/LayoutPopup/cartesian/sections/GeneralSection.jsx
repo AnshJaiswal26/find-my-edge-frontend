@@ -8,10 +8,10 @@ export default function GeneralSection({ chartId, updateChart }) {
       <InputField
         label="Title"
         type="text"
-        value={(s) => s.charts[chartId].tempLayout.title}
+        value={(s) => s[chartId].draft.layout.title}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.title = v;
+            chart.draft.layout.title = v;
           })
         }
         placeholder="Chart title"
@@ -21,60 +21,32 @@ export default function GeneralSection({ chartId, updateChart }) {
 
       <ToggleButton
         label={"Tooltip"}
-        value={(s) => s.charts[chartId].tempLayout.tooltip}
+        value={(s) => s[chartId].draft.layout.tooltip}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.tooltip = !chart.tempLayout.tooltip;
+            chart.draft.layout.tooltip = !chart.draft.layout.tooltip;
           })
         }
         store={useChartStore}
       />
       <ToggleButton
         label={"Data Labels"}
-        value={(s) => s.charts[chartId].tempLayout.dataLabels}
+        value={(s) => s[chartId].draft.layout.dataLabels}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.dataLabels = !chart.tempLayout.dataLabels;
+            chart.draft.layout.dataLabels = !chart.draft.layout.dataLabels;
           })
         }
         store={useChartStore}
       />
       <ToggleButton
         label={"Selection"}
-        value={(s) => s.charts[chartId].tempLayout.selection}
+        value={(s) => s[chartId].draft.layout.selection}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.selection = !chart.tempLayout.selection;
+            chart.draft.layout.selection = !chart.draft.layout.selection;
           })
         }
-        store={useChartStore}
-      />
-      <InputField
-        label="Chart Width (%)"
-        type="range"
-        formatter={(v) => `${v}%`}
-        value={(s) => s.charts[chartId].tempLayout.dimensionX}
-        onChange={(v) =>
-          updateChart(chartId, (chart) => {
-            chart.tempLayout.dimensionX = v;
-          })
-        }
-        min={50}
-        max={100}
-        store={useChartStore}
-      />
-      <InputField
-        label="Chart Height (px)"
-        type="range"
-        formatter={(v) => `${v}px`}
-        value={(s) => s.charts[chartId].tempLayout.dimensionY}
-        onChange={(v) =>
-          updateChart(chartId, (chart) => {
-            chart.tempLayout.dimensionY = v;
-          })
-        }
-        min={250}
-        max={500}
         store={useChartStore}
       />
     </Section>

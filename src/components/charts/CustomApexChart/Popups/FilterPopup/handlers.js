@@ -3,7 +3,7 @@ import { filterOperationMap, sortOperationMap } from "@utils";
 export const handleApply = (chart) => {
   const { selectedSeries, selectedFilter, selectedSort, value, from, to } =
     chart.filters;
-  let filtered = [...chart.originalSeries];
+  let filtered = [...chart.series.default];
 
   const sortFn = sortOperationMap?.[selectedSort];
   const filterFn = filterOperationMap?.[selectedFilter];
@@ -20,5 +20,5 @@ export const handleApply = (chart) => {
       sortFn(a[selectedSeries], b[selectedSeries])
     );
   }
-  chart.filteredSeries = filtered;
+  chart.series.filtered = filtered;
 };

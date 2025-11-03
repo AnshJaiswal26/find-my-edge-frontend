@@ -12,10 +12,10 @@ export default function LineSettingsSection({ chartId, updateChart }) {
           <ToggleButton
             key={i}
             label={curve.charAt(0).toUpperCase() + curve.slice(1)}
-            value={(s) => s.charts[chartId].tempLayout.curve === curve}
+            value={(s) => s[chartId].draft.layout.curve === curve}
             onClick={() =>
-              updateChart(chartId, (c) => {
-                c.tempLayout.curve = curve;
+              updateChart(chartId, (chart) => {
+                chart.draft.layout.curve = curve;
               })
             }
             store={useChartStore}
@@ -28,10 +28,10 @@ export default function LineSettingsSection({ chartId, updateChart }) {
         <InputField
           label="Stroke Width"
           type="range"
-          value={(s) => s.charts[chartId].tempLayout.strokeWidth}
+          value={(s) => s[chartId].draft.layout.strokeWidth}
           onChange={(v) =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.strokeWidth = v;
+              chart.draft.layout.strokeWidth = v;
             })
           }
           min={1}
@@ -52,10 +52,10 @@ export default function LineSettingsSection({ chartId, updateChart }) {
         <InputField
           label="Marker Size"
           type="range"
-          value={(s) => s.charts[chartId].tempLayout.markerSize}
+          value={(s) => s[chartId].draft.layout.markerSize}
           onChange={(v) =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.markerSize = Number(v);
+              chart.draft.layout.markerSize = Number(v);
             })
           }
           min={0}
@@ -66,10 +66,10 @@ export default function LineSettingsSection({ chartId, updateChart }) {
         <InputField
           label="Marker Hover Size"
           type="range"
-          value={(s) => s.charts[chartId].tempLayout.markerHoverSize}
+          value={(s) => s[chartId].draft.layout.markerHoverSize}
           onChange={(v) =>
             updateChart(chartId, (chart) => {
-              chart.tempLayout.markerHoverSize = Number(v);
+              chart.draft.layout.markerHoverSize = Number(v);
             })
           }
           min={1}
@@ -90,16 +90,16 @@ export default function LineSettingsSection({ chartId, updateChart }) {
 }
 
 function AreaSettingsSection({ chartId, updateChart }) {
-  const isAreaVisible = useChartStore((s) => s.charts[chartId].tempLayout.area);
+  const isAreaVisible = useChartStore((s) => s[chartId].draft.layout.area);
 
   return (
     <Section title="Area Settings">
       <ToggleButton
         label="Show Area"
-        value={(s) => s.charts[chartId].tempLayout.area}
+        value={(s) => s[chartId].draft.layout.area}
         onClick={() =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.area = !chart.tempLayout.area;
+            chart.draft.layout.area = !chart.draft.layout.area;
           })
         }
         store={useChartStore}
@@ -113,10 +113,10 @@ function AreaSettingsSection({ chartId, updateChart }) {
             min={0}
             max={1}
             step={0.05}
-            value={(s) => s.charts[chartId].tempLayout.areaOpacityFrom}
+            value={(s) => s[chartId].draft.layout.areaOpacityFrom}
             onChange={(v) =>
               updateChart(chartId, (chart) => {
-                chart.tempLayout.areaOpacityFrom = parseFloat(v);
+                chart.draft.layout.areaOpacityFrom = parseFloat(v);
               })
             }
             store={useChartStore}
@@ -128,10 +128,10 @@ function AreaSettingsSection({ chartId, updateChart }) {
             min={0}
             max={1}
             step={0.05}
-            value={(s) => s.charts[chartId].tempLayout.areaOpacityTo}
+            value={(s) => s[chartId].draft.layout.areaOpacityTo}
             onChange={(v) =>
               updateChart(chartId, (chart) => {
-                chart.tempLayout.areaOpacityTo = parseFloat(v);
+                chart.draft.layout.areaOpacityTo = parseFloat(v);
               })
             }
             store={useChartStore}
@@ -139,11 +139,11 @@ function AreaSettingsSection({ chartId, updateChart }) {
 
           <ToggleButton
             label={"Area Horizontal"}
-            value={(s) => s.charts[chartId].tempLayout.areaGradientHorizontal}
+            value={(s) => s[chartId].draft.layout.areaGradientHorizontal}
             onClick={() =>
               updateChart(chartId, (chart) => {
-                chart.tempLayout.areaGradientHorizontal =
-                  !chart.tempLayout.areaGradientHorizontal;
+                chart.draft.layout.areaGradientHorizontal =
+                  !chart.draft.layout.areaGradientHorizontal;
               })
             }
             store={useChartStore}
@@ -162,9 +162,7 @@ function AreaSettingsSection({ chartId, updateChart }) {
 }
 
 function SeriesColors({ title, chartId, updateChart, type = "markerColor" }) {
-  const length = useChartStore(
-    (s) => s.charts[chartId].tempSeriesConfig.length
-  );
+  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
 
   return (
     <Section title={title}>
@@ -172,12 +170,10 @@ function SeriesColors({ title, chartId, updateChart, type = "markerColor" }) {
         <ColorPicker
           key={index}
           label={`Series ${index + 1}`}
-          value={(s) =>
-            parseColor(s.charts[chartId].tempSeriesConfig[index][type])
-          }
+          value={(s) => parseColor(s[chartId].draft.seriesConfig[index][type])}
           onChange={(c) => {
             updateChart(chartId, (chart) => {
-              chart.tempSeriesConfig[index][type] = c;
+              chart.draft.seriesConfig[index][type] = c;
             });
           }}
           store={useChartStore}

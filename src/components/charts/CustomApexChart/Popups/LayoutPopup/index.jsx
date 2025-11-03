@@ -3,7 +3,7 @@ import CartesianLayoutPopup from "./cartesian/CartesianLayoutPopup";
 import RadialLayoutPopup from "./radialbar/RadialLayoutPoup";
 
 export default function ChartLayoutPopup() {
-  const activeChart = useChartStore((s) => s.charts.activeChart);
+  const activeChart = useChartStore((s) => s.activeChart);
   if (activeChart.id === "") return null;
 
   return activeChart.type === "radialBar" ? (

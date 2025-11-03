@@ -8,8 +8,8 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import "./Dashboard.css";
 import "./Dark-Dashboard.css";
-import { Button, ChartLayoutPopup } from "@ui";
-import { CustomApexChart } from "@charts";
+import { Button } from "@ui";
+import { CustomApexChart, ChartLayoutPopup } from "@charts";
 import { WidthProvider, Responsive } from "react-grid-layout";
 
 const ReactGridLayout = WidthProvider(Responsive);
@@ -69,7 +69,7 @@ function ChartDashboard() {
 
   const order = useChartStore((s) => s.order);
 
-  const gridLayout = useChartStore.getState().charts.gridLayout;
+  const gridLayout = useChartStore.getState().chartGridLayout;
 
   const layout = useMemo(() => {
     if (gridLayout) return gridLayout;
@@ -99,13 +99,17 @@ function ChartDashboard() {
   const cols = { lg: 8, md: 8, sm: 6, xs: 4, xxs: 2 };
 
   return (
-    <div className="w-full h-full  bg-[inherit]" ref={containerRef}>
+    <div
+      className="w-full h-full border-3 border-[#233a58] bg-[inherit] rounded-[7px] overflow-hidden"
+      ref={containerRef}
+    >
+      <div className="bg-[#233a58] px-3 py-2 text-[#fff]">Risk Metrics</div>
       <ReactGridLayout
         className="layout"
         layouts={layouts}
         breakpoints={breakpoints}
         onLayoutChange={(l) =>
-          useChartStore.getState().updateChart((s) => (s.charts.gridLayout = l))
+          useChartStore.getState().updateChart((s) => (s.gridLayout = l))
         }
         cols={cols}
         rowHeight={10}

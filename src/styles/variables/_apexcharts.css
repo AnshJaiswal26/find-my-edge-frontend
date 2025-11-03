@@ -188,9 +188,33 @@
   pointer-events: none;
 }
 
-.apexcharts-legend-marker svg {
-  fill: var(--color-bg-container) !important;
-  stroke-width: 0 !important;
+.apexcharts-legend-series {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.25rem;
+}
+
+.apexcharts-legend-series .apexcharts-legend-marker {
+  border-radius: 50%;
+  background-color: var(--color-bg-container);
+}
+
+.apexcharts-legend-series svg {
+  border-radius: 50%;
+  background-color: var(--color-bg-container);
+  padding: 6.5px 2px;
+  width: 25px !important;
+  height: 25px !important;
+  border: none;
+}
+
+.apexcharts-legend-series svg path {
+  stroke-width: none !important;
+}
+
+.apexcharts-legend-text {
+  color: var(--color-text-heading) !important;
+  font-size: 0.93rem !important;
 }
 
 .react-resizable-handle-se {

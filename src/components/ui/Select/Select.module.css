@@ -1,0 +1,69 @@
+.selectWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+.selectLabel {
+  color: var(--color-text-heading);
+}
+
+.selectBtn {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem;
+  padding: 0.35rem 0.6rem;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-default);
+  min-width: 100px;
+}
+
+.optionListWrapper {
+  position: relative;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  border-radius: 7px 0px 0px 7px;
+  width: 100%;
+  position: absolute;
+  top: 104%;
+  right: 0%;
+  /* padding: 0.25rem 0.5rem; */
+  background-color: var(--color-bg-container);
+  border: 1px solid var(--color-border-default);
+  z-index: 100;
+  max-height: 200px;
+  min-width: 100px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.optionList::-webkit-scrollbar {
+  width: var(--scrollbar-size-mid);
+  height: var(--scrollbar-size-mid);
+}
+
+.optionList .option {
+  border-bottom: 1px solid var(--color-bg-hover);
+  padding: 0.25rem 0.5rem;
+  box-sizing: border-box;
+}
+
+.optionList .option:last-child {
+  border-bottom: none;
+}
+
+.optionList .option:hover {
+  background-color: var(--color-bg-hover);
+}
+
+:global(.sidebar-open) .optionList {
+  background-color: #ffff;
+}

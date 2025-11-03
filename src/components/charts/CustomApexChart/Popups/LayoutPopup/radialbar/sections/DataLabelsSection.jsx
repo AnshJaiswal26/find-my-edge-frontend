@@ -8,10 +8,10 @@ export default function RadialTrackSection({ chartId, updateChart }) {
     <Section title="Track Settings">
       <ColorPicker
         label="Background"
-        value={(s) => parseColor(s.charts[chartId].tempLayout.trackBackground)}
+        value={(s) => parseColor(s[chartId].draft.layout.trackBackground)}
         onChange={(c) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.trackBackground = c;
+            chart.draft.layout.trackBackground = c;
           })
         }
         store={useChartStore}
@@ -20,12 +20,10 @@ export default function RadialTrackSection({ chartId, updateChart }) {
       <InputField
         label="Stroke Width (%)"
         type="range"
-        value={(s) =>
-          parseInt(s.charts[chartId].tempLayout.strokeWidth || "50")
-        }
+        value={(s) => parseInt(s[chartId].draft.layout.strokeWidth || "50")}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.tempLayout.strokeWidth = `${v}%`;
+            chart.draft.layout.strokeWidth = `${v}%`;
           })
         }
         min={10}

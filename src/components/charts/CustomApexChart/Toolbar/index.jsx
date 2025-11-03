@@ -18,8 +18,10 @@ import {
   handleDownloadPNG,
 } from "./handlers";
 
-export default function Toolbar({ chartRef, chartId, type }) {
+export default function Toolbar({ chartId, type }) {
   const updateChart = useChartStore((s) => s.updateChart);
+
+  const isGroupType = ["radialBar", "pie", "radar"].includes(type);
 
   const IconCmpt = useMemo(
     () => [
@@ -28,8 +30,8 @@ export default function Toolbar({ chartRef, chartId, type }) {
         title: "Layout",
         onClick: () => {
           updateChart((s) => {
-            s.charts.activeChart.id = chartId;
-            s.charts.activeChart.type = type;
+            s.activeChart.id = chartId;
+            s.activeChart.type = type;
           });
           document.body.style.overflow = "hidden";
         },
@@ -39,24 +41,28 @@ export default function Toolbar({ chartRef, chartId, type }) {
         title: "Add Series",
         onClick: () => {},
       },
-      {
-        icon: ZoomIn,
-        title: "Zoom In",
-        onClick: () => handleZoomIn(updateChart, chartId),
-      },
-      {
-        icon: ZoomOut,
-        title: "Zoom Out",
-        onClick: () => handleZoomOut(updateChart, chartId),
-      },
-      {
-        icon: RefreshCcw,
-        title: "Reset Series",
-        onClick: () =>
-          updateChart(chartId, (chart) => {
-            chart.filteredSeries = chart.originalSeries;
-          }),
-      },
+      ...(isGroupType
+        ? []
+        : [
+            {
+              icon: ZoomIn,
+              title: "Zoom In",
+              onClick: () => handleZoomIn(updateChart, chartId),
+            },
+            {
+              icon: ZoomOut,
+              title: "Zoom Out",
+              onClick: () => handleZoomOut(updateChart, chartId),
+            },
+            {
+              icon: RefreshCcw,
+              title: "Reset Series",
+              onClick: () =>
+                updateChart(chartId, (chart) => {
+                  chart.series.filtered = chart.series.default;
+                }),
+            },
+          ]),
       {
         icon: Download,
         title: "Download",
@@ -69,23 +75,29 @@ export default function Toolbar({ chartRef, chartId, type }) {
         icon: Trash2,
         title: "Remove Chart",
         onClick: () => {
-          updateChart((s) => delete s.chart[chartId]);
+          updateChart((s) => {
+            delete s[chartId];
+            s.order = s.order.filter(({ id }) => id !== chartId);
+          });
         },
       },
     ],
-    [chartRef, chartId]
+    []
   );
 
   return (
     <div className="apexcharts-custom-toolbar">
-      <FilterPopup chartId={chartId} />
+      {!isGroupType && <FilterPopup chartId={chartId} />}
 
       {IconCmpt.map((item, index) => (
         <IconButton
           className={"icon-button"}
           key={index}
           icon={<item.icon />}
-          tooltip={{ title: item.title, position: "bottom" }}
+          tooltip={{
+            title: item.title,
+            position: "bottom",
+          }}
           onClick={() => (item?.onClick ? item.onClick() : {})}
         />
       ))}
