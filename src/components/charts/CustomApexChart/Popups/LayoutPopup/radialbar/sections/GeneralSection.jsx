@@ -53,18 +53,17 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
       />
 
       <InputField
-        label="Hollow Size (%)"
+        label="Hollow Size"
         type="range"
-        value={(s) =>
-          parseInt(s[chartId].draft.layout.hollowSize.replace("%", ""))
-        }
+        value={(s) => parseInt(s[chartId].draft.layout.hollowSize)}
+        formatter={(v) => `${v}%`}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.hollowSize = `${v}%`;
+            chart.draft.layout.strokeWidth = `${v}%`;
           })
         }
-        min={20}
-        max={80}
+        min={50}
+        max={100}
         store={useChartStore}
       />
 

@@ -4,7 +4,7 @@ import { useChartStore } from "@stores";
 import { Fragment } from "react";
 import { parseColor } from "@utils";
 import { Trash2 } from "lucide-react";
-import styles from "../CartesianLayoutPopup.module.css";
+import styles from "../../LayoutPopup.module.css";
 
 export default function BarSettingsSection({ chartId, updateChart }) {
   return (

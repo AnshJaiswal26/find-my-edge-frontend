@@ -3,7 +3,9 @@ import { cartesianChartConfig } from "./cartesianChartConfig";
 export const getLineChartConfig = ({ chart, chartId, tooltipCallback }) => {
   const config = chart.live.layout;
   const series = chart.series.filtered;
-  const seriesConfig = chart.live.seriesConfig;
+  const index = chart.runtime.selectedLegendIndex;
+  const seriesConfig =
+    index !== null ? [chart.live.seriesConfig[index]] : chart.live.seriesConfig;
 
   const base = cartesianChartConfig({
     chart,
@@ -25,10 +27,9 @@ export const getLineChartConfig = ({ chart, chartId, tooltipCallback }) => {
     stroke: { curve: config.curve || "smooth", width: config.strokeWidth || 2 },
     markers: {
       size: config.markerSize || 0,
-      colors:
-        chart.runtime.selectedLegendIndex !== null
-          ? seriesConfig[chart.runtime.selectedLegendIndex].markerColor
-          : seriesConfig?.map((s) => s.markerColor) || ["var(--color-default)"],
+      colors: seriesConfig?.map((s) => s.markerColor) || [
+        "var(--color-default)",
+      ],
       strokeWidth: 0,
       hover: { size: config.markerHoverSize || 6 },
     },

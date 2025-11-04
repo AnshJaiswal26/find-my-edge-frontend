@@ -1,10 +1,8 @@
-import { useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import Toolbar from "./Toolbar";
 import { useChartStore } from "@stores";
 import { Container, Legend } from "@layout";
 import useChartCfgGenerator from "./hooks/useChartCfgGenerator";
-import ApexCharts from "apexcharts";
 import styles from "./CustomApexChart.module.css";
 
 export default function CustomApexChart({ chartId, type }) {
@@ -46,16 +44,6 @@ function ChartWithConfig({ chartId, type }) {
 
   const updateChart = useChartStore((s) => s.updateChart);
 
-  useEffect(() => {
-    const listener = (e) => {
-      if (e.detail?.chartId === chartId) {
-        ApexCharts.exec(chartId, "resize");
-      }
-    };
-    window.addEventListener("chart-resize", listener);
-    return () => window.removeEventListener("chart-resize", listener);
-  }, []);
-
   return (
     <>
       {legend && (
@@ -68,13 +56,13 @@ function ChartWithConfig({ chartId, type }) {
               color={type === "bar" ? s.colors.map((r) => r.color) : s.color}
               label={s.name ?? s.label}
               selected={selectedLegendIndex === i}
-              onClick={() =>
+              onClick={() => {
                 updateChart(chartId, (chart) => {
                   if (chart.live.seriesConfig.length === 1) return;
                   const idx = chart.runtime.selectedLegendIndex;
                   chart.runtime.selectedLegendIndex = idx === i ? null : i;
-                })
-              }
+                });
+              }}
             />
           ))}
         </div>
@@ -92,11 +80,11 @@ function ChartWithConfig({ chartId, type }) {
       >
         <div className="h-full relative" style={{ width: `${chartWidth}%` }}>
           <ReactApexChart
-            key={`${layout?.area}`}
+            key={`${layout?.area} `}
             options={options}
             series={computedSeries}
             type={layout?.area && type === "line" ? "area" : type}
-            height={type === "radialBar" ? "100%" : "100%"}
+            height="100%"
             width="100%"
           />
         </div>

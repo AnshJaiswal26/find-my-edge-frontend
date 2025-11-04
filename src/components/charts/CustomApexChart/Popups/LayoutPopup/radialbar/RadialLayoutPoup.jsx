@@ -3,7 +3,7 @@ import { Popup, Section } from "@layout";
 import { ToggleButton, InputField, ColorPicker } from "@ui";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
-import styles from "../ChartLayoutPopup.module.css";
+import styles from "../LayoutPopup.module.css";
 
 // --- Sub-sections ---
 import RadialGeneralSection from "./sections/GeneralSection";

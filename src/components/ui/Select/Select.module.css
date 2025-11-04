@@ -21,6 +21,7 @@
   border-radius: 4px;
   border: 1px solid var(--color-border-default);
   min-width: 100px;
+  width: 100%;
 }
 
 .optionListWrapper {
@@ -39,10 +40,12 @@
   background-color: var(--color-bg-container);
   border: 1px solid var(--color-border-default);
   z-index: 100;
-  max-height: 200px;
+  max-height: 400px;
   min-width: 100px;
   overflow-y: auto;
   box-sizing: border-box;
+  color: var(--color-text-heading);
+  font-size: 0.85rem;
 }
 
 .optionList::-webkit-scrollbar {
@@ -54,6 +57,7 @@
   border-bottom: 1px solid var(--color-bg-hover);
   padding: 0.25rem 0.5rem;
   box-sizing: border-box;
+  text-align: start;
 }
 
 .optionList .option:last-child {

@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import styles from "./ChartFilterPopup.module.css";
+import styles from "./FilterPopup.module.css";
 import { useState } from "react";
+import { Select } from "@ui";
 
 export default function ExpandableSection({
   title,
@@ -29,20 +30,11 @@ export default function ExpandableSection({
 
       {isExpanded && (
         <div className="pl-3 pr-3 w-[100%] flex flex-col gap-3.5">
-          <select
-            onChange={(e) => onSelect(e.target.value)}
-            className={styles.chartFilterSelect}
+          <Select
+            onChange={(v) => onSelect(v)}
             value={selected}
-            id={title}
-          >
-            {Array.isArray(options)
-              ? options.map((v, i) => <option key={i}>{v}</option>)
-              : Object.entries(options).map(([k, v], i) => (
-                  <option key={i} value={k}>
-                    {v}
-                  </option>
-                ))}
-          </select>
+            options={options}
+          />
 
           {title.includes("Filter") && selected !== "none" && (
             <div className="flex flex-col gap-2">

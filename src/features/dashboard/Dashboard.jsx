@@ -73,14 +73,15 @@ function ChartDashboard() {
 
   const layout = useMemo(() => {
     if (gridLayout) return gridLayout;
-    return order.map(({ id }, index) => ({
+    return order.map(({ id, type }, index) => ({
       i: id,
-      x: (index * 4) % 12,
+      x: (index * 3) % 12,
       y: Math.floor(index / 3),
-      w: 4,
+      w: type === "radialBar" ? 10 : 16,
       h: 20,
-      minW: 3,
+      minW: type === "radialBar" ? 8 : 10,
       minH: 20,
+      maxH: 30,
     }));
   }, [gridLayout, order]);
 
@@ -96,14 +97,14 @@ function ChartDashboard() {
   );
 
   const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
-  const cols = { lg: 8, md: 8, sm: 6, xs: 4, xxs: 2 };
+  const cols = { lg: 30, md: 26, sm: 22, xs: 18, xxs: 14 };
 
   return (
     <div
-      className="w-full h-full border-3 border-[#233a58] bg-[inherit] rounded-[7px] overflow-hidden"
+      className="w-full h-full border-3 border-[#152335] bg-[inherit] rounded-[7px] overflow-hidden"
       ref={containerRef}
     >
-      <div className="bg-[#233a58] px-3 py-2 text-[#fff]">Risk Metrics</div>
+      <div className="bg-[#16283f] px-3 py-2 text-[#fff]">Risk Metrics</div>
       <ReactGridLayout
         className="layout"
         layouts={layouts}

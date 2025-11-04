@@ -1,24 +1,19 @@
 import { useMemo, useRef, useState } from "react";
-import { IconButton } from "../../../../ui/Buttons";
 import { Filter } from "lucide-react";
+import { IconButton } from "@ui";
 import { useClickOutside } from "@hooks";
 import { ChartPopup } from "@layout";
 import { useChartStore } from "@stores";
 import { filterOptions, sortOptions } from "@utils";
 import ExpandableSection from "./ExpandableSection";
-import styles from "./ChartFilterPopup.module.css";
+import styles from "./FilterPopup.module.css";
 import { handleApply } from "./handlers";
 
 export default function FilterPopup({ chartId }) {
   const [showFilter, setShowFilter] = useState(false);
   const ref = useRef();
 
-  useClickOutside(ref, () => {
-    setShowFilter(false);
-  });
-
   const updateChart = useChartStore((s) => s.updateChart);
-
   const filters = useChartStore((s) => s[chartId].filters);
 
   const { selectedSort, selectedFilter, value, from, to, selectedSeries } =
@@ -60,7 +55,8 @@ export default function FilterPopup({ chartId }) {
       <ChartPopup
         title={"Filter"}
         isVisible={showFilter}
-        onLeftBtnClick={() => {
+        text={["Clear"]}
+        onCancel={() => {
           updateChart(chartId, (chart) => {
             chart.series.filtered = chart.series.default;
             chart.filters = {
@@ -74,10 +70,11 @@ export default function FilterPopup({ chartId }) {
           });
           setShowFilter(false);
         }}
-        onRightBtnClick={() => {
+        onApply={() => {
           updateChart(chartId, handleApply);
           setShowFilter(false);
         }}
+        onClose={() => setShowFilter(false)}
         className={styles.filterPopupContent}
       >
         <SeriesSelector
@@ -95,7 +92,7 @@ export default function FilterPopup({ chartId }) {
             values={{ value, from, to }}
             onChange={(k, v) =>
               updateChart(chartId, (chart) => {
-                chart.filters[k] = v;
+                chart.filters[k] = v.toLowerCase();
               })
             }
           />

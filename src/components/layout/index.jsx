@@ -185,9 +185,10 @@ export const ChartPopup = ({
   title,
   children,
   isVisible,
-  text = { leftBtn: "Clear", rightBtn: "Apply" },
-  onLeftBtnClick = () => {},
-  onRightBtnClick = () => {},
+  text,
+  onCancel = () => null,
+  onApply = () => null,
+  onClose = () => null,
   className,
 }) => {
   if (!isVisible) return null;
@@ -196,19 +197,22 @@ export const ChartPopup = ({
     <div className={styles.chartPopup}>
       <header>
         <span>{title}</span>
+        <button onClick={onClose}>
+          <X size={14} />
+        </button>
       </header>
 
       <main className={className}>{children}</main>
 
       <footer className="flex-box justify-end gap-2">
         <Button
-          text={text?.leftBtn}
+          text={text?.[0] || "Cancel"}
           color={"var(--color-bg-hover)"}
           className={"text-[var(--color-text-headings)]"}
           size="small"
-          onClick={onLeftBtnClick}
+          onClick={onCancel}
         />
-        <Button text={text?.rightBtn} size="small" onClick={onRightBtnClick} />
+        <Button text={text?.[1] || "Apply"} size="small" onClick={onApply} />
       </footer>
     </div>
   );

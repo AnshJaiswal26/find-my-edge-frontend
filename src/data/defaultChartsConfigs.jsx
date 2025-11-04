@@ -74,15 +74,26 @@ const defaultRadialBarChartLayout = {
 
   // Radial specifics
   hollowSize: "50%",
-  trackBackground: "var(--color-gray-100)",
+  gradientType: "gradient",
+  trackBackground: "var(--color-bg-hover)",
   strokeWidth: "50%",
   startAngle: 0,
   endAngle: 360,
+  strokeLineCap: "round",
 
   // Data label parts
   name: true,
+  namePrefix: "",
+  nameSuffix: "",
+
   value: true,
+  valuePrefix: "",
+  valueSuffix: "%",
+
   total: true,
+  totalLabel: "Avg",
+  totalPrefix: "",
+  totalSuffix: "%",
 
   legend: true,
   legendPosition: "bottom",
@@ -270,7 +281,8 @@ export const defaultCharts = {
       data: [
         Number(
           parseFloat(
-            (tradeData.filter((d) => d.Pnl !== 0).length / tradeData.length) *
+            (tradeData.filter((d) => d.Profit !== 0).length /
+              tradeData.length) *
               100
           ).toFixed(2)
         ),

@@ -1,8 +1,8 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Select, ToggleButton } from "@ui";
 import { Popup, Section } from "@layout";
 import { useChartStore } from "@stores";
-import styles from "./CartesianLayoutPopup.module.css";
+import styles from "../LayoutPopup.module.css";
 
 import {
   GeneralSection,
@@ -19,23 +19,23 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
 
   const [isAnyChange, setIsAnyChange] = useState(true);
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     updateChart(chartId, (chart, s) => {
       s.activeChart.id = "";
       chart.draft.layout = chart.live.layout;
       chart.draft.seriesConfig = chart.live.seriesConfig;
     });
     document.body.style.overflow = "";
-  }, []);
+  };
 
-  const handleApply = useCallback(() => {
+  const handleApply = () => {
     updateChart(chartId, (chart, s) => {
       s.activeChart.id = "";
       chart.live.layout = chart.draft.layout;
       chart.live.seriesConfig = chart.draft.seriesConfig;
     });
     document.body.style.overflow = "";
-  }, []);
+  };
 
   const updateChart = useChartStore((s) => s.updateChart);
 
@@ -104,28 +104,22 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
           />
           <Select
             label={"Position"}
-            options={["Top", "Bottom"]}
-            value={(s) => {
-              const val = s[chartId].draft.layout.legendPosition;
-              return val.charAt(0).toUpperCase() + val.substring(1, val.lenth);
-            }}
-            onChange={(v) =>
+            options={{ top: "Top", bottom: "Bottom" }}
+            value={(s) => s[chartId].draft.layout.legendPosition}
+            onChange={(k) =>
               updateChart(chartId, (chart) => {
-                chart.draft.layout.legendPosition = v.toLowerCase();
+                chart.draft.layout.legendPosition = k;
               })
             }
             store={useChartStore}
           />
           <Select
             label={"Alignment"}
-            options={["Left", "Center", "Right"]}
-            value={(s) => {
-              const val = s[chartId].draft.layout.legendAlignment;
-              return val.charAt(0).toUpperCase() + val.substring(1, val.lenth);
-            }}
-            onChange={(v) =>
+            options={{ left: "Left", center: "Center", right: "Right" }}
+            value={(s) => s[chartId].draft.layout.legendAlignment}
+            onChange={(k) =>
               updateChart(chartId, (chart) => {
-                chart.draft.layout.legendAlignment = v.toLowerCase();
+                chart.draft.layout.legendAlignment = k;
               })
             }
             store={useChartStore}
