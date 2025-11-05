@@ -85,13 +85,17 @@ export default function useChartCfgGenerator({ chartId, type }) {
           ? runtime.selectedLegendIndex
           : seriesIndex;
       return {
-        title: series.filtered[legendIndex]?.[meta.xaxisMetric],
+        // title: live.seriesConfig[legendIndex].name,
+
         dataArray: [
           {
             value:
-              series.filtered[legendIndex][live.seriesConfig[legendIndex].key],
+              live.layout.valuePrefix +
+              series.filtered[legendIndex] +
+              live.layout.valueSuffix,
             label: live.seriesConfig[legendIndex].name,
             color: live.seriesConfig[legendIndex].color,
+            // indicator: false,
           },
         ],
       };

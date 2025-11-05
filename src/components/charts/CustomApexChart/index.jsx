@@ -55,7 +55,9 @@ function ChartWithConfig({ chartId, type }) {
               key={i}
               color={type === "bar" ? s.colors.map((r) => r.color) : s.color}
               label={s.name ?? s.label}
-              selected={selectedLegendIndex === i}
+              selected={
+                selectedLegendIndex !== i && selectedLegendIndex !== null
+              }
               onClick={() => {
                 updateChart(chartId, (chart) => {
                   if (chart.live.seriesConfig.length === 1) return;

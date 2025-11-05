@@ -1,8 +1,9 @@
 import { useResolvedValue } from "@hooks";
 import styles from "./Select.module.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { createPortal } from "react-dom";
+import { useUIStore } from "@stores";
 export default function Select({
   label,
   options,
@@ -11,18 +12,22 @@ export default function Select({
   store,
   className,
 }) {
-  const listRef = useRef(null);
+  const listId = useId();
+  const buttonId = `${listId}-button`;
+
   const buttonRef = useRef(null);
 
   const val = useResolvedValue(store, value);
 
-  const [showList, setShowList] = useState(false);
+  const activeSelector = useUIStore((s) => s.activeSelector);
+  const toggleActiveSelector = useUIStore((s) => s.toggleActiveSelector);
+
   const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
 
   const isArray = Array.isArray(options);
 
   useEffect(() => {
-    if (showList && buttonRef.current) {
+    if (activeSelector?.listId === listId && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setPos({
         top: rect.bottom + window.scrollY,
@@ -30,36 +35,7 @@ export default function Select({
         width: rect.width,
       });
     }
-
-    const handleGlobalClose = (e) => {
-      // If dropdown isn’t open → skip
-      if (!showList) return;
-
-      // If click was inside button or list → ignore
-      if (
-        buttonRef.current?.contains(e.target) ||
-        listRef.current?.contains(e.target)
-      )
-        return;
-
-      setShowList(false);
-    };
-
-    // Close on blur (when switching tabs or focusing DevTools)
-    const handleBlur = () => setShowList(false);
-
-    window.addEventListener("mousedown", handleGlobalClose);
-    window.addEventListener("resize", handleBlur);
-    window.addEventListener("blur", handleBlur);
-    document.addEventListener("visibilitychange", handleBlur);
-
-    return () => {
-      window.removeEventListener("mousedown", handleGlobalClose);
-      window.removeEventListener("resize", handleBlur);
-      window.removeEventListener("blur", handleBlur);
-      document.removeEventListener("visibilitychange", handleBlur);
-    };
-  }, [showList]);
+  }, [activeSelector]);
 
   return (
     <div className={`${styles.selectWrapper} ${className}`}>
@@ -70,18 +46,26 @@ export default function Select({
       )}
       <div className={`${styles.optionListWrapper} ${label ? "" : "w-full"}`}>
         <button
+          id={buttonId}
           ref={buttonRef}
           className={styles.selectBtn}
-          onClick={() => setShowList((p) => !p)}
+          onClick={(e) => {
+            e.preventDefault();
+            toggleActiveSelector(listId, buttonId);
+          }}
         >
           <span>{isArray ? val : options[val]}</span>{" "}
-          {showList ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          {activeSelector?.listId == listId ? (
+            <ChevronUp size={14} />
+          ) : (
+            <ChevronDown size={14} />
+          )}
         </button>
 
-        {showList &&
+        {activeSelector?.listId == listId &&
           createPortal(
             <div
-              ref={listRef}
+              id={listId}
               className={styles.optionList}
               style={{
                 position: "absolute",
@@ -93,13 +77,14 @@ export default function Select({
             >
               {(isArray ? options : Object.keys(options)).map((o, i) => (
                 <button
+                  id={listId}
                   key={i}
                   className={`${styles.option} ${
                     o === val ? styles.active : ""
                   }`}
                   onClick={() => {
                     onChange(o, options[o]);
-                    setShowList(false);
+                    toggleActiveSelector(listId, buttonId);
                   }}
                 >
                   {isArray ? o : options[o]}

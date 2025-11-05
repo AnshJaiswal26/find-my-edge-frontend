@@ -60,7 +60,7 @@ export const Legend = ({ color, label, selected, onClick = () => null }) => {
     <div className={styles.legendWrapper}>
       <div
         className={`${styles.legendIndicatorLabelWrapper} ${
-          selected ? "opacity-30" : ""
+          selected ? styles.selected : ""
         }`}
         onClick={onClick}
       >
@@ -136,12 +136,12 @@ export const Badge = ({ value, label, formatter, className }) => {
 export const Popup = ({
   title,
   children,
+  text,
   large = false,
   isVisible = true,
   onClose = () => {},
-  text = { leftBtn: "Clear", rightBtn: "Apply" },
-  onLeftBtnClick,
-  onRightBtnClick,
+  onCancel = () => null,
+  onApply = () => null,
 }) => {
   if (!isVisible) return null;
 
@@ -160,22 +160,16 @@ export const Popup = ({
         </header>
         <main>{children}</main>
 
-        {onLeftBtnClick && onRightBtnClick && (
-          <footer className={styles.chartPopupFooter}>
-            <Button
-              text={text?.leftBtn}
-              size="large"
-              onClick={onLeftBtnClick}
-              color="var(--color-bg-hover)"
-              className="text-[var(--color-text-charts)]"
-            />
-            <Button
-              text={text?.rightBtn}
-              size="large"
-              onClick={onRightBtnClick}
-            />
-          </footer>
-        )}
+        <footer className={styles.chartPopupFooter}>
+          <Button
+            text={text?.[0] || "Cancel"}
+            size="large"
+            onClick={onCancel}
+            color="var(--color-bg-hover)"
+            className="text-[var(--color-text-charts)]"
+          />
+          <Button text={text?.[1] || "Apply"} size="large" onClick={onApply} />
+        </footer>
       </div>
     </div>
   );

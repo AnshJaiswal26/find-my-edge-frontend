@@ -1,8 +1,9 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { pageRoute } from "@data";
 import { PageContainer } from "@layout";
 import { Loader2 } from "lucide-react";
+import { useUIStore } from "@stores";
 
 // Lazy import each page
 const Dashboard = lazy(() => import("./features/dashboard/Dashboard"));
@@ -44,6 +45,43 @@ function Loader() {
 }
 
 function App() {
+  useEffect(() => {
+    const setActiveSelector = useUIStore.getState().setActiveSelector;
+
+    const handleBlur = () => {
+      setActiveSelector(null);
+    };
+
+    const handleGlobalClose = (e) => {
+      const activeSelector = useUIStore.getState().activeSelector;
+      // If dropdown isn’t open → skip
+      if (activeSelector === null) return;
+
+      // If click was inside button or list → ignore
+      if (
+        e.target?.id === activeSelector?.buttonId ||
+        e.target?.id === activeSelector?.listId
+      )
+        return;
+
+      setActiveSelector(null);
+    };
+
+    window.addEventListener("mousedown", handleGlobalClose);
+    window.addEventListener("resize", handleBlur);
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("scroll", handleGlobalClose, true);
+    document.addEventListener("visibilitychange", handleBlur);
+
+    return () => {
+      window.removeEventListener("mousedown", handleGlobalClose);
+      window.removeEventListener("resize", handleBlur);
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("scroll", handleGlobalClose, true);
+      document.removeEventListener("visibilitychange", handleBlur);
+    };
+  }, []);
+
   return (
     <Suspense fallback={<Loader />}>
       <Routes>

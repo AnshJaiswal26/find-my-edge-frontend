@@ -1,50 +1,32 @@
 import { Section } from "@layout";
-import { ToggleButton, InputField } from "@ui";
+import { ColorPicker, InputField } from "@ui";
+import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 
-export default function RadialDataLabelSection({ chartId, updateChart }) {
+export default function TrackSection({ chartId, updateChart }) {
   return (
-    <Section title="Data Label Settings">
-      <ToggleButton
-        label={"Show Name"}
-        value={(s) => s[chartId].draft.layout.name}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.name = !chart.draft.layout.name;
-          })
-        }
-        store={useChartStore}
-      />
-
-      <ToggleButton
-        label={"Show Value"}
-        value={(s) => s[chartId].draft.layout.value}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.value = !chart.draft.layout.value;
-          })
-        }
-        store={useChartStore}
-      />
-
-      <ToggleButton
-        label={"Show Total"}
-        value={(s) => s[chartId].draft.layout.total}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.total = !chart.draft.layout.total;
-          })
-        }
-        store={useChartStore}
-      />
-
+    <Section title="Track">
       <InputField
-        label="Total Value (static)"
-        type="number"
-        value={(s) => s[chartId].draft.layout.totalValue ?? 70}
+        label={"Track Width"}
+        type="range"
+        value={(s) => parseInt(s[chartId].draft.layout.strokeWidth)}
+        formatter={(v) => `${v}%`}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.totalValue = parseInt(v);
+            chart.draft.layout.strokeWidth = `${v}%`;
+          })
+        }
+        min={0}
+        max={100}
+        store={useChartStore}
+      />
+
+      <ColorPicker
+        label="Background"
+        value={(s) => parseColor(s[chartId].draft.layout.trackBackground)}
+        onChange={(c) =>
+          updateChart(chartId, (chart) => {
+            chart.draft.layout.trackBackground = c;
           })
         }
         store={useChartStore}

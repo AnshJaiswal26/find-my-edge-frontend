@@ -16,7 +16,7 @@ export default function ColorPicker({
   return (
     <div className="flex justify-between items-center">
       <div
-        className={`flex gap-0.5 items-center relative px-2 py-1 rounded-[4px] w-fit border-1 border-[var(--color-bg-hover)] ${
+        className={`flex gap-0.5 items-center relative px-2 py-1 rounded-[4px] w-fit border-1 border-[var(--color-border-default)] ${
           isEnable ? "pointer-events-none opacity-40" : ""
         }`}
       >

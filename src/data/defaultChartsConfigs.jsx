@@ -69,8 +69,6 @@ const defaultRadialBarChartLayout = {
   selectedLegendIndex: null,
 
   tooltip: true,
-  dataLabels: true,
-  legend: false,
 
   // Radial specifics
   hollowSize: "50%",

@@ -1,53 +1,106 @@
 import { Section } from "@layout";
-import { ColorPicker, InputField, Select } from "@ui";
-import { parseColor } from "@utils";
+import { ToggleButton, InputField } from "@ui";
 import { useChartStore } from "@stores";
 
-export default function RadialTrackSection({ chartId, updateChart }) {
+export default function DataLabelSection({ chartId, updateChart }) {
   return (
-    <Section title="Bar And Track">
-      <Select
-        label={"Gradient Type"}
-        value={(s) => s[chartId].draft.layout.gradientType}
-        options={{ gradient: "Gradient", solid: "Solid" }}
-        onChange={(k) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.gradientType = k;
-          })
-        }
-      />
-      <ColorPicker
-        label="Background"
-        value={(s) => parseColor(s[chartId].draft.layout.trackBackground)}
-        onChange={(c) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.trackBackground = c;
-          })
-        }
-        store={useChartStore}
-      />
-
-      {[
-        { label: "Track Width", key: "strokeWidth", min: 0, max: 100 },
-        { label: "Start Angle", key: "startAngle", min: 0, max: 360 },
-        { label: "End Angle", key: "endAngle", min: 0, max: 360 },
-      ].map(({ label, key, min, max }, i) => (
-        <InputField
-          key={i}
-          label={label}
-          type="range"
-          value={(s) => parseInt(s[chartId].draft.layout[key])}
-          formatter={(v) => (key === "strokeWidth" ? `${v}%` : v)}
-          onChange={(v) =>
+    <Section title="Data Labels">
+      <Section>
+        <ToggleButton
+          label={"Name"}
+          value={(s) => s[chartId].draft.layout.name}
+          onClick={() =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout[key] = key === "strokeWidth" ? `${v}%` : v;
+              chart.draft.layout.name = !chart.draft.layout.name;
             })
           }
-          min={min}
-          max={max}
           store={useChartStore}
         />
-      ))}
+      </Section>
+
+      {/* <div className="border-t-1 border-[var(--color-border-default)]"></div> */}
+
+      <Section>
+        <ToggleButton
+          label={"Value"}
+          value={(s) => s[chartId].draft.layout.value}
+          onClick={() =>
+            updateChart(chartId, (chart) => {
+              chart.draft.layout.value = !chart.draft.layout.value;
+            })
+          }
+          store={useChartStore}
+        />
+        <InputField
+          label={"Prefix"}
+          value={(s) => s[chartId].draft.layout.valuePrefix}
+          placeholder="Enter Prefix"
+          onChange={(v) =>
+            updateChart(chartId, (chart) => {
+              chart.draft.layout.valuePrefix = v;
+            })
+          }
+          store={useChartStore}
+        />
+        <InputField
+          label={"Suffix"}
+          value={(s) => s[chartId].draft.layout.valueSuffix}
+          placeholder="Enter Suffix"
+          onChange={(v) =>
+            updateChart(chartId, (chart) => {
+              chart.draft.layout.valueSuffix = v;
+            })
+          }
+          store={useChartStore}
+        />
+      </Section>
+      {/* <div className="border-t-1 border-[var(--color-border-default)]"></div> */}
+
+      <Section>
+        <ToggleButton
+          label={"Total"}
+          value={(s) => s[chartId].draft.layout.total}
+          onClick={() =>
+            updateChart(chartId, (chart) => {
+              chart.draft.layout.total = !chart.draft.layout.total;
+            })
+          }
+          store={useChartStore}
+        />
+        <InputField
+          label={"Label"}
+          value={(s) => s[chartId].draft.layout.totalLabel}
+          placeholder="Enter Label"
+          onChange={(v) =>
+            updateChart(chartId, (chart) => {
+              chart.draft.layout.totalLabel = v;
+            })
+          }
+          store={useChartStore}
+        />
+        <InputField
+          label={"Prefix"}
+          value={(s) => s[chartId].draft.layout.totalPrefix}
+          placeholder="Enter Prefix"
+          onChange={(v) =>
+            updateChart(chartId, (chart) => {
+              chart.draft.layout.totalPrefix = v;
+            })
+          }
+          store={useChartStore}
+        />
+        <InputField
+          label={"Suffix"}
+          value={(s) => s[chartId].draft.layout.totalSuffix}
+          placeholder="Enter Suffix"
+          onChange={(v) =>
+            updateChart(chartId, (chart) => {
+              chart.draft.layout.totalSuffix = v;
+            })
+          }
+          store={useChartStore}
+        />
+      </Section>
     </Section>
   );
 }

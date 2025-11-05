@@ -9,15 +9,6 @@ const getTheme = () => {
   return theme || "dark";
 };
 
-const getSidebarStatus = () => {
-  const isSidebarOpen = localStorage.getItem("isSidebarOpen");
-
-  if (isSidebarOpen)
-    document.documentElement.classList.toggle("sidebar-open", isSidebarOpen);
-
-  return isSidebarOpen !== undefined ? isSidebarOpen : false;
-};
-
 export const useUIStore = create((set) => ({
   theme: getTheme(),
 
@@ -45,4 +36,11 @@ export const useUIStore = create((set) => ({
 
   selectedAvatar: "Icons/avtar/user.png",
   setAvtar: (avtar) => set({ selectedAvatar: avtar }),
+
+  activeSelector: null,
+  setActiveSelector: (value) => set({ activeSelector: value }),
+  toggleActiveSelector: (listId, buttonId) =>
+    set((p) => ({
+      activeSelector: p.activeSelector !== null ? null : { listId, buttonId },
+    })),
 }));

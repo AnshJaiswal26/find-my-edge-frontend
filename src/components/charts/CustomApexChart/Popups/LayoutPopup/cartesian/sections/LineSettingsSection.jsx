@@ -40,7 +40,7 @@ export default function LineSettingsSection({ chartId, updateChart }) {
         />
 
         <SeriesColors
-          title={"Stroke Colors"}
+          title={"Stroke Color"}
           chartId={chartId}
           updateChart={updateChart}
           type="color"
@@ -78,7 +78,7 @@ export default function LineSettingsSection({ chartId, updateChart }) {
         />
 
         <SeriesColors
-          title={"Marker Colors"}
+          title={"Marker Color"}
           updateChart={updateChart}
           chartId={chartId}
         />
@@ -150,7 +150,7 @@ function AreaSettingsSection({ chartId, updateChart }) {
           />
 
           <SeriesColors
-            title={"Area Colors"}
+            title={"Area Color"}
             chartId={chartId}
             updateChart={updateChart}
             type="areaColor"
@@ -165,11 +165,11 @@ function SeriesColors({ title, chartId, updateChart, type = "markerColor" }) {
   const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
 
   return (
-    <Section title={title}>
+    <div className="flex flex-wrap gap-3">
       {Array.from({ length }).map((_, index) => (
         <ColorPicker
           key={index}
-          label={`Series ${index + 1}`}
+          label={`${title} ${index + 1}`}
           value={(s) => parseColor(s[chartId].draft.seriesConfig[index][type])}
           onChange={(c) => {
             updateChart(chartId, (chart) => {
@@ -179,6 +179,6 @@ function SeriesColors({ title, chartId, updateChart, type = "markerColor" }) {
           store={useChartStore}
         />
       ))}
-    </Section>
+    </div>
   );
 }

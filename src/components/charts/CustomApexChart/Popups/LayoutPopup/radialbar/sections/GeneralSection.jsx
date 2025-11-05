@@ -15,7 +15,6 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
           })
         }
         placeholder="Chart title"
-        className="w-[14rem]"
         store={useChartStore}
       />
 
@@ -25,28 +24,6 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
         onClick={() =>
           updateChart(chartId, (chart) => {
             chart.draft.layout.tooltip = !chart.draft.layout.tooltip;
-          })
-        }
-        store={useChartStore}
-      />
-
-      <ToggleButton
-        label={"Data Labels"}
-        value={(s) => s[chartId].draft.layout.dataLabels}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.dataLabels = !chart.draft.layout.dataLabels;
-          })
-        }
-        store={useChartStore}
-      />
-
-      <ToggleButton
-        label={"Legend"}
-        value={(s) => s[chartId].draft.layout.legend}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.legend = !chart.draft.layout.legend;
           })
         }
         store={useChartStore}
@@ -68,26 +45,29 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
       />
 
       <InputField
-        label="Start Angle"
-        type="number"
-        value={(s) => s[chartId].draft.layout.startAngle}
+        label={"Start Angle"}
+        type="range"
+        value={(s) => parseInt(s[chartId].draft.layout.startAngle)}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.startAngle = parseInt(v);
+            chart.draft.layout.startAngle = v;
           })
         }
+        min={0}
+        max={360}
         store={useChartStore}
       />
-
       <InputField
-        label="End Angle"
-        type="number"
-        value={(s) => s[chartId].draft.layout.endAngle}
+        label={"End Angle"}
+        type="range"
+        value={(s) => parseInt(s[chartId].draft.layout.endAngle)}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.endAngle = parseInt(v);
+            chart.draft.layout.endAngle = v;
           })
         }
+        min={0}
+        max={360}
         store={useChartStore}
       />
     </Section>

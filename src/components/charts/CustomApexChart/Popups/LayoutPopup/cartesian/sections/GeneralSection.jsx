@@ -15,7 +15,7 @@ export default function GeneralSection({ chartId, updateChart }) {
           })
         }
         placeholder="Chart title"
-        className="w-[14rem]"
+        className="flex-1"
         store={useChartStore}
       />
 

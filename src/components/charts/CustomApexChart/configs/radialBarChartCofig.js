@@ -53,7 +53,6 @@ export const getRadialBarChartConfig = ({
           background: config.trackBackground ?? "var(--color-bg-hover)",
         },
         dataLabels: {
-          showOn: config.showOn ?? "always",
           name: { show: config.name ?? true },
           value: {
             show: config.value ?? true,

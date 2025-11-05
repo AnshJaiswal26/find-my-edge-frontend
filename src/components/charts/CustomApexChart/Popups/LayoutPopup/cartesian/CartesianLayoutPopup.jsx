@@ -43,9 +43,9 @@ export default function CartesianLayoutPopup({ chartId, type = "bar" }) {
     <Popup
       title={"Layout"}
       isVisible={true}
-      text={{ leftBtn: "Cancel", rightBtn: isAnyChange ? "Apply" : "Ok" }}
-      onLeftBtnClick={handleClose}
-      onRightBtnClick={handleApply}
+      text={["Cancel", isAnyChange ? "Apply" : "Ok"]}
+      onCancel={handleClose}
+      onApply={handleApply}
       onClose={handleClose}
     >
       <div className={styles.contentWrapper}>

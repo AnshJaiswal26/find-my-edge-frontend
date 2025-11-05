@@ -62,7 +62,7 @@
 .section {
   border-radius: 5px;
   padding: 0.75rem;
-  border: 1px solid var(--color-bg-hover);
+  border: 1px solid var(--color-border-default);
 }
 
 .sectionTitle {
@@ -105,7 +105,6 @@
 .legendWrapper {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
   font-size: 0.93rem;
   color: var(--color-text-charts);
 }
@@ -120,11 +119,13 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  padding: 0 0.25rem;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.legendIndicatorLabelWrapper:hover {
-  opacity: 0.4;
-  cursor: pointer;
+.legendIndicatorLabelWrapper.selected {
+  opacity: 0.3;
 }
 
 /* Percentage Bar */

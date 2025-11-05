@@ -6,48 +6,49 @@ import { parseColor } from "@utils";
 import styles from "../LayoutPopup.module.css";
 
 // --- Sub-sections ---
-import RadialGeneralSection from "./sections/GeneralSection";
-import RadialDataLabelSection from "./sections/DataLabelsSection";
-import RadialTrackSection from "./sections/TrackSection";
-import RadialLegendSection from "./sections/LegendSection";
+import GeneralSection from "./sections/GeneralSection";
+import DataLabelSection from "./sections/DataLabelsSection";
+import TrackSection from "./sections/TrackSection";
+import BarSection from "./sections/RadialBarSection";
+import LegendSection from "./sections/LegendSection";
 
 export default function RadialLayoutPopup({ chartId }) {
   const updateChart = useChartStore((s) => s.updateChart);
-  const chart = useChartStore((s) => s[chartId]);
   const [isAnyChange, setIsAnyChange] = useState(true);
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     updateChart(chartId, (chart, s) => {
       s.activeChart.id = "";
       chart.draft.layout = chart.live.layout;
       chart.draft.seriesConfig = chart.live.seriesConfig;
     });
     document.body.style.overflow = "";
-  }, []);
+  };
 
-  const handleApply = useCallback(() => {
+  const handleApply = () => {
     updateChart(chartId, (chart, s) => {
       s.activeChart.id = "";
       chart.live.layout = chart.draft.layout;
       chart.live.seriesConfig = chart.draft.seriesConfig;
     });
     document.body.style.overflow = "";
-  }, []);
+  };
 
   return (
     <Popup
       title="Layout"
       isVisible={true}
-      text={{ leftBtn: "Cancel", rightBtn: isAnyChange ? "Apply" : "Ok" }}
-      onLeftBtnClick={handleClose}
-      onRightBtnClick={handleApply}
+      text={["Cancel", isAnyChange ? "Apply" : "Ok"]}
+      onCancel={handleClose}
+      onApply={handleApply}
       onClose={handleClose}
     >
       <div className={styles.contentWrapper}>
-        <RadialGeneralSection chartId={chartId} updateChart={updateChart} />
-        <RadialTrackSection chartId={chartId} updateChart={updateChart} />
-        <RadialDataLabelSection chartId={chartId} updateChart={updateChart} />
-        <RadialLegendSection chartId={chartId} updateChart={updateChart} />
+        <GeneralSection chartId={chartId} updateChart={updateChart} />
+        <TrackSection chartId={chartId} updateChart={updateChart} />
+        <BarSection chartId={chartId} updateChart={updateChart} />
+        <DataLabelSection chartId={chartId} updateChart={updateChart} />
+        <LegendSection chartId={chartId} updateChart={updateChart} />
       </div>
     </Popup>
   );
