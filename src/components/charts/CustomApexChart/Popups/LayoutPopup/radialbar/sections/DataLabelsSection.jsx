@@ -18,8 +18,6 @@ export default function DataLabelSection({ chartId, updateChart }) {
         />
       </Section>
 
-      {/* <div className="border-t-1 border-[var(--color-border-default)]"></div> */}
-
       <Section>
         <ToggleButton
           label={"Value"}
@@ -54,7 +52,6 @@ export default function DataLabelSection({ chartId, updateChart }) {
           store={useChartStore}
         />
       </Section>
-      {/* <div className="border-t-1 border-[var(--color-border-default)]"></div> */}
 
       <Section>
         <ToggleButton

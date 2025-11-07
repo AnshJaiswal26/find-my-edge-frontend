@@ -6,11 +6,10 @@ import styles from "../LayoutPopup.module.css";
 // --- Sub-sections ---
 import GeneralSection from "./sections/GeneralSection";
 import DataLabelSection from "./sections/DataLabelsSection";
-import TrackSection from "./sections/TrackSection";
-import BarSection from "./sections/RadialBarSection";
+import PieSliceSection from "./sections/PieSliceSection";
 import LegendSection from "../common sections/LegendSection";
 
-export default function RadialLayoutPopup({ chartId }) {
+export default function PieLayoutPopup({ chartId }) {
   const updateChart = useChartStore((s) => s.updateChart);
   const [isAnyChange, setIsAnyChange] = useState(true);
 
@@ -43,8 +42,7 @@ export default function RadialLayoutPopup({ chartId }) {
     >
       <div className={styles.contentWrapper}>
         <GeneralSection chartId={chartId} updateChart={updateChart} />
-        <TrackSection chartId={chartId} updateChart={updateChart} />
-        <BarSection chartId={chartId} updateChart={updateChart} />
+        <PieSliceSection chartId={chartId} updateChart={updateChart} />
         <DataLabelSection chartId={chartId} updateChart={updateChart} />
         <LegendSection chartId={chartId} updateChart={updateChart} />
       </div>

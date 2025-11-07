@@ -47,9 +47,9 @@ export const getRadialBarChartConfig = ({
       radialBar: {
         startAngle: config.startAngle ?? 0,
         endAngle: config.endAngle ?? 360,
-        hollow: { size: config.hollowSize ?? "50%" },
+        hollow: { size: `${config.hollowSize}%` ?? "50%" },
         track: {
-          strokeWidth: config.strokeWidth ?? "50%",
+          strokeWidth: `${config.strokeWidth}%` ?? "50%",
           background: config.trackBackground ?? "var(--color-bg-hover)",
         },
         dataLabels: {

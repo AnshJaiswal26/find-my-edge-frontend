@@ -45,10 +45,12 @@ function ChartWithConfig({ chartId, type }) {
   const updateChart = useChartStore((s) => s.updateChart);
 
   return (
-    <>
+    <div className={`${styles.legendChartWrapper} ${styles[legendPosition]}`}>
       {legend && (
         <div
-          className={`${styles.chartLegendWrapper} ${styles[legendPosition]} ${styles[legendAlignment]}`}
+          className={`${styles.chartLegendWrapper} ${styles[legendAlignment]} ${
+            type === "bar" || type === "line" ? styles.paddingRight : ""
+          }`}
         >
           {seriesConfig.map((s, i) => (
             <Legend
@@ -72,6 +74,7 @@ function ChartWithConfig({ chartId, type }) {
 
       <div
         id="apexcharts-custom-wrapper"
+        data-chart-type={type}
         style={{
           overflowX:
             chartWidth === 100 || typeof chartWidth === "string"
@@ -82,15 +85,15 @@ function ChartWithConfig({ chartId, type }) {
       >
         <div className="h-full relative" style={{ width: `${chartWidth}%` }}>
           <ReactApexChart
-            key={`${layout?.area} `}
+            key={`${layout?.area}`}
             options={options}
             series={computedSeries}
             type={layout?.area && type === "line" ? "area" : type}
-            height="100%"
-            width="100%"
+            height={"100%"}
+            width={"100%"}
           />
         </div>
       </div>
-    </>
+    </div>
   );
 }

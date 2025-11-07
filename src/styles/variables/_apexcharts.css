@@ -88,9 +88,10 @@
   stroke: var(--color-bg-bar-track) !important;
 }
 
-.apexcharts-pie .apexcharts-text,
-.apexcharts-radialbar .apexcharts-text {
-  fill: var(--color-text-charts);
+.apexcharts-pie .apexcharts-datalabel-value,
+.apexcharts-radialbar .apexcharts-text,
+[data-chart-type="radar"] .apexcharts-text {
+  fill: var(--color-text-charts) !important;
 }
 
 .apexcharts-gridline {

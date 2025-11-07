@@ -9,11 +9,11 @@ export default function TrackSection({ chartId, updateChart }) {
       <InputField
         label={"Track Width"}
         type="range"
-        value={(s) => parseInt(s[chartId].draft.layout.strokeWidth)}
+        value={(s) => s[chartId].draft.layout.strokeWidth}
         formatter={(v) => `${v}%`}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeWidth = `${v}%`;
+            chart.draft.layout.strokeWidth = v;
           })
         }
         min={0}

@@ -34,6 +34,16 @@ const seriesGenerator = {
     }));
   },
 
+  donut: (chart) => {
+    const index = chart.selectedLegendIndex;
+
+    if (index !== null) {
+      return [chart.series[index]];
+    }
+
+    return chart.live.seriesConfig.map((s, i) => chart.series[i]);
+  },
+
   radialBar: (chart) => {
     const index = chart.selectedLegendIndex;
 
@@ -42,6 +52,30 @@ const seriesGenerator = {
     }
 
     return chart.live.seriesConfig.map((s, i) => chart.series[i]);
+  },
+
+  radar: (chart) => {
+    const index = chart.selectedLegendIndex;
+
+    const getSeriesValues = (s) =>
+      chart.series.map((d) => Number(d[s.key] ?? 0));
+
+    if (index !== null) {
+      const s = chart.live.seriesConfig[index];
+      return [
+        {
+          name: s.name,
+          data: getSeriesValues(s),
+          color: s.color,
+        },
+      ];
+    }
+
+    return chart.live.seriesConfig.map((s) => ({
+      name: s.name,
+      data: getSeriesValues(s),
+      color: s.color,
+    }));
   },
 };
 
@@ -99,6 +133,43 @@ export default function useChartCfgGenerator({ chartId, type }) {
           },
         ],
       };
+    } else if (type === "donut") {
+      const legendIndex =
+        runtime.selectedLegendIndex !== null
+          ? runtime.selectedLegendIndex
+          : seriesIndex;
+      return {
+        // title: live.seriesConfig[legendIndex].name,
+
+        dataArray: [
+          {
+            value:
+              live.layout.valuePrefix +
+              series.filtered[legendIndex] +
+              live.layout.valueSuffix,
+            label: live.seriesConfig[legendIndex].name,
+            color: live.seriesConfig[legendIndex].color,
+            // indicator: false,
+          },
+        ],
+      };
+    } else if (type === "radar") {
+      const legendIndex =
+        runtime.selectedLegendIndex !== null
+          ? runtime.selectedLegendIndex
+          : seriesIndex;
+      return {
+        title: series.filtered[index].axis,
+
+        dataArray: [
+          {
+            value: series.filtered[index][live.seriesConfig[legendIndex].key],
+            label: live.seriesConfig[legendIndex].name,
+            color: live.seriesConfig[legendIndex].color,
+            // indicator: false,
+          },
+        ],
+      };
     }
 
     // line / area tooltip
@@ -146,7 +217,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
   }, []);
 
   useEffect(() => {
-    if (type === "radialBar") {
+    if (type === "radialBar" || type === "donut") {
       ApexCharts.exec(chartId, "updateSeries", computedSeries, true);
     }
   }, [selectedLegendIndex]);

@@ -2,7 +2,7 @@ import { Section } from "@layout";
 import { Select, ToggleButton } from "@ui";
 import { useChartStore } from "@stores";
 
-export default function RadialLegendSection({ chartId, updateChart }) {
+export default function LegendSection({ chartId, updateChart }) {
   return (
     <Section title={"Legend"}>
       <ToggleButton

@@ -1,7 +1,7 @@
 import { tradeData } from "./tradeData";
 
 // --- default layouts ---
-const defaultBarChartLayout = {
+const defaultCartesianLayout = {
   title: "",
 
   chartWidth: 100,
@@ -11,12 +11,6 @@ const defaultBarChartLayout = {
   // grid
   xGrid: false,
   yGrid: true,
-
-  // bar
-  horizontal: false,
-  stacked: false,
-  stacked100: false,
-  barRadius: 1,
 
   // xaxis
   xTooltip: true,
@@ -45,8 +39,17 @@ const defaultBarChartLayout = {
   legendAlignment: "center",
 };
 
+const defaultBarChartLayout = {
+  ...defaultCartesianLayout,
+  // bar
+  horizontal: false,
+  stacked: false,
+  stacked100: false,
+  barRadius: 1,
+};
+
 const defaultLineChartLayout = {
-  ...defaultBarChartLayout,
+  ...defaultCartesianLayout,
   // line
   curve: "smooth", // straight, smooth, stepline
   strokeWidth: 2,
@@ -62,7 +65,7 @@ const defaultLineChartLayout = {
   areaOpacityTo: 0.05,
 };
 
-const defaultRadialBarChartLayout = {
+const defaultGroupedChartLayout = {
   title: "",
   chartWidth: 100,
 
@@ -70,19 +73,8 @@ const defaultRadialBarChartLayout = {
 
   tooltip: true,
 
-  // Radial specifics
-  hollowSize: "50%",
-  gradientType: "gradient",
-  trackBackground: "var(--color-bg-hover)",
-  strokeWidth: "50%",
-  startAngle: 0,
-  endAngle: 360,
-  strokeLineCap: "round",
-
   // Data label parts
   name: true,
-  namePrefix: "",
-  nameSuffix: "",
 
   value: true,
   valuePrefix: "",
@@ -92,6 +84,57 @@ const defaultRadialBarChartLayout = {
   totalLabel: "Avg",
   totalPrefix: "",
   totalSuffix: "%",
+
+  legend: true,
+  legendPosition: "bottom",
+  legendAlignment: "center",
+};
+
+const defaultRadialBarChartLayout = {
+  ...defaultGroupedChartLayout,
+
+  // Radial specifics
+  hollowSize: 50,
+  gradientType: "gradient",
+  trackBackground: "var(--color-bg-hover)",
+  strokeWidth: 50,
+  startAngle: 0,
+  endAngle: 360,
+  strokeLineCap: "round",
+};
+
+const defaultPieChartLayout = {
+  ...defaultGroupedChartLayout,
+
+  // Pie/Donut specifics
+  donutSize: 70,
+  gradientType: "gradient",
+  strokeWidth: 0,
+
+  showDataLabels: false,
+};
+
+export const defaultRadarChartLayout = {
+  title: "",
+  chartWidth: 100,
+
+  selectedLegendIndex: null,
+  tooltip: true,
+
+  // Radar specifics
+  polygonStroke: "var(--color-border-default)",
+  polygonFill: "var(--color-bg-hover)",
+  polygonStrokeWidth: 1,
+
+  // Edge Value Labels (on points)
+  showEdgeLabels: true,
+  edgeValuePrefix: "",
+  edgeValueSuffix: "",
+
+  // Axis / Category Labels
+  showAxisLabels: false,
+  axisLabelPrefix: "",
+  axisLabelSuffix: "",
 
   legend: true,
   legendPosition: "bottom",
@@ -302,15 +345,52 @@ export const defaultCharts = {
       ],
     },
   },
-  pie: {},
-  radar: {},
+  pie: {
+    "apex-pie-chart-1": {
+      data: [
+        Number(
+          parseFloat(
+            (tradeData.filter((d) => d.Profit !== 0).length /
+              tradeData.length) *
+              100
+          ).toFixed(2)
+        ),
+        Number(
+          parseFloat(
+            (tradeData.filter((d) => d.Loss !== 0).length / tradeData.length) *
+              100
+          ).toFixed(2)
+        ),
+      ],
+      meta: {
+        id: "apex-pie-chart-1",
+        type: "donut",
+      },
+      layout: { ...defaultPieChartLayout, title: "Pie Progress" },
+      seriesConfig: [
+        { key: "Wins", name: "Wins", color: "var(--color-default)" },
+        { key: "Loses", name: "Loses", color: "var(--color-yellow)" },
+      ],
+    },
+  },
+  radar: {
+    "apex-radar-chart-1": {
+      data: [
+        // each point is an object with axes keys
+        { axis: "Nifty 50", Reward: 3.3, Risk: 1.2 },
+        { axis: "Bank Nifty", Reward: 1.3, Risk: 1.2 },
+        { axis: "Sensex", Reward: 2.1, Risk: 0.93 },
+        { axis: "Bankex", Reward: 0.75, Risk: 1.2 },
+      ],
+      meta: {
+        id: "apex-radar-chart-1",
+        type: "radar",
+      },
+      layout: { ...defaultRadarChartLayout, title: "Radar Progress" },
+      seriesConfig: [
+        { key: "Reward", name: "Reward", color: "var(--color-green)" },
+        { key: "Risk", name: "Risk", color: "var(--color-red)" },
+      ],
+    },
+  },
 };
-
-// -- radar chart 1
-const radarData = [
-  // each point is an object with axes keys
-  { axis: "Q1", Pnl: 10, Profit: 8 },
-  { axis: "Q2", Pnl: 15, Profit: 20 },
-  { axis: "Q3", Pnl: 6, Profit: 4 },
-  { axis: "Q4", Pnl: 12, Profit: 11 },
-];

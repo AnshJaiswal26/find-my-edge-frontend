@@ -2,7 +2,7 @@ import { Section } from "@layout";
 import { ToggleButton, InputField } from "@ui";
 import { useChartStore } from "@stores";
 
-export default function RadialGeneralSection({ chartId, updateChart }) {
+export default function GeneralSection({ chartId, updateChart }) {
   return (
     <Section title="General">
       <InputField
@@ -30,44 +30,17 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
       />
 
       <InputField
-        label="Hollow Size"
+        label="Donut Size"
         type="range"
-        value={(s) => s[chartId].draft.layout.hollowSize}
+        value={(s) => s[chartId].draft.layout.donutSize}
         formatter={(v) => `${v}%`}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeWidth = v;
+            chart.draft.layout.donutSize = v;
           })
         }
-        min={50}
+        min={10}
         max={100}
-        store={useChartStore}
-      />
-
-      <InputField
-        label={"Start Angle"}
-        type="range"
-        value={(s) => parseInt(s[chartId].draft.layout.startAngle)}
-        onChange={(v) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.startAngle = v;
-          })
-        }
-        min={0}
-        max={360}
-        store={useChartStore}
-      />
-      <InputField
-        label={"End Angle"}
-        type="range"
-        value={(s) => parseInt(s[chartId].draft.layout.endAngle)}
-        onChange={(v) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.endAngle = v;
-          })
-        }
-        min={0}
-        max={360}
         store={useChartStore}
       />
     </Section>

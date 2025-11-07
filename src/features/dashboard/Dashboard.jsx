@@ -11,6 +11,7 @@ import "./Dark-Dashboard.css";
 import { Button } from "@ui";
 import { CustomApexChart, ChartLayoutPopup } from "@charts";
 import { WidthProvider, Responsive } from "react-grid-layout";
+import { LucideLayoutDashboard } from "lucide-react";
 
 const ReactGridLayout = WidthProvider(Responsive);
 
@@ -66,38 +67,47 @@ function Dashboard() {
 
 function ChartDashboard() {
   const containerRef = useRef(null);
+  const layoutsRef = useRef(null);
+
+  const handleSaveLayout = (layout, allLayouts) => {
+    layoutsRef.current = allLayouts; // ✅ local, no re-render
+    useChartStore.getState().updateChart((s) => {
+      s.chartGridLayout = allLayouts; // ✅ save once, no lag
+    });
+  };
 
   const order = useChartStore((s) => s.order);
 
-  const gridLayout = useChartStore.getState().chartGridLayout;
+  const savedLayouts = useChartStore.getState().chartGridLayout;
 
   const layout = useMemo(() => {
-    if (gridLayout) return gridLayout;
-    return order.map(({ id, type }, index) => ({
+    const itemsPerRow = 3;
+    return order.map(({ id, type, category }, index) => ({
       i: id,
-      x: (index * 3) % 12,
-      y: Math.floor(index / 3),
-      w: type === "radialBar" ? 10 : 16,
+      x: (index % itemsPerRow) * (category === "group" ? 10 : 16),
+      y: Math.floor(index / itemsPerRow) * 20, // 20 is item height
+      w: category === "group" ? 10 : 16,
       h: 20,
-      minW: type === "radialBar" ? 8 : 10,
+      minW: category === "group" ? 8 : 12,
       minH: 20,
       maxH: 30,
     }));
-  }, [gridLayout, order]);
+  }, [order]);
 
-  const layouts = useMemo(
-    () => ({
-      lg: layout,
-      md: layout,
-      sm: layout,
-      xs: layout,
-      xxs: layout,
-    }),
-    [layout]
-  );
+  const layouts = useMemo(() => {
+    return (
+      savedLayouts ?? {
+        lg: layout,
+        md: layout,
+        sm: layout,
+        xs: layout,
+        xxs: layout,
+      }
+    );
+  }, [savedLayouts, layout]);
 
   const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
-  const cols = { lg: 30, md: 26, sm: 22, xs: 18, xxs: 14 };
+  const cols = { lg: 30, md: 15, sm: 10, xs: 7, xxs: 4 };
 
   return (
     <div
@@ -109,15 +119,16 @@ function ChartDashboard() {
         className="layout"
         layouts={layouts}
         breakpoints={breakpoints}
-        onLayoutChange={(l) =>
-          useChartStore.getState().updateChart((s) => (s.gridLayout = l))
-        }
         cols={cols}
         rowHeight={10}
         isResizable
         isDraggable
         draggableHandle=".chart-toolbar"
+        onDragStop={(layout, oldItem, newItem) => {
+          handleSaveLayout(layout, layoutsRef.current ?? layouts);
+        }}
         onResizeStop={(layout, oldItem, newItem) => {
+          handleSaveLayout(layout, layoutsRef.current ?? layouts);
           window.dispatchEvent(
             new CustomEvent("chart-resize", { detail: { chartId: newItem.i } })
           );
