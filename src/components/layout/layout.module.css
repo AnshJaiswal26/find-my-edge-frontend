@@ -32,7 +32,7 @@
   display: flex;
   border-radius: 7px;
   height: fit-content;
-  padding: 20px;
+  padding: 1.25rem;
   box-sizing: border-box;
   color: var(--color-text-heading);
   background-color: var(--color-bg-container);
@@ -63,6 +63,13 @@
   border-radius: 5px;
   padding: 0.75rem;
   border: 1px solid var(--color-border-default);
+}
+
+.section.subSection {
+  border: 0;
+  padding: 0.75rem 0.5rem;
+  border-radius: 0;
+  border-top: 1px solid var(--color-border-default);
 }
 
 .sectionTitle {
@@ -110,8 +117,8 @@
 }
 
 .legendIndicator {
-  width: 13px;
-  height: 13px;
+  width: 0.9rem;
+  height: 0.9rem;
   border-radius: 50%;
 }
 
@@ -256,7 +263,8 @@
 }
 
 .chartPopup {
-  left: 0;
+  right: calc(100%);
+  top: -2px;
   position: absolute;
   background-color: var(--apexcharts-tooltip-background);
   border: 1px solid var(--color-border-container);

@@ -51,8 +51,6 @@ function Settings() {
             <QtyRoundSelector updateSettings={updateSettings} />
           </SettingsSectionWrapper>
 
-          {/* <div className="divider"></div> */}
-
           <CalculationLogicGuide updateSettings={updateSettings} />
         </div>
       </div>

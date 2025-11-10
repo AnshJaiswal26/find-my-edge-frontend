@@ -46,6 +46,8 @@
   border-radius: 6px !important;
   padding: 6px 12px !important;
   font-size: 12px !important;
+  width: fit-content !important;
+  text-wrap: nowrap;
 }
 
 .apexcharts-xaxistooltip-bottom :after,
@@ -88,10 +90,10 @@
   stroke: var(--color-bg-bar-track) !important;
 }
 
-.apexcharts-pie .apexcharts-datalabel-value,
-.apexcharts-radialbar .apexcharts-text,
+[data-chart-type="donut"] .apexcharts-text,
+[data-chart-type="radialBar"] .apexcharts-text,
 [data-chart-type="radar"] .apexcharts-text {
-  fill: var(--color-text-charts) !important;
+  fill: var(--color-text-charts);
 }
 
 .apexcharts-gridline {
@@ -117,10 +119,6 @@
 .apexcharts-selection-rect {
   fill: rgba(0, 149, 208, 0.74) !important;
   stroke: #e0e0e0;
-}
-
-#apexcharts-custom-wrapper::-webkit-scrollbar {
-  height: var(--scrollbar-size-mid) !important;
 }
 
 .apexcharts-menu.apexcharts-menu-open {
@@ -163,12 +161,12 @@
 }
 
 .apexcharts-custom-toolbar {
-  position: relative;
   display: flex;
+  flex-direction: column;
   gap: 0.125rem;
   background-color: inherit;
   margin-right: 0.5rem;
-  z-index: 100;
+  z-index: 1;
   flex-wrap: wrap;
 }
 
@@ -237,4 +235,10 @@
 
 .grid-chart-wrapper:has(.react-resizable-handle-se:active) {
   --resize-border: var(--color-default) !important;
+}
+
+@media (max-width: 600) {
+  :root {
+    font-size: 14px;
+  }
 }

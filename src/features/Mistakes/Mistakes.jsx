@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import "./Mistakes.css";
-import Editor from "../../components/ui/Editor";
-import Sidebar from "../../components/ui/Sidebar";
 
 function Mistakes() {
   const [mistakes, setMistakes] = useState([]);
@@ -29,8 +27,6 @@ function Mistakes() {
 
   return (
     <div>
-      <Editor />
-      <Sidebar pageActive={"mistakes"} />
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div className="mistakes-container">
           <div className="mistakes-heading">

@@ -47,7 +47,7 @@ export default function FilterPopup({ chartId }) {
     <div ref={ref} className="relative">
       <IconButton
         icon={<Filter />}
-        tooltip={{ title: "Filter", position: "bottom" }}
+        tooltip={{ title: "Filter", position: "left" }}
         onClick={() => setShowFilter((p) => !p)}
         className={"icon-button"}
       />

@@ -1,6 +1,5 @@
 import React from "react";
 import { StatCard } from "@ui";
-import { DashboardStatsGrid } from "../layout";
 import {
   InrIcon,
   HourGlassIcon,
@@ -9,6 +8,7 @@ import {
   CandlesIcon,
   GrowthIcon,
 } from "@icons/statcards";
+import styles from "./StatsGrid.module.css";
 
 const statCards = [
   { src: InrIcon, title: "Profit & Loss", value: "13.7K" },
@@ -21,7 +21,7 @@ const statCards = [
 
 function StatCards() {
   return (
-    <DashboardStatsGrid>
+    <div className={styles.statCardGrid}>
       {statCards.map((card, i) => (
         <StatCard
           key={i}
@@ -30,7 +30,7 @@ function StatCards() {
           value={card.value}
         />
       ))}
-    </DashboardStatsGrid>
+    </div>
   );
 }
 

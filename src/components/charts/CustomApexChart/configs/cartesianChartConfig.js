@@ -170,12 +170,6 @@ export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
       strokeDashArray: 3,
       xaxis: { lines: { show: config.xGrid } },
       yaxis: { lines: { show: config.yGrid } },
-      padding: {
-        top: 0,
-        left: 0,
-        bottom: config.xTitleText ? -5 : 15,
-        right: 40,
-      },
     },
     tooltip: {
       enabled: config.tooltip,
@@ -187,6 +181,10 @@ export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
     dataLabels: {
       enabled: config.dataLabels,
       style: { fontSize: style.fontSize },
+      ...(chart.meta.type === "bar" && {
+        offsetY: 7,
+        position: "middle",
+      }),
     },
     xaxis: axisX,
     yaxis: axisY,

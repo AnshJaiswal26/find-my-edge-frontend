@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./Edge.css";
-import Sidebar from "../../components/ui/Sidebar";
-import Editor from "../../components/ui/Editor";
+
 import { DateHeader } from "@ui";
 import "../../components/ui/DateHeader/DateHeader.css";
 import Filter from "../../components/ui/TableComponents/Popups/Filter";
@@ -462,11 +461,8 @@ function Edge() {
 
   return (
     <div>
-      <Editor />
-      <Sidebar pageActive={"edge"} />
-
       <div className="edge-main-div">
-        <DateHeader />
+        {/* <DateHeader /> */}
 
         <div className="edge-container">
           {/* Delete Confirmation Modal */}
@@ -529,7 +525,7 @@ function Edge() {
               <span>Find Your Edge</span>
             </h3>
           </div>
-          <Summary trades={trades} />
+          {/* <Summary trades={trades} /> */}
 
           <div>
             <div

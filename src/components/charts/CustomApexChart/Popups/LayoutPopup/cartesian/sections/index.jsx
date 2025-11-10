@@ -1,5 +1,3 @@
-// index.jsx
-
 export { default as GeneralSection } from "./GeneralSection";
 export { default as BarSettingsSection } from "./BarSettingsSection";
 export { default as LineSettingsSection } from "./LineSettingsSection";

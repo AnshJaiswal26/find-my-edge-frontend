@@ -74,34 +74,41 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
   if (length === 0) return null;
 
   return (
-    <Section title={`Range Colors Series ${seriesIndex + 1}`}>
+    <Section title={`Series ${seriesIndex + 1}`}>
+      <InputField
+        label={"Series Name"}
+        value={(s) => s[chartId].draft.seriesConfig[seriesIndex].name}
+        onChange={(v) =>
+          updateChart(chartId, (chart) => {
+            chart.draft.seriesConfig[seriesIndex].name = v;
+          })
+        }
+        store={useChartStore}
+      />{" "}
       {Array.from({ length }).map((_, index) => (
-        <Fragment key={index}>
-          <div className={styles.colorRangeGrid}>
-            {[
-              { key: "from", label: "From" },
-              { key: "to", label: "To" },
-              { key: "label", label: "Tooltip Label" },
-            ].map(({ key, label }, idx) => (
-              <InputField
-                key={idx}
-                labelPosition="top"
-                size="small"
-                label={label}
-                type={key === "label" ? "text" : "number"}
-                value={(s) =>
-                  s[chartId].draft.seriesConfig[seriesIndex].colors[index][key]
-                }
-                onChange={(v) =>
-                  updateChart(chartId, (chart) => {
-                    chart.draft.seriesConfig[seriesIndex].colors[index][key] =
-                      v;
-                  })
-                }
-                store={useChartStore}
-              />
-            ))}
+        <Section key={index} subSection title={`Range ${index + 1}`}>
+          {[
+            { key: "from", label: "From" },
+            { key: "to", label: "To" },
+            { key: "label", label: "Tooltip Label" },
+          ].map(({ key, label }, idx) => (
+            <InputField
+              key={idx}
+              label={label}
+              type={key === "label" ? "text" : "number"}
+              value={(s) =>
+                s[chartId].draft.seriesConfig[seriesIndex].colors[index][key]
+              }
+              onChange={(v) =>
+                updateChart(chartId, (chart) => {
+                  chart.draft.seriesConfig[seriesIndex].colors[index][key] = v;
+                })
+              }
+              store={useChartStore}
+            />
+          ))}
 
+          <div className="flex justify-between">
             <ColorPicker
               label="Color"
               value={(s) =>
@@ -127,11 +134,7 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
               store={useChartStore}
             />
           </div>
-
-          {index + 1 < length && (
-            <div className="border-t-1 border-[var(--color-bg-hover)] my-2" />
-          )}
-        </Fragment>
+        </Section>
       ))}
       <div className="flex justify-end flex-1">
         <Button

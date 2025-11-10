@@ -139,8 +139,6 @@ export default function useChartCfgGenerator({ chartId, type }) {
           ? runtime.selectedLegendIndex
           : seriesIndex;
       return {
-        // title: live.seriesConfig[legendIndex].name,
-
         dataArray: [
           {
             value:
@@ -163,10 +161,12 @@ export default function useChartCfgGenerator({ chartId, type }) {
 
         dataArray: [
           {
-            value: series.filtered[index][live.seriesConfig[legendIndex].key],
+            value:
+              live.seriesConfig[legendIndex].prefix +
+              series.filtered[index][live.seriesConfig[legendIndex].key] +
+              live.seriesConfig[legendIndex].suffix,
             label: live.seriesConfig[legendIndex].name,
             color: live.seriesConfig[legendIndex].color,
-            // indicator: false,
           },
         ],
       };

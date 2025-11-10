@@ -1,4 +1,4 @@
-import { ToggleButton, ColorPicker, InputField } from "@ui";
+import { ToggleButton, ColorPicker, InputField, Select } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
@@ -6,25 +6,9 @@ import { parseColor } from "@utils";
 export default function LineSettingsSection({ chartId, updateChart }) {
   return (
     <>
-      {/* Curve Type */}
-      <Section title="Line Curve Type">
-        {["straight", "smooth", "stepline"].map((curve, i) => (
-          <ToggleButton
-            key={i}
-            label={curve.charAt(0).toUpperCase() + curve.slice(1)}
-            value={(s) => s[chartId].draft.layout.curve === curve}
-            onClick={() =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.curve = curve;
-              })
-            }
-            store={useChartStore}
-          />
-        ))}
-      </Section>
-
+      <DataSeries chartId={chartId} updateChart={updateChart} />
       {/* Stroke Settings */}
-      <Section title="Stroke Settings">
+      <Section title="Stroke">
         <InputField
           label="Stroke Width"
           type="range"
@@ -38,17 +22,31 @@ export default function LineSettingsSection({ chartId, updateChart }) {
           max={10}
           store={useChartStore}
         />
+        <Select
+          label={"Stroke Type"}
+          options={{
+            straight: "Straight",
+            smooth: "Smooth",
+            stepline: "StepLine",
+          }}
+          value={(s) => s[chartId].draft.layout.curve}
+          onChange={(k) =>
+            updateChart(chartId, (chart) => {
+              chart.draft.layout.curve = k;
+            })
+          }
+          store={useChartStore}
+        />
 
         <SeriesColors
-          title={"Stroke Color"}
+          title={"Stroke"}
           chartId={chartId}
           updateChart={updateChart}
           type="color"
         />
       </Section>
-
       {/* Marker Settings */}
-      <Section title="Marker Settings">
+      <Section title="Marker">
         <InputField
           label="Marker Size"
           type="range"
@@ -78,7 +76,7 @@ export default function LineSettingsSection({ chartId, updateChart }) {
         />
 
         <SeriesColors
-          title={"Marker Color"}
+          title={"Marker"}
           updateChart={updateChart}
           chartId={chartId}
         />
@@ -93,7 +91,7 @@ function AreaSettingsSection({ chartId, updateChart }) {
   const isAreaVisible = useChartStore((s) => s[chartId].draft.layout.area);
 
   return (
-    <Section title="Area Settings">
+    <Section title="Area">
       <ToggleButton
         label="Show Area"
         value={(s) => s[chartId].draft.layout.area}
@@ -150,7 +148,7 @@ function AreaSettingsSection({ chartId, updateChart }) {
           />
 
           <SeriesColors
-            title={"Area Color"}
+            title={"Area"}
             chartId={chartId}
             updateChart={updateChart}
             type="areaColor"
@@ -180,5 +178,27 @@ function SeriesColors({ title, chartId, updateChart, type = "markerColor" }) {
         />
       ))}
     </div>
+  );
+}
+
+function DataSeries({ chartId, updateChart }) {
+  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
+
+  return (
+    <Section title={"Data Series Name"}>
+      {Array.from({ length }).map((_, index) => (
+        <InputField
+          key={index}
+          label={`Series ${index + 1}`}
+          value={(s) => parseColor(s[chartId].draft.seriesConfig[index].name)}
+          onChange={(c) => {
+            updateChart(chartId, (chart) => {
+              chart.draft.seriesConfig[index].name = c;
+            });
+          }}
+          store={useChartStore}
+        />
+      ))}
+    </Section>
   );
 }

@@ -48,7 +48,6 @@
   flex-wrap: wrap;
   z-index: 10;
   width: 100%;
-  /* border: 1px solid #ccc; */
 }
 
 .legendChartWrapper {
@@ -78,10 +77,22 @@
   justify-content: center;
 }
 
-.chartWrapper {
+.chartZoomWrapper {
   position: relative;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
+
+.chartZoomWrapper::-webkit-scrollbar {
+  height: var(--scrollbar-size-mid) !important;
+}
+
+.chartWrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0;
   height: 100%;
   width: 100%;
 }

@@ -15,6 +15,11 @@
   font-family: "Trebuchet MS";
 }
 
+:root img {
+  width: 30px;
+  height: 30px;
+}
+
 .dark-theme {
   background-color: #12181e;
 }

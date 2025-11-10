@@ -110,114 +110,110 @@ const YearlyCalendar = () => {
   };
 
   return (
-    <div>
-      <Editor />
-      <Sidebar pageActive={"yearlycalender"} />
-      <div className="yearly-calendar-main-div">
-        <div className="calendar-and-popup-container ">
-          <div className="calendar-wrapper">
-            <div className="calendar-header">
-              <button onClick={handlePrevMonth}>&lt;</button>
-              <h2>
-                {currentDate.toLocaleString("default", { month: "long" })}{" "}
-                {currentDate.getFullYear()}
-              </h2>
-              <button onClick={handleNextMonth}>&gt;</button>
-            </div>
-            <div className="calendar">{renderCalendar()}</div>
+    <>
+      <div className="calendar-and-popup-container ">
+        <div className="calendar-wrapper">
+          <div className="calendar-header">
+            <button onClick={handlePrevMonth}>&lt;</button>
+            <h2>
+              {currentDate.toLocaleString("default", { month: "long" })}{" "}
+              {currentDate.getFullYear()}
+            </h2>
+            <button onClick={handleNextMonth}>&gt;</button>
           </div>
-          <div className="popup-wrapper">
-            <div className="popup-summary">
-              <h3>Net Realised P&L</h3>
+          <div className="calendar">{renderCalendar()}</div>
+        </div>
+        <div className="popup-wrapper">
+          <div className="popup-summary">
+            <h3>Net Realised P&L</h3>
+            <div>
+              <span className="pnl-amount">₹-3,357.77</span>
+              <span className="for-month">for Oct 2024</span>
+            </div>
+            <div className="summary-stats">
+              <div className="trading-days">
+                <p>22</p>
+                <p>Trading Days</p>
+              </div>
+              <div className="traded-on">
+                <p>6</p>
+                <p>Traded On</p>
+              </div>
+              <div className="in-profit-days">
+                <p>0</p>
+                <p>In-Profit Days</p>
+              </div>
+              <div className="winning-streak">
+                <p>0</p>
+                <p>Winning Streak</p>
+              </div>
+            </div>
+            <div className="most-profitable-days">
+              <h4>Most Profitable Days</h4>
               <div>
-                <span className="pnl-amount">₹-3,357.77</span>
-                <span className="for-month">for Oct 2024</span>
-              </div>
-              <div className="summary-stats">
-                <div className="trading-days">
-                  <p>22</p>
-                  <p>Trading Days</p>
-                </div>
-                <div className="traded-on">
-                  <p>6</p>
-                  <p>Traded On</p>
-                </div>
-                <div className="in-profit-days">
-                  <p>0</p>
-                  <p>In-Profit Days</p>
-                </div>
-                <div className="winning-streak">
-                  <p>0</p>
-                  <p>Winning Streak</p>
-                </div>
-              </div>
-              <div className="most-profitable-days">
-                <h4>Most Profitable Days</h4>
-                <div>
-                  <div className="profitable-day-row">
-                    <div>
-                      <img src="Icons/others/triangle.png" alt="see" />
-                      <span>In this period:</span>
-                      <strong>17 Oct 2024</strong>
-                    </div>
-                    <span className="pnl-negative">₹-249.00</span>
+                <div className="profitable-day-row">
+                  <div>
+                    <img src="Icons/others/triangle.png" alt="see" />
+                    <span>In this period:</span>
+                    <strong>17 Oct 2024</strong>
                   </div>
-                  <div className="profitable-day-row">
-                    <div>
-                      <img src="Icons/others/triangle.png" alt="see" />
-                      <span>Of all time:</span>
-                      <strong>17 Oct 2024</strong>
-                    </div>
-                    <span className="pnl-negative">₹-249.00</span>
+                  <span className="pnl-negative">₹-249.00</span>
+                </div>
+                <div className="profitable-day-row">
+                  <div>
+                    <img src="Icons/others/triangle.png" alt="see" />
+                    <span>Of all time:</span>
+                    <strong>17 Oct 2024</strong>
                   </div>
+                  <span className="pnl-negative">₹-249.00</span>
                 </div>
               </div>
             </div>
-            <div className="popup-overview">
-              <div className="popup-header">
-                <span className="overview-month">Oct 23, 2024</span>
-                <span className="pnl-amount">₹-1,059.75</span>
+          </div>
+          <div className="popup-overview">
+            <div className="popup-header">
+              <span className="overview-month">Oct 23, 2024</span>
+              <span className="pnl-amount">₹-1,059.75</span>
+            </div>
+            <div>
+              <div className="trade-overview">
+                <img src="Icons/others/trading.png" alt="Trade Overview" />
+                <h4>Trade Overview</h4>
               </div>
-              <div>
-                <div className="trade-overview">
-                  <img src="Icons/others/trading.png" alt="Trade Overview" />
-                  <h4>Trade Overview</h4>
+              <div className="trade-overview-details">
+                <div className="trade-detail-column">
+                  <p>
+                    <strong>Overall P&L:</strong>{" "}
+                    <span className="negative">₹-1,059.75</span>
+                  </p>
+                  <p>
+                    <strong>Govt Charges:</strong> ₹22.45
+                  </p>
                 </div>
-                <div className="trade-overview-details">
-                  <div className="trade-detail-column">
-                    <p>
-                      <strong>Overall P&L:</strong>{" "}
-                      <span className="negative">₹-1,059.75</span>
-                    </p>
-                    <p>
-                      <strong>Govt Charges:</strong> ₹22.45
-                    </p>
-                  </div>
-                  <div className="trade-detail-column">
-                    <p>
-                      <strong>Net P&L:</strong>{" "}
-                      <span className="negative">₹-1,162.20</span>
-                    </p>
-                    <p>
-                      <strong>Brokerage:</strong> ₹80.00
-                    </p>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "last baseline" }}>
-                    <p>
-                      <strong>Trades:</strong> 4
-                    </p>
-                  </div>
+                <div className="trade-detail-column">
+                  <p>
+                    <strong>Net P&L:</strong>{" "}
+                    <span className="negative">₹-1,162.20</span>
+                  </p>
+                  <p>
+                    <strong>Brokerage:</strong> ₹80.00
+                  </p>
+                </div>
+                <div style={{ display: "flex", alignItems: "last baseline" }}>
+                  <p>
+                    <strong>Trades:</strong> 4
+                  </p>
                 </div>
               </div>
-              <div className="popup-footer">
-                <p>See trades for this period with your trading details.</p>
-                <button className="view-button">View</button>
-              </div>
+            </div>
+            <div className="popup-footer">
+              <p>See trades for this period with your trading details.</p>
+              <button className="view-button">View</button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

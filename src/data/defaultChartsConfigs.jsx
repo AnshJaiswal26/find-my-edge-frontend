@@ -122,19 +122,24 @@ export const defaultRadarChartLayout = {
   tooltip: true,
 
   // Radar specifics
+  radarSize: 100,
   polygonStroke: "var(--color-border-default)",
   polygonFill: "var(--color-bg-hover)",
   polygonStrokeWidth: 1,
+  radarOpacity: 0.1,
+
+  // Markers
+  markerSize: 5,
+  markerHoverSize: 8,
 
   // Edge Value Labels (on points)
   showEdgeLabels: true,
-  edgeValuePrefix: "",
+  edgeValuePrefix: "1:",
   edgeValueSuffix: "",
 
   // Axis / Category Labels
-  showAxisLabels: false,
-  axisLabelPrefix: "",
-  axisLabelSuffix: "",
+  showXAxisLabels: true,
+  showYAxisLabels: true,
 
   legend: true,
   legendPosition: "bottom",
@@ -377,10 +382,9 @@ export const defaultCharts = {
     "apex-radar-chart-1": {
       data: [
         // each point is an object with axes keys
-        { axis: "Nifty 50", Reward: 3.3, Risk: 1.2 },
-        { axis: "Bank Nifty", Reward: 1.3, Risk: 1.2 },
-        { axis: "Sensex", Reward: 2.1, Risk: 0.93 },
-        { axis: "Bankex", Reward: 0.75, Risk: 1.2 },
+        { axis: "Nifty 50", Reward: 3.3, Risk: 1.2, Gain: 0.34 },
+        { axis: "Bank Nifty", Reward: 1.3, Risk: 1.2, Gain: 0.23 },
+        { axis: "Sensex", Reward: 2.1, Risk: 0.93, Gain: 0.56 },
       ],
       meta: {
         id: "apex-radar-chart-1",
@@ -388,8 +392,27 @@ export const defaultCharts = {
       },
       layout: { ...defaultRadarChartLayout, title: "Radar Progress" },
       seriesConfig: [
-        { key: "Reward", name: "Reward", color: "var(--color-green)" },
-        { key: "Risk", name: "Risk", color: "var(--color-red)" },
+        {
+          key: "Reward",
+          name: "Reward",
+          color: "var(--color-green)",
+          prefix: "1:",
+          suffix: "",
+        },
+        {
+          key: "Risk",
+          name: "Risk",
+          color: "var(--color-red)",
+          prefix: "1:",
+          suffix: "",
+        },
+        {
+          key: "Gain",
+          name: "Gain",
+          color: "var(--color-default)",
+          prefix: "",
+          suffix: "%",
+        },
       ],
     },
   },

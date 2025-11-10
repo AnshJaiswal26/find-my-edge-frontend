@@ -9,6 +9,7 @@ export const getRadarChartConfig = ({ chartId, chart, tooltipCallback }) => {
   return {
     chart: {
       id: chartId,
+      offsetY: 20,
     },
 
     labels: chart.series.filtered.map((d) => d.axis),
@@ -21,25 +22,32 @@ export const getRadarChartConfig = ({ chartId, chart, tooltipCallback }) => {
 
     dataLabels: {
       enabled: config.showEdgeLabels,
-      formatter: (val) => config.edgeValuePrefix + val + config.edgeValueSuffix,
+      formatter: (val, rer) => {
+        return (
+          seriesConfig[rer.seriesIndex].prefix +
+          val +
+          seriesConfig[rer.seriesIndex].suffix
+        );
+      },
     },
 
     markers: {
-      size: 8,
-      strokeWidth: 2,
-      hover: { size: 10 },
+      size: config.markerSize,
+      strokeWidth: 0,
+      hover: { size: config.markerHoverSize },
     },
 
     stroke: {
-      width: 2,
+      width: 1,
     },
 
     fill: {
-      opacity: 0.1,
+      opacity: config.radarOpacity,
     },
 
     plotOptions: {
       radar: {
+        size: config.radarSize,
         polygons: {
           strokeColors: config.polygonStroke,
           strokeWidth: config.polygonStrokeWidth,
@@ -52,12 +60,12 @@ export const getRadarChartConfig = ({ chartId, chart, tooltipCallback }) => {
     },
 
     xaxis: {
-      show: config.showAxisLabels,
-      categories: chart.series.filtered.map((d) => d.axis),
       labels: {
-        formatter: (val) =>
-          config.axisLabelPrefix + val + config.axisLabelSuffix,
+        show: config.showXAxisLabels,
       },
+    },
+    yaxis: {
+      show: config.showYAxisLabels,
     },
     legend: {
       show: false,

@@ -44,8 +44,8 @@ export const Container = ({
   );
 };
 
-export const Section = ({ title, children }) => (
-  <div className={styles.section}>
+export const Section = ({ title, children, subSection = false }) => (
+  <div className={`${styles.section} ${subSection ? styles.subSection : ""}`}>
     {title && <h3 className={styles.sectionTitle}>{title}</h3>}
     <div className={styles.sectionContent}>{children}</div>
   </div>

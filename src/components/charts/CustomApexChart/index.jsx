@@ -16,7 +16,6 @@ export default function CustomApexChart({ chartId, type }) {
 
       <div className={styles.chartToolbarWrapper}>
         <Title chartId={chartId} />
-        <Toolbar type={type} chartId={chartId} />
       </div>
 
       <ChartWithConfig type={type} chartId={chartId} />
@@ -43,6 +42,8 @@ function ChartWithConfig({ chartId, type }) {
   const { chartWidth, legend, legendAlignment, legendPosition } = layout;
 
   const updateChart = useChartStore((s) => s.updateChart);
+
+  const isZoomedIn = chartWidth === 100 || typeof chartWidth === "string";
 
   return (
     <div className={`${styles.legendChartWrapper} ${styles[legendPosition]}`}>
@@ -72,27 +73,29 @@ function ChartWithConfig({ chartId, type }) {
         </div>
       )}
 
-      <div
-        id="apexcharts-custom-wrapper"
-        data-chart-type={type}
-        style={{
-          overflowX:
-            chartWidth === 100 || typeof chartWidth === "string"
-              ? "hidden"
-              : "auto",
-        }}
-        className={styles.chartWrapper}
-      >
-        <div className="h-full relative" style={{ width: `${chartWidth}%` }}>
-          <ReactApexChart
-            key={`${layout?.area}`}
-            options={options}
-            series={computedSeries}
-            type={layout?.area && type === "line" ? "area" : type}
-            height={"100%"}
-            width={"100%"}
-          />
+      <div className={styles.chartWrapper}>
+        <Toolbar type={type} chartId={chartId} />
+
+        <div
+          data-chart-type={type}
+          style={{
+            overflowX: isZoomedIn ? "" : "auto",
+            overflowY: !isZoomedIn ? "hidden" : "",
+          }}
+          className={styles.chartZoomWrapper}
+        >
+          <div className="h-full" style={{ width: `${chartWidth}%` }}>
+            <ReactApexChart
+              key={`${layout?.area}`}
+              options={options}
+              series={computedSeries}
+              type={layout?.area && type === "line" ? "area" : type}
+              height={"100%"}
+              width={"100%"}
+            />
+          </div>
         </div>
+        <div id="tooltip-container"></div>
       </div>
     </div>
   );

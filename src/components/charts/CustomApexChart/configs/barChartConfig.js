@@ -33,6 +33,5 @@ export const getBarChartConfig = ({ chart, chartId, tooltipCallback }) => {
     },
     xaxis: config.horizontal ? base.yaxis : base.xaxis,
     yaxis: config.horizontal ? base.xaxis : base.yaxis,
-    dataLabels: { enabled: config.dataLabels, style: { fontSize: "0.75rem" } },
   };
 };

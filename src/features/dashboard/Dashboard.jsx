@@ -1,25 +1,16 @@
-import React, { useRef, useMemo } from "react";
-import { useChartStore, useUIStore } from "@stores";
+import { useRef, useMemo } from "react";
+import { useChartStore } from "@stores";
 import StatCards from "./components/StatsGrid";
-import TopPieCharts from "./TopPieCharts/top-pie-charts";
-import OverAllLineChart from "./Charts/overall-line-chart";
 import { Container } from "@layout";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-import "./Dashboard.css";
-import "./Dark-Dashboard.css";
 import { Button } from "@ui";
 import { CustomApexChart, ChartLayoutPopup } from "@charts";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 import { WidthProvider, Responsive } from "react-grid-layout";
-import { LucideLayoutDashboard } from "lucide-react";
 
 const ReactGridLayout = WidthProvider(Responsive);
 
 function Dashboard() {
-  const isSidebarOpen = useUIStore((s) => s.isSidebarOpen);
-
-  const isDarkTheme = true;
-
   return (
     <>
       <ChartLayoutPopup />
@@ -52,14 +43,6 @@ function Dashboard() {
         isSidebarOpen={isSidebarOpen}
       /> */}
 
-      <div style={{ width: "100%", marginBottom: "20px" }}>
-        <OverAllLineChart
-          data={"demo"}
-          theme={"dark"}
-          isSidebarOpen={isSidebarOpen}
-        />
-      </div>
-
       <ChartDashboard />
     </>
   );
@@ -70,9 +53,9 @@ function ChartDashboard() {
   const layoutsRef = useRef(null);
 
   const handleSaveLayout = (layout, allLayouts) => {
-    layoutsRef.current = allLayouts; // ✅ local, no re-render
+    layoutsRef.current = allLayouts;
     useChartStore.getState().updateChart((s) => {
-      s.chartGridLayout = allLayouts; // ✅ save once, no lag
+      s.chartGridLayout = allLayouts;
     });
   };
 
@@ -82,15 +65,15 @@ function ChartDashboard() {
 
   const layout = useMemo(() => {
     const itemsPerRow = 3;
-    return order.map(({ id, type, category }, index) => ({
+    return order.map(({ id, category }, index) => ({
       i: id,
-      x: (index % itemsPerRow) * (category === "group" ? 10 : 16),
-      y: Math.floor(index / itemsPerRow) * 20, // 20 is item height
+      x: (index % itemsPerRow) * 10,
+      y: Math.floor(index / itemsPerRow) * 20,
       w: category === "group" ? 10 : 16,
       h: 20,
       minW: category === "group" ? 8 : 12,
       minH: 20,
-      maxH: 30,
+      maxH: 100,
     }));
   }, [order]);
 
@@ -107,7 +90,7 @@ function ChartDashboard() {
   }, [savedLayouts, layout]);
 
   const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
-  const cols = { lg: 30, md: 15, sm: 10, xs: 7, xxs: 4 };
+  const cols = { lg: 30, md: 18, sm: 16, xs: 13, xxs: 10 };
 
   return (
     <div

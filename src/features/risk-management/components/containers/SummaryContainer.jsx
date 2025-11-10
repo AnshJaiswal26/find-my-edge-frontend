@@ -5,10 +5,8 @@ import {
 } from "@features/risk-management/components";
 
 export function SummaryContainer() {
-  console.log("SummaryContainer...");
-
   return (
-    <Container>
+    <Container className="flex-none w-full">
       <TransactionSummarySection />
       <ChargesSummarySection />
     </Container>

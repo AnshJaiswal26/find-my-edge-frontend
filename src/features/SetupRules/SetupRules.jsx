@@ -60,8 +60,6 @@ const SetupRules = () => {
 
   return (
     <div>
-      <Editor />
-      <Sidebar pageActive={"setuprules"} />
       <div
         className=""
         style={{

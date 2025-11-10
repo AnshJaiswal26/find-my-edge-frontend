@@ -10,44 +10,14 @@ import TrackSection from "./sections/TrackSection";
 import BarSection from "./sections/RadialBarSection";
 import LegendSection from "../common sections/LegendSection";
 
-export default function RadialLayoutPopup({ chartId }) {
-  const updateChart = useChartStore((s) => s.updateChart);
-  const [isAnyChange, setIsAnyChange] = useState(true);
-
-  const handleClose = () => {
-    updateChart(chartId, (chart, s) => {
-      s.activeChart.id = "";
-      chart.draft.layout = chart.live.layout;
-      chart.draft.seriesConfig = chart.live.seriesConfig;
-    });
-    document.body.style.overflow = "";
-  };
-
-  const handleApply = () => {
-    updateChart(chartId, (chart, s) => {
-      s.activeChart.id = "";
-      chart.live.layout = chart.draft.layout;
-      chart.live.seriesConfig = chart.draft.seriesConfig;
-    });
-    document.body.style.overflow = "";
-  };
-
+export default function RadialLayoutPopup({ chartId, updateChart }) {
   return (
-    <Popup
-      title="Layout"
-      isVisible={true}
-      text={["Cancel", isAnyChange ? "Apply" : "Ok"]}
-      onCancel={handleClose}
-      onApply={handleApply}
-      onClose={handleClose}
-    >
-      <div className={styles.contentWrapper}>
-        <GeneralSection chartId={chartId} updateChart={updateChart} />
-        <TrackSection chartId={chartId} updateChart={updateChart} />
-        <BarSection chartId={chartId} updateChart={updateChart} />
-        <DataLabelSection chartId={chartId} updateChart={updateChart} />
-        <LegendSection chartId={chartId} updateChart={updateChart} />
-      </div>
-    </Popup>
+    <>
+      <GeneralSection chartId={chartId} updateChart={updateChart} />
+      <TrackSection chartId={chartId} updateChart={updateChart} />
+      <BarSection chartId={chartId} updateChart={updateChart} />
+      <DataLabelSection chartId={chartId} updateChart={updateChart} />
+      <LegendSection chartId={chartId} updateChart={updateChart} />
+    </>
   );
 }

@@ -96,7 +96,7 @@ export default function Toolbar({ chartId, type }) {
           icon={<item.icon />}
           tooltip={{
             title: item.title,
-            position: "bottom",
+            position: "left",
           }}
           onClick={() => (item?.onClick ? item.onClick() : {})}
         />

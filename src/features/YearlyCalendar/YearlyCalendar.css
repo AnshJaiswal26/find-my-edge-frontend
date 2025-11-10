@@ -26,23 +26,12 @@
     padding 0.3s ease-in-out;
 }
 
-.sidebar-open .calendar-and-popup-container {
-  width: calc(100% - 260px);
-  margin-left: 260px;
-  padding: 20px 25px;
-  gap: 15px;
-}
-
 .calendar-wrapper {
   flex: 1;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   min-width: 200px;
   border-radius: 10px;
-}
-
-.sidebar-open .calendar-wrapper {
-  overflow-x: auto;
 }
 
 .calendar-header {
@@ -116,12 +105,6 @@
   transition: font-size 0.3s ease, padding 0.3s ease;
 }
 
-.sidebar-open .calendar-header-cell {
-  font-size: 12px;
-  padding: 6px;
-  transition: font-size 0.3s ease, padding 0.3s ease;
-}
-
 .calendar-row {
   display: contents;
 }
@@ -142,11 +125,6 @@
   transition: box-shadow 0.3s ease, transform 0.2s ease, width 0.3s ease,
     height 0.3s ease;
   cursor: pointer;
-}
-
-.sidebar-open .calendar-cell {
-  height: 50px;
-  width: 50px;
 }
 
 .calendar-cell:hover {
@@ -205,10 +183,6 @@
   position: relative;
   overflow-x: auto;
   transition: padding 0.3s ease;
-}
-
-.sidebar-open .popup-summary {
-  padding: 15px;
 }
 
 .popup-summary h3 {
@@ -319,10 +293,6 @@
   min-width: 360px;
   text-align: left;
   transition: padding 0.3s ease;
-}
-
-.sidebar-open .popup-overview {
-  padding: 15px;
 }
 
 .popup-header {
