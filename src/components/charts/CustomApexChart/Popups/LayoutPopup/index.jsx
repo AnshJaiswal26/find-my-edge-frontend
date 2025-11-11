@@ -6,6 +6,7 @@ import PieLayoutPopup from "./pie/PieLayoutPopup";
 import RadarLayoutPopup from "./radar/RadarLayoutPopup";
 import { Popup } from "@layout";
 import styles from "./LayoutPopup.module.css";
+import PolarAreaLayoutPopup from "./polarArea/PolarAreaLayoutPopup";
 
 export default function ChartLayoutPopup() {
   const activeChart = useChartStore((s) => s.activeChart);
@@ -62,6 +63,9 @@ function PopupContent({ id, type, updateChart }) {
 
     case "radar":
       return <RadarLayoutPopup chartId={id} updateChart={updateChart} />;
+
+    case "polarArea":
+      return <PolarAreaLayoutPopup chartId={id} updateChart={updateChart} />;
 
     default:
       return (

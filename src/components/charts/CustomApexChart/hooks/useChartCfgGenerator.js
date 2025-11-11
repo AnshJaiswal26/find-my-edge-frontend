@@ -70,18 +70,9 @@ const seriesGenerator = {
   polarArea: (chart) => {
     const index = chart.selectedLegendIndex;
 
-    const getSeriesValues = (s) =>
-      chart.series.map((d) => Number(d[s.key] ?? 0));
-
     if (index !== null) {
       const s = chart.live.seriesConfig[index];
-      return [
-        {
-          name: s.name,
-          data: getSeriesValues(s),
-          color: s.color,
-        },
-      ];
+      return [chart.series[index][s.key]];
     }
 
     return chart.series.map((s) => s.data);
@@ -167,17 +158,16 @@ export default function useChartCfgGenerator({ chartId, type }) {
         runtime.selectedLegendIndex !== null
           ? runtime.selectedLegendIndex
           : seriesIndex;
+
+      const s = live.seriesConfig[legendIndex];
+
       return {
         title: series.filtered[index].axis,
-
         dataArray: [
           {
-            value:
-              live.seriesConfig[legendIndex].prefix +
-              series.filtered[index][live.seriesConfig[legendIndex].key] +
-              live.seriesConfig[legendIndex].suffix,
-            label: live.seriesConfig[legendIndex].tooltipLabel,
-            color: live.seriesConfig[legendIndex].color,
+            value: s.prefix + series.filtered[index][s.key] + s.suffix,
+            label: s.tooltipLabel,
+            color: s.color,
           },
         ],
       };
@@ -185,17 +175,19 @@ export default function useChartCfgGenerator({ chartId, type }) {
       const { live, series, runtime } = useChartStore.getState()[chartId];
 
       const legendIndex =
-        runtime.selectedLegendIndex !== null ? runtime.selectedLegendIndex : 0;
+        runtime.selectedLegendIndex !== null
+          ? runtime.selectedLegendIndex
+          : seriesIndex;
 
       const s = live.seriesConfig[legendIndex];
 
       return {
-        title: series.filtered[index]?.axis,
+        title: series.filtered[legendIndex]?.axis,
         dataArray: [
           {
             value:
               (s.prefix ?? "") +
-              series.filtered[index]?.[s.key] +
+              series.filtered[legendIndex][s.key] +
               (s.suffix ?? ""),
             label: s.tooltipLabel,
             color: s.color,
@@ -249,7 +241,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
   }, []);
 
   useEffect(() => {
-    if (type === "radialBar" || type === "donut" || type === "polarArea") {
+    if (type === "radialBar" || type === "donut") {
       ApexCharts.exec(chartId, "updateSeries", computedSeries, true);
     }
   }, [live, filteredSeries, selectedLegendIndex]);

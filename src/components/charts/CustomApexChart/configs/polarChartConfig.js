@@ -14,13 +14,10 @@ export const getPolarChartConfig = ({ chartId, chart, tooltipCallback }) => {
 
     plotOptions: {
       polarArea: {
+        size: config.polarSize,
         rings: {
-          strokeColor: "var(--color-border-default)", // ring circles
-          strokeWidth: 0,
-        },
-        spokes: {
-          strokeColor: "var(--color-border-default)", // radial lines
-          strokeWidth: 1,
+          strokeColor: config.ringBorderColor,
+          strokeWidth: config.ringBorderWidth,
         },
       },
     },
@@ -32,6 +29,13 @@ export const getPolarChartConfig = ({ chartId, chart, tooltipCallback }) => {
 
     dataLabels: {
       enabled: config.dataLabels,
+      formatter: (val, { seriesIndex }) => {
+        return (
+          seriesConfig[seriesIndex].prefix +
+          val +
+          seriesConfig[seriesIndex].suffix
+        );
+      },
     },
 
     tooltip: {
@@ -52,23 +56,14 @@ export const getPolarChartConfig = ({ chartId, chart, tooltipCallback }) => {
           shadeColor(parseColor(s.color), 20)
         ),
         inverseColors: false,
-        opacityFrom: config.fillOpacity,
-        opacityTo: config.fillOpacity / 2,
-        stops: [0, 90],
+        opacityFrom: config.fillOpacityFrom,
+        opacityTo: config.fillOpacityTo,
+        stops: [0, 100],
       },
     },
 
-    markers: {
-      size: config.markerSize,
-      hover: { size: config.markerHoverSize },
-    },
-
-    xaxis: {
-      labels: { show: config.showCategoryLabels },
-    },
-
     yaxis: {
-      labels: { show: config.showValueGrid },
+      show: config.showYAxisLabels,
     },
   };
 };

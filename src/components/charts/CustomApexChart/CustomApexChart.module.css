@@ -31,10 +31,9 @@
   visibility: visible;
 }
 
-.chartToolbarWrapper {
+.chartTitleWrapper {
   display: flex;
   align-items: center;
-  padding-right: 0.25rem;
   height: fit-content;
   box-sizing: border-box;
   justify-content: space-between;
@@ -46,7 +45,6 @@
   position: relative;
   gap: 0.25rem;
   flex-wrap: wrap;
-  z-index: 10;
   width: 100%;
 }
 
@@ -65,10 +63,6 @@
   justify-content: start;
 }
 
-.legendWrapper.paddingRight {
-  padding-right: 30px;
-}
-
 .legendWrapper.right {
   justify-content: end;
 }
@@ -79,7 +73,6 @@
 
 .chartZoomWrapper {
   position: relative;
-  /* overflow-y: hidden; */
   box-sizing: border-box;
   height: 100%;
   width: 100%;
@@ -91,8 +84,12 @@
 
 .chartWrapper {
   display: flex;
-  flex-direction: row-reverse;
-  gap: 0;
   height: 100%;
   width: 100%;
+  position: relative;
+}
+
+.chartWrapper > :first-child {
+  flex: 1;
+  min-width: 0;
 }

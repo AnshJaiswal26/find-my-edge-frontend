@@ -55,9 +55,15 @@ export const Label = ({ children, type = "medium" }) => {
   return <div className={`${styles.label} ${styles[type]}`}>{children}</div>;
 };
 
-export const Legend = ({ color, label, selected, onClick = () => null }) => {
+export const Legend = ({
+  color,
+  label,
+  selected,
+  onClick = () => null,
+  className,
+}) => {
   return (
-    <div className={styles.legendWrapper}>
+    <div className={`${styles.legendWrapper} ${className}`}>
       <div
         className={`${styles.legendIndicatorLabelWrapper} ${
           selected ? styles.selected : ""

@@ -164,6 +164,7 @@
 .apexcharts-custom-toolbar {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 0.125rem;
   background-color: inherit;
   z-index: 1;

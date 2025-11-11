@@ -151,16 +151,16 @@ export const defaultPolarAreaChartLayout = {
 
   // Polar-specific
   polarSize: 100,
-  strokeWidth: 1,
-  fillOpacity: 1,
 
-  // markers
-  markerSize: 4,
-  markerHoverSize: 7,
+  ringBorderWidth: 1,
+  ringBorderColor: "var(--color-border-default)",
+
+  strokeWidth: 1,
+  fillOpacityFrom: 1,
+  fillOpacityTo: 0.8,
 
   // Axis Labels
-  showCategoryLabels: true,
-  showValueGrid: true,
+  showYAxisLabels: true,
 
   legend: true,
   legendPosition: "bottom",
@@ -496,19 +496,25 @@ export const defaultCharts = {
           key: "data",
           name: "Momentum",
           tooltipLabel: "Momentum",
-          color: "var(--color-green)",
+          color: "var(--color-default)",
+          prefix: "",
+          suffix: "%",
         },
         {
           key: "data",
           name: "Volume",
           tooltipLabel: "Volume",
           color: "var(--color-yellow)",
+          prefix: "",
+          suffix: "%",
         },
         {
           key: "data",
           name: "Volatility",
           tooltipLabel: "Volatility",
           color: "var(--color-red)",
+          prefix: "",
+          suffix: "%",
         },
       ],
     },

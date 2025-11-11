@@ -5,7 +5,7 @@ import "../../components/ui/TableComponents/Popups/Popup.css";
 import AddColumnModal from "./popups/AddColumn";
 import Filter from "../../components/ui/TableComponents/Popups/Filter";
 import { Button, Sidebar, Editor, DateHeader } from "@ui";
-import DeleteColumnModal from "../../components/ui/TableComponents/Popups/DeleteColumn";
+import DeleteColumnModal from "@ui/TableComponents/Popups/DeleteColumn";
 import DeleteConfirmationPopup from "../../components/ui/TableComponents/Popups/DeleteConfirmationPopup";
 
 function CustomRecords({ isCustomEdge }) {

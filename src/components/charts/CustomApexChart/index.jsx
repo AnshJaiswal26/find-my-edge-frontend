@@ -14,7 +14,7 @@ export default function CustomApexChart({ chartId, type }) {
     >
       <div className={`chart-toolbar ${styles.chartDragIcon}`}>⠿</div>
 
-      <div className={styles.chartToolbarWrapper}>
+      <div className={styles.chartTitleWrapper}>
         <Title chartId={chartId} />
       </div>
 
@@ -25,12 +25,7 @@ export default function CustomApexChart({ chartId, type }) {
 
 function Title({ chartId }) {
   const title = useChartStore((s) => s[chartId].live.layout.title);
-
-  return (
-    <div>
-      <span>{title}</span>
-    </div>
-  );
+  return <span>{title}</span>;
 }
 
 function ChartWithConfig({ chartId, type }) {
@@ -47,14 +42,9 @@ function ChartWithConfig({ chartId, type }) {
 
   return (
     <div className={styles.chartWrapper}>
-      <Toolbar type={type} chartId={chartId} />
       <div className={`${styles.legendChartWrapper} ${styles[legendPosition]}`}>
         {legend && (
-          <div
-            className={`${styles.legendWrapper} ${styles[legendAlignment]} ${
-              type === "bar" || type === "line" ? styles.paddingRight : ""
-            }`}
-          >
+          <div className={`${styles.legendWrapper} ${styles[legendAlignment]}`}>
             {seriesConfig.map((s, i) => (
               <Legend
                 key={i}
@@ -95,7 +85,8 @@ function ChartWithConfig({ chartId, type }) {
             />
           </div>
         </div>
-      </div>
+      </div>{" "}
+      <Toolbar type={type} chartId={chartId} />
     </div>
   );
 }
