@@ -92,7 +92,8 @@
 
 [data-chart-type="donut"] .apexcharts-text,
 [data-chart-type="radialBar"] .apexcharts-text,
-[data-chart-type="radar"] .apexcharts-text {
+[data-chart-type="radar"] .apexcharts-text,
+[data-chart-type="polarArea"] .apexcharts-text {
   fill: var(--color-text-charts);
 }
 
@@ -165,7 +166,6 @@
   flex-direction: column;
   gap: 0.125rem;
   background-color: inherit;
-  margin-right: 0.5rem;
   z-index: 1;
   flex-wrap: wrap;
 }

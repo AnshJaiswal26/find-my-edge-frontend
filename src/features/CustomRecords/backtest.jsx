@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx"; // Import the xlsx library
 import "./CustomRecords.css";
-import AddColumnModal from "./popups/Add-column";
+import AddColumnModal from "./popups/AddColumn";
 import Filter from "../../components/ui/TableComponents/Popups/Filter";
-import DeleteColumnModal from "../../components/ui/TableComponents/Popups/delete-column";
-import DeleteConfirmationPopup from "../../components/ui/TableComponents/Popups/Delete-Confirmation-Popup";
+import DeleteColumnModal from "../../components/ui/TableComponents/Popups/DeleteColumn";
+import DeleteConfirmationPopup from "../../components/ui/TableComponents/Popups/DeleteConfirmationPopup";
 import Sidebar from "../../components/ui/Sidebar";
 import Editor from "../../components/ui/Editor";
 import { Button } from "../../components/ui";

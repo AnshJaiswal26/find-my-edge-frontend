@@ -28,6 +28,16 @@ export default function GeneralSection({ chartId, updateChart }) {
         }
         store={useChartStore}
       />
+      <ToggleButton
+        label={"Data Labels"}
+        value={(s) => s[chartId].draft.layout.dataLabels}
+        onClick={() =>
+          updateChart(chartId, (chart) => {
+            chart.draft.layout.dataLabels = !chart.draft.layout.dataLabels;
+          })
+        }
+        store={useChartStore}
+      />
 
       <InputField
         label="Donut Size"
@@ -39,8 +49,8 @@ export default function GeneralSection({ chartId, updateChart }) {
             chart.draft.layout.donutSize = v;
           })
         }
-        min={10}
-        max={100}
+        min={0}
+        max={95}
         store={useChartStore}
       />
     </Section>

@@ -29,6 +29,17 @@ export default function GeneralSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
+      <ToggleButton
+        label="Data Labels"
+        value={(s) => s[chartId].draft.layout.dataLabels}
+        onClick={() =>
+          updateChart(chartId, (chart) => {
+            chart.draft.layout.dataLabels = !chart.draft.layout.dataLabels;
+          })
+        }
+        store={useChartStore}
+      />
+
       <InputField
         label="Radar Size"
         type="range"

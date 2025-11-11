@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   publicDir: "public",
+  server: { fs: { strict: true } },
   resolve: {
     alias: {
       "@icons": path.resolve(__dirname, "src/assets/icons"),

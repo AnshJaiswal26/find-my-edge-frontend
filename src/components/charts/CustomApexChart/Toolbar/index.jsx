@@ -21,7 +21,9 @@ import {
 export default function Toolbar({ chartId, type }) {
   const updateChart = useChartStore((s) => s.updateChart);
 
-  const isGroupType = ["radialBar", "donut", "radar"].includes(type);
+  const chartMeta = useChartStore.getState()[chartId].meta;
+
+  const isGroupType = chartMeta.category === "group";
 
   const IconCmpt = useMemo(
     () => [

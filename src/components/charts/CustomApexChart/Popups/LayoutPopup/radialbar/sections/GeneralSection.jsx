@@ -36,27 +36,14 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
         formatter={(v) => `${v}%`}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeWidth = v;
+            chart.draft.layout.hollowSize = v;
           })
         }
-        min={50}
-        max={100}
+        min={30}
+        max={80}
         store={useChartStore}
       />
 
-      <InputField
-        label={"Start Angle"}
-        type="range"
-        value={(s) => parseInt(s[chartId].draft.layout.startAngle)}
-        onChange={(v) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.startAngle = v;
-          })
-        }
-        min={0}
-        max={360}
-        store={useChartStore}
-      />
       <InputField
         label={"End Angle"}
         type="range"
@@ -66,8 +53,9 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
             chart.draft.layout.endAngle = v;
           })
         }
-        min={0}
+        min={90}
         max={360}
+        step={90}
         store={useChartStore}
       />
     </Section>

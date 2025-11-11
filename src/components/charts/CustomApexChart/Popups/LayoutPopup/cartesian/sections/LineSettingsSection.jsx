@@ -2,6 +2,7 @@ import { ToggleButton, ColorPicker, InputField, Select } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
+import { Fragment } from "react";
 
 export default function LineSettingsSection({ chartId, updateChart }) {
   return (
@@ -187,17 +188,32 @@ function DataSeries({ chartId, updateChart }) {
   return (
     <Section title={"Data Series Name"}>
       {Array.from({ length }).map((_, index) => (
-        <InputField
-          key={index}
-          label={`Series ${index + 1}`}
-          value={(s) => parseColor(s[chartId].draft.seriesConfig[index].name)}
-          onChange={(c) => {
-            updateChart(chartId, (chart) => {
-              chart.draft.seriesConfig[index].name = c;
-            });
-          }}
-          store={useChartStore}
-        />
+        <Section title={`Series ${index + 1}`} key={index} subSection>
+          <InputField
+            label={"Name"}
+            placeholder="Enter Name"
+            value={(s) => parseColor(s[chartId].draft.seriesConfig[index].name)}
+            onChange={(c) => {
+              updateChart(chartId, (chart) => {
+                chart.draft.seriesConfig[index].name = c;
+              });
+            }}
+            store={useChartStore}
+          />
+          <InputField
+            label={`Tooltip Label`}
+            placeholder="Enter Label"
+            value={(s) =>
+              parseColor(s[chartId].draft.seriesConfig[index].tooltipLabel)
+            }
+            onChange={(c) => {
+              updateChart(chartId, (chart) => {
+                chart.draft.seriesConfig[index].tooltipLabel = c;
+              });
+            }}
+            store={useChartStore}
+          />
+        </Section>
       ))}
     </Section>
   );

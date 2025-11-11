@@ -41,16 +41,23 @@ function PieColors({ chartId, updateChart }) {
   const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
 
   return Array.from({ length }).map((_, i) => (
-    <div className="flex flex-wrap gap-3 items-end" key={i}>
+    <Section title={`Series ${i + 1}`} key={i} subSection>
       <InputField
-        key={i}
-        label={"Slice Name"}
-        labelPosition="top"
-        type="text"
+        label={"Name"}
         value={(s) => s[chartId].draft.seriesConfig[i].name}
         onChange={(v) =>
           updateChart(chartId, (chart) => {
             chart.draft.seriesConfig[i].name = v;
+          })
+        }
+        store={useChartStore}
+      />
+      <InputField
+        label={"Tooltip Label"}
+        value={(s) => s[chartId].draft.seriesConfig[i].tooltipLabel}
+        onChange={(v) =>
+          updateChart(chartId, (chart) => {
+            chart.draft.seriesConfig[i].tooltipLabel = v;
           })
         }
         store={useChartStore}
@@ -65,6 +72,6 @@ function PieColors({ chartId, updateChart }) {
         }
         store={useChartStore}
       />
-    </div>
+    </Section>
   ));
 }

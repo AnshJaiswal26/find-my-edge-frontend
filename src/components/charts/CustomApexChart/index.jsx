@@ -46,35 +46,35 @@ function ChartWithConfig({ chartId, type }) {
   const isZoomedIn = chartWidth === 100 || typeof chartWidth === "string";
 
   return (
-    <div className={`${styles.legendChartWrapper} ${styles[legendPosition]}`}>
-      {legend && (
-        <div
-          className={`${styles.chartLegendWrapper} ${styles[legendAlignment]} ${
-            type === "bar" || type === "line" ? styles.paddingRight : ""
-          }`}
-        >
-          {seriesConfig.map((s, i) => (
-            <Legend
-              key={i}
-              color={type === "bar" ? s.colors.map((r) => r.color) : s.color}
-              label={s.name ?? s.label}
-              selected={
-                selectedLegendIndex !== i && selectedLegendIndex !== null
-              }
-              onClick={() => {
-                updateChart(chartId, (chart) => {
-                  if (chart.live.seriesConfig.length === 1) return;
-                  const idx = chart.runtime.selectedLegendIndex;
-                  chart.runtime.selectedLegendIndex = idx === i ? null : i;
-                });
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      <div className={styles.chartWrapper}>
-        <Toolbar type={type} chartId={chartId} />
+    <div className={styles.chartWrapper}>
+      <Toolbar type={type} chartId={chartId} />
+      <div className={`${styles.legendChartWrapper} ${styles[legendPosition]}`}>
+        {legend && (
+          <div
+            className={`${styles.legendWrapper} ${styles[legendAlignment]} ${
+              type === "bar" || type === "line" ? styles.paddingRight : ""
+            }`}
+          >
+            {seriesConfig.map((s, i) => (
+              <Legend
+                key={i}
+                color={type === "bar" ? s.colors.map((r) => r.color) : s.color}
+                label={s.name ?? s.label}
+                selected={
+                  selectedLegendIndex !== i && selectedLegendIndex !== null
+                }
+                onClick={() => {
+                  if (type === "donut") return;
+                  updateChart(chartId, (chart) => {
+                    if (chart.live.seriesConfig.length === 1) return;
+                    const idx = chart.runtime.selectedLegendIndex;
+                    chart.runtime.selectedLegendIndex = idx === i ? null : i;
+                  });
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         <div
           data-chart-type={type}
@@ -95,7 +95,6 @@ function ChartWithConfig({ chartId, type }) {
             />
           </div>
         </div>
-        <div id="tooltip-container"></div>
       </div>
     </div>
   );

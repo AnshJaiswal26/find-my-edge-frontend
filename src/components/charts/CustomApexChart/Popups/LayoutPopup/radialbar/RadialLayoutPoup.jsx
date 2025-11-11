@@ -1,9 +1,3 @@
-import { useState } from "react";
-import { Popup } from "@layout";
-import { useChartStore } from "@stores";
-import styles from "../LayoutPopup.module.css";
-
-// --- Sub-sections ---
 import GeneralSection from "./sections/GeneralSection";
 import DataLabelSection from "./sections/DataLabelsSection";
 import TrackSection from "./sections/TrackSection";

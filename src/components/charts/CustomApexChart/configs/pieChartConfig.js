@@ -18,7 +18,7 @@ export const getPieChartConfig = ({ chartId, chart, tooltipCallback }) => {
     legend: { show: false },
 
     dataLabels: {
-      enabled: config.showDataLabels,
+      enabled: config.dataLabels,
       formatter: (val, opts) => {
         return config.valuePrefix + val + config.valueSuffix;
       },

@@ -5,10 +5,10 @@ import "./Edge.css";
 import { DateHeader } from "@ui";
 import "../../components/ui/DateHeader/DateHeader.css";
 import Filter from "../../components/ui/TableComponents/Popups/Filter";
-import AddColumnModal from "../../components/ui/TableComponents/Popups/Add-Column";
-import DeleteConfirmationPopup from "../../components/ui/TableComponents/Popups/Delete-Confirmation-Popup";
-import EditDropdownColumn from "../../components/ui/TableComponents/Popups/Edit-Dropdown";
-import DeleteColumnModal from "../../components/ui/TableComponents/Popups/delete-column";
+import AddColumnModal from "../../components/ui/TableComponents/Popups/AddColumn";
+import DeleteConfirmationPopup from "../../components/ui/TableComponents/Popups/DeleteConfirmationPopup";
+import EditDropdownColumn from "../../components/ui/TableComponents/Popups/EditDropdown";
+import DeleteColumnModal from "../../components/ui/TableComponents/Popups/DeleteColumn";
 import Table from "../../components/ui/TableComponents/Table/Table";
 import Summary from "../../components/ui/TradeSummary/TradeSummary";
 

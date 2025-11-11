@@ -5,25 +5,10 @@ import { useChartStore } from "@stores";
 export default function DataLabelSection({ chartId, updateChart }) {
   return (
     <>
-      <Section title="Slice Data Labels">
-        <Section>
+      <Section title="Center Labels">
+        <Section title={"Name"} subSection>
           <ToggleButton
             label={"Show"}
-            value={(s) => s[chartId].draft.layout.showDataLabels}
-            onClick={() =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.showDataLabels =
-                  !chart.draft.layout.showDataLabels;
-              })
-            }
-            store={useChartStore}
-          />
-        </Section>
-      </Section>
-      <Section title="Center Data Labels">
-        <Section>
-          <ToggleButton
-            label={"Name"}
             value={(s) => s[chartId].draft.layout.name}
             onClick={() =>
               updateChart(chartId, (chart) => {
@@ -34,9 +19,9 @@ export default function DataLabelSection({ chartId, updateChart }) {
           />
         </Section>
 
-        <Section>
+        <Section title={"Value"} subSection>
           <ToggleButton
-            label={"Value"}
+            label={"Show"}
             value={(s) => s[chartId].draft.layout.value}
             onClick={() =>
               updateChart(chartId, (chart) => {
@@ -69,9 +54,9 @@ export default function DataLabelSection({ chartId, updateChart }) {
           />
         </Section>
 
-        <Section>
+        <Section title={"Total"} subSection>
           <ToggleButton
-            label={"Total"}
+            label={"Show"}
             value={(s) => s[chartId].draft.layout.total}
             onClick={() =>
               updateChart(chartId, (chart) => {

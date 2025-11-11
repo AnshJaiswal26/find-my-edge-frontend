@@ -29,18 +29,16 @@ const getChartStructure = (acc, [chartId, chart]) => {
     },
 
     // --- applied filters ---
-    ...(chart.meta.type !== "radialBar" &&
-      chart.meta.type !== "donut" &&
-      chart.meta.type !== "radar" && {
-        filters: {
-          selectedSeries: chart.seriesConfig[0].key,
-          selectedFilter: "none",
-          selectedSort: "none",
-          value: "",
-          from: "",
-          to: "",
-        },
-      }),
+    ...(chart.meta.category !== "group" && {
+      filters: {
+        selectedSeries: chart.seriesConfig[0].key,
+        selectedFilter: "none",
+        selectedSort: "none",
+        value: "",
+        from: "",
+        to: "",
+      },
+    }),
   };
   return acc;
 };
@@ -53,23 +51,6 @@ export const generateCharts = (charts) => {
       return acc;
     },
     {}
-  );
-  const barAcc = Object.entries(defaultCharts.bar).reduce(
-    getChartStructure,
-    {}
-  );
-  const barLineAcc = Object.entries(defaultCharts.line).reduce(
-    getChartStructure,
-    barAcc
-  );
-  const barLinePieAcc = Object.entries(defaultCharts.pie).reduce(
-    getChartStructure,
-    barLineAcc
-  );
-
-  const barLineRadialBarPieAcc = Object.entries(defaultCharts.radialBar).reduce(
-    getChartStructure,
-    barLinePieAcc
   );
 
   return config;

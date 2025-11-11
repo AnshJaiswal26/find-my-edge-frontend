@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx"; // Import the xlsx library
 import "./CustomRecords.css";
 import "../../components/ui/TableComponents/Popups/Popup.css";
-import AddColumnModal from "./popups/Add-column";
+import AddColumnModal from "./popups/AddColumn";
 import Filter from "../../components/ui/TableComponents/Popups/Filter";
 import { Button, Sidebar, Editor, DateHeader } from "@ui";
-import DeleteColumnModal from "../../components/ui/TableComponents/Popups/delete-column";
-import DeleteConfirmationPopup from "../../components/ui/TableComponents/Popups/delete-confirmation-popup";
+import DeleteColumnModal from "../../components/ui/TableComponents/Popups/DeleteColumn";
+import DeleteConfirmationPopup from "../../components/ui/TableComponents/Popups/DeleteConfirmationPopup";
 
 function CustomRecords({ isCustomEdge }) {
   const [trades, setTrades] = useState([]); // Start with empty trades array

@@ -45,7 +45,7 @@ export const getRadialBarChartConfig = ({
     },
     plotOptions: {
       radialBar: {
-        startAngle: config.startAngle ?? 0,
+        startAngle: 0,
         endAngle: config.endAngle ?? 360,
         hollow: { size: `${config.hollowSize}%` ?? "50%" },
         track: {

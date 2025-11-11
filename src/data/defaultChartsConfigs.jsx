@@ -6,6 +6,9 @@ const defaultCartesianLayout = {
 
   chartWidth: 100,
 
+  // general
+  tooltip: true,
+  dataLabels: false,
   selection: false,
 
   // grid
@@ -30,9 +33,6 @@ const defaultCartesianLayout = {
   yTitleColor: "var(--apexcharts-axis-labels-color)",
   yLabelPrefix: "",
   yLabelSuffix: "",
-
-  tooltip: true,
-  dataLabels: false,
 
   legend: true,
   legendPosition: "top",
@@ -98,7 +98,6 @@ const defaultRadialBarChartLayout = {
   gradientType: "gradient",
   trackBackground: "var(--color-bg-hover)",
   strokeWidth: 50,
-  startAngle: 0,
   endAngle: 360,
   strokeLineCap: "round",
 };
@@ -111,7 +110,7 @@ const defaultPieChartLayout = {
   gradientType: "gradient",
   strokeWidth: 0,
 
-  showDataLabels: false,
+  dataLabels: false,
 };
 
 export const defaultRadarChartLayout = {
@@ -119,6 +118,7 @@ export const defaultRadarChartLayout = {
   chartWidth: 100,
 
   selectedLegendIndex: null,
+  dataLabels: true,
   tooltip: true,
 
   // Radar specifics
@@ -126,20 +126,41 @@ export const defaultRadarChartLayout = {
   polygonStroke: "var(--color-border-default)",
   polygonFill: "var(--color-bg-hover)",
   polygonStrokeWidth: 1,
-  radarOpacity: 0.1,
+  radarOpacity: 1,
 
   // Markers
   markerSize: 5,
   markerHoverSize: 8,
 
-  // Edge Value Labels (on points)
-  showEdgeLabels: true,
-  edgeValuePrefix: "1:",
-  edgeValueSuffix: "",
-
   // Axis / Category Labels
   showXAxisLabels: true,
   showYAxisLabels: true,
+
+  legend: true,
+  legendPosition: "bottom",
+  legendAlignment: "center",
+};
+
+export const defaultPolarAreaChartLayout = {
+  title: "",
+  chartWidth: 100,
+
+  selectedLegendIndex: null,
+  tooltip: true,
+  dataLabels: true,
+
+  // Polar-specific
+  polarSize: 100,
+  strokeWidth: 1,
+  fillOpacity: 1,
+
+  // markers
+  markerSize: 4,
+  markerHoverSize: 7,
+
+  // Axis Labels
+  showCategoryLabels: true,
+  showValueGrid: true,
 
   legend: true,
   legendPosition: "bottom",
@@ -154,6 +175,7 @@ export const defaultCharts = {
         id: "apex-bar-chart-1",
         type: "bar",
         xaxisMetric: "Date",
+        category: "series",
       },
       layout: {
         ...defaultBarChartLayout,
@@ -171,19 +193,19 @@ export const defaultCharts = {
               from: 0.61,
               to: Number.MAX_SAFE_INTEGER,
               color: "var(--color-green)",
-              label: "Reward Taken",
+              tooltipLabel: "Reward Taken",
             },
             {
               from: 0,
               to: 0.6,
               color: "var(--color-yellow)",
-              label: "Breakeven",
+              tooltipLabel: "Breakeven",
             },
             {
               from: Number.MIN_SAFE_INTEGER,
               to: -0.01,
               color: "var(--color-red)",
-              label: "Risk Taken",
+              tooltipLabel: "Risk Taken",
             },
           ],
         },
@@ -203,6 +225,7 @@ export const defaultCharts = {
         id: "apex-bar-chart-2",
         type: "bar",
         xaxisMetric: "day",
+        category: "series",
       },
       layout: {
         ...defaultBarChartLayout,
@@ -221,7 +244,7 @@ export const defaultCharts = {
               from: 0,
               to: Number.MAX_SAFE_INTEGER,
               color: "var(--color-green)",
-              label: "Win Rate",
+              tooltipLabel: "Win Rate",
             },
           ],
         },
@@ -233,7 +256,7 @@ export const defaultCharts = {
               from: 0,
               to: Number.MAX_SAFE_INTEGER,
               color: "var(--color-red)",
-              label: "Lose Rate",
+              tooltipLabel: "Lose Rate",
             },
           ],
         },
@@ -247,6 +270,7 @@ export const defaultCharts = {
         id: "apex-line-chart-1",
         type: "line",
         xaxisMetric: "Date",
+        category: "series",
       },
       layout: {
         ...defaultLineChartLayout,
@@ -259,6 +283,7 @@ export const defaultCharts = {
         {
           key: "Pnl",
           name: "Pnl",
+          tooltipLabel: "Pnl",
           color: "var(--color-cyan)",
           markerColor: "var(--color-cyan)",
           areaColor: "var(--color-cyan)",
@@ -266,6 +291,7 @@ export const defaultCharts = {
         {
           key: "Cummulative Pnl",
           name: "Cummulative Pnl",
+          tooltipLabel: "Cummulative Pnl",
           color: "var(--color-yellow)",
           markerColor: "var(--color-yellow)",
           areaColor: "var(--color-yellow)",
@@ -278,6 +304,7 @@ export const defaultCharts = {
         id: "apex-line-chart-2",
         type: "line",
         xaxisMetric: "Date",
+        category: "series",
       },
       layout: {
         ...defaultLineChartLayout,
@@ -287,6 +314,7 @@ export const defaultCharts = {
         {
           key: "Capital",
           name: "Captial",
+          tooltipLabel: "Capital",
           color: "var(--color-yellow)",
           markerColor: "var(--color-yellow)",
           areaColor: "var(--color-yellow)",
@@ -299,6 +327,7 @@ export const defaultCharts = {
         id: "apex-line-chart-3",
         type: "line",
         xaxisMetric: "Date",
+        category: "series",
       },
       layout: {
         ...defaultLineChartLayout,
@@ -308,6 +337,7 @@ export const defaultCharts = {
         {
           key: "Profit",
           name: "Profit",
+          tooltipLabel: "Profit",
           color: "var(--color-green)",
           markerColor: "var(--color-green)",
           areaColor: "var(--color-green)",
@@ -315,6 +345,7 @@ export const defaultCharts = {
         {
           key: "Loss",
           name: "Loss",
+          tooltipLabel: "Loss",
           color: "var(--color-red)",
           markerColor: "var(--color-red)",
           areaColor: "var(--color-red)",
@@ -341,12 +372,23 @@ export const defaultCharts = {
       ],
       meta: {
         id: "apex-radial-bar-chart-1",
-        type: "raidialBar",
+        type: "radialBar",
+        category: "group",
       },
       layout: { ...defaultRadialBarChartLayout, title: "Radial Progress" },
       seriesConfig: [
-        { key: "Wins", name: "Wins", color: "var(--color-green)" },
-        { key: "Loses", name: "Loses", color: "var(--color-red)" },
+        {
+          key: "Wins",
+          name: "Wins",
+          tooltipLabel: "Wins",
+          color: "var(--color-green)",
+        },
+        {
+          key: "Loses",
+          name: "Loses",
+          tooltipLabel: "Loses",
+          color: "var(--color-red)",
+        },
       ],
     },
   },
@@ -370,18 +412,28 @@ export const defaultCharts = {
       meta: {
         id: "apex-pie-chart-1",
         type: "donut",
+        category: "group",
       },
       layout: { ...defaultPieChartLayout, title: "Pie Progress" },
       seriesConfig: [
-        { key: "Wins", name: "Wins", color: "var(--color-default)" },
-        { key: "Loses", name: "Loses", color: "var(--color-yellow)" },
+        {
+          key: "Wins",
+          name: "Wins",
+          tooltipLabel: "Wins",
+          color: "var(--color-default)",
+        },
+        {
+          key: "Loses",
+          name: "Loses",
+          tooltipLabel: "Loses",
+          color: "var(--color-yellow)",
+        },
       ],
     },
   },
   radar: {
     "apex-radar-chart-1": {
       data: [
-        // each point is an object with axes keys
         { axis: "Nifty 50", Reward: 3.3, Risk: 1.2, Gain: 0.34 },
         { axis: "Bank Nifty", Reward: 1.3, Risk: 1.2, Gain: 0.23 },
         { axis: "Sensex", Reward: 2.1, Risk: 0.93, Gain: 0.56 },
@@ -389,12 +441,14 @@ export const defaultCharts = {
       meta: {
         id: "apex-radar-chart-1",
         type: "radar",
+        category: "group",
       },
       layout: { ...defaultRadarChartLayout, title: "Radar Progress" },
       seriesConfig: [
         {
           key: "Reward",
           name: "Reward",
+          tooltipLabel: "Reward",
           color: "var(--color-green)",
           prefix: "1:",
           suffix: "",
@@ -402,6 +456,7 @@ export const defaultCharts = {
         {
           key: "Risk",
           name: "Risk",
+          tooltipLabel: "Risk",
           color: "var(--color-red)",
           prefix: "1:",
           suffix: "",
@@ -409,9 +464,51 @@ export const defaultCharts = {
         {
           key: "Gain",
           name: "Gain",
+          tooltipLabel: "Gain",
           color: "var(--color-default)",
           prefix: "",
           suffix: "%",
+        },
+      ],
+    },
+  },
+  polar: {
+    "apex-polarArea-chart-1": {
+      data: [
+        { axis: "Nifty 50", data: 30 },
+        { axis: "Bank Nifty", data: 30 },
+        { axis: "Sensex", data: 40 },
+      ],
+
+      meta: {
+        id: "apex-polarArea-chart-1",
+        type: "polarArea",
+        category: "group",
+      },
+
+      layout: {
+        ...defaultPolarAreaChartLayout,
+        title: "Market Polar Strength",
+      },
+
+      seriesConfig: [
+        {
+          key: "data",
+          name: "Momentum",
+          tooltipLabel: "Momentum",
+          color: "var(--color-green)",
+        },
+        {
+          key: "data",
+          name: "Volume",
+          tooltipLabel: "Volume",
+          color: "var(--color-yellow)",
+        },
+        {
+          key: "data",
+          name: "Volatility",
+          tooltipLabel: "Volatility",
+          color: "var(--color-red)",
         },
       ],
     },

@@ -1,4 +1,4 @@
-import { customTooltip } from "@utils";
+import { customTooltip, parseColor, shadeColor } from "@utils";
 
 export const getRadarChartConfig = ({ chartId, chart, tooltipCallback }) => {
   const config = chart.live.layout;
@@ -9,7 +9,7 @@ export const getRadarChartConfig = ({ chartId, chart, tooltipCallback }) => {
   return {
     chart: {
       id: chartId,
-      offsetY: 20,
+      // offsetY: 20,
     },
 
     labels: chart.series.filtered.map((d) => d.axis),
@@ -21,12 +21,12 @@ export const getRadarChartConfig = ({ chartId, chart, tooltipCallback }) => {
     },
 
     dataLabels: {
-      enabled: config.showEdgeLabels,
-      formatter: (val, rer) => {
+      enabled: config.dataLabels,
+      formatter: (val, { seriesIndex }) => {
         return (
-          seriesConfig[rer.seriesIndex].prefix +
+          seriesConfig[seriesIndex].prefix +
           val +
-          seriesConfig[rer.seriesIndex].suffix
+          seriesConfig[seriesIndex].suffix
         );
       },
     },

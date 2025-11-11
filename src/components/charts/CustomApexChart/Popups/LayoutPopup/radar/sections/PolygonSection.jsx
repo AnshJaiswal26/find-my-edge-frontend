@@ -20,6 +20,21 @@ export default function PolygonSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
+      <InputField
+        label="Opacity"
+        type="range"
+        value={(s) => s[chartId].draft.layout.radarOpacity}
+        onChange={(v) =>
+          updateChart(chartId, (chart) => {
+            chart.draft.layout.radarOpacity = v;
+          })
+        }
+        min={0}
+        max={1}
+        step={0.1}
+        store={useChartStore}
+      />
+
       <div className="flex gap-3">
         <ColorPicker
           label="Stroke"
@@ -55,6 +70,11 @@ function RadarSeries({ chartId, updateChart }) {
     <Section title={`Series ${i + 1}`} subSection={true} key={i}>
       {[
         { label: "Name", key: "name", placeholder: "Enter Name" },
+        {
+          label: "Tooltip Label",
+          key: "tooltipLabel",
+          placeholder: "Enter Label",
+        },
         { label: "Value Prefix", key: "prefix", placeholder: "Enter Prefix" },
         { label: "Value Suffix", key: "suffix", placeholder: "Enter Suffix" },
       ].map(({ label, key, placeholder }, idx) => (

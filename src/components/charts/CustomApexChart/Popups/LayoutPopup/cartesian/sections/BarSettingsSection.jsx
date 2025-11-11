@@ -88,14 +88,19 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
       {Array.from({ length }).map((_, index) => (
         <Section key={index} subSection title={`Range ${index + 1}`}>
           {[
-            { key: "from", label: "From" },
-            { key: "to", label: "To" },
-            { key: "label", label: "Tooltip Label" },
-          ].map(({ key, label }, idx) => (
+            { key: "from", label: "From", placeHoldder: "Enter From" },
+            { key: "to", label: "To", placeHoldder: "Enter To" },
+            {
+              key: "tooltipLabel",
+              label: "Tooltip Label",
+              placeHoldder: "Enter Label",
+            },
+          ].map(({ key, label, placeHoldder }, idx) => (
             <InputField
               key={idx}
               label={label}
-              type={key === "label" ? "text" : "number"}
+              type={key === "tooltipLabel" ? "text" : "number"}
+              placeholder={placeHoldder}
               value={(s) =>
                 s[chartId].draft.seriesConfig[seriesIndex].colors[index][key]
               }
@@ -146,7 +151,7 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
                 from: 0,
                 to: 0,
                 color: "var(--color-default)",
-                label: "",
+                tooltipLabel: "",
               });
             })
           }

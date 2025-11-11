@@ -3,6 +3,11 @@ import { useChartStore } from "@stores";
 import { configGenerator } from "../configs";
 import ApexCharts from "apexcharts";
 
+const getCircularChartSeries = (chart) => {
+  const index = chart.selectedLegendIndex;
+  return index !== null ? [chart.series[index]] : chart.series;
+};
+
 const seriesGenerator = {
   bar: (chart) => {
     const index = chart.selectedLegendIndex;
@@ -34,25 +39,9 @@ const seriesGenerator = {
     }));
   },
 
-  donut: (chart) => {
-    const index = chart.selectedLegendIndex;
+  donut: getCircularChartSeries,
 
-    if (index !== null) {
-      return [chart.series[index]];
-    }
-
-    return chart.live.seriesConfig.map((s, i) => chart.series[i]);
-  },
-
-  radialBar: (chart) => {
-    const index = chart.selectedLegendIndex;
-
-    if (index !== null) {
-      return [chart.series[index]];
-    }
-
-    return chart.live.seriesConfig.map((s, i) => chart.series[i]);
-  },
+  radialBar: getCircularChartSeries,
 
   radar: (chart) => {
     const index = chart.selectedLegendIndex;
@@ -76,6 +65,26 @@ const seriesGenerator = {
       data: getSeriesValues(s),
       color: s.color,
     }));
+  },
+
+  polarArea: (chart) => {
+    const index = chart.selectedLegendIndex;
+
+    const getSeriesValues = (s) =>
+      chart.series.map((d) => Number(d[s.key] ?? 0));
+
+    if (index !== null) {
+      const s = chart.live.seriesConfig[index];
+      return [
+        {
+          name: s.name,
+          data: getSeriesValues(s),
+          color: s.color,
+        },
+      ];
+    }
+
+    return chart.series.map((s) => s.data);
   },
 };
 
@@ -102,13 +111,16 @@ export default function useChartCfgGenerator({ chartId, type }) {
               ? runtime.selectedLegendIndex
               : i;
 
-          const { color, label } = live.seriesConfig[legendIndex].colors.filter(
-            (r) => r.from <= value && value <= r.to
-          )[0] || { color: "var(--color-default)", label: "" };
+          const { color, tooltipLabel } = live.seriesConfig[
+            legendIndex
+          ].colors.filter((r) => r.from <= value && value <= r.to)[0] || {
+            color: "var(--color-default)",
+            label: "",
+          };
 
           return {
             value: live.layout.yLabelPrefix + value + live.layout.yLabelSuffix,
-            label,
+            label: tooltipLabel,
             color,
           };
         }),
@@ -127,9 +139,8 @@ export default function useChartCfgGenerator({ chartId, type }) {
               live.layout.valuePrefix +
               series.filtered[legendIndex] +
               live.layout.valueSuffix,
-            label: live.seriesConfig[legendIndex].name,
+            label: live.seriesConfig[legendIndex].tooltipLabel,
             color: live.seriesConfig[legendIndex].color,
-            // indicator: false,
           },
         ],
       };
@@ -145,7 +156,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
               live.layout.valuePrefix +
               series.filtered[legendIndex] +
               live.layout.valueSuffix,
-            label: live.seriesConfig[legendIndex].name,
+            label: live.seriesConfig[legendIndex].tooltipLabel,
             color: live.seriesConfig[legendIndex].color,
             // indicator: false,
           },
@@ -165,8 +176,29 @@ export default function useChartCfgGenerator({ chartId, type }) {
               live.seriesConfig[legendIndex].prefix +
               series.filtered[index][live.seriesConfig[legendIndex].key] +
               live.seriesConfig[legendIndex].suffix,
-            label: live.seriesConfig[legendIndex].name,
+            label: live.seriesConfig[legendIndex].tooltipLabel,
             color: live.seriesConfig[legendIndex].color,
+          },
+        ],
+      };
+    } else if (type === "polarArea") {
+      const { live, series, runtime } = useChartStore.getState()[chartId];
+
+      const legendIndex =
+        runtime.selectedLegendIndex !== null ? runtime.selectedLegendIndex : 0;
+
+      const s = live.seriesConfig[legendIndex];
+
+      return {
+        title: series.filtered[index]?.axis,
+        dataArray: [
+          {
+            value:
+              (s.prefix ?? "") +
+              series.filtered[index]?.[s.key] +
+              (s.suffix ?? ""),
+            label: s.tooltipLabel,
+            color: s.color,
           },
         ],
       };
@@ -183,7 +215,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
 
         return {
           value: layout.yLabelPrefix + value + layout.yLabelSuffix,
-          label: live.seriesConfig[legendIndex].name,
+          label: live.seriesConfig[legendIndex].tooltipLabel,
           color: live.seriesConfig[legendIndex].color,
         };
       }),
@@ -217,10 +249,10 @@ export default function useChartCfgGenerator({ chartId, type }) {
   }, []);
 
   useEffect(() => {
-    if (type === "radialBar" || type === "donut") {
+    if (type === "radialBar" || type === "donut" || type === "polarArea") {
       ApexCharts.exec(chartId, "updateSeries", computedSeries, true);
     }
-  }, [selectedLegendIndex]);
+  }, [live, filteredSeries, selectedLegendIndex]);
 
   return {
     options,
