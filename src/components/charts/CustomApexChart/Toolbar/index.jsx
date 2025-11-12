@@ -34,14 +34,22 @@ export default function Toolbar({ chartId, type }) {
           updateChart((s) => {
             s.activeChart.id = chartId;
             s.activeChart.type = type;
+            s.activeChart.activePopup = "Layout";
           });
           document.body.style.overflow = "hidden";
         },
       },
       {
         icon: PlusCircle,
-        title: "Add Series",
-        onClick: () => {},
+        title: "Manage Series",
+        onClick: () => {
+          updateChart((s) => {
+            s.activeChart.id = chartId;
+            s.activeChart.type = type;
+            s.activeChart.activePopup = "ManageSeries";
+          });
+          document.body.style.overflow = "hidden";
+        },
       },
       ...(isGroupType
         ? []

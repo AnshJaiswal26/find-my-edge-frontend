@@ -5,7 +5,7 @@ import { immer } from "zustand/middleware/immer";
 export const useChartStore = create(
   immer((set) => ({
     chartGridLayout: null,
-    activeChart: { id: "", type: "" },
+    activeChart: { id: "", type: "", activePopup: null },
 
     ...generateCharts(),
 

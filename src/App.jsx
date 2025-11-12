@@ -1,8 +1,7 @@
 import React, { Suspense, lazy, useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { pageRoute } from "@data";
-import { PageContainer } from "@layout";
-import { Loader2 } from "lucide-react";
+import { Loader, PageContainer } from "@layout";
 import { useUIStore } from "@stores";
 
 // Lazy import each page
@@ -32,17 +31,13 @@ function Layout() {
   );
 }
 
-function Loader() {
+const withSuspense = (Component) => {
   return (
-    <div className="flex w-[100vw] h-[100vh] items-center justify-center">
-      <Loader2
-        size={60}
-        className="animate-spin"
-        color="var(--color-text-heading)"
-      />
-    </div>
+    <Suspense fallback={<Loader />}>
+      <Component />
+    </Suspense>
   );
-}
+};
 
 function App() {
   useEffect(() => {

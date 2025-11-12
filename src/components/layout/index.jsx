@@ -1,6 +1,6 @@
 import { Button, Editor, IconButton, Sidebar } from "@ui";
 import styles from "./layout.module.css";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 
 export const PageContainer = ({
   children,
@@ -217,3 +217,15 @@ export const ChartPopup = ({
     </div>
   );
 };
+
+export function Loader() {
+  return (
+    <div className="flex w-[100vw] h-[100vh] items-center justify-center">
+      <Loader2
+        size={60}
+        className="animate-spin"
+        color="var(--color-text-heading)"
+      />
+    </div>
+  );
+}

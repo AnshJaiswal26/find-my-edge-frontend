@@ -69,7 +69,8 @@ const defaultGroupedChartLayout = {
   title: "",
   chartWidth: 100,
 
-  selectedLegendIndex: null,
+  selectedLegendIndex: [],
+  unSelectedLegendIndex: [],
 
   tooltip: true,
 

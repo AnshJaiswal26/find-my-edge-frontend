@@ -8,16 +8,12 @@ import { Popup } from "@layout";
 import styles from "./LayoutPopup.module.css";
 import PolarAreaLayoutPopup from "./polarArea/PolarAreaLayoutPopup";
 
-export default function ChartLayoutPopup() {
-  const activeChart = useChartStore((s) => s.activeChart);
-  const updateChart = useChartStore((s) => s.updateChart);
+export default function ChartLayoutPopup({ chartId, type, updateChart }) {
   const [isAnyChange, setIsAnyChange] = useState(true);
 
-  if (activeChart.id === "") return null;
-
   const handleClose = () => {
-    updateChart(activeChart.id, (chart, s) => {
-      s.activeChart.id = "";
+    updateChart(chartId, (chart, s) => {
+      s.activeChart.activePopup = null;
       chart.draft.layout = chart.live.layout;
       chart.draft.seriesConfig = chart.live.seriesConfig;
     });
@@ -25,8 +21,8 @@ export default function ChartLayoutPopup() {
   };
 
   const handleApply = () => {
-    updateChart(activeChart.id, (chart, s) => {
-      s.activeChart.id = "";
+    updateChart(chartId, (chart, s) => {
+      s.activeChart.activePopup = null;
       chart.live.layout = chart.draft.layout;
       chart.live.seriesConfig = chart.draft.seriesConfig;
     });
@@ -43,11 +39,7 @@ export default function ChartLayoutPopup() {
       onClose={handleClose}
     >
       <div className={styles.contentWrapper}>
-        <PopupContent
-          id={activeChart.id}
-          type={activeChart.type}
-          updateChart={updateChart}
-        />
+        <PopupContent id={chartId} type={type} updateChart={updateChart} />
       </div>
     </Popup>
   );

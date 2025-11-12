@@ -3,7 +3,7 @@ import { useChartStore } from "@stores";
 import StatCards from "./components/StatsGrid";
 import { Container } from "@layout";
 import { Button } from "@ui";
-import { CustomApexChart, ChartLayoutPopup } from "@charts";
+import { CustomApexChart, ChartPopups } from "@charts";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { WidthProvider, Responsive } from "react-grid-layout";
@@ -13,7 +13,8 @@ const ReactGridLayout = WidthProvider(Responsive);
 function Dashboard() {
   return (
     <>
-      <ChartLayoutPopup />
+      <ChartPopups />
+
       <Container className="rounded-[4px]">
         <div className="flex-box items-center">
           <img
