@@ -60,14 +60,12 @@ export const getNewCharges = (section, currentCharges) => {
   return calculateCharges("totalCharges", qty, buyValue, sellValue, tradeValue);
 };
 
-export const toggleCharges = (section, field, capital, showMsg) => {
+export const toggleCharges = (section, field, capital) => {
   const { name, sellPrice, qty, pts, amount, percent } = section;
 
   if (qty === 0) return [];
 
   const isAdd = field === "added";
-
-  showMsg(isAdd ? "isChargesAdded" : "isChargesRemoved", true);
 
   const baseCharges = getNewCharges(section, 0);
   const adjustCharges = isAdd

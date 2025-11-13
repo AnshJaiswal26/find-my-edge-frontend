@@ -1,6 +1,5 @@
 import { fieldLabels } from "@features/risk-management/data";
 import { is } from "./derivedUtils";
-import { logInfo } from ".";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 
 export const getKey = (s, f) => `${s}_${f}`;
@@ -46,15 +45,6 @@ export const generateTooltip = (field, key, mode) => {
   };
 };
 
-export const createFlash = () => ({
-  buyPrice: false,
-  sellPrice: false,
-  qty: false,
-  pts: false,
-  amount: false,
-  percent: false,
-});
-
 export const createMetrics = () => ({
   buyPrice: 0,
   sellPrice: 0,
@@ -62,4 +52,32 @@ export const createMetrics = () => ({
   pts: 0,
   amount: 0,
   percent: 0,
+});
+
+export const createInputMetrics = () => ({
+  buyPrice: {
+    value: 0,
+    flash: false,
+    tooltip: false,
+  },
+  sellPrice: {
+    value: 0,
+    flash: false,
+    tooltip: false,
+  },
+  qty: {
+    value: 0,
+    flash: false,
+    tooltip: false,
+  },
+  pts: {
+    value: 0,
+    flash: false,
+    tooltip: false,
+  },
+  percent: {
+    value: 0,
+    flash: false,
+    tooltip: false,
+  },
 });

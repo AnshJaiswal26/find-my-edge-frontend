@@ -1,10 +1,11 @@
-import { Button } from "@ui";
+import { Button, PopupMessage } from "@ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import {
   useTradeSummary,
   useChargesLogic,
 } from "@features/risk-management/hooks";
 import { formatINR, safe } from "@features/risk-management/utils";
+import { useState } from "react";
 
 export default function ChargesSummarySection() {
   console.log("ChargesSummarySection...");
@@ -27,12 +28,38 @@ function ToggleChargesButtons() {
   const active = useRiskManagementStore((s) => s.anyTooltipActive);
   const charges = useChargesLogic();
 
+  const [isAdded, setIdAdded] = useState("");
+
   return (
     <>
+      {isAdded === "added" && (
+        <PopupMessage
+          message="Charges Added"
+          type="success"
+          duration={1200}
+          isVisible={true}
+          onClose={() => setIdAdded("")}
+          showCloseButton={false}
+        />
+      )}
+
+      {isAdded === "removed" && (
+        <PopupMessage
+          message="Charges Removed"
+          type="success"
+          duration={1200}
+          isVisible={true}
+          onClose={() => setIdAdded("")}
+          showCloseButton={false}
+        />
+      )}
       <Button
         text="Add"
         color="#05ab72"
-        onClick={() => charges("added")}
+        onClick={() => {
+          charges("added");
+          setIdAdded("added");
+        }}
         style={{
           padding: "3px 10px",
           fontSize: "12px",
@@ -42,7 +69,10 @@ function ToggleChargesButtons() {
       <Button
         text="Remove"
         color="#fe5a5a"
-        onClick={() => charges("removed")}
+        onClick={() => {
+          charges("removed");
+          setIdAdded("removed");
+        }}
         style={{
           padding: "3px 10px",
           fontSize: "12px",
@@ -54,24 +84,8 @@ function ToggleChargesButtons() {
 }
 
 function ChargesSummaryList() {
-  const { breakevenPts, tradeVal, charges } = useTradeSummary();
+  const { chargesSummaryList } = useTradeSummary();
 
-  const chargesSummaryList = [
-    { label: "Turnover", value: Math.ceil(tradeVal) },
-    { label: "Brokerage", value: charges.brokerage },
-    { label: "Exchange Transaction Charges", value: charges.eT },
-    { label: "DP Charges", value: charges.dp },
-    { label: "Securities Transaction Tax STT", value: charges.stt },
-    { label: "SEBI Turnover Charges", value: charges.sebi },
-    { label: "Investor Protection Fund Trust IPFT", value: charges.ipft },
-    { label: "Stamp Duty", value: charges.stampDuty },
-    { label: "GST", value: charges.gst },
-    { label: "Total Tax & Charges", value: charges.total },
-    {
-      label: "Points to Breakeven (No Profit No Loss)",
-      value: "+" + safe(breakevenPts, 2),
-    },
-  ];
   return (
     <>
       {chargesSummaryList.map((item, idx) => (

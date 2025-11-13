@@ -43,26 +43,14 @@ export const resetAllToZero = (keys) => {
   return updatedToZero;
 };
 
-export const getUpdatedKeys = (prev, updates, prevTooltip) => {
-  logStart("getUpdatedKeys", { prev, updates });
-
-  const toFlash = {};
-  const toReset = {};
-
+export const getUpdatedKeys = (prev, updates) => {
   const toUpdate = Object.keys(updates).reduce((acc, key) => {
     const newVal = updates[key];
-    const tooltipKey = prevTooltip?.[key];
-
     if (newVal !== prev[key]) {
       acc[key] = newVal;
-      if (!tooltipKey) {
-        toFlash[key] = true;
-        toReset[key] = false;
-      }
     }
     return acc;
   }, {});
 
-  logResult("getUpdatedKeys", toUpdate);
-  return { toFlash, toUpdate, toReset };
+  return toUpdate;
 };

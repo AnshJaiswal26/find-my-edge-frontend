@@ -1,77 +1,24 @@
-import {
-  getUpdatedKeys,
-  logMsg,
-  logObj,
-  logResult,
-  logStart,
-  logStateUpdate,
-  roundKeys,
-} from "@features/risk-management/utils";
-import { data } from "react-router-dom";
-
-const flashTimeoutMap = new Map();
-
-const handleFlash = (sec, set, prev, toReset, toFlash, duration) => {
-  const key = `${sec}Flash`;
-  const existingTimeout = flashTimeoutMap.get(key);
-  if (existingTimeout) {
-    logMsg(`(triggerFlash): Flash skipped for ${sec} (already active)`);
-    return;
-  }
-  // Reset
-  const timeout = setTimeout(() => {
-    logStateUpdate(`Flash reset for ${key}`, toReset);
-    set((prev) => ({ [key]: { ...prev[key], ...toReset } }));
-    flashTimeoutMap.delete(key);
-  }, duration);
-  flashTimeoutMap.set(key, timeout);
-
-  return { [key]: { ...prev[key], ...toFlash } };
-};
+import { getUpdatedKeys, roundKeys } from "@features/risk-management/utils";
 
 export const calculatorUpdater = ({ set, prev, section, updates, cfg }) => {
-  const { round, flashing, duration } = cfg;
-  logStart("calculatorUpdater", { section, cfg });
+  const { round } = cfg;
 
   const prevSection = prev[section];
-  const prevTooltip = prev[section + "Tooltip"];
 
-  logObj("updates", updates);
   const roundedKeys = round ? roundKeys(updates) : updates;
-  const { toUpdate, toFlash, toReset } = getUpdatedKeys(
-    prevSection,
-    roundedKeys,
-    prevTooltip
-  );
+  const toUpdate = getUpdatedKeys(prevSection, roundedKeys);
 
   if (Object.keys(toUpdate).length === 0) {
-    logResult("calculatorUpdater", `No update needed for ${section}`);
     return null;
   }
 
-  const shouldFlash = flashing && Object.keys(toFlash).length > 0;
-  logStateUpdate(
-    `Keys ${shouldFlash ? "& Flash " : ""}updated for ${section}`,
-    {
-      toUpdate,
-      ...(shouldFlash && { toFlash: toFlash }),
-    }
-  );
-
   const result = { ...prevSection, ...toUpdate };
-  logResult("calculatorUpdater", toUpdate);
-  return {
-    [section]: result,
-    ...(shouldFlash &&
-      handleFlash(section, set, prev, toReset, toFlash, duration)),
-  };
+  return { [section]: result };
 };
 
 // Tooltip updates
 export const toolTipUpdater = ({ prev, section, updates }) => {
-  logStart("tooltipUpdater", { section, updates }, false);
   if (section === "capitalTooltip" || section === "riskRewardTooltip") {
-    logStateUpdate(`Tooltip set for ${section}`, updates);
     return { [section]: updates };
   }
 
@@ -88,13 +35,10 @@ export const toolTipUpdater = ({ prev, section, updates }) => {
   }, {});
 
   if (Object.keys(diff).length === 0) {
-    logResult("toolTipUpdater", "No Update Required.");
     return null;
   }
   const hasActive = Object.values(diff).some((v) => v !== null);
 
-  logResult("toolTipUpdater", "Process Done");
-  logStateUpdate(`Tooltip set for ${section}`, diff);
   return { [section]: { ...prevSec, ...diff }, anyTooltipActive: hasActive };
 };
 

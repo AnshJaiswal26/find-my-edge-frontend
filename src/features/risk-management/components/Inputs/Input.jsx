@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useRef } from "react";
-import { debounce } from "lodash";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { debounce, values } from "lodash";
 import "./Inputs.css";
-import { useRiskManagementStore } from "../../stores";
-import {
-  useInputChange,
-  useSpecialCaseHandler,
-} from "@features/risk-management/hooks";
+import { useRiskManagementStore } from "@features/risk-management/stores";
+
 import { ValidationTooltip } from "@ui";
-import { is, logMsg, logObj } from "@features/risk-management/utils";
-import RenderLogger from "@Profiler";
+import {
+  checkSpecialCase,
+  handleChange,
+  is,
+} from "@features/risk-management/utils";
 import { fieldColors } from "@features/risk-management/data";
 import { InfoTooltip } from "./InfoTooltip";
 
@@ -50,16 +50,16 @@ function NormalInput({
   enableTooltip,
   readOnly,
 }) {
-  const handleChange = useInputChange();
-  const handleSpecialCases = useSpecialCaseHandler();
+  const firstRun = useRef(true);
 
-  const setHoveredInput = useRiskManagementStore((s) => s.updater.hoveredInput);
+  const [flash, setFlash] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  // const [showTooltip, setShowTooltip] = useState(false);
+
   const showTooltip = useRiskManagementStore((s) => s.updater.tooltip);
+
   const tooltip = useRiskManagementStore(
     (s) => s?.[sectionName + "Tooltip"]?.[field]
-  );
-  const isFlashing = useRiskManagementStore(
-    (s) => s?.[sectionName + "Flash"]?.[field]
   );
 
   const isPyramiding = sectionName === "pyramiding";
@@ -71,6 +71,15 @@ function NormalInput({
       return s?.[sectionName]?.[field];
     }
   });
+
+  useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+    setFlash(true);
+    setTimeout(() => setFlash(false), 100);
+  }, [currentVal]);
 
   const isCapital = sectionName === "capital";
 
@@ -85,62 +94,58 @@ function NormalInput({
   const debouncedChange = useMemo(
     () =>
       debounce((sectionName, field, val) => {
-        handleChange(sectionName, field, val);
+        handleChange(
+          sectionName,
+          field,
+          val,
+          useRiskManagementStore.getState()
+        );
       }, 20),
     [handleChange]
   );
 
-  const timeoutRef = useRef(null);
-
-  const handleMouseEnter = () => {
-    setHoveredInput(`${sectionName}_${field}`);
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      setHoveredInput(null);
-      timeoutRef.current = null;
-    }, 3000);
-  };
-
   return (
     <>
-      <RenderLogger id={`NormalInput`} why={`${sectionName}.${field}`}>
-        <input
-          className={`risk-input ${className} ${
-            tooltip ? tooltip?.type : ""
-          } ${color} ${isFlashing ? "flashing" : ""}`}
-          type="text"
-          value={field === "ratio" ? "1 : " + currentVal : currentVal}
-          onChange={(e) => {
-            debouncedChange(sectionName, field, e.target.value);
-          }}
-          onBlur={(e) => {
-            const state = useRiskManagementStore.getState();
-            const section = state[sectionName];
-            const inputPrev = state.inputPrev;
-            handleSpecialCases(section, field, e.target.value, inputPrev);
-          }}
-          onMouseEnter={handleMouseEnter}
-          readOnly={readOnly}
-        />
-      </RenderLogger>
+      <input
+        className={`risk-input ${className} ${
+          tooltip ? tooltip?.type : ""
+        } ${color} ${flash ? "flashing" : ""}`}
+        type="text"
+        value={field === "ratio" ? "1 : " + currentVal : currentVal}
+        onChange={(e) => {
+          debouncedChange(sectionName, field, e.target.value);
+        }}
+        onBlur={(e) => {
+          const state = useRiskManagementStore.getState();
+          const { caseValue } = checkSpecialCase(
+            sectionName,
+            field,
+            e.target.value,
+            state.inputPrev
+          );
+          if (caseValue !== null)
+            state.updater.section(
+              sectionName,
+              { [field]: caseValue },
+              { round: false }
+            );
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(null)}
+        readOnly={readOnly}
+      />
       {tooltip && enableTooltip && (
-        <RenderLogger id={`ValidationTooltip`} why={`${sectionName}.${field}`}>
-          <ValidationTooltip
-            type={tooltip.type ?? "error"}
-            message={tooltip.message}
-            position={tooltip.position}
-            isVisible={true}
-            autoHide={isCapital}
-            onClose={() => showTooltip("capitalTooltip", { [field]: null })}
-            showCloseButton={isCapital}
-          />
-        </RenderLogger>
+        <ValidationTooltip
+          type={tooltip.type ?? "error"}
+          message={tooltip.message}
+          position={tooltip.position}
+          isVisible={true}
+          autoHide={isCapital}
+          onClose={() => showTooltip("capitalTooltip", { [field]: null })}
+          showCloseButton={isCapital}
+        />
       )}
-      <InfoTooltip name={sectionName} field={field} />
+      <InfoTooltip isHovered={isHovered} field={field} />
     </>
   );
 }

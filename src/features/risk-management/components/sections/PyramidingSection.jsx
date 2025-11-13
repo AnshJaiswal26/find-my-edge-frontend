@@ -1,20 +1,18 @@
 import React from "react";
 import { Button } from "@ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import {
-  useInputChange,
-  useSpecialCaseHandler,
-} from "@features/risk-management/hooks";
+
 import { CalculatorSectionLayout } from "@features/risk-management/layout";
+import {
+  checkSpecialCase,
+  handleChange,
+} from "@features/risk-management/utils";
 
 export default function PyramidingSection() {
   const pyramiding = useRiskManagementStore((s) => s.pyramiding);
   const updateSection = useRiskManagementStore((s) => s.updater.section);
 
   const note = useRiskManagementStore((s) => s.pyramiding);
-
-  const handleChange = useInputChange();
-  const handleSpecialCases = useSpecialCaseHandler();
 
   const handleLayerChange = (direction) => {
     const currentLayer = pyramiding.currentLayer;

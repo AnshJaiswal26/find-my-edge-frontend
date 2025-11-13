@@ -1,5 +1,4 @@
 import { fields } from "@features/risk-management/data";
-import { logEnd, logObj, logResult, logStart } from ".";
 
 export function formatINR(num) {
   const number = parseFloat(num);
@@ -26,18 +25,13 @@ export const cleanFloat = (
   if (Number.isInteger(val)) return val;
 
   const { threshold, epsilon, decimals } = cfg;
-  logStart("cleanFloat", { val, cfg });
-  if (Math.abs(val) < epsilon) {
-    logResult("cleanFloat", 0);
-    return 0;
-  }
+  if (Math.abs(val) < epsilon) return 0;
 
   const fractional = Math.abs(val % 1);
   const nearInteger = fractional <= threshold || fractional >= 1 - threshold;
 
   const rounded = nearInteger ? Math.round(val) : Number(val);
   const result = parseFloat(rounded.toFixed(decimals));
-  logResult("cleanFloat", result);
   return result;
 };
 
@@ -74,15 +68,11 @@ export const formatValue = (val, { mode, direction = "ceil" }) => {
 };
 
 export const roundKeys = (updates) => {
-  logStart("roundKeys", updates);
-
   const preciseKeys = {};
   for (const key in updates) {
     const val = updates[key] ?? 0;
     preciseKeys[key] = key === "percent" ? safe(val) : cleanFloat(val);
   }
-
-  logResult("roundKeys", preciseKeys);
   return preciseKeys;
 };
 

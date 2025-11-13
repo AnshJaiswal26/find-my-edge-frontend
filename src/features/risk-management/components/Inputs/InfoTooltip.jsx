@@ -2,13 +2,9 @@ import { Tooltip } from "@ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { is } from "@features/risk-management/utils";
 
-export function InfoTooltip({ name, field }) {
+export function InfoTooltip({ field, isHovered }) {
   const derivedInput = useRiskManagementStore((s) => s.settings.derivedInput);
   const adjustedField = useRiskManagementStore((s) => s.settings.adjustedField);
-
-  const isHovered = useRiskManagementStore(
-    (s) => s.hoveredInput === `${name}_${field}`
-  );
 
   const isReadOnly = field === "suggestedQty" || field === "adjustedSl";
   const isRiskAmtOrPercent = field === "riskPercent" || field === "riskAmount";

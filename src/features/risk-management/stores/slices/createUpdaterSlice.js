@@ -3,7 +3,6 @@ import {
   toolTipUpdater,
   singleUpdater,
   settingsUpdater,
-  logObj,
 } from "@features/risk-management/utils";
 import { showMsg } from "@features/risk-management/utils";
 

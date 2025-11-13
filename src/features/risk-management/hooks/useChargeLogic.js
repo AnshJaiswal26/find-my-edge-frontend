@@ -4,7 +4,6 @@ import { toggleCharges, safe } from "@features/risk-management/utils";
 
 export default function useChargesLogic() {
   const updateSections = useRiskManagementStore((s) => s.updater.sections);
-  const showMsg = useRiskManagementStore((s) => s.updater.showMsg);
 
   const isProcessing = useRef(false);
 
@@ -27,7 +26,7 @@ export default function useChargesLogic() {
       const sectionUpdates = [];
       sections.forEach((s) => {
         const section = state[s];
-        const updatesArray = toggleCharges(section, field, capital, showMsg);
+        const updatesArray = toggleCharges(section, field, capital);
         if (updatesArray.length !== 0) {
           const [type, sec, updates] = updatesArray;
           const amt = updates.amount;
@@ -60,7 +59,7 @@ export default function useChargesLogic() {
         isProcessing.current = false;
       }, 300);
     },
-    [showMsg, updateSections]
+    [updateSections]
   );
 
   return charges;

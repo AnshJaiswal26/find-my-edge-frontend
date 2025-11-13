@@ -1,23 +1,26 @@
-import { createFlash } from "@features/risk-management/utils";
-
 export const createRiskManagementUiSlice = () => ({
   currentTab: "normal",
   currentTransaction: "calculator",
-  hoveredInput: "",
   inputPrev: 0,
   isChargesAdded: false,
   isChargesRemoved: false,
 
-  capitalFlash: { current: false },
-  riskrewardFlash: { ratio: false },
-  calculatorFlash: {
-    ...createFlash(),
-  },
-  targetFlash: {
-    ...createFlash(),
-  },
-  stopLossFlash: {
-    ...createFlash(),
+  tooltip: {
+    capital: null,
+    riskReward: null,
+    calculator: {
+      buyPrice: null,
+      sellPrice: null,
+    },
+    target: {
+      buyPrice: null,
+      sellPrice: null,
+    },
+    stopLoss: {
+      buyPrice: null,
+      sellPrice: null,
+    },
+    isActive: null,
   },
 
   capitalTooltip: { current: null },

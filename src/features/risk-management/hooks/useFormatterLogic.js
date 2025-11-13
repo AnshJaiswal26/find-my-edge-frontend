@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import { usePtsAmountAndPercentHandler } from ".";
 import {
   formatValue,
+  handlePtsAmountAndPercentChange,
   logResult,
   logStart,
 } from "@features/risk-management/utils";
@@ -10,7 +10,6 @@ import { shouldFormat } from "@features/risk-management/utils";
 
 export default function useFormatterLogic() {
   const updateSections = useRiskManagementStore((s) => s.updater.sections);
-  const handlePtsAmountAndPercentChange = usePtsAmountAndPercentHandler();
 
   const formatAndUpdate = useCallback(
     (sec, formatedKeys, mode, state) => {
