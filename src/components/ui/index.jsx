@@ -18,3 +18,4 @@ export { default as ColorPicker } from "./ColorPicker";
 export { default as InputField } from "./InputField";
 
 export { default as Select } from "./Select";
+export { default as Table } from "./Table";

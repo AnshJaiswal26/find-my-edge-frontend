@@ -7,6 +7,9 @@ import { useUIStore } from "@stores";
 // Lazy import each page
 const Dashboard = lazy(() => import("./features/dashboard/Dashboard"));
 const Edge = lazy(() => import("./features/Edge/Edge"));
+const TradeMetrics = lazy(() =>
+  import("./features/trade-metrics/TradeMetrics")
+);
 const CustomJournal = lazy(() => import("./features/Edge/Edge"));
 const CustomEdge = lazy(() => import("./features/CustomRecords/CustomEdge"));
 const TradingJournal = lazy(() =>
@@ -83,7 +86,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path={pageRoute.dashboard} element={<Dashboard />} />
           <Route path={pageRoute.edge} element={<Edge />} />
-          <Route path={pageRoute.customJournal} element={<CustomJournal />} />
+          <Route path={pageRoute.tradeMetrics} element={<TradeMetrics />} />
           <Route path={pageRoute.customEdge} element={<CustomEdge />} />
           <Route path={pageRoute.tradingJournal} element={<TradingJournal />} />
           <Route path={pageRoute.calendar} element={<YearlyCalendar />} />

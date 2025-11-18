@@ -6,12 +6,13 @@ import {
 } from "@features/risk-management/hooks";
 import { formatINR, safe } from "@features/risk-management/utils";
 import { useState } from "react";
+import { Section } from "@layout";
 
 export default function ChargesSummarySection() {
   console.log("ChargesSummarySection...");
 
   return (
-    <div className="charges-summary">
+    <Section>
       <div className="flex justify-between flex-wrap">
         <div className="transaction-summary-title">Charges Summary</div>
         <div className="flex gap-2.5 align-middle">
@@ -20,7 +21,7 @@ export default function ChargesSummarySection() {
         </div>
       </div>
       <ChargesSummaryList />
-    </div>
+    </Section>
   );
 }
 

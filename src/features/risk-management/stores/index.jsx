@@ -11,8 +11,6 @@ import {
 
 export const useRiskManagementStore = create(
   immer((set) => ({
-    ui: {},
-
     capital: {
       name: "capital",
       current: 0,

@@ -75,13 +75,17 @@ export const IconButton = ({
   icon,
   src,
   alt,
-  tooltip = { title: "", position: "top", className: "" },
   className,
   disabled = false,
+  tooltipContent,
+  tooltipPosition = "top",
 }) => {
-  const [onHover, setOnHover] = useState(false);
   return (
-    <div className="relative w-[fit-content]">
+    <div
+      className="relative w-[fit-content]"
+      data-tooltip-position={tooltipPosition}
+      data-tooltip={tooltipContent}
+    >
       <button
         className={`${styles.iconBtn} ${className} ${
           disabled
@@ -89,24 +93,10 @@ export const IconButton = ({
             : ""
         }`}
         onClick={(e) => (onClick ? onClick(e) : null)}
-        onMouseEnter={() => {
-          if (tooltip?.title !== "") setOnHover(true);
-        }}
-        onMouseLeave={() => {
-          if (tooltip?.title !== "") setOnHover(false);
-        }}
         disabled={disabled}
       >
         {icon ? icon : <img src={src} alt={alt ?? "icon button"} />}
       </button>
-      {tooltip.title !== "" && (
-        <Tooltip
-          data={[tooltip.title]}
-          isVisible={onHover}
-          position={tooltip.position}
-          className={`pl-2 pr-2 ${tooltip.className}`}
-        />
-      )}
     </div>
   );
 };
