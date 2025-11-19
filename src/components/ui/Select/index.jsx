@@ -11,6 +11,7 @@ export default function Select({
   onChange = () => null,
   store,
   className,
+  buttonClass,
 }) {
   const listId = useId();
   const buttonId = `${listId}-button`;
@@ -48,7 +49,7 @@ export default function Select({
         <button
           id={buttonId}
           ref={buttonRef}
-          className={styles.selectBtn}
+          className={`${styles.selectBtn} ${buttonClass}`}
           onClick={(e) => {
             e.preventDefault();
             toggleActiveSelector(listId, buttonId);

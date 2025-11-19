@@ -1,4 +1,4 @@
-export { default as Dashboard } from "./DashBoard/Dashboard";
+export { default as Dashboard } from "./dashboard/Dashboard";
 export { default as Edge } from "./Edge/Edge";
 export { default as CustomJournal } from "./CustomRecords/CustomJournal";
 export { default as CustomEdge } from "./CustomRecords/CustomEdge";
@@ -9,3 +9,5 @@ export { default as Settings } from "./Settings/Settings";
 export { default as Backtest } from "./CustomRecords/backtest";
 export { default as Mistakes } from "./Mistakes/Mistakes";
 export { default as RiskManagement } from "./risk-management/RiskManagement";
+export { default as RiskManagement } from "./sheet-integration/";
+export { default as TradeMetrics } from "./trade-metrics/TradeMetrics";

@@ -29,7 +29,7 @@ function ToggleChargesButtons() {
   const active = useRiskManagementStore((s) => s.anyTooltipActive);
   const charges = useChargesLogic();
 
-  const [isAdded, setIdAdded] = useState("");
+  const [isAdded, setIsAdded] = useState("");
 
   return (
     <>
@@ -39,7 +39,7 @@ function ToggleChargesButtons() {
           type="success"
           duration={1200}
           isVisible={true}
-          onClose={() => setIdAdded("")}
+          onClose={() => setIsAdded("")}
           showCloseButton={false}
         />
       )}
@@ -50,7 +50,7 @@ function ToggleChargesButtons() {
           type="success"
           duration={1200}
           isVisible={true}
-          onClose={() => setIdAdded("")}
+          onClose={() => setIsAdded("")}
           showCloseButton={false}
         />
       )}
@@ -59,7 +59,7 @@ function ToggleChargesButtons() {
         color="#05ab72"
         onClick={() => {
           charges("added");
-          setIdAdded("added");
+          setIsAdded("added");
         }}
         style={{
           padding: "3px 10px",
@@ -72,7 +72,7 @@ function ToggleChargesButtons() {
         color="#fe5a5a"
         onClick={() => {
           charges("removed");
-          setIdAdded("removed");
+          setIsAdded("removed");
         }}
         style={{
           padding: "3px 10px",

@@ -16,7 +16,11 @@ import { pageRoute } from "@data";
 
 const sidebarItems = [
   { label: "Dashboard", icon: LayoutDashboardIcon, route: pageRoute.dashboard },
-  { label: "Sheet Integration", icon: FileSpreadsheet, route: pageRoute.edge },
+  {
+    label: "Sheet Integration",
+    icon: FileSpreadsheet,
+    route: pageRoute.sheetIntegration,
+  },
   { label: "Trade Metrics", icon: Table, route: pageRoute.tradeMetrics },
   { label: "Monthly Overview", icon: Calendar, route: pageRoute.calendar },
   { label: "Strategy Rules", icon: FileCheck, route: pageRoute.setupRules },

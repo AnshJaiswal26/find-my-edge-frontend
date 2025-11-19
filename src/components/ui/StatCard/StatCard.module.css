@@ -24,7 +24,7 @@
 .title {
   font-size: 1rem;
   font-weight: 500;
-  color: var(--color-text-card-title);
+  color: var(--color-text-label);
 }
 
 .value {

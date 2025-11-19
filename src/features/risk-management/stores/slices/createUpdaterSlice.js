@@ -4,9 +4,8 @@ import {
   singleUpdater,
   settingsUpdater,
 } from "@features/risk-management/utils";
-import { showMsg } from "@features/risk-management/utils";
 
-const defaultCfg = { flashing: true, duration: 100, round: true };
+const defaultCfg = { round: true };
 
 const updaterMap = {
   "single-value": singleUpdater,
@@ -66,20 +65,15 @@ export const createUpdaterSlice = (set) => ({
 
     settings: (updates) => set((prev) => settingsUpdater({ prev, updates })),
 
-    section: (section, updates, inputCfg) => {
-      const cfg = { ...defaultCfg, ...inputCfg };
+    section: (section, updates, cfg = { round: true }) => {
       set((prev) => {
-        const data = calculatorUpdater({ set, prev, section, updates, cfg });
+        const data = calculatorUpdater({ prev, section, updates, cfg });
         return Object.keys(data).length === 0 ? prev : data;
       });
     },
 
-    sections: (sectionUpdates, inputCfg) => {
-      const cfg = { ...defaultCfg, ...inputCfg };
+    sections: (sectionUpdates, cfg = { round: true }) => {
       set((prev) => applySectionUpdate(set, prev, sectionUpdates, cfg));
     },
-
-    showMsg: (field, isVisible) =>
-      set((prev) => showMsg(prev, field, isVisible)),
   },
 });

@@ -2,6 +2,7 @@ export const pageRoute = {
   dashboard: "/",
   edge: "/edge",
   tradeMetrics: "/trade-metrics",
+  sheetIntegration: "/sheet-integration",
   customJournal: "/custom-journal",
   customEdge: "/custom-edge",
   tradingJournal: "/trading-journal",

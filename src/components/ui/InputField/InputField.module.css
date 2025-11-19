@@ -12,7 +12,7 @@
 
 .field label {
   font-size: var(--_font-size);
-  color: var(--color-text-title);
+  color: var(--color-text-label);
   text-wrap: nowrap;
 }
 

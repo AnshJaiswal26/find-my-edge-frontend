@@ -1,11 +1,9 @@
 import { getUpdatedKeys, roundKeys } from "@features/risk-management/utils";
 
-export const calculatorUpdater = ({ set, prev, section, updates, cfg }) => {
-  const { round } = cfg;
-
+export const calculatorUpdater = ({ prev, section, updates, cfg }) => {
   const prevSection = prev[section];
 
-  const roundedKeys = round ? roundKeys(updates) : updates;
+  const roundedKeys = cfg.round ? roundKeys(updates) : updates;
   const toUpdate = getUpdatedKeys(prevSection, roundedKeys);
 
   if (Object.keys(toUpdate).length === 0) {
@@ -55,19 +53,4 @@ export const settingsUpdater = ({ prev, updates }) => {
     filtered[key] = updates[key];
   }
   return { settings: { ...prevSettings, ...filtered } };
-};
-
-export const showMsg = (prev, field, isVisible) => {
-  const current = prev[field];
-  if (isVisible === current) return prev;
-
-  const updates = { [field]: isVisible };
-
-  if (isVisible) {
-    const otherField =
-      field === "isChargesAdded" ? "isChargesRemoved" : "isChargesAdded";
-    updates[otherField] = false;
-  }
-
-  return updates;
 };
