@@ -19,7 +19,7 @@ function SheetButton({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-4 p-6 rounded-lg border hover:shadow-sm bg-[var(--color-bg-container)]"
+      className="flex items-center gap-4 p-6 rounded-lg border border-[var(--color-border-default)] hover:shadow-sm bg-[var(--color-bg-container)]"
     >
       <div
         className={`w-10 h-10 rounded-md ${
@@ -169,10 +169,10 @@ export default function SheetIntegration() {
               value={""}
               placeholder="Sheet name"
               onChange={(v) => setSheetName(v)}
-              className="bg-[inherit] w-[505px] p-3 rounded-[0.5rem]"
+              className="bg-[inherit] w-full p-3 rounded-[0.5rem]"
             />
 
-            <label className="block mt-3 mb-2 text-sm text-gray-600">
+            <label className="block mt-3 mb-2 text-sm text-[var(--color-text-label)]">
               Frequency
             </label>
 

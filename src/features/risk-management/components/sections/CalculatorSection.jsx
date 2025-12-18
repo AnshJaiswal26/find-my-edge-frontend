@@ -4,7 +4,6 @@ import { Button } from "@ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { useClearLogic } from "@features/risk-management/hooks";
 import { CalculatorSectionLayout } from "@features/risk-management/layout";
-import RenderLogger from "@Profiler";
 
 export default function CalculatorSection({ sectionName }) {
   const updateTransaction = useRiskManagementStore(
@@ -22,7 +21,6 @@ export default function CalculatorSection({ sectionName }) {
   const isTargetOrSL = sectionName !== "calculator";
 
   return (
-    // <RenderLogger id={"CalculatorSection"} why={sectionName}>
     <CalculatorSectionLayout
       section={sectionName}
       onMouseEnter={debouncedsetHoveredSection}
@@ -39,7 +37,6 @@ export default function CalculatorSection({ sectionName }) {
         !isTargetOrSL && <FooterButtons sectionName={sectionName} />
       }
     />
-    // </RenderLogger>
   );
 }
 

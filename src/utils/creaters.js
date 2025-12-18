@@ -1,5 +1,3 @@
-import { defaultCharts } from "@data";
-
 const getChartStructure = (acc, [chartId, chart]) => {
   acc[chartId] = {
     // --- chart info ---
@@ -44,14 +42,11 @@ const getChartStructure = (acc, [chartId, chart]) => {
 };
 
 export const generateCharts = (charts) => {
-  const config = Object.entries(defaultCharts).reduce(
-    (acc, [type, chartObj]) => {
-      acc = Object.entries(chartObj).reduce(getChartStructure, acc);
+  const config = Object.entries(charts).reduce((acc, [_, chartObj]) => {
+    acc = Object.entries(chartObj).reduce(getChartStructure, acc);
 
-      return acc;
-    },
-    {}
-  );
+    return acc;
+  }, {});
 
   return config;
 };

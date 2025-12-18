@@ -6,7 +6,6 @@ import {
   QtyRoundSelector,
 } from "./components";
 import { SettingsSectionWrapper } from "@features/risk-management/layout";
-import { Label } from "@layout";
 import "./settings.css";
 
 function Settings() {
@@ -33,7 +32,9 @@ function Settings() {
 
         <div className="settings-popup-body">
           <SettingsSectionWrapper>
-            <Label>Applies to Calculator, Target & Stop-Loss</Label>
+            <span className="text-(--text)">
+              Applies to Calculator, Target & Stop-Loss
+            </span>
 
             <div className="divider"></div>
 
@@ -45,7 +46,8 @@ function Settings() {
           </SettingsSectionWrapper>
 
           <SettingsSectionWrapper>
-            <Label>Applies to Position-Sizing</Label>
+            <span className="text-(--text)">Applies to Position-Sizing</span>
+
             <div className="divider"></div>
 
             <QtyRoundSelector updateSettings={updateSettings} />

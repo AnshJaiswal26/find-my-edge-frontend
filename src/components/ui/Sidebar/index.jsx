@@ -1,78 +1,116 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUIStore } from "@stores";
-import styles from "./Sidebar.module.css";
-import {
-  LayoutDashboardIcon,
-  Table,
-  Calendar,
-  FileCheck,
-  NotepadText,
-  CircleX,
-  ChartNoAxesCombined,
-  Scale,
-  FileSpreadsheet,
-} from "lucide-react";
-import { pageRoute } from "@data";
+import { sidebarItems } from "./content";
 
-const sidebarItems = [
-  { label: "Dashboard", icon: LayoutDashboardIcon, route: pageRoute.dashboard },
-  {
-    label: "Sheet Integration",
-    icon: FileSpreadsheet,
-    route: pageRoute.sheetIntegration,
-  },
-  { label: "Trade Metrics", icon: Table, route: pageRoute.tradeMetrics },
-  { label: "Monthly Overview", icon: Calendar, route: pageRoute.calendar },
-  { label: "Strategy Rules", icon: FileCheck, route: pageRoute.setupRules },
-  {
-    label: "Captured Strategies",
-    icon: NotepadText,
-    route: pageRoute.backtest,
-  },
-  { label: "Strategy Analysis", icon: ChartNoAxesCombined, route: null },
-  { label: "Mistakes To Avoid", icon: CircleX, route: pageRoute.mistakes },
-  { label: "Risk Management", icon: Scale, route: pageRoute.riskManagement },
-];
+const Profile = () => {
+  const selectedAvatar = useUIStore((s) => s.selectedAvatar);
+  const username = useUIStore((s) => s.username);
+
+  return (
+    <div
+      className="
+        flex items-center gap-3
+        border-b border-(--border-muted)
+        mt-5 px-4 py-3
+        hover:bg-(--hover)
+        transition-colors
+      "
+    >
+      <img
+        src={selectedAvatar}
+        alt="Profile"
+        className="w-10 h-10 rounded-full cursor-pointer"
+      />
+      <h3 className="font-(--font-base)">{username}</h3>
+    </div>
+  );
+};
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  const removeToast = useUIStore((s) => s.removeToast);
 
   return (
     <>
-      <div className={styles.sidebarOverlay} onClick={toggleSidebar}></div>
-      <div className={styles.sidebar}>
+      {/* Overlay */}
+      <div
+        onClick={toggleSidebar}
+        className="
+          fixed inset-0
+          bg-gray/40
+          backdrop-blur-[2px]
+          z-1000
+          opacity-0 pointer-events-none
+          transition-opacity duration-300
+          sidebar-open:opacity-100
+          sidebar-open:pointer-events-auto
+        "
+      />
+
+      {/* Sidebar */}
+      <aside
+        className="
+          fixed top-0 left-0
+          h-full
+          w-60
+          bg-(--surface-muted)
+          text-(--text)
+          border-r border-(--border-muted)
+          shadow-[0_0_10px_rgba(0,0,0,0.1)]
+          z-[10000]
+          transition-transform duration-200 
+          -translate-x-full
+          sidebar-open:translate-x-0
+          overflow-y-auto
+        "
+      >
         <Profile />
-        <div className={styles.sidebarMenu}>
-          {sidebarItems.map((item, index) => (
-            <button
-              key={index}
-              className={`${styles.sidebarButtons} ${
-                location.pathname === item.route ? styles.buttonActive : ""
-              }`}
-              onClick={() => item.route && navigate(item.route)}
-            >
-              <div className="flex items-center gap-2">
-                <item.icon />
+
+        {/* Menu */}
+        <div
+          className="
+            flex flex-col gap-4
+            p-2.5
+            h-[84vh] min-h-[300px]
+            overflow-y-auto
+          "
+        >
+          {sidebarItems.map((item, index) => {
+            const isActive = location.pathname === item.route;
+
+            return (
+              <button
+                key={index}
+                onClick={() => {
+                  item.route && navigate(item.route);
+                  removeToast("reset");
+                  toggleSidebar();
+                }}
+                className={`
+                  w-full
+                  flex items-center gap-2
+                  text-[0.85rem] font-light
+                  px-2.5 py-[0.41rem]
+                  rounded
+                  border border-white 
+                  dark:border-(--border-muted) 
+                  transition-colors duration-100
+                  ${
+                    isActive
+                      ? "bg-(--cyan) border-(--cyan) text-white pointer-events-none"
+                      : "hover:bg-(--hover) hover:border-(--hover)"
+                  }
+                `}
+              >
+                <item.icon className="w-4.5 h-4.5" />
                 <span>{item.label}</span>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
-      </div>
+      </aside>
     </>
-  );
-}
-
-function Profile() {
-  const selectedAvatar = useUIStore((s) => s.selectedAvatar);
-  const username = useUIStore((s) => s.username);
-
-  return (
-    <div className={styles.sidebarProfile}>
-      <img src={selectedAvatar} alt="Profile" className={styles.profileIcon} />
-      <h3>{username} </h3>
-    </div>
   );
 }

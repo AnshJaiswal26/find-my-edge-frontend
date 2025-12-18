@@ -11,6 +11,11 @@ const getTheme = () => {
 
 export const useUIStore = create((set) => ({
   theme: getTheme(),
+  isSidebarOpen: false,
+  username: "Ansh Jaiswal",
+  selectedAvatar: "Icons/avtar/user.png",
+  activeSelector: null,
+  toasts: [],
 
   toggleTheme: () =>
     set((prev) => {
@@ -21,8 +26,6 @@ export const useUIStore = create((set) => ({
       return { theme };
     }),
 
-  isSidebarOpen: false,
-
   toggleSidebar: () =>
     set((prev) => {
       const value = !prev.isSidebarOpen;
@@ -31,16 +34,39 @@ export const useUIStore = create((set) => ({
       return { isSidebarOpen: value };
     }),
 
-  username: "Ansh Jaiswal",
   setUserName: (username) => set({ username }),
 
-  selectedAvatar: "Icons/avtar/user.png",
   setAvtar: (avtar) => set({ selectedAvatar: avtar }),
 
-  activeSelector: null,
   setActiveSelector: (value) => set({ activeSelector: value }),
   toggleActiveSelector: (listId, buttonId) =>
     set((p) => ({
       activeSelector: p.activeSelector !== null ? null : { listId, buttonId },
+    })),
+
+  showToast: (type = "INFO", message, duration = 5000) => {
+    const id = Date.now() + Math.random();
+
+    set((state) => {
+      const newToast = { id, type: type.toLowerCase(), message };
+
+      // auto-remove
+      setTimeout(
+        () => {
+          set((s) => ({
+            toasts: s.toasts.filter((t) => t.id !== id),
+          }));
+        },
+        type === "ERROR" || type === "INFO" ? duration : 1500
+      );
+
+      return { toasts: [newToast, ...state.toasts] };
+    });
+    return id;
+  },
+
+  removeToast: (id) =>
+    set((s) => ({
+      toasts: id === "reset" ? [] : s.toasts.filter((t) => t.id !== id),
     })),
 }));

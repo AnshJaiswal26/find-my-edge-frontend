@@ -1,12 +1,13 @@
-import { Button, PopupMessage } from "@ui";
+import { Button } from "@ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import {
   useTradeSummary,
   useChargesLogic,
 } from "@features/risk-management/hooks";
-import { formatINR, safe } from "@features/risk-management/utils";
-import { useState } from "react";
+import { formatINR } from "@features/risk-management/utils";
 import { Section } from "@layout";
+import { useUIStore } from "@stores";
+import { useRef } from "react";
 
 export default function ChargesSummarySection() {
   console.log("ChargesSummarySection...");
@@ -28,38 +29,16 @@ export default function ChargesSummarySection() {
 function ToggleChargesButtons() {
   const active = useRiskManagementStore((s) => s.anyTooltipActive);
   const charges = useChargesLogic();
-
-  const [isAdded, setIsAdded] = useState("");
+  const showToast = useUIStore((s) => s.showToast);
 
   return (
     <>
-      {isAdded === "added" && (
-        <PopupMessage
-          message="Charges Added"
-          type="success"
-          duration={1200}
-          isVisible={true}
-          onClose={() => setIsAdded("")}
-          showCloseButton={false}
-        />
-      )}
-
-      {isAdded === "removed" && (
-        <PopupMessage
-          message="Charges Removed"
-          type="success"
-          duration={1200}
-          isVisible={true}
-          onClose={() => setIsAdded("")}
-          showCloseButton={false}
-        />
-      )}
       <Button
         text="Add"
         color="#05ab72"
         onClick={() => {
           charges("added");
-          setIsAdded("added");
+          showToast("SUCCESS", "Charges added");
         }}
         style={{
           padding: "3px 10px",
@@ -72,7 +51,7 @@ function ToggleChargesButtons() {
         color="#fe5a5a"
         onClick={() => {
           charges("removed");
-          setIsAdded("removed");
+          showToast("ERROR", "Charges removed");
         }}
         style={{
           padding: "3px 10px",

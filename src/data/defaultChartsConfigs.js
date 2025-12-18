@@ -114,7 +114,7 @@ const defaultPieChartLayout = {
   dataLabels: false,
 };
 
-export const defaultRadarChartLayout = {
+const defaultRadarChartLayout = {
   title: "",
   chartWidth: 100,
 
@@ -142,7 +142,7 @@ export const defaultRadarChartLayout = {
   legendAlignment: "center",
 };
 
-export const defaultPolarAreaChartLayout = {
+const defaultPolarAreaChartLayout = {
   title: "",
   chartWidth: 100,
 

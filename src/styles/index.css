@@ -1,15 +1,27 @@
-@import "tailwindcss" important;
-
-@custom-variant dark (&:where(.dark, .dark-theme *));
-
-@import "./utilities.css";
+/* 1️⃣ Design tokens FIRST */
 @import "./variables/_colors.css";
-@import "./variables/_layout.css";
-@import "./variables/_shadows.css";
-@import "./variables/_scrollbar.css";
-@import "./variables/_theme.css";
+@import "./variables/layout.css";
 @import "./variables/_apexcharts.css";
+@import "./animations.css";
 
+/* 2️⃣ Tailwind engine (NO important here) */
+@import "tailwindcss";
+
+/* 3️⃣ Token + base layers (BEFORE utilities) */
+@import "./variables/tokens.css";
+@import "./variables/scrollbar.base.css";
+
+/* 4️⃣ Utilities (AFTER base, BEFORE overrides) */
+@import "./variables/scrollbar.utilities.css";
+
+/* 5️⃣ Tailwind extensions */
+@custom-variant dark (&:where(.dark, .dark-theme *));
+@custom-variant sidebar-open (&:where(.sidebar-open, .sidebar-open *));
+
+/* 6️⃣ Your overrides LAST */
+@import "./utilities.css";
+
+/* 7️⃣ App globals */
 :root {
   background-color: #fff;
   font-family: "Trebuchet MS";
@@ -23,7 +35,3 @@
 .dark-theme {
   background-color: #12181e;
 }
-
-/* .sidebar-open {
-  font-size: 15px;
-} */

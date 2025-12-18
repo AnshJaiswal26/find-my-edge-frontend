@@ -1,4 +1,5 @@
 import { generateCharts } from "@utils";
+import { defaultCharts } from "@data";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -7,7 +8,7 @@ export const useChartStore = create(
     chartGridLayout: null,
     activeChart: { id: "", type: "", activePopup: null },
 
-    ...generateCharts(),
+    ...generateCharts(defaultCharts),
 
     order: [
       { id: "apex-radial-bar-chart-1", type: "radialBar", category: "group" },

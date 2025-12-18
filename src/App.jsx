@@ -6,24 +6,20 @@ import { useUIStore } from "@stores";
 
 // Lazy import each page
 const Dashboard = lazy(() => import("./features/dashboard/Dashboard"));
-const Edge = lazy(() => import("./features/Edge/Edge"));
 const TradeMetrics = lazy(() =>
   import("./features/trade-metrics/TradeMetrics")
 );
 const SheetIntegration = lazy(() =>
   import("./features/sheet-integration/SheetIntegration")
 );
-const CustomEdge = lazy(() => import("./features/CustomRecords/CustomEdge"));
-const TradingJournal = lazy(() =>
-  import("./features/TradingJournal/TradingJournal")
+
+const YearlyCalendar = lazy(() => import("./features/calander/YearlyCalendar"));
+const CapturedStrategies = lazy(() =>
+  import("./features/captured-strategies/CapturedStrategies")
 );
-const YearlyCalendar = lazy(() =>
-  import("./features/YearlyCalendar/YearlyCalendar")
-);
-const SetupRules = lazy(() => import("./features/SetupRules/SetupRules"));
-const Backtest = lazy(() => import("./features/CustomRecords/backtest"));
-const Settings = lazy(() => import("./features/Settings/Settings"));
-const Mistakes = lazy(() => import("./features/Mistakes/Mistakes"));
+const SetupRules = lazy(() => import("./features/setups-rules/SetupRules"));
+const Settings = lazy(() => import("./features/settings/Settings"));
+const Mistakes = lazy(() => import("./features/mistakes/Mistakes"));
 const RiskManagement = lazy(() =>
   import("./features/risk-management/RiskManagement")
 );
@@ -87,17 +83,17 @@ function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path={pageRoute.dashboard} element={<Dashboard />} />
-          <Route path={pageRoute.edge} element={<Edge />} />
           <Route path={pageRoute.tradeMetrics} element={<TradeMetrics />} />
           <Route
             path={pageRoute.sheetIntegration}
             element={<SheetIntegration />}
           />
-          <Route path={pageRoute.customEdge} element={<CustomEdge />} />
-          <Route path={pageRoute.tradingJournal} element={<TradingJournal />} />
           <Route path={pageRoute.calendar} element={<YearlyCalendar />} />
           <Route path={pageRoute.setupRules} element={<SetupRules />} />
-          <Route path={pageRoute.backtest} element={<Backtest />} />
+          <Route
+            path={pageRoute.capturedStrategies}
+            element={<CapturedStrategies />}
+          />
           <Route path={pageRoute.settings} element={<Settings />} />
           <Route path={pageRoute.mistakes} element={<Mistakes />} />
           <Route path={pageRoute.riskManagement} element={<RiskManagement />} />

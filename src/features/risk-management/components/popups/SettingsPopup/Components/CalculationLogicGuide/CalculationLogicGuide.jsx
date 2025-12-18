@@ -1,4 +1,4 @@
-import { TabSwitcher } from "@ui";
+import { TabSelector } from "@ui";
 import {
   Arrow,
   CalculatedFields,
@@ -11,7 +11,6 @@ import { fields } from "@features/risk-management/data";
 import { useMemo } from "react";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { SettingsSectionWrapper } from "@features/risk-management/layout";
-import { Label } from "@layout";
 
 export default function CalculationLogicGuide({ updateSettings }) {
   const { selectedField, affected, userDefined, mainFields, formulaMap } =
@@ -35,7 +34,7 @@ export default function CalculationLogicGuide({ updateSettings }) {
 
   return (
     <div>
-      <TabSwitcher
+      <TabSelector
         tabs={tabs}
         tabStyle={{ marginBottom: "0px" }}
         currentTab={selectedSection}
@@ -43,7 +42,8 @@ export default function CalculationLogicGuide({ updateSettings }) {
         style={{ padding: "10px 15px" }}
       />
       <SettingsSectionWrapper>
-        <Label>Calculation Logic Guide</Label>
+        <span className="text-(--text)">Calculation Logic Guide</span>
+
         <div className="divider"></div>
 
         <div className="settings-popup-grid">

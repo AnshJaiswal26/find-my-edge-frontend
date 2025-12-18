@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import "./ValidationTooltip.css";
-import { tooltip } from "./data";
+import { tooltip } from "./content";
 
 export default function ValidationTooltip({
   message,

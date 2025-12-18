@@ -12,4 +12,5 @@ export const pageRoute = {
   settings: "/settings",
   mistakes: "/mistakes",
   riskManagement: "/risk-management",
+  capturedStrategies: "/captured-strategies",
 };

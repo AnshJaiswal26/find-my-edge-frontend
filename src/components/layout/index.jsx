@@ -1,5 +1,4 @@
-import { Button, Editor, IconButton, Sidebar } from "@ui";
-import styles from "./layout.module.css";
+import { Button, Editor, IconButton, Sidebar, Toast } from "@ui";
 import { Loader2, X } from "lucide-react";
 
 export const PageContainer = ({
@@ -7,14 +6,19 @@ export const PageContainer = ({
   className = "",
   editor = true,
   sidebar = true,
-  pageActive,
 }) => {
   return (
     <div>
-      {sidebar && <Sidebar pageActive={pageActive} />}
-      <div className={`${styles.pageContainer} ${className}`}>
+      {sidebar && <Sidebar />}
+      <div
+        className={`flex flex-col justify-center items-center font-(--font-base) w-full h-full box-border ${className}`}
+      >
+        <Toast />
+
         {editor && <Editor />}
-        <div className={styles.mainContent}>{children}</div>
+        <div className="box-border flex-wrap p-5 bg-(--surface) w-full h-full max-w-[1350px] overflow-x-auto overflow-y-hidden">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -26,17 +30,36 @@ export const Container = ({
   className = "",
   title,
   header,
-  childClassName,
+  childClassName = "",
 }) => {
   return (
-    <div id={id} className={`${styles.container} ${className}`}>
-      <div className={`${styles.innerContainer} ${className}`}>
-        <div className="flex-box justify-between">
-          {title && <div className={styles.title}>{title}</div>}
+    <div
+      id={id}
+      className={`
+        min-w-[360px]
+        flex
+        rounded-[7px]
+        h-fit
+        p-5
+        box-border
+        text-(--text)
+        bg-(--surface-muted)
+        border border-(--border-muted)
+        shadow-[0_4px_8px_rgba(0,0,0,0.1)]
+        relative
+        overflow-hidden
+        ${className}
+      `}
+    >
+      <div className="flex flex-col flex-1 gap-[0.65rem]">
+        <div className="flex items-center justify-between">
+          {title && (
+            <div className="text-[1.2rem] font-semibold mb-[5px]">{title}</div>
+          )}
           {header && <div>{header}</div>}
         </div>
-        <div className={`${styles.childrenWrapper} ${childClassName}`}>
-          {" "}
+
+        <div className={`flex flex-col flex-1 gap-5 ${childClassName}`}>
           {children}
         </div>
       </div>
@@ -44,97 +67,133 @@ export const Container = ({
   );
 };
 
-export const Section = ({ title, children, subSection = false }) => (
-  <div className={`${styles.section} ${subSection ? styles.subSection : ""}`}>
-    {title && <h3 className={styles.sectionTitle}>{title}</h3>}
-    <div className={styles.sectionContent}>{children}</div>
-  </div>
-);
+export const Section = ({ title, children, subSection = false }) => {
+  return (
+    <div
+      className={`
+        border border-(--border)
+        rounded-[5px]
+        p-3
+        ${
+          subSection
+            ? "border-0 border-t border-(--border) rounded-none px-2 py-3"
+            : ""
+        }
+      `}
+    >
+      {title && (
+        <h3
+          className="
+            text-sm
+            font-semibold
+            text-(--text)
+            mb-3
+            uppercase
+            tracking-wider
+          "
+        >
+          {title}
+        </h3>
+      )}
 
-export const Label = ({ children, type = "medium" }) => {
-  return <div className={`${styles.label} ${styles[type]}`}>{children}</div>;
+      <div className="flex flex-col gap-3">{children}</div>
+    </div>
+  );
 };
-
 export const Legend = ({
   color,
   label,
   selected,
   onClick = () => null,
-  className,
+  className = "",
 }) => {
   return (
-    <div className={`${styles.legendWrapper} ${className}`}>
+    <div
+      className={`flex items-center text-[0.93rem] text-[hsl(var(--text-charts))] ${className}`}
+    >
       <div
-        className={`${styles.legendIndicatorLabelWrapper} ${
-          selected ? styles.selected : ""
-        }`}
         onClick={onClick}
+        className={`
+          flex items-center
+          gap-[5px]
+          px-1
+          rounded-[5px]
+          cursor-pointer
+          ${selected ? "opacity-30" : ""}
+        `}
       >
         {Array.isArray(color) ? (
           color.map((c, i) => (
             <div
               key={i}
-              className={styles.legendIndicator}
+              className="w-[0.9rem] h-[0.9rem] rounded-full"
               style={{ backgroundColor: c }}
-            ></div>
+            />
           ))
         ) : (
           <div
-            className={styles.legendIndicator}
+            className="w-[0.9rem] h-[0.9rem] rounded-full"
             style={{ backgroundColor: color }}
-          ></div>
+          />
         )}
-        <span> {label}</span>
+
+        <span>{label}</span>
       </div>
     </div>
   );
 };
 
-export const Bar = ({ color, label1, label2, fill }) => {
+export const Bar = ({ color, labels, fill }) => {
   return (
-    <div className={styles.barContainer}>
-      <div className={styles.barLabelsWrapper}>
-        {label1 && (
-          <div>
-            <span>{label1}</span>
-          </div>
-        )}
-        {label2 && (
-          <div>
-            <span>{label2} </span>
-          </div>
-        )}
+    <div className="w-full min-w-[180px] box-border">
+      <div className="flex flex-wrap justify-between items-center w-full text-sm mb-2 text-(--text-charts)">
+        {labels &&
+          labels.map((label) => (
+            <div>
+              <span>{label}</span>
+            </div>
+          ))}
       </div>
 
-      <div className={styles.bar}>
+      <div className="flex-1 h-[14px] bg-(--hover) overflow-hidden relative rounded-[6px]">
         <div
-          className="h-[100%]"
+          className="h-full"
           style={{
             width: fill,
             backgroundColor: color,
           }}
-        ></div>
+        />
       </div>
     </div>
   );
 };
 
-export const Badge = ({ value, label, formatter, className }) => {
+export const Badge = ({ value, label, formatter, className = "" }) => {
   const v = Number(value);
-  const formatedValue = formatter ? formatter(v) : v;
-  const formatedStyle =
-    v > 0 ? styles.badgeGreen : v === 0 ? styles.badgeYellow : styles.badgeRed;
+  const formattedValue = formatter ? formatter(v) : v;
+
+  const variant =
+    v > 0
+      ? "bg-(--success-soft) text-(--success) border border-(--success)"
+      : v === 0
+      ? "bg-(--warning) text-(--warning) border border-(--warning)"
+      : "bg-(--error-soft) text-(--error) border border-(--error)";
 
   return (
-    <div className="flex-box gap-1.5 items-center">
+    <div className="flex gap-1.5 items-center">
       {label && <span>{label}</span>}
-      <div>
-        <span
-          className={`${styles.badge} ${formatedStyle} text-[0.88rem] p-[3px 5px] ${className}`}
-        >
-          {formatedValue}
-        </span>
-      </div>
+
+      <span
+        className={`
+          rounded-full
+          px-[6px] py-[3px]
+          text-[0.88rem]
+          ${variant}
+          ${className}
+        `}
+      >
+        {formattedValue}
+      </span>
     </div>
   );
 };
@@ -152,27 +211,60 @@ export const Popup = ({
   if (!isVisible) return null;
 
   return (
-    <div className={styles.popupContainer}>
-      <div className={`${styles.popup} ${large ? styles.popupLarge : ""}`}>
-        <header>
-          <div className="flex-box justify-between items-center">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40">
+      <div
+        className={`
+          bg-(--surface-muted)
+          rounded-lg
+          max-w-[29rem]
+          w-full
+          m-4
+          shadow-[0_10px_25px_rgba(0,0,0,0.15)]
+          h-[80vh]
+          overflow-hidden
+          flex flex-col
+          justify-between
+          text-(--text-charts)
+          ${large ? "max-w-[29rem]" : ""}
+        `}
+      >
+        {/* Header */}
+        <header className="bg-(--surface-muted) p-[15px] border-b border-(--border)">
+          <div className="flex items-center justify-between">
             <div>{title}</div>
+
             <IconButton
               icon={<X size={17} />}
-              className={styles.popupCloseIcon}
               onClick={onClose}
+              className="p-1 hover:text-(--error)"
             />
           </div>
         </header>
-        <main>{children}</main>
 
-        <footer className={styles.chartPopupFooter}>
+        {/* Main */}
+        <main
+          className={`
+            grid
+            grid-cols-1
+            gap-4
+            overflow-y-auto
+            w-full
+            py-1
+            px-2
+            ${large ? "grid-cols-2" : ""}
+          `}
+        >
+          {children}
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-(--surface-muted) p-[15px] border-t border-(--border) flex justify-end gap-4">
           <Button
             text={text?.[0] || "Cancel"}
             size="large"
             onClick={onCancel}
-            color="var(--color-bg-hover)"
-            className="text-[var(--color-text-charts)]"
+            color="var(--hover)"
+            className="text-(--text)!"
           />
           <Button text={text?.[1] || "Apply"} size="large" onClick={onApply} />
         </footer>
@@ -189,30 +281,66 @@ export const ChartPopup = ({
   onCancel = () => null,
   onApply = () => null,
   onClose = () => null,
-  className,
+  className = "",
 }) => {
   if (!isVisible) return null;
 
   return (
-    <div className={styles.chartPopup}>
-      <header>
+    <div
+      className="
+        absolute right-full -top-[2px]
+        z-[100]
+        flex flex-col
+        h-fit w-fit
+        min-w-[210px] max-h-[400px]
+        bg-(--apexcharts-tooltip-background)
+        border border-(--border)
+        rounded-[4px]
+        shadow-[0_0_6px_rgba(0,0,0,0.192)]
+      "
+    >
+      {/* Header */}
+      <header className="flex items-center justify-between p-[10px] border-b border-(--hover)">
         <span>{title}</span>
-        <button onClick={onClose}>
+        <button
+          type="button"
+          onClick={onClose}
+          className="p-[0.2rem] hover:text-(--danger) hover:bg-(--hover) hover:rounded-[5px]"
+        >
           <X size={14} />
         </button>
       </header>
 
-      <main className={className}>{children}</main>
+      {/* Main */}
+      <main
+        className={`
+          flex flex-col
+          text-[0.78rem]
+          px-1 py-[10px]
+          max-h-[200px] max-w-[350px]
+          overflow-y-auto
+          ${className}
+        `}
+      >
+        {children}
+      </main>
 
-      <footer className="flex-box justify-end gap-2">
+      {/* Footer */}
+      <footer className="flex justify-end gap-2 p-[10px] border-t border-(--hover)">
         <Button
           text={text?.[0] || "Cancel"}
-          color={"var(--color-bg-hover)"}
-          className={"text-[var(--color-text-headings)]"}
+          variant="hollow"
+          color={"var(--hover)"}
+          className="text-(--text)!"
           size="small"
           onClick={onCancel}
         />
-        <Button text={text?.[1] || "Apply"} size="small" onClick={onApply} />
+        <Button
+          text={text?.[1] || "Apply"}
+          size="small"
+          onClick={onApply}
+          className="text-white"
+        />
       </footer>
     </div>
   );
@@ -221,11 +349,7 @@ export const ChartPopup = ({
 export function Loader() {
   return (
     <div className="flex w-[100vw] h-[100vh] items-center justify-center">
-      <Loader2
-        size={60}
-        className="animate-spin"
-        color="var(--color-text-heading)"
-      />
+      <Loader2 size={60} className="animate-spin" color="var(--text)" />
     </div>
   );
 }

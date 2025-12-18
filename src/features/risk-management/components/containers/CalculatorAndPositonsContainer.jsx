@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { TabSwitcher } from "@ui";
 import {
   RiskRewardCalculatorContainer,
   CurrentPositionsContainer,
@@ -7,6 +6,7 @@ import {
 } from "@features/risk-management/components";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { Container } from "@layout";
+import { TabSelector } from "@ui";
 
 export function CalculatorAndPositionsContainer() {
   const updateTab = useRiskManagementStore((s) => s.updater.tab);
@@ -23,7 +23,7 @@ export function CalculatorAndPositionsContainer() {
 
   return (
     <div className="flex-[1.1] min-w-[360px] relative">
-      <TabSwitcher
+      <TabSelector
         tabs={tabs}
         currentTab={currentTab}
         onClick={(tab) => updateTab(tab)}

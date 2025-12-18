@@ -1,0 +1,36 @@
+@layer base {
+  :root {
+    --scrollbar-track: #f5f7f8;
+    --scrollbar-thumb: #aaaeaf;
+    --scrollbar-thumb-hover: #878b8b;
+  }
+
+  .dark-theme {
+    --scrollbar-track: #1c2334;
+    --scrollbar-thumb: #77797b;
+    --scrollbar-thumb-hover: #bcbaba;
+  }
+
+  /* Default scrollbar */
+  * {
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-hidden {
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 6px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+}
