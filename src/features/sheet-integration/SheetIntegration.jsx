@@ -19,7 +19,7 @@ function SheetButton({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-4 p-6 rounded-lg border border-[var(--color-border-default)] hover:shadow-sm bg-[var(--color-bg-container)]"
+      className="flex items-center gap-4 p-6 rounded-lg border border-[var(--border)] hover:shadow-sm bg-[var(--surface-muted)]"
     >
       <div
         className={`w-10 h-10 rounded-md ${
@@ -30,7 +30,7 @@ function SheetButton({
       </div>
       <div className="text-left">
         <div className="font-semibold text-lg">Connect to {name}</div>
-        <div className="text-sm text-[var(--color-text-label)]">
+        <div className="text-sm text-[var(--text-muted)]">
           Use Google Drive spreadsheets {driveName}
         </div>
       </div>
@@ -118,10 +118,10 @@ export default function SheetIntegration() {
   // ----------------- Connect Page -----------------
   function ConnectPage() {
     return (
-      <div className="max-w-5xl mx-auto py-12 px-6 text-[var(--color-text-heading)]">
+      <div className="max-w-5xl mx-auto py-12 px-6 text-[var(--text)]">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold">Connect</h1>
-          <p className="mt-3 text-[var(--color-text-label)]">
+          <p className="mt-3 text-[var(--text-muted)]">
             Connect to Google Sheets or Microsoft Excel to map trades and inject
             your trade data into sheets.
           </p>
@@ -172,7 +172,7 @@ export default function SheetIntegration() {
               className="bg-[inherit] w-full p-3 rounded-[0.5rem]"
             />
 
-            <label className="block mt-3 mb-2 text-sm text-[var(--color-text-label)]">
+            <label className="block mt-3 mb-2 text-sm text-[var(--text-muted)]">
               Frequency
             </label>
 
@@ -185,7 +185,7 @@ export default function SheetIntegration() {
             <div className="mt-4 text-right">
               <Button
                 text={"Save Options"}
-                color={"var(--color-green)"}
+                color={"var(--success)"}
                 onClick={() =>
                   alert("This is mock. Choose a provider to connect.")
                 }

@@ -50,7 +50,7 @@ export const getRadialBarChartConfig = ({
         hollow: { size: `${config.hollowSize}%` ?? "50%" },
         track: {
           strokeWidth: `${config.strokeWidth}%` ?? "50%",
-          background: config.trackBackground ?? "var(--color-bg-hover)",
+          background: config.trackBackground ?? "var(--hover)",
         },
         dataLabels: {
           name: { show: config.name ?? true },

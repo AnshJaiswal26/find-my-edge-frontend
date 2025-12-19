@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
+    "gridstack": "^12.4.1",
     "immer": "^10.2.0",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-grid-layout": "^1.5.2",
     "react-resizable": "^3.0.5",
     "tailwindcss": "^4.1.13",
     "vite-plugin-eslint": "^1.8.1",

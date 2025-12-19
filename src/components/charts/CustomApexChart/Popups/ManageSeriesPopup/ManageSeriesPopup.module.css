@@ -31,7 +31,7 @@
   gap: 0.5rem;
   height: 220px;
   overflow: auto;
-  background-color: var(--color-bg-hover);
+  background-color: var(--hover);
 }
 
 .availableMetricsList::-webkit-scrollbar {
@@ -48,9 +48,9 @@
   user-select: none;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  background-color: var(--color-bg-container);
+  background-color: var(--surface-muted);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--color-bg-hover);
+  border: 1px solid var(--hover);
 }
 
 .listRow.disable {

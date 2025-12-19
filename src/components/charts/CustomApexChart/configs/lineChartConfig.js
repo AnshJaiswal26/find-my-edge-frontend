@@ -27,9 +27,7 @@ export const getLineChartConfig = ({ chart, chartId, tooltipCallback }) => {
     stroke: { curve: config.curve || "smooth", width: config.strokeWidth || 2 },
     markers: {
       size: config.markerSize || 0,
-      colors: seriesConfig?.map((s) => s.markerColor) || [
-        "var(--color-default)",
-      ],
+      colors: seriesConfig?.map((s) => s.markerColor) || ["var(--info)"],
       strokeWidth: 0,
       hover: { size: config.markerHoverSize || 6 },
     },
@@ -46,7 +44,7 @@ export const getLineChartConfig = ({ chart, chartId, tooltipCallback }) => {
               type: config.areaGradientHorizontal ? "horizontal" : "vertical", // horizontal or vertical
               shadeIntensity: 0,
               gradientToColors: seriesConfig?.map((s) => s.areaColor) || [
-                "var(--color-default)",
+                "var(--info)",
               ],
               opacityFrom: config.areaOpacityFrom || 0.3,
               opacityTo: config.areaOpacityTo || 0.05,

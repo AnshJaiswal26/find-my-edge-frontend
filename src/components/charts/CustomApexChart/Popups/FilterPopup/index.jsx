@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { Filter } from "lucide-react";
 import { IconButton } from "@ui";
-import { useClickOutside } from "@hooks";
 import { ChartPopup } from "@layout";
 import { useChartStore } from "@stores";
 import { filterOptions, sortOptions } from "@utils";

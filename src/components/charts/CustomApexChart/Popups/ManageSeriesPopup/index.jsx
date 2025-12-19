@@ -14,7 +14,7 @@ const seriesCfgGenerator = {
       {
         from: 0,
         to: Number.MAX_SAFE_INTEGER,
-        color: "var(--color-default)",
+        color: "var(--info)",
         tooltipLabel: key,
       },
     ],
@@ -23,9 +23,9 @@ const seriesCfgGenerator = {
     key,
     name: key,
     tooltipLabel: key,
-    color: "var(--color-default)",
-    markerColor: "var(--color-default)",
-    areaColor: "var(--color-default)",
+    color: "var(--info)",
+    markerColor: "var(--info)",
+    areaColor: "var(--info)",
   }),
 };
 
@@ -73,7 +73,7 @@ export default function ManageSeriesPopup({ chartId, type, updateChart }) {
       onClose={handleClose}
     >
       <div className={styles.contentWrapper}>
-        <div className="text-[var(--color-red)] text-[0.8rem]">
+        <div className="text-[var(--error)] text-[0.8rem]">
           <strong>Note:</strong> You can have up to 3 active series at a time,
           and at least 1 must remain active.
         </div>
@@ -132,7 +132,7 @@ function MetricsSection({
       </div>
       <div className={styles[className]}>
         {list.length === 0 ? (
-          <div className="self-center text-[var(--color-text-disabled)]">
+          <div className="self-center text-[var(--text-disabled)]">
             No Selected Metrics
           </div>
         ) : (

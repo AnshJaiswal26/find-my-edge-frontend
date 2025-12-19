@@ -2,8 +2,9 @@
 :root {
   /* semantic colors */
   --surface: hsl(0 0% 100%);
+  --surface-light: hsl(210, 27%, 94%);
   --surface-muted: hsl(0, 0%, 100%);
-  --surface-muted-soft: hwb(225 98% 0%, 0.743);
+  --surface-muted-soft: hsla(0, 0%, 99%, 0.543);
   --surface-disabled: hsl(0, 0%, 96%);
 
   --border: hsl(0, 0%, 87%);
@@ -13,6 +14,7 @@
   --text: hsl(210 10% 23%);
   --text-muted: hsl(216, 15%, 34%);
   --text-charts: hsl(210, 29%, 29%);
+  --text-charts-muted: hsl(210, 13%, 62%);
   --text-disabled: hsl(0 0% 70%);
 
   /* status colors */
@@ -23,7 +25,7 @@
   --error-soft: hsl(0 99% 67% / 0.12);
 
   --warning: hsl(41 92% 67%);
-  --warning-soft: hsl(41 92% 67% / 0.12);
+  --warning-soft: rgba(255, 202, 88, 0.55);
 
   --info: hsl(215 100% 55%);
   --info-soft: hsl(215 100% 55% / 0.08);
@@ -34,20 +36,18 @@
   --hover: hsla(211 43% 87% / 0.35);
   --hover-muted: hsl(0, 0%, 82%);
 
-  --shadow: 0 2px 22px rgba(0, 0, 0, 0.1);
-  --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.2);
+  /* shadow */
+  --shadow: 0 2px 22px hsla(0, 0%, 0%, 0.1);
+  --shadow-hover: 0 6px 12px hsla(0, 0%, 0%, 0.2);
 
-  --tooltip: hsla(0 0% 0% / 0.9);
-
-  --font-base: "Trebuchet MS";
+  --font-family-base: "Trebuchet MS", system-ui, sans-serif;
 
   font-size: 17px;
-
-  color: hsl(var(--success) / 0.12);
 }
 
 .dark-theme {
   --surface: hsl(210 25% 9%);
+  --surface-light: hsl(211 21% 20%);
   --surface-muted: hsl(210 24% 15%);
   --surface-muted-soft: hsla(210, 24%, 15%, 0.643);
   --surface-disabled: hsla(210, 29%, 24%, 0.467);
@@ -59,13 +59,12 @@
   --text: hsl(0 0% 100%);
   --text-muted: hsl(180 4% 80%);
   --text-charts: hsl(0, 0%, 100%);
+  --text-charts-muted: hsl(208, 13%, 45%);
   --text-disabled: hsl(225 21% 39%);
 
   --hover: hsla(210 29% 23% / 0.47);
   --hover-muted: hsl(210, 27%, 26%);
 
   --shadow: none;
-  --shadow-hover: 0 6px 12px rgb(45, 58, 71);
-
-  --tooltip: hsla(0 0% 0% / 0.9);
+  --shadow-hover: 0 6px 12px hsl(210, 22%, 23%);
 }

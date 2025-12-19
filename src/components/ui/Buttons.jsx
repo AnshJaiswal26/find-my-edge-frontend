@@ -102,14 +102,13 @@ export const IconButton = ({
   alt,
   className = "",
   disabled = false,
-  tooltipContent,
-  tooltipPosition = "top",
+  tooltip,
 }) => {
   return (
     <div
       className="relative w-fit"
-      data-tooltip-position={tooltipPosition}
-      data-tooltip={tooltipContent}
+      data-tooltip-position={tooltip?.position}
+      data-tooltip={tooltip?.title}
     >
       <button
         type="button"

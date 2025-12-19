@@ -104,8 +104,7 @@ export default function Toolbar({ chartId, type }) {
           className={"icon-button"}
           key={index}
           icon={<item.icon />}
-          tooltipContent={item.title}
-          tooltipPosition={"left"}
+          tooltip={{ title: item.title, position: "left" }}
           onClick={() => (item?.onClick ? item.onClick() : {})}
         />
       ))}

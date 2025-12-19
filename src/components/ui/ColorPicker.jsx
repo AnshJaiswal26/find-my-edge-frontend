@@ -1,5 +1,6 @@
 import { IconButton } from "./Buttons";
 import { useResolvedValue } from "@hooks";
+import { parseColor } from "@utils";
 import { RefreshCcw } from "lucide-react";
 
 export default function ColorPicker({
@@ -34,7 +35,7 @@ export default function ColorPicker({
       {/* Hidden color input */}
       <input
         type="color"
-        value={color}
+        value={parseColor(color)}
         onChange={(e) => onChange?.(e.target.value)}
         className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
       />

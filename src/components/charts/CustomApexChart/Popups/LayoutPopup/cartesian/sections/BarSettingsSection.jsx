@@ -150,7 +150,7 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
               chart.draft.seriesConfig[seriesIndex].colors.push({
                 from: 0,
                 to: 0,
-                color: "var(--color-default)",
+                color: "var(--info)",
                 tooltipLabel: "",
               });
             })

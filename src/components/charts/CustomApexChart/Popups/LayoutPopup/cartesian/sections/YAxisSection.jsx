@@ -70,7 +70,7 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
         />
       </Section>
       <Section title={"Title"}>
-        <span className="font-light text-[var(--color-text-charts)] text-[0.85rem]">
+        <span className="font-light text-[var(--text-charts)] text-[0.85rem]">
           Leave blank to hide the title.{" "}
         </span>
 

@@ -116,7 +116,6 @@ export default function Select({
                   `}
                   onClick={() => {
                     onChange(o, options[o]);
-                    console.log("clicked");
                     toggleActiveSelector(listId, buttonId);
                   }}
                 >

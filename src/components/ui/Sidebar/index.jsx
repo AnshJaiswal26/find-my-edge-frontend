@@ -21,7 +21,7 @@ const Profile = () => {
         alt="Profile"
         className="w-10 h-10 rounded-full cursor-pointer"
       />
-      <h3 className="font-(--font-base)">{username}</h3>
+      <h3 className="font-(--font-faimily-base)">{username}</h3>
     </div>
   );
 };

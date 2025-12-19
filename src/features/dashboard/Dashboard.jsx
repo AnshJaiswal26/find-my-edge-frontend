@@ -1,16 +1,23 @@
-import { useRef, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import { useChartStore } from "@stores";
+import { ChartPopups, CustomApexChart } from "@charts";
+
+import { GridStack } from "gridstack";
+import "gridstack/dist/gridstack.min.css";
+import "gridstack/dist/gridstack.min.css";
+import { Button } from "@ui";
 import StatCards from "./components/StatsGrid";
 import { Container } from "@layout";
-import { Button } from "@ui";
-import { CustomApexChart, ChartPopups } from "@charts";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-import { WidthProvider, Responsive } from "react-grid-layout";
 
-const ReactGridLayout = WidthProvider(Responsive);
+const getColumnCount = () => {
+  const w = window.innerWidth;
+  if (w < 480) return 6;
+  if (w < 768) return 12;
+  if (w < 1024) return 20;
+  return 30;
+};
 
-function Dashboard() {
+export default function Dashboard() {
   return (
     <>
       <ChartPopups />
@@ -50,87 +57,108 @@ function Dashboard() {
 }
 
 function ChartDashboard() {
-  const containerRef = useRef(null);
-  const layoutsRef = useRef(null);
-
-  const handleSaveLayout = (layout, allLayouts) => {
-    layoutsRef.current = allLayouts;
-    useChartStore.getState().updateChart((s) => {
-      s.chartGridLayout = allLayouts;
-    });
-  };
+  const gridRef = useRef(null);
+  const grid = useRef(null);
+  const isResponsiveChange = useRef(false);
 
   const order = useChartStore((s) => s.order);
+  const savedLayout = useChartStore((s) => s.chartGridLayout);
 
-  const savedLayouts = useChartStore.getState().chartGridLayout;
+  useEffect(() => {
+    if (!grid.current) {
+      grid.current = GridStack.init(
+        {
+          column: getColumnCount(),
+          float: false,
+          resizable: { handles: "" },
+          draggable: { handle: ".chart-toolbar" },
+        },
+        gridRef.current
+      );
 
-  const layout = useMemo(() => {
-    const itemsPerRow = 3;
-    return order.map(({ id, category }, index) => ({
-      i: id,
-      x: (index % itemsPerRow) * 10,
-      y: Math.floor(index / itemsPerRow) * 20,
-      w: category === "group" ? 10 : 16,
-      h: 20,
-      minW: category === "group" ? 8 : 12,
-      minH: 20,
-      maxH: 100,
-    }));
-  }, [order]);
+      // 🔥 Resize on drag
+      grid.current.on("resizestop", (_, el) => {
+        const chartId = el.getAttribute("gs-id");
+        if (chartId) {
+          window.dispatchEvent(
+            new CustomEvent("chart-resize", { detail: { chartId } })
+          );
+        }
+      });
 
-  const layouts = useMemo(() => {
-    return (
-      savedLayouts ?? {
-        lg: layout,
-        md: layout,
-        sm: layout,
-        xs: layout,
-        xxs: layout,
-      }
-    );
-  }, [savedLayouts, layout]);
+      // 💾 Save layout
+      grid.current.on("change", () => {
+        if (isResponsiveChange.current) return;
 
-  const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
-  const cols = { lg: 30, md: 18, sm: 16, xs: 13, xxs: 10 };
+        const safeLayout = grid.current
+          .save()
+          .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+
+        useChartStore.getState().updateChart((s) => {
+          s.chartGridLayout = safeLayout;
+        });
+      });
+
+      // ✅ FORCE RESIZE AFTER INITIAL LAYOUT
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.dispatchEvent(new Event("resize"));
+        });
+      });
+    }
+
+    const updateColumns = () => {
+      if (!grid.current) return;
+
+      isResponsiveChange.current = true;
+
+      const cols = getColumnCount();
+      grid.current.column(cols, "move");
+
+      requestAnimationFrame(() => {
+        isResponsiveChange.current = false;
+      });
+    };
+
+    // initial
+    updateColumns();
+
+    // on resize
+    window.addEventListener("resize", updateColumns);
+
+    return () => {
+      grid.current?.destroy(false);
+      grid.current = null;
+      window.removeEventListener("resize", updateColumns);
+    };
+  }, []);
 
   return (
-    <div
-      className="w-full h-full border-3 border-[#152335] bg-[inherit] rounded-[7px] overflow-hidden"
-      ref={containerRef}
-    >
-      <div className="bg-[#16283f] px-3 py-2 text-[#fff]">Risk Metrics</div>
-      <ReactGridLayout
-        className="layout"
-        layouts={layouts}
-        breakpoints={breakpoints}
-        cols={cols}
-        rowHeight={10}
-        isResizable
-        isDraggable
-        draggableHandle=".chart-toolbar"
-        onDragStop={(layout, oldItem, newItem) => {
-          handleSaveLayout(layout, layoutsRef.current ?? layouts);
-        }}
-        onResizeStop={(layout, oldItem, newItem) => {
-          handleSaveLayout(layout, layoutsRef.current ?? layouts);
-          window.dispatchEvent(
-            new CustomEvent("chart-resize", { detail: { chartId: newItem.i } })
-          );
-        }}
-      >
-        {order.map(({ id, type }) => (
+    <div className="grid-stack" ref={gridRef}>
+      {order.map(({ id, type, category }) => {
+        const layout = savedLayout?.find((l) => l.id === id);
+
+        return (
           <div
             key={id}
-            className="bg-[inherit] border-dashed border-1 border-[var(--resize-border)] rounded-xl min-h-[fit-content] grid-chart-wrapper"
+            className="grid-stack-item"
+            gs-id={id}
+            gs-x={layout?.x}
+            gs-y={layout?.y}
+            gs-w={layout?.w ?? (category === "group" ? 10 : 16)}
+            gs-h={layout?.h ?? 10}
+            gs-min-w={category === "group" ? 8 : 12}
+            gs-min-h={8}
+            gs-max-h={100}
           >
-            <div className="p-1 box-border h-full relative">
-              <CustomApexChart chartId={id} type={type} />
+            <div className="grid-stack-item-content rounded-[8px] shadow-xl">
+              <div className="h-full relative">
+                <CustomApexChart chartId={id} type={type} />
+              </div>
             </div>
           </div>
-        ))}
-      </ReactGridLayout>
+        );
+      })}
     </div>
   );
 }
-
-export default Dashboard;

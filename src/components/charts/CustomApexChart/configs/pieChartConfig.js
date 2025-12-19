@@ -52,7 +52,7 @@ export const getPieChartConfig = ({ chartId, chart, tooltipCallback }) => {
     stroke: {
       width: config.strokeWidth,
       lineCap: "round",
-      colors: ["var(--color-bg-container)"],
+      colors: ["var(--surface-muted)"],
     },
 
     plotOptions: {

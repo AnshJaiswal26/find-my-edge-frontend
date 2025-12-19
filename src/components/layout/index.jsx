@@ -11,7 +11,7 @@ export const PageContainer = ({
     <div>
       {sidebar && <Sidebar />}
       <div
-        className={`flex flex-col justify-center items-center font-(--font-base) w-full h-full box-border ${className}`}
+        className={`flex flex-col justify-center items-center font-(--font-faimily-base) w-full h-full box-border ${className}`}
       >
         <Toast />
 
@@ -40,7 +40,9 @@ export const Container = ({
         flex
         rounded-[7px]
         h-fit
-        p-5
+        p-2
+        sm:p-3
+        md:p-5
         box-border
         text-(--text)
         bg-(--surface-muted)
@@ -54,7 +56,7 @@ export const Container = ({
       <div className="flex flex-col flex-1 gap-[0.65rem]">
         <div className="flex items-center justify-between">
           {title && (
-            <div className="text-[1.2rem] font-semibold mb-[5px]">{title}</div>
+            <div className="text-[1.2rem] font-semibold mb-1.5">{title}</div>
           )}
           {header && <div>{header}</div>}
         </div>
@@ -293,7 +295,7 @@ export const ChartPopup = ({
         flex flex-col
         h-fit w-fit
         min-w-[210px] max-h-[400px]
-        bg-(--apexcharts-tooltip-background)
+        bg-(--surface)
         border border-(--border)
         rounded-[4px]
         shadow-[0_0_6px_rgba(0,0,0,0.192)]

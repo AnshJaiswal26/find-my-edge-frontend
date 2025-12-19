@@ -19,7 +19,7 @@ export const customTooltip = (callback) => {
     );
 
     return `
-      <div class="custom-grouped-bar-chart-tooltip">
+      <div class="apexcharts-custom-tooltip">
         ${
           tooltipData?.title
             ? `<div class="tooltip-title">${tooltipData.title}</div>`

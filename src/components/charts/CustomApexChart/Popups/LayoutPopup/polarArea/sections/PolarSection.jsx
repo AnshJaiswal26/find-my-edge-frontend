@@ -42,7 +42,7 @@ export default function PolygonSection({ chartId, updateChart }) {
             chart.draft.layout.ringBorderColor = c;
           })
         }
-        resetColor={"var(--color-border-default)"}
+        resetColor={"var(--border)"}
         store={useChartStore}
       />
 

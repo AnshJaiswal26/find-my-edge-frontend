@@ -11,7 +11,7 @@ export default function Table({ tableHead, tableBody }) {
       "
     >
       <div
-        className="grid w-full"
+        className="grid w-100"
         style={{
           gridTemplateColumns: `repeat(${colLength}, minmax(150px, 1fr))`,
         }}
@@ -24,7 +24,7 @@ export default function Table({ tableHead, tableBody }) {
               sticky top-0
               bg-(--surface-muted)
               p-2
-              border border-(--border-muted)
+              border border-(--border)
               font-medium
             "
           >
@@ -38,7 +38,7 @@ export default function Table({ tableHead, tableBody }) {
             key={index}
             className="
               p-2
-              border border-(--border-muted)
+              border border-(--border)
             "
           >
             <span>{cell}</span>

@@ -9,7 +9,7 @@ export default function CustomApexChart({ chartId, type }) {
   return (
     <Container
       id={`${chartId}-container`}
-      className={styles.chartContainer}
+      className={`${styles.chartContainer}`}
       childClassName={styles.chartInnerContainer}
     >
       <div className={`chart-toolbar ${styles.chartDragIcon}`}>⠿</div>

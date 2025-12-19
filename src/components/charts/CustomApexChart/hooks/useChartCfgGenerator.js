@@ -21,7 +21,7 @@ const seriesGenerator = {
       data: chart.series.map((d) => d?.[s.key]),
       color: ({ value }) =>
         s.colors.filter((r) => value >= r.from && value <= r.to)[0]?.color ||
-        "var(--color-default)",
+        "var(--info)",
     }));
   },
 
@@ -105,7 +105,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
           const { color, tooltipLabel } = live.seriesConfig[
             legendIndex
           ].colors.filter((r) => r.from <= value && value <= r.to)[0] || {
-            color: "var(--color-default)",
+            color: "var(--info)",
             label: "",
           };
 

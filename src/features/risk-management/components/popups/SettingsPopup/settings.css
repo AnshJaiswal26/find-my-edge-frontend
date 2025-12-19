@@ -9,7 +9,7 @@
 }
 
 .settings-popup-container {
-  background-color: var(--color-bg-chart-popup);
+  background-color: var(--surface-muted);
   border-radius: 0.5rem;
   max-width: 29rem;
   width: 100%;
