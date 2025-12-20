@@ -1,58 +1,92 @@
-// components/ColumnHeader.jsx
-import { useRef } from "react";
+import { GripHorizontal } from "lucide-react";
 import { useTableStore } from "./store";
 
-export function ColumnHeader({ column, index }) {
-  const ref = useRef(null);
-
-  const { reorderColumn, resizeColumn, columnWidths } = useTableStore();
-
-  /* ---------- Drag reorder ---------- */
-  function onDragStart(e) {
-    e.dataTransfer.setData("colIndex", index);
+function bindGlobalPointer(onMove, onUp) {
+  function move(e) {
+    onMove(e.clientX);
   }
-
-  function onDrop(e) {
-    const from = Number(e.dataTransfer.getData("colIndex"));
-    reorderColumn(from, index);
+  function up() {
+    onUp();
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", up);
   }
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", up);
+}
 
-  /* ---------- Resize ---------- */
-  function startResize(e) {
-    e.preventDefault();
-    const startX = e.clientX;
-    const startWidth = columnWidths[column.id] || ref.current.offsetWidth;
+export function ColumnHeader({ colId, index }) {
+  const draggingColumn = useTableStore((s) => s.draggingColumn);
+  const startColumnDrag = useTableStore((s) => s.startColumnDrag);
+  const setDragOverIndex = useTableStore((s) => s.setDragOverIndex);
+  const endColumnDrag = useTableStore((s) => s.endColumnDrag);
+  const updateColumnDrag = useTableStore((s) => s.updateColumnDrag);
+  const startColumnResize = useTableStore((s) => s.startColumnResize);
 
-    function onMove(ev) {
-      resizeColumn(column.id, startWidth + ev.clientX - startX);
-    }
-
-    function onUp() {
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
-    }
-
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-  }
+  const column = useTableStore((s) => s.columnsById[colId]);
+  const width = useTableStore((s) => s.columnWidths?.[colId] ?? 200);
 
   return (
     <div
-      ref={ref}
-      draggable
-      onDragStart={onDragStart}
-      onDragOver={(e) => e.preventDefault()}
-      onDrop={onDrop}
-      className="relative flex items-center px-2 py-1 border-r border-(--border) bg-(--surface-muted) font-medium select-none"
-      style={{ width: columnWidths[column.id] ?? 200 }}
+      data-col-header
+      className="group relative select-none"
+      style={{ width }}
+      onPointerEnter={() => {
+        if (draggingColumn) {
+          setDragOverIndex(index);
+        }
+      }}
     >
-      {column.label}
-
-      {/* Resize handle */}
+      {/* DRAG HANDLE */}
       <div
-        onMouseDown={startResize}
-        className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-blue-400"
+        onPointerDown={(e) => {
+          const rect = e.currentTarget
+            .closest("[data-col-header]")
+            .getBoundingClientRect();
+
+          startColumnDrag({
+            id: colId,
+            index,
+            width: rect.width,
+            left: rect.left,
+            top: rect.top,
+            height: rect.height,
+            startX: e.clientX,
+          });
+
+          bindGlobalPointer(updateColumnDrag, endColumnDrag);
+
+          e.preventDefault();
+        }}
+        className="opacity-0 group-hover:opacity-60 absolute -bottom-1 left-1/2 -translate-x-1/2 cursor-grab"
+      >
+        <GripHorizontal size={18} />
+      </div>
+
+      <div
+        onPointerDown={(e) => {
+          const rect = e.currentTarget
+            .closest("[data-col-header]")
+            .getBoundingClientRect();
+
+          startColumnResize({
+            id: colId,
+            width: rect.width,
+            left: rect.left,
+            top: rect.top,
+            height: rect.height,
+            startX: e.clientX,
+          });
+
+          bindGlobalPointer(updateColumnDrag, endColumnDrag);
+          e.stopPropagation();
+        }}
+        className="absolute right-0 top-0 h-full w-1 cursor-col-resize"
       />
+
+      {/* HEADER BODY */}
+      <div className="flex items-center px-2 py-1 border-r border-(--border) bg-(--surface-muted)">
+        {column.label}
+      </div>
     </div>
   );
 }

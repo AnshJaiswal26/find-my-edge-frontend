@@ -37,12 +37,32 @@ export const columnsById = {
     parse: (v) => Number(v),
   },
 
+  sl: {
+    id: "sl",
+    label: "SL",
+    type: "number",
+    parse: (v) => Number(v),
+  },
+
   pnl: {
     id: "pnl",
     label: "PnL",
     type: "computed",
     editable: false,
-    display: { format: "currency", decimals: 0 },
+    display: { format: "currency", decimals: 2 },
+
+    expression: {
+      type: "binary",
+      op: "*",
+      left: {
+        type: "binary",
+        op: "-",
+        left: { type: "column", columnId: "exit" },
+        right: { type: "column", columnId: "entry" },
+      },
+      right: { type: "column", columnId: "qty" },
+    },
+
     conditionalStyle(value) {
       if (value == null) return "muted";
       if (value > 0) return "profit";
@@ -56,7 +76,20 @@ export const columnsById = {
     label: "Risk-Reward",
     type: "computed",
     editable: false,
-    display: { format: "ratio", decimals: 0 },
+    display: { format: "ratio", decimals: 2 },
+
+    expression: {
+      type: "binary",
+      op: "/",
+      left: {
+        type: "binary",
+        op: "-",
+        left: { type: "column", columnId: "exit" },
+        right: { type: "column", columnId: "entry" },
+      },
+      right: { type: "column", columnId: "sl" },
+    },
+
     conditionalStyle(value) {
       if (value == null) return "muted";
       if (value > 0) return "profit";

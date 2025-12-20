@@ -206,6 +206,7 @@ export const Popup = ({
   text,
   large = false,
   isVisible = true,
+  footer = true,
   onClose = () => {},
   onCancel = () => null,
   onApply = () => null,
@@ -260,16 +261,22 @@ export const Popup = ({
         </main>
 
         {/* Footer */}
-        <footer className="bg-(--surface-muted) p-[15px] border-t border-(--border) flex justify-end gap-4">
-          <Button
-            text={text?.[0] || "Cancel"}
-            size="large"
-            onClick={onCancel}
-            color="var(--hover)"
-            className="text-(--text)!"
-          />
-          <Button text={text?.[1] || "Apply"} size="large" onClick={onApply} />
-        </footer>
+        {footer && (
+          <footer className="bg-(--surface-muted) p-[15px] border-t border-(--border) flex justify-end gap-4">
+            <Button
+              text={text?.[0] || "Cancel"}
+              size="large"
+              onClick={onCancel}
+              color="var(--hover)"
+              className="text-(--text)!"
+            />
+            <Button
+              text={text?.[1] || "Apply"}
+              size="large"
+              onClick={onApply}
+            />
+          </footer>
+        )}
       </div>
     </div>
   );

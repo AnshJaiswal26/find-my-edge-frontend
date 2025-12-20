@@ -1,16 +1,35 @@
 // components/TableHeader.jsx
 import { ColumnHeader } from "./ColumnHeader";
 import { useTableStore } from "./store";
-import { columnsById } from "./data";
 
 export function TableHeader() {
   const columnOrder = useTableStore((s) => s.columnOrder);
 
   return (
-    <div className="flex border-b border-(--border)">
-      {columnOrder.map((id, index) => (
-        <ColumnHeader key={id} column={columnsById[id]} index={index} />
-      ))}
+    <div
+      className="
+        sticky top-0 left-0 z-20
+        flex border-b border-(--border)
+        bg-(--surface-muted)
+      "
+    >
+      {/* SN HEADER */}
+      <div
+        className="sticky top-0 left-0 z-20
+          w-12 shrink-0 flex items-center justify-center
+          border-r border-(--border)
+          text-xs font-medium text-(--muted)
+          bg-(--surface-muted)
+          select-none
+        "
+      />
+
+      {/* COLUMN HEADERS */}
+      <div className="flex">
+        {columnOrder.map((id, index) => (
+          <ColumnHeader key={id} colId={id} index={index} />
+        ))}
+      </div>
     </div>
   );
 }

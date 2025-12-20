@@ -29,6 +29,47 @@ const seriesCfgGenerator = {
   }),
 };
 
+function MetricsSection({
+  title,
+  list = [],
+  icon,
+  onClick,
+  disable = false,
+  color = "default",
+  className = "selectedMetricsList",
+}) {
+  return (
+    <div className={styles.section}>
+      <div className="pl-1">
+        <span>{title}</span>
+      </div>
+      <div className={styles[className]}>
+        {list.length === 0 ? (
+          <div className="self-center text-[var(--text-disabled)]">
+            No Selected Metrics
+          </div>
+        ) : (
+          list.map((key, index) => (
+            <div
+              key={index}
+              className={`${styles.listRow} ${disable ? styles.disable : ""}`}
+            >
+              <div style={{ color: `var(--color-${color})` }}>
+                <span>{key}</span>
+              </div>
+              <IconButton
+                icon={icon}
+                className={"p-1"}
+                onClick={() => onClick(key)}
+              />
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function ManageSeriesPopup({ chartId, type, updateChart }) {
   const seriesConfig = useChartStore((s) => s[chartId].draft.seriesConfig);
   const currentSeries = seriesConfig.map((cfg) => cfg.key);
@@ -113,46 +154,5 @@ export default function ManageSeriesPopup({ chartId, type, updateChart }) {
         </div>
       </div>
     </Popup>
-  );
-}
-
-function MetricsSection({
-  title,
-  list = [],
-  icon,
-  onClick,
-  disable = false,
-  color = "default",
-  className = "selectedMetricsList",
-}) {
-  return (
-    <div className={styles.section}>
-      <div className="pl-1">
-        <span>{title}</span>
-      </div>
-      <div className={styles[className]}>
-        {list.length === 0 ? (
-          <div className="self-center text-[var(--text-disabled)]">
-            No Selected Metrics
-          </div>
-        ) : (
-          list.map((key, index) => (
-            <div
-              key={index}
-              className={`${styles.listRow} ${disable ? styles.disable : ""}`}
-            >
-              <div style={{ color: `var(--color-${color})` }}>
-                <span>{key}</span>
-              </div>
-              <IconButton
-                icon={icon}
-                className={"p-1"}
-                onClick={() => onClick(key)}
-              />
-            </div>
-          ))
-        )}
-      </div>
-    </div>
   );
 }
