@@ -1,5 +1,3 @@
-// data/columns.ts
-
 export const columnsById = {
   date: {
     id: "date",

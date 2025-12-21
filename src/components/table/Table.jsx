@@ -1,44 +1,18 @@
-// components/Table.jsx
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTableStore } from "./store";
-import { TableHeader } from "./TableHeader";
-import { Row } from "./Row";
-import { Toolbar } from "./Toolbar";
-import { MetricBuilder } from "./MetricBuilder";
+import { Toolbar } from "./Toolbar/Toolbar";
 
-const Ghost = () => {
-  const draggingColumn = useTableStore((s) => s.draggingColumn);
-  const dragX = useTableStore((s) => s.dragX);
-  const resizeWidth = useTableStore((s) => s.resizeWidth);
-  const dragMode = useTableStore((s) => s.dragMode);
+import { TableHeader } from "./Header/TableHeader";
+import { ColumnGhost } from "./Header/ColumnGhost";
 
-  if (!draggingColumn) return null;
+import { Row } from "./Row/Row";
+import { RowGhost } from "./Row/RowGhost";
 
-  return (
-    <div
-      className={`
-        pointer-events-none
-        absolute
-        bg-(--cyan-soft)
-        border-(--cyan-soft)
-        rounded
-        shadow-xl
-        h-full
-        top-0 ${dragMode !== "reorder" ? "border-r-5!" : "border-x-5!"}
-      `}
-      style={{
-        left:
-          (dragMode === "reorder"
-            ? draggingColumn.left + dragX
-            : draggingColumn.left) - 22,
-        width: dragMode === "resize" ? resizeWidth : draggingColumn.width,
-        zIndex: 50,
-      }}
-    />
-  );
-};
+import { MetricBuilder } from "./Popups/MetricBuilder";
 
 export function Table() {
+  const tableRef = useRef(null);
+
   const rowOrder = useTableStore((s) => s.rowOrder);
   const initDemoData = useTableStore((s) => s.initDemoData);
   const addTrade = useTableStore((s) => s.addTrade);
@@ -54,10 +28,9 @@ export function Table() {
       <Toolbar
         onAddTrade={addTrade}
         onAddMetric={() => {
-          console.log("clicked");
           openPopup("add-metric");
         }}
-        onToggleSummary={() => null}
+        onToggleSummary={(e) => null}
         onToggleReview={() => null}
         onToggleHeatmap={() => null}
         onResetLayout={() => null}
@@ -77,14 +50,15 @@ export function Table() {
           text-(--text)
         "
       >
-        <div className="relative min-w-max">
+        <div className="relative min-w-max" ref={tableRef}>
           <TableHeader />
 
           {rowOrder.map((rowId, index) => (
             <Row key={rowId} rowId={rowId} index={index} />
           ))}
         </div>
-        <Ghost />
+        <ColumnGhost ref={tableRef} />
+        <RowGhost ref={tableRef} />
       </div>
     </div>
   );

@@ -42,39 +42,35 @@ const withSuspense = (Component) => {
 
 function App() {
   useEffect(() => {
-    const setActiveSelector = useUIStore.getState().setActiveSelector;
+    const { setActiveSelector } = useUIStore.getState();
 
-    const handleBlur = () => {
-      setActiveSelector(null);
-    };
+    const close = () => setActiveSelector(null);
 
-    const handleGlobalClose = (e) => {
-      const activeSelector = useUIStore.getState().activeSelector;
-      // If dropdown isn’t open → skip
-      if (activeSelector === null) return;
+    const handlePointerDown = (e) => {
+      const { activeSelector } = useUIStore.getState();
+      if (!activeSelector) return;
 
-      // If click was inside button or list → ignore
-      if (
-        e.target?.id === activeSelector?.buttonId ||
-        e.target?.id === activeSelector?.listId
-      )
+      const { buttonEl, listEl } = activeSelector;
+
+      if (buttonEl?.contains(e.target) || listEl?.contains(e.target)) {
         return;
+      }
 
-      setActiveSelector(null);
+      close();
     };
 
-    window.addEventListener("mousedown", handleGlobalClose);
-    window.addEventListener("resize", handleBlur);
-    window.addEventListener("blur", handleBlur);
-    window.addEventListener("scroll", handleGlobalClose, true);
-    document.addEventListener("visibilitychange", handleBlur);
+    const handleVisibility = () => {
+      if (document.hidden) close();
+    };
+
+    window.addEventListener("mousedown", handlePointerDown);
+    window.addEventListener("resize", close);
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
-      window.removeEventListener("mousedown", handleGlobalClose);
-      window.removeEventListener("resize", handleBlur);
-      window.removeEventListener("blur", handleBlur);
-      window.removeEventListener("scroll", handleGlobalClose, true);
-      document.removeEventListener("visibilitychange", handleBlur);
+      window.removeEventListener("mousedown", handlePointerDown);
+      window.removeEventListener("resize", close);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 

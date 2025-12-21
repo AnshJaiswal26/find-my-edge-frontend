@@ -13,3 +13,4 @@ export { default as InputField } from "./InputField";
 export { default as Select } from "./Select";
 export { default as Table } from "./Table";
 export { default as Toast } from "./Toast";
+export { default as Input } from "./Input";

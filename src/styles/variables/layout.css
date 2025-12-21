@@ -1,6 +1,7 @@
 /* Tooltip with seudo elements*/
 [data-tooltip] {
   position: relative !important;
+  z-index: 100;
 }
 
 [data-tooltip]::after {
@@ -13,8 +14,8 @@
   color: #fff;
   border-radius: 4px;
   white-space: pre;
-  transition: transform 0.2s ease-in, opacity 0.2s ease-in;
-  z-index: 10;
+  /* transition: transform 0.2s ease-in, opacity 0.2s ease-in; */
+  z-index: 100;
   pointer-events: none;
   width: fit-content;
 }

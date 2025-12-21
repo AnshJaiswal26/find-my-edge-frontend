@@ -1,6 +1,6 @@
 // components/TableHeader.jsx
 import { ColumnHeader } from "./ColumnHeader";
-import { useTableStore } from "./store";
+import { useTableStore } from "../store";
 
 export function TableHeader() {
   const columnOrder = useTableStore((s) => s.columnOrder);

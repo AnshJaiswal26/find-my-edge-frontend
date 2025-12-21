@@ -1,5 +1,3 @@
-// utils/tableUtils.ts
-
 export const TONE_CLASS = {
   profit: "text-(--success) bg-(--success-soft)",
   loss: "text-(--error) bg-(--error-soft)",
@@ -68,4 +66,17 @@ export function evaluateExpression(expr, row) {
     default:
       return null;
   }
+}
+
+export function bindGlobalPointer(from, onMove, onUp) {
+  function move(e) {
+    onMove(e[from]);
+  }
+  function up() {
+    onUp();
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", up);
+  }
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", up);
 }

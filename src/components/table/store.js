@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { columnsById } from "./data";
-import { evaluateExpression, moveItem } from "./utils";
+import { evaluateExpression, moveItem } from "./tableUtils";
 
 function getInitialCellValue(column) {
   switch (column.type) {
@@ -83,54 +83,77 @@ export const useTableStore = create(
     columnOrder: [],
     columnWidths: {},
     activePopup: null,
+    selectedColumn: null,
 
     draggingColumn: null,
-    dragMode: null, // "reorder" | "resize"
-    dragX: 0,
+    colDragMode: null, // "reorder" | "resize"
+    colDragX: 0,
     resizeWidth: null,
-    dragOverIndex: null,
+    colDragOverIndex: null,
+
+    draggingRow: null,
+    rowDragY: 0,
+    rowDragOverIndex: null,
 
     openPopup(id) {
-      set(() => ({ activePopup: id }));
+      set({ activePopup: id });
     },
 
     closePopup() {
-      set(() => ({ activePopup: null }));
+      set({ activePopup: null });
+    },
+
+    selectColumn(payload) {
+      set({
+        selectedColumn: {
+          id: payload.id,
+          width: payload.width,
+          left: payload.left,
+        },
+        colDragMode: "select",
+      });
+    },
+
+    unselectColumn(id) {
+      if (id && get().selectedColumn.id === id) return;
+
+      set({
+        selectedColumn: null,
+        colDragMode: null,
+      });
     },
 
     startColumnDrag(payload) {
-      set(() => ({
+      set({
         draggingColumn: {
           id: payload.id,
           fromIndex: payload.index,
           width: payload.width,
           left: payload.left,
-          top: payload.top,
-          height: payload.height,
           startX: payload.startX,
         },
-        dragMode: "reorder",
-        dragX: 0,
-        dragOverIndex: payload.index,
-      }));
+        colDragMode: "reorder",
+        colDragX: 0,
+        colDragOverIndex: payload.index,
+      });
     },
 
     updateColumnDrag(clientX) {
       set((s) => {
         if (!s.draggingColumn) return;
 
-        s.dragX = clientX - s.draggingColumn.startX;
+        s.colDragX = clientX - s.draggingColumn.startX;
 
-        if (s.dragMode === "resize") {
-          s.resizeWidth = Math.max(60, s.draggingColumn.width + s.dragX);
+        if (s.colDragMode === "resize") {
+          s.resizeWidth = Math.max(60, s.draggingColumn.width + s.colDragX);
         }
       });
     },
 
-    setDragOverIndex(index) {
+    setColDragOverIndex(index) {
       set((s) => {
-        if (s.dragOverIndex !== index) {
-          s.dragOverIndex = index;
+        if (s.colDragOverIndex !== index) {
+          s.colDragOverIndex = index;
         }
       });
     },
@@ -139,41 +162,39 @@ export const useTableStore = create(
       set((s) => {
         if (!s.draggingColumn) return;
 
-        if (s.dragMode === "reorder") {
+        if (s.colDragMode === "reorder") {
           const { fromIndex } = s.draggingColumn;
-          const toIndex = s.dragOverIndex;
+          const toIndex = s.colDragOverIndex;
 
           if (fromIndex !== toIndex) {
             s.columnOrder = moveItem(s.columnOrder, fromIndex, toIndex);
           }
         }
 
-        if (s.dragMode === "resize") {
+        if (s.colDragMode === "resize") {
           s.columnWidths[s.draggingColumn.id] = s.resizeWidth;
         }
 
         s.draggingColumn = null;
-        s.dragMode = null;
-        s.dragX = 0;
+        s.colDragMode = null;
+        s.colDragX = 0;
         s.resizeWidth = null;
-        s.dragOverIndex = null;
+        s.colDragOverIndex = null;
       });
     },
 
     startColumnResize(payload) {
-      set(() => ({
+      set({
         draggingColumn: {
           id: payload.id,
           width: payload.width,
           left: payload.left,
-          top: payload.top,
-          height: payload.height,
           startX: payload.startX,
         },
-        dragMode: "resize",
-        dragX: 0,
+        colDragMode: "resize",
+        colDragX: 0,
         resizeWidth: payload.width,
-      }));
+      });
     },
 
     endColumnResize() {
@@ -182,21 +203,49 @@ export const useTableStore = create(
       });
     },
 
-    reorderRow(from, to) {
-      set((state) => {
-        state.rowOrder = moveItem(state.rowOrder, from, to);
+    startRowDrag(payload) {
+      set({
+        draggingRow: {
+          id: payload.id,
+          fromIndex: payload.index,
+          top: payload.top,
+          height: payload.height,
+          startY: payload.startY,
+        },
+        rowDragY: 0,
+        rowDragOverIndex: payload.index,
       });
     },
 
-    reorderColumn(from, to) {
-      set((state) => {
-        state.columnOrder = moveItem(state.columnOrder, from, to);
+    updateRowDrag(clientY) {
+      set((s) => {
+        if (!s.draggingRow) return;
+        s.rowDragY = clientY - s.draggingRow.startY;
       });
     },
 
-    resizeColumn(colId, width) {
-      set((state) => {
-        state.columnWidths[colId] = Math.max(60, width);
+    setRowDragOverIndex(index) {
+      set((s) => {
+        if (s.rowDragOverIndex !== index) {
+          s.rowDragOverIndex = index;
+        }
+      });
+    },
+
+    endRowDrag() {
+      set((s) => {
+        if (!s.draggingRow) return;
+
+        const { fromIndex } = s.draggingRow;
+        const toIndex = s.rowDragOverIndex;
+
+        if (fromIndex !== toIndex) {
+          s.rowOrder = moveItem(s.rowOrder, fromIndex, toIndex);
+        }
+
+        s.draggingRow = null;
+        s.rowDragY = 0;
+        s.rowDragOverIndex = null;
       });
     },
 

@@ -38,11 +38,7 @@ export const useUIStore = create((set) => ({
 
   setAvtar: (avtar) => set({ selectedAvatar: avtar }),
 
-  setActiveSelector: (value) => set({ activeSelector: value }),
-  toggleActiveSelector: (listId, buttonId) =>
-    set((p) => ({
-      activeSelector: p.activeSelector !== null ? null : { listId, buttonId },
-    })),
+  setActiveSelector: (payload) => set({ activeSelector: payload }),
 
   showToast: (type = "INFO", message, duration = 5000) => {
     const id = Date.now() + Math.random();
