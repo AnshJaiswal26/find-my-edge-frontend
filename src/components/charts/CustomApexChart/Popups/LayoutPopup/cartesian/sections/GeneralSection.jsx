@@ -1,4 +1,4 @@
-import { ToggleButton, InputField } from "@ui";
+import { InputField, Button } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 
@@ -19,7 +19,7 @@ export default function GeneralSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <ToggleButton
+      <Button.Toggle
         label={"Tooltip"}
         value={(s) => s[chartId].draft.layout.tooltip}
         onClick={() =>
@@ -29,7 +29,7 @@ export default function GeneralSection({ chartId, updateChart }) {
         }
         store={useChartStore}
       />
-      <ToggleButton
+      <Button.Toggle
         label={"Data Labels"}
         value={(s) => s[chartId].draft.layout.dataLabels}
         onClick={() =>
@@ -39,7 +39,7 @@ export default function GeneralSection({ chartId, updateChart }) {
         }
         store={useChartStore}
       />
-      <ToggleButton
+      <Button.Toggle
         label={"Selection"}
         value={(s) => s[chartId].draft.layout.selection}
         onClick={() =>

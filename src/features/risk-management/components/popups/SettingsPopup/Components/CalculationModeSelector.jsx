@@ -1,4 +1,4 @@
-import { ToggleButton, ButtonSelector, Overview } from "@ui";
+import { ButtonSelector, Overview } from "@ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { calculationPoints } from "@features/risk-management/data";
 
@@ -9,7 +9,7 @@ export default function CalculationModeSelector({ updateSettings }) {
     <>
       <div className="settings-popup-label-container">
         <div className="settings-popup-label">Round Mode</div>
-        <ToggleButton
+        <Button.Toggle
           label={["Auto-Rounding"]}
           toggleOn={autoRound}
           onClick={() => updateSettings({ autoRound: !autoRound })}

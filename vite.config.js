@@ -21,6 +21,7 @@ export default defineConfig({
       "@features": path.resolve(__dirname, "src/features"),
       "@data": path.resolve(__dirname, "src/data"),
       "@utils": path.resolve(__dirname, "src/utils"),
+      "@lib": path.resolve(__dirname, "src/lib"),
       "@hooks": path.resolve(__dirname, "src/hooks"),
 
       "@Profiler": path.resolve(__dirname, "src/RenderLogger"),

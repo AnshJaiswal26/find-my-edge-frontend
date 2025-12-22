@@ -1,5 +1,5 @@
 import { Section } from "@layout";
-import { ToggleButton, InputField } from "@ui";
+import { Button, InputField } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function DataLabelSection({ chartId, updateChart }) {
@@ -7,7 +7,7 @@ export default function DataLabelSection({ chartId, updateChart }) {
     <>
       <Section title="Center Labels">
         <Section title={"Name"} subSection>
-          <ToggleButton
+          <Button.Toggle
             label={"Show"}
             value={(s) => s[chartId].draft.layout.name}
             onClick={() =>
@@ -20,7 +20,7 @@ export default function DataLabelSection({ chartId, updateChart }) {
         </Section>
 
         <Section title={"Value"} subSection>
-          <ToggleButton
+          <Button.Toggle
             label={"Show"}
             value={(s) => s[chartId].draft.layout.value}
             onClick={() =>
@@ -55,7 +55,7 @@ export default function DataLabelSection({ chartId, updateChart }) {
         </Section>
 
         <Section title={"Total"} subSection>
-          <ToggleButton
+          <Button.Toggle
             label={"Show"}
             value={(s) => s[chartId].draft.layout.total}
             onClick={() =>

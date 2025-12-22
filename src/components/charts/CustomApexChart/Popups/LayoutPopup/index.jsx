@@ -54,17 +54,25 @@ export default function ChartLayoutPopup({ chartId, type, updateChart }) {
   };
 
   return (
-    <Popup
-      title={"Layout"}
-      isVisible={true}
-      text={["Cancel", isAnyChange ? "Apply" : "Ok"]}
-      onCancel={handleClose}
-      onApply={handleApply}
-      onClose={handleClose}
-    >
-      <div className={styles.contentWrapper}>
-        <PopupContent id={chartId} type={type} updateChart={updateChart} />
-      </div>
+    <Popup open={true}>
+      <Popup.Container>
+        {/* Header */}
+        <Popup.Header title="Layout" onClose={handleClose} />
+
+        {/* Body */}
+        <Popup.Body>
+          <div className={styles.contentWrapper}>
+            <PopupContent id={chartId} type={type} updateChart={updateChart} />
+          </div>
+        </Popup.Body>
+
+        {/* Footer */}
+        <Popup.Footer
+          text={["Cancel", isAnyChange ? "Apply" : "Ok"]}
+          onCancel={handleClose}
+          onApply={handleApply}
+        />
+      </Popup.Container>
     </Popup>
   );
 }

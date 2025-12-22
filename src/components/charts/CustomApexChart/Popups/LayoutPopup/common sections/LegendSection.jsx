@@ -1,11 +1,11 @@
 import { Section } from "@layout";
-import { Select, ToggleButton } from "@ui";
+import { Button, Select } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function LegendSection({ chartId, updateChart }) {
   return (
     <Section title={"Legend"}>
-      <ToggleButton
+      <Button.Toggle
         label={"Show"}
         value={(s) => s[chartId].draft.layout.legend}
         onClick={() =>

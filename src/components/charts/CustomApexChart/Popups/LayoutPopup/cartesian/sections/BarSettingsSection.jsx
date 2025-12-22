@@ -1,10 +1,8 @@
-import { ToggleButton, Button, ColorPicker, InputField, IconButton } from "@ui";
+import { Button, ColorPicker, InputField, Input } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
-import { Fragment } from "react";
 import { parseColor } from "@utils";
 import { Trash2 } from "lucide-react";
-import styles from "../../LayoutPopup.module.css";
 
 export default function BarSettingsSection({ chartId, updateChart }) {
   return (
@@ -14,7 +12,7 @@ export default function BarSettingsSection({ chartId, updateChart }) {
         { title: "Stacked", key: "stacked" },
         { title: "Stacked 100%", key: "stacked100" },
       ].map(({ title, key }, i) => (
-        <ToggleButton
+        <Button.Toggle
           key={i}
           label={title}
           value={(s) => s[chartId].draft.layout[key]}
@@ -30,6 +28,29 @@ export default function BarSettingsSection({ chartId, updateChart }) {
           store={useChartStore}
         />
       ))}
+
+      <Input
+        className={"flex-row text-sm"}
+        value={(s) => s[chartId].draft.layout.barRadius}
+        store={useChartStore}
+      >
+        {({ value }) => (
+          <>
+            <Input.Label>Bar Radius</Input.Label>
+            <Input.Range
+              className="p-0! w-40!"
+              value={value}
+              min={0}
+              max={10}
+              onChange={(e) =>
+                updateChart(chartId, (chart) => {
+                  chart.draft.layout.barRadius = e.target.value;
+                })
+              }
+            />
+          </>
+        )}
+      </Input>
 
       <InputField
         label="Bar Radius"
@@ -128,16 +149,16 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
               }
               store={useChartStore}
             />
-            <IconButton
-              icon={<Trash2 size={15} />}
+
+            <Button.Icon
               onClick={() =>
                 updateChart(chartId, (chart) => {
                   chart.draft.seriesConfig[seriesIndex].colors.splice(index, 1);
                 })
               }
-              className="p-2"
-              store={useChartStore}
-            />
+            >
+              <Trash2 size={16} className="text-inherit" />
+            </Button.Icon>
           </div>
         </Section>
       ))}

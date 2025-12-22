@@ -1,4 +1,4 @@
-import { ToggleButton } from "@ui";
+import { Button } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 
@@ -28,7 +28,7 @@ export default function CartesianLayoutPopup({
           { title: "X Grid", key: "xGrid" },
           { title: "Y Grid", key: "yGrid" },
         ].map(({ title, key }, i) => (
-          <ToggleButton
+          <Button.Toggle
             key={i}
             label={title}
             value={(s) => s[chartId].draft.layout[key]}

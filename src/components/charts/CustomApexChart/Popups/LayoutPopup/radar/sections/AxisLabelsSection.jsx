@@ -1,11 +1,11 @@
 import { Section } from "@layout";
-import { InputField, ToggleButton } from "@ui";
+import { Button, InputField } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function AxisLabelsSection({ chartId, updateChart }) {
   return (
     <Section title="Axis Labels">
-      <ToggleButton
+      <Button.Toggle
         label="X Axis Labels"
         value={(s) => s[chartId].draft.layout.showXAxisLabels}
         onClick={() =>
@@ -17,7 +17,7 @@ export default function AxisLabelsSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <ToggleButton
+      <Button.Toggle
         label="Y Axis Labels"
         value={(s) => s[chartId].draft.layout.showYAxisLabels}
         onClick={() =>

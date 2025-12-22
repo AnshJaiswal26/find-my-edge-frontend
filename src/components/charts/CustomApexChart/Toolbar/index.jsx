@@ -8,7 +8,7 @@ import {
   ZoomOut,
   Settings2,
 } from "lucide-react";
-import { IconButton } from "@ui";
+import { Button } from "@ui";
 import { FilterPopup } from "../Popups";
 import { useChartStore } from "@stores";
 import {
@@ -100,13 +100,13 @@ export default function Toolbar({ chartId, type }) {
       {!isGroupType && <FilterPopup chartId={chartId} />}
 
       {IconCmpt.map((item, index) => (
-        <IconButton
-          className={"icon-button"}
+        <Button.Icon
           key={index}
-          icon={<item.icon />}
-          tooltip={{ title: item.title, position: "left" }}
+          tooltip={{ text: item.title, position: "left" }}
           onClick={() => (item?.onClick ? item.onClick() : {})}
-        />
+        >
+          <item.icon size={16} className="text-inherit" />
+        </Button.Icon>
       ))}
     </div>
   );

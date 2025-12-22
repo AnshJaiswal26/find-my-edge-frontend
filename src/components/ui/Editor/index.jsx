@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { IconButton } from "@ui";
+import { Button } from "@ui";
 import { Bell, Search, Settings } from "lucide-react";
 import { useUIStore } from "@stores";
 import { NavbarToggle } from "./NavbarToggle";
@@ -51,14 +51,13 @@ const EditorRightActions = () => {
       <div className="flex items-center gap-2">
         <ThemeToggle />
 
-        <IconButton
-          icon={<Bell className="text-yellow-400 fill-yellow-400" />}
-        />
+        <Button.Icon>
+          <Bell size={18} className="text-yellow-400 fill-yellow-400" />
+        </Button.Icon>
 
-        <IconButton
-          icon={<Settings className="text-gray-400" />}
-          onClick={() => navigate("/settings")}
-        />
+        <Button.Icon onClick={() => navigate("/settings")}>
+          <Settings size={18} className="text-gray-400" />
+        </Button.Icon>
       </div>
     </div>
   );

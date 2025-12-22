@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Chart from "react-apexcharts";
-import { Button, ToggleButton } from "@ui";
+import { Button } from "@ui";
 import "./Settings.css";
 
 const FundAllocationChart = () => {
@@ -325,7 +325,7 @@ function Settings({
                       >
                         Auto Update{" "}
                         {isAutoUpdateCapitalEnabled ? "Enabled" : "Disabled"}
-                        <ToggleButton
+                        <Button.Toggle
                           onClick={() =>
                             setIsAutoUpdateCapital(!isAutoUpdateCapitalEnabled)
                           }

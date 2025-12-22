@@ -1,5 +1,5 @@
 import { Section } from "@layout";
-import { ToggleButton, ColorPicker, InputField } from "@ui";
+import { ColorPicker, InputField, Button } from "@ui";
 import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 
@@ -7,7 +7,7 @@ export default function XAxisSection({ chartId, updateChart, isHorizontal }) {
   return (
     <Section title={isHorizontal ? "Y-Axis" : "X-Axis"}>
       {!isHorizontal && (
-        <ToggleButton
+        <Button.Toggle
           label={"Tooltip"}
           value={(s) => s[chartId].draft.layout.xTooltip}
           onClick={() =>
@@ -31,7 +31,7 @@ export default function XAxisSection({ chartId, updateChart, isHorizontal }) {
           }
           store={useChartStore}
         />
-        <ToggleButton
+        <Button.Toggle
           label={"Show"}
           value={(s) => s[chartId].draft.layout.xLabels}
           onClick={() =>
@@ -42,7 +42,7 @@ export default function XAxisSection({ chartId, updateChart, isHorizontal }) {
           store={useChartStore}
         />
 
-        <ToggleButton
+        <Button.Toggle
           label={"Prefix Indexing"}
           value={(s) => s[chartId].draft.layout.xLabelPrefixIndexing}
           onClick={() =>
@@ -54,7 +54,7 @@ export default function XAxisSection({ chartId, updateChart, isHorizontal }) {
           store={useChartStore}
         />
 
-        <ToggleButton
+        <Button.Toggle
           label={"Suffix Indexing"}
           value={(s) => s[chartId].draft.layout.xLabelSuffixIndexing}
           onClick={() =>

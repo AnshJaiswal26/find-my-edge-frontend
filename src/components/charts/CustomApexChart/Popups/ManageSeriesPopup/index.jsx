@@ -3,7 +3,7 @@ import styles from "./ManageSeriesPopup.module.css";
 import { tradeData } from "@data";
 import { useChartStore } from "@stores";
 import { useState } from "react";
-import { IconButton } from "@ui";
+import { Button } from "@ui";
 import { Plus, Trash2 } from "lucide-react";
 
 const seriesCfgGenerator = {
@@ -32,10 +32,10 @@ const seriesCfgGenerator = {
 function MetricsSection({
   title,
   list = [],
-  icon,
+  icon: Icon,
   onClick,
   disable = false,
-  color = "default",
+  color = "info",
   className = "selectedMetricsList",
 }) {
   return (
@@ -54,14 +54,13 @@ function MetricsSection({
               key={index}
               className={`${styles.listRow} ${disable ? styles.disable : ""}`}
             >
-              <div style={{ color: `var(--color-${color})` }}>
+              <div className={`text-(--${color})`}>
                 <span>{key}</span>
               </div>
-              <IconButton
-                icon={icon}
-                className={"p-1"}
-                onClick={() => onClick(key)}
-              />
+
+              <Button.Icon onClick={() => onClick(key)}>
+                <Icon size={16} className="text-inherit" />
+              </Button.Icon>
             </div>
           ))
         )}
@@ -105,54 +104,70 @@ export default function ManageSeriesPopup({ chartId, type, updateChart }) {
   };
 
   return (
-    <Popup
-      title={"Manage Series"}
-      isVisible={true}
-      text={["Cancel", "Apply"]}
-      onCancel={handleClose}
-      onApply={handleApply}
-      onClose={handleClose}
-    >
-      <div className={styles.contentWrapper}>
-        <div className="text-[var(--error)] text-[0.8rem]">
-          <strong>Note:</strong> You can have up to 3 active series at a time,
-          and at least 1 must remain active.
-        </div>
-        <div className="flex gap-3">
-          <MetricsSection
-            title={"Available Metrics"}
-            list={availableMetrics}
-            icon={<Plus />}
-            disable={selected.length + currentSeries.length > 2}
-            onClick={(k) => setSelected((p) => [...p, k])}
-            className="availableMetricsList"
-          />
-          <div className={styles.section}>
-            <MetricsSection
-              title={"Active Metrics"}
-              list={currentSeries}
-              icon={<Trash2 />}
-              onClick={(k) =>
-                updateChart(chartId, (chart) => {
-                  const cfg = chart.draft.seriesConfig;
-                  chart.draft.seriesConfig = cfg.filter((s) => k !== s.key);
-                })
-              }
-              disable={currentSeries.length < 2}
-              color="green"
-              className="activeMetricsList"
-            />
-            <MetricsSection
-              title={"Selected Metrics"}
-              list={selected}
-              icon={<Trash2 />}
-              onClick={(k) => setSelected((p) => p.filter((i) => i !== k))}
-              color="yellow"
-              className="selectedMetricsList"
-            />
+    <Popup open={true}>
+      <Popup.Container>
+        {/* Header */}
+        <Popup.Header title="Manage Series" onClose={handleClose} />
+
+        {/* Body */}
+        <Popup.Body>
+          <div className={styles.contentWrapper}>
+            {/* Note */}
+            <div className="text-[var(--error)] text-[0.8rem]">
+              <strong>Note:</strong> You can have up to 3 active series at a
+              time, and at least 1 must remain active.
+            </div>
+
+            {/* Content */}
+            <div className="flex gap-3">
+              {/* Available Metrics */}
+              <MetricsSection
+                title="Available Metrics"
+                list={availableMetrics}
+                icon={Plus}
+                disable={selected.length + currentSeries.length > 2}
+                onClick={(k) => setSelected((p) => [...p, k])}
+                className="availableMetricsList"
+              />
+
+              <div className={styles.section}>
+                {/* Active Metrics */}
+                <MetricsSection
+                  title="Active Metrics"
+                  list={currentSeries}
+                  icon={Trash2}
+                  disable={currentSeries.length < 2}
+                  color="success"
+                  className="activeMetricsList"
+                  onClick={(k) =>
+                    updateChart(chartId, (chart) => {
+                      chart.draft.seriesConfig =
+                        chart.draft.seriesConfig.filter((s) => s.key !== k);
+                    })
+                  }
+                />
+
+                {/* Selected Metrics */}
+                <MetricsSection
+                  title="Selected Metrics"
+                  list={selected}
+                  icon={Trash2}
+                  color="warning"
+                  className="selectedMetricsList"
+                  onClick={(k) => setSelected((p) => p.filter((i) => i !== k))}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </Popup.Body>
+
+        {/* Footer */}
+        <Popup.Footer
+          text={["Cancel", "Apply"]}
+          onCancel={handleClose}
+          onApply={handleApply}
+        />
+      </Popup.Container>
     </Popup>
   );
 }

@@ -11,6 +11,7 @@
       "@features/*": ["features/*"],
       "@data": ["data"],
       "@utils": ["utils"],
+      "@lib": ["lib"],
       "@hooks": ["hooks"],
       "@Profiler": ["RenderLogger"]
 

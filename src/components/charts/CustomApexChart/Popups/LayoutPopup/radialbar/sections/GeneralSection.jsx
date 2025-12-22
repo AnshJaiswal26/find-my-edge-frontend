@@ -1,5 +1,5 @@
 import { Section } from "@layout";
-import { ToggleButton, InputField } from "@ui";
+import { Button, InputField } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function RadialGeneralSection({ chartId, updateChart }) {
@@ -18,7 +18,7 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <ToggleButton
+      <Button.Toggle
         label={"Tooltip"}
         value={(s) => s[chartId].draft.layout.tooltip}
         onClick={() =>

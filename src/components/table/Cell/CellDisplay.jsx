@@ -12,7 +12,7 @@ export const CellDisplay = ({ row, column, width, setDraft, setEditing }) => {
 
   return (
     <div
-      onClick={() => unselectColumn(column.id)}
+      onClick={() => unselectColumn({ id: column.id })}
       style={{ width }}
       className={`px-2 py-1 cursor-pointer border-r-1 border-r-(--border) ${TONE_CLASS[tone]}`}
       onDoubleClick={() => {

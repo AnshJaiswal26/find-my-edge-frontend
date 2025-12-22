@@ -1,4 +1,4 @@
-import { IconButton } from "./Buttons";
+import { Button } from "./Buttons";
 import { useResolvedValue } from "@hooks";
 import { parseColor } from "@utils";
 import { RefreshCcw } from "lucide-react";
@@ -43,13 +43,12 @@ export default function ColorPicker({
       {/* Label */}
       <span className="text-[0.85rem]">{label}</span>
 
-      {/* Reset */}
-      <IconButton
-        icon={<RefreshCcw className="w-[0.85rem] h-[0.85rem]" />}
-        tooltip={{ title: "Reset", position: "top" }}
-        className="p-0"
+      <Button.Icon
+        tooltip={{ text: "Reset", position: "top" }}
         onClick={() => onChange?.(resetColor)}
-      />
+      >
+        <RefreshCcw size={16} />
+      </Button.Icon>
     </div>
   );
 }

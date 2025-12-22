@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { Filter } from "lucide-react";
-import { IconButton } from "@ui";
+import { Button } from "@ui";
 import { ChartPopup } from "@layout";
 import { useChartStore } from "@stores";
 import { filterOptions, sortOptions } from "@utils";
@@ -44,12 +44,12 @@ export default function FilterPopup({ chartId }) {
 
   return (
     <div ref={ref} className="relative">
-      <IconButton
-        icon={<Filter />}
-        tooltip={{ title: "Filter", position: "left" }}
+      <Button.Icon
+        tooltip={{ text: "Filter", position: "left" }}
         onClick={() => setShowFilter((p) => !p)}
-        className={"icon-button"}
-      />
+      >
+        <Filter size={16} className="text-inherit" />
+      </Button.Icon>
 
       <ChartPopup
         title={"Filter"}

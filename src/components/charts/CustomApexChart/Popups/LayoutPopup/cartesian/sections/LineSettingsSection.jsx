@@ -1,8 +1,7 @@
-import { ToggleButton, ColorPicker, InputField, Select } from "@ui";
+import { ColorPicker, InputField, Select, Button } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
-import { Fragment } from "react";
 
 export default function LineSettingsSection({ chartId, updateChart }) {
   return (
@@ -93,7 +92,7 @@ function AreaSettingsSection({ chartId, updateChart }) {
 
   return (
     <Section title="Area">
-      <ToggleButton
+      <Button.Toggle
         label="Show Area"
         value={(s) => s[chartId].draft.layout.area}
         onClick={() =>
@@ -136,7 +135,7 @@ function AreaSettingsSection({ chartId, updateChart }) {
             store={useChartStore}
           />
 
-          <ToggleButton
+          <Button.Toggle
             label={"Area Horizontal"}
             value={(s) => s[chartId].draft.layout.areaGradientHorizontal}
             onClick={() =>

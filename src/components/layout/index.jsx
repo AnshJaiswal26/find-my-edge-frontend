@@ -1,4 +1,4 @@
-import { Button, Editor, IconButton, Sidebar, Toast } from "@ui";
+import { Button, Editor, Sidebar, Toast } from "@ui";
 import { Loader2, X } from "lucide-react";
 
 export const PageContainer = ({
@@ -200,87 +200,167 @@ export const Badge = ({ value, label, formatter, className = "" }) => {
   );
 };
 
-export const Popup = ({
-  title,
-  children,
-  text,
-  large = false,
-  isVisible = true,
-  footer = true,
-  onClose = () => {},
-  onCancel = () => null,
-  onApply = () => null,
-}) => {
-  if (!isVisible) return null;
+export const Popup = ({ open = true, children }) => {
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40">
-      <div
-        className={`
-          bg-(--surface-muted)
-          rounded-lg
-          max-w-[29rem]
-          w-full
-          m-4
-          shadow-[0_10px_25px_rgba(0,0,0,0.15)]
-          h-[80vh]
-          overflow-hidden
-          flex flex-col
-          justify-between
-          text-(--text-charts)
-          ${large ? "max-w-[29rem]" : ""}
-        `}
-      >
-        {/* Header */}
-        <header className="bg-(--surface-muted) p-[15px] border-b border-(--border)">
-          <div className="flex items-center justify-between">
-            <div>{title}</div>
-
-            <IconButton
-              icon={<X size={17} />}
-              onClick={onClose}
-              className="p-1 hover:text-(--error)"
-            />
-          </div>
-        </header>
-
-        {/* Main */}
-        <main
-          className={`
-            grid
-            grid-cols-1
-            gap-4
-            overflow-y-auto
-            w-full
-            py-1
-            px-2
-            ${large ? "grid-cols-2" : ""}
-          `}
-        >
-          {children}
-        </main>
-
-        {/* Footer */}
-        {footer && (
-          <footer className="bg-(--surface-muted) p-[15px] border-t border-(--border) flex justify-end gap-4">
-            <Button
-              text={text?.[0] || "Cancel"}
-              size="large"
-              onClick={onCancel}
-              color="var(--hover)"
-              className="text-(--text)!"
-            />
-            <Button
-              text={text?.[1] || "Apply"}
-              size="large"
-              onClick={onApply}
-            />
-          </footer>
-        )}
-      </div>
+      {children}
     </div>
   );
 };
+
+Popup.Container = ({ children, className = "", large = false }) => {
+  return (
+    <div
+      className={`
+        bg-(--surface-muted)
+        rounded-lg
+        w-full
+        m-4
+        shadow-[0_10px_25px_rgba(0,0,0,0.15)]
+        h-[80vh]
+        max-w-[29rem]
+        overflow-hidden
+        flex flex-col
+        text-(--text-charts)
+        ${large ? "max-w-[48rem]" : ""}
+        ${className}
+      `}
+    >
+      {children}
+    </div>
+  );
+};
+
+Popup.Header = ({ title, onClose, children }) => {
+  return (
+    <header className="p-[15px] border-b border-(--border) flex items-center justify-between">
+      <div>{title}</div>
+
+      {onClose && (
+        <Button.Icon
+          aria-label="Close"
+          className="hover:text-(--error)"
+          onClick={onClose}
+        >
+          <X size={16} className="text-inherit" />
+        </Button.Icon>
+      )}
+
+      {children}
+    </header>
+  );
+};
+
+Popup.Body = ({ children, className = "" }) => {
+  return (
+    <main
+      className={`
+        flex-1
+        overflow-y-auto
+        overscroll-contain
+        px-2 py-1
+        grid gap-4
+        ${className}
+      `}
+    >
+      {children}
+    </main>
+  );
+};
+
+Popup.Footer = ({
+  text = ["Cancel", "Apply"],
+  onCancel,
+  onApply,
+  className = "",
+}) => {
+  return (
+    <footer
+      className={`
+        p-[15px]
+        border-t border-(--border)
+        flex justify-end gap-4
+        ${className}
+      `}
+    >
+      {onCancel && <Button hollow text={text[0]} onClick={onCancel} />}
+      {onApply && <Button onClick={onApply} text={text[1]} />}
+    </footer>
+  );
+};
+
+// export const Popup = ({
+//   title,
+//   children,
+//   text,
+//   large = false,
+//   isVisible = true,
+//   footer = true,
+//   onClose = () => {},
+//   onCancel = () => null,
+//   onApply = () => null,
+// }) => {
+//   if (!isVisible) return null;
+
+//   return (
+//     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40">
+//       <div
+//         className={`
+//           bg-(--surface-muted)
+//           rounded-lg
+//           max-w-[29rem]
+//           w-full
+//           m-4
+//           shadow-[0_10px_25px_rgba(0,0,0,0.15)]
+//           h-[80vh]
+//           overflow-hidden
+//           flex flex-col
+//           justify-between
+//           text-(--text-charts)
+//           ${large ? "max-w-[29rem]" : ""}
+//         `}
+//       >
+//         {/* Header */}
+//         <header className="bg-(--surface-muted) p-[15px] border-b border-(--border)">
+//           <div className="flex items-center justify-between">
+//             <div>{title}</div>
+
+//             <Button.Icon className="hover:text-(--error)" onClick={onClose}>
+//               <X size={16} className="text-inherit" />
+//             </Button.Icon>
+//           </div>
+//         </header>
+
+//         {/* Main */}
+//         <main
+//           className={`
+//             grid
+//             grid-cols-1
+//             gap-4
+//             overflow-y-auto
+//             overscroll-contain
+//             w-full
+//             py-1
+//             px-2
+//             ${large ? "grid-cols-2" : ""}
+//           `}
+//         >
+//           {children}
+//         </main>
+
+//         {/* Footer */}
+//         {footer && (
+//           <footer className="bg-(--surface-muted) p-[15px] border-t border-(--border) flex justify-end gap-4">
+//             <Button text={text?.[0] || "Cancel"} hollow onClick={onCancel} />
+//             <Button text={text?.[1] || "Apply"} onClick={onApply} />
+//           </footer>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
 
 export const ChartPopup = ({
   title,

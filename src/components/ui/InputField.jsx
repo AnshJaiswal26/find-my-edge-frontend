@@ -100,20 +100,3 @@ export default function InputField({
     </div>
   );
 }
-
-// import { useResolvedValue } from "@hooks";
-
-// const sizeClasses = {
-//   large: {
-//     label: "text-sm",
-//     input: "px-3 py-2 text-sm",
-//   },
-//   medium: {
-//     label: "text-[0.83rem]",
-//     input: "px-[0.6rem] py-[0.3rem] text-[0.83rem]",
-//   },
-//   small: {
-//     label: "text-[0.8rem]",
-//     input: "px-[0.55rem] py-[0.25rem] text-[0.8rem]",
-//   },
-// };

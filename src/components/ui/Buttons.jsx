@@ -1,42 +1,47 @@
 import { useResolvedValue } from "@hooks";
 
 const sizeClasses = {
-  large: "px-3 py-[5px] text-base",
-  medium: "px-2.5 py-1 text-[0.85rem]",
-  small: "px-2 py-[3px] text-xs",
+  large: "px-3 py-2 text-lg rounded-lg",
+  medium: "px-2.5 py-1 text-md rounded-md",
+  small: "px-2 py-1 text-sm rounded-sm",
+};
+
+const typeClasses = {
+  hollow: "bg-inherit hover:text-white",
+  fill: "text-white",
+};
+
+const variantClasses = {
+  success: "hover:bg-(--success) border-(--success) text-(--sucess)",
+  error: "hover:bg-(--error) border-(--error) text-(--error)",
+  wraning: "hover:bg-(--wraning) border-(--wraning) text-(--wraning)",
+  info: "hover:bg-(--info) border-(--info) text-(--info)",
+  cyan: "hover:bg-(--cyan) border-(--cyan) text-(--cyan)",
 };
 
 export const Button = ({
   text,
-  color,
-  onClick,
+  hollow = false,
   size = "medium",
-  title,
-  disabled = false,
+  variant = "cyan",
   className = "",
+  disabled = false,
+  ...props
 }) => {
   return (
     <div className="flex">
       <button
-        type="button"
-        title={title}
-        disabled={disabled}
-        onClick={() => onClick?.()}
-        style={color ? { backgroundColor: color } : undefined}
+        style={{ backgroundColor: hollow ? "" : `var(--${variant})` }}
+        {...props}
         className={`
-          rounded-[4px]
-          font-bold
+          font-[500]
+          select-none
           cursor-pointer
+          border
           ${sizeClasses[size]}
-          text-white
-          ${
-            disabled
-              ? "bg-(--surface-disabled) text-(--text-disabled) pointer-events-none"
-              : "bg-(--cyan)"
-          }
-          active:brightness-90
-          active:contrast-125
-          active:saturate-125
+          ${typeClasses[hollow ? "hollow" : "fill"]}
+          ${variantClasses[variant]}
+          ${disabled ? "opacity-40 pointer-events-none" : ""}
           ${className}
         `}
       >
@@ -46,75 +51,66 @@ export const Button = ({
   );
 };
 
-export const ToggleButton = ({
-  label = "",
-  value = false,
-  color,
-  onClick,
-  className = "",
+Button.Toggle = ({
+  label,
   store,
+  value,
+  classNames = {},
+  className = "",
+  trackClass = "",
+  thumbClass = "",
+  activeTrackClass = "",
+  activeThumbClass = "",
+  ...props
 }) => {
-  const toggleOn = useResolvedValue(store, value);
-
-  const trackColor = toggleOn
-    ? { backgroundColor: color || "var(--info)" }
-    : {};
-
-  const borderColor = toggleOn ? color || "var(--info)" : "#cccccc";
+  const active = useResolvedValue(store, value);
 
   return (
     <div
-      className={`flex items-center gap-2 flex-wrap justify-between ${className}`}
+      className={`flex items-center gap-2 justify-between text-sm ${classNames?.wrapper}`}
     >
-      {label && <span className="text-sm text-(--text)">{label}</span>}
+      {label && <span>{label}</span>}
 
       <div
-        className="
+        role="switch"
+        aria-checked={active}
+        className={`
           cursor-pointer
-          w-[33px] min-w-[33px]
-          h-[13px]
+          w-8 h-3
           rounded-full
           flex items-center
-          bg-(--hover)
-          transition-colors duration-200
-        "
-        style={trackColor}
-        onClick={() => onClick?.()}
+          transition-colors
+          ${classNames?.track}
+          ${active ? `bg-(--info) ${activeTrackClass}` : "bg-(--hover)"}
+        `}
+        {...props}
       >
         <div
           className={`
-            w-[17px] h-[17px]
+            w-4 h-4
             bg-white
-            rounded-full transition-all duration-200
-            ${toggleOn ? "translate-x-full" : "translate-x-0"}
+            rounded-full
+            transition-transform
+            border 
+            ${classNames?.thumb}
+            ${
+              active
+                ? `translate-x-full border-(--info) ${activeThumbClass}`
+                : "translate-x-0 border-(--border)"
+            }
           `}
-          style={{ border: `1px solid ${borderColor}` }}
         />
       </div>
     </div>
   );
 };
 
-export const IconButton = ({
-  onClick,
-  icon,
-  src,
-  alt,
-  className = "",
-  disabled = false,
-  tooltip,
-}) => {
+Button.Icon = ({ className = "", tooltip, disabled, children, ...props }) => {
   return (
-    <div
-      className="relative w-fit"
+    <button
+      data-tooltip={tooltip?.text}
       data-tooltip-position={tooltip?.position}
-      data-tooltip={tooltip?.title}
-    >
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={(e) => (onClick ? onClick(e) : null)}
-        className={`
+      className={`
           bg-transparent
           border-0
           cursor-pointer
@@ -124,22 +120,13 @@ export const IconButton = ({
           p-2
           rounded-[5px]
           hover:bg-(--hover)
-          ${disabled ? "pointer-events-none text-(--text-disabled)" : ""}
+          text-(--text)
+          ${disabled ? "opacity-40 pointer-events-none" : ""}
           ${className}
         `}
-      >
-        {icon ? (
-          <span className="w-5 h-5 flex items-center justify-center">
-            {icon}
-          </span>
-        ) : (
-          <img
-            src={src}
-            alt={alt ?? "icon button"}
-            className="max-w-[20px] max-h-[20px] dark:invert"
-          />
-        )}
-      </button>
-    </div>
+      {...props}
+    >
+      {children}
+    </button>
   );
 };

@@ -1,4 +1,4 @@
-import { ToggleButton, ColorPicker, InputField } from "@ui";
+import { ColorPicker, InputField, Button } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
@@ -7,7 +7,7 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
   return (
     <Section title={isHorizontal ? "X-Axis" : "Y-Axis"}>
       {!isHorizontal && (
-        <ToggleButton
+        <Button.Toggle
           label={"Tooltip"}
           value={(s) => s[chartId].draft.layout.xTooltip}
           onClick={() =>
@@ -32,7 +32,7 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
           store={useChartStore}
         />
 
-        <ToggleButton
+        <Button.Toggle
           label={"Show"}
           value={(s) => s[chartId].draft.layout.yLabels}
           onClick={() =>

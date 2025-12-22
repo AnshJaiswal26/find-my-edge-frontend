@@ -11,11 +11,13 @@ import {
   RotateCcw,
   LayoutGrid,
 } from "lucide-react";
-import { ToolbarButton } from "./ToolbarButton";
+import { Button } from "@ui";
+import { useTableStore } from "../store";
 
 export function Toolbar({
   onAddTrade,
   onAddMetric,
+  onFilter,
   onToggleSummary,
   onToggleReview,
   onToggleHeatmap,
@@ -23,6 +25,7 @@ export function Toolbar({
   onExport,
   onOpenColumnSettings,
 }) {
+  const filteredRowOrder = useTableStore((s) => s.filteredRowOrder);
   return (
     <div
       className="
@@ -34,58 +37,84 @@ export function Toolbar({
     >
       {/* LEFT */}
       <div className="flex items-center gap-1">
-        <ToolbarButton
-          icon={Plus}
-          tooltip="Add Trade"
+        <Button.Icon
+          disabled={filteredRowOrder.length > 0}
+          tooltip={{ text: "Add Trade", position: "bottom" }}
           onClick={onAddTrade}
-          primary
-        />
-        <ToolbarButton icon={Calendar} tooltip="Date Filter" />
-        <ToolbarButton icon={Filter} tooltip="Filter Trades" />
-        <ToolbarButton icon={ArrowUpDown} tooltip="Sort" />
+        >
+          <Plus size={16} className="text-inherit" />
+        </Button.Icon>
+
+        <Button.Icon tooltip={{ text: "Date Filter", position: "bottom" }}>
+          <Calendar size={16} className="text-inherit" />
+        </Button.Icon>
+
+        <Button.Icon
+          className={filteredRowOrder.length > 0 ? "bg-(--hover)!" : ""}
+          tooltip={{ text: "Filter Trades", position: "bottom" }}
+          onClick={onFilter}
+        >
+          <Filter size={16} className="text-inherit" />
+        </Button.Icon>
+
+        <Button.Icon tooltip={{ text: "Sort", position: "bottom" }}>
+          <ArrowUpDown size={16} className="text-inherit" />
+        </Button.Icon>
       </div>
 
       {/* CENTER */}
       <div className="flex items-center gap-1">
-        <ToolbarButton
-          icon={Sigma}
-          tooltip="Add Metric"
+        <Button.Icon
+          tooltip={{ text: "Add Metric", position: "bottom" }}
           onClick={onAddMetric}
-        />
-        <ToolbarButton
-          icon={LayoutGrid}
-          tooltip="Summary View"
+        >
+          <Sigma size={16} className="text-inherit" />
+        </Button.Icon>
+
+        <Button.Icon
+          tooltip={{ text: "Summary View", position: "bottom" }}
           onClick={onToggleSummary}
-        />
-        <ToolbarButton
-          icon={Brain}
-          tooltip="Trade Review"
+        >
+          <LayoutGrid size={16} className="text-inherit" />
+        </Button.Icon>
+
+        <Button.Icon
+          tooltip={{ text: "Trade Review", position: "bottom" }}
           onClick={onToggleReview}
-        />
-        <ToolbarButton
-          icon={Flame}
-          tooltip="Heatmap"
+        >
+          <Brain size={16} className="text-inherit" />
+        </Button.Icon>
+
+        <Button.Icon
+          tooltip={{ text: "Heatmap", position: "bottom" }}
           onClick={onToggleHeatmap}
-        />
+        >
+          <Flame size={16} className="text-inherit" />
+        </Button.Icon>
       </div>
 
       {/* RIGHT */}
       <div className="flex items-center gap-1">
-        <ToolbarButton
-          icon={Settings}
-          tooltip="Column Settings"
+        <Button.Icon
+          tooltip={{ text: "Column Settings", position: "bottom" }}
           onClick={onOpenColumnSettings}
-        />
-        <ToolbarButton
-          icon={RotateCcw}
-          tooltip="Reset Layout"
+        >
+          <Settings size={16} className="text-inherit" />
+        </Button.Icon>
+
+        <Button.Icon
+          tooltip={{ text: "Reset Layout", position: "bottom" }}
           onClick={onResetLayout}
-        />
-        <ToolbarButton
-          icon={Download}
-          tooltip="Export Data"
+        >
+          <RotateCcw size={16} className="text-inherit" />
+        </Button.Icon>
+
+        <Button.Icon
+          tooltip={{ text: "Export Data", position: "bottom" }}
           onClick={onExport}
-        />
+        >
+          <Download size={16} className="text-inherit" />
+        </Button.Icon>
       </div>
     </div>
   );
