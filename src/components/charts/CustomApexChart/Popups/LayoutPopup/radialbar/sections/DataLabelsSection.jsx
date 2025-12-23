@@ -1,5 +1,5 @@
 import { Section } from "@layout";
-import { Button, InputField } from "@ui";
+import { Button, Input } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function DataLabelSection({ chartId, updateChart }) {
@@ -29,24 +29,24 @@ export default function DataLabelSection({ chartId, updateChart }) {
           }
           store={useChartStore}
         />
-        <InputField
+        <Input
           label={"Prefix"}
           value={(s) => s[chartId].draft.layout.valuePrefix}
           placeholder="Enter Prefix"
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.valuePrefix = v;
+              chart.draft.layout.valuePrefix = e.target.value;
             })
           }
           store={useChartStore}
         />
-        <InputField
+        <Input
           label={"Suffix"}
           value={(s) => s[chartId].draft.layout.valueSuffix}
           placeholder="Enter Suffix"
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.valueSuffix = v;
+              chart.draft.layout.valueSuffix = e.target.value;
             })
           }
           store={useChartStore}
@@ -64,35 +64,35 @@ export default function DataLabelSection({ chartId, updateChart }) {
           }
           store={useChartStore}
         />
-        <InputField
+        <Input
           label={"Label"}
           value={(s) => s[chartId].draft.layout.totalLabel}
           placeholder="Enter Label"
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.totalLabel = v;
+              chart.draft.layout.totalLabel = e.target.value;
             })
           }
           store={useChartStore}
         />
-        <InputField
+        <Input
           label={"Prefix"}
           value={(s) => s[chartId].draft.layout.totalPrefix}
           placeholder="Enter Prefix"
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.totalPrefix = v;
+              chart.draft.layout.totalPrefix = e.target.value;
             })
           }
           store={useChartStore}
         />
-        <InputField
+        <Input
           label={"Suffix"}
           value={(s) => s[chartId].draft.layout.totalSuffix}
           placeholder="Enter Suffix"
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.totalSuffix = v;
+              chart.draft.layout.totalSuffix = e.target.value;
             })
           }
           store={useChartStore}

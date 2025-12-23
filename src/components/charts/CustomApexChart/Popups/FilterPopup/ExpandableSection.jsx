@@ -10,6 +10,7 @@ export default function ExpandableSection({
   selected,
   onSelect,
   onChange,
+  getLabel,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -34,6 +35,7 @@ export default function ExpandableSection({
             onChange={(v) => onSelect(v)}
             value={selected}
             options={options}
+            getLabel={getLabel}
           />
 
           {title.includes("Filter") && selected !== "none" && (

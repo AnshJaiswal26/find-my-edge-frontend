@@ -1,11 +1,15 @@
+import { useTableStore } from "../store";
+
 export const CellSelect = ({
-  row,
-  column,
+  rowId,
+  colId,
   draft,
   setDraft,
   onCommit,
   setEditing,
 }) => {
+  const options = useTableStore((s) => s.columnsById[colId].options);
+
   return (
     <select
       className="w-full h-full px-2 py-1 outline-0"
@@ -13,14 +17,14 @@ export const CellSelect = ({
       value={draft}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={() => {
-        onCommit(draft, row, column);
+        onCommit(draft, colId);
         setEditing(false);
       }}
     >
       <option value="" className="bg-(--surface)">
         —
       </option>
-      {column.options.map((o) => (
+      {options.map((o) => (
         <option key={o} className="bg-(--surface)">
           {o}
         </option>

@@ -1,5 +1,5 @@
 import { Section } from "@layout";
-import { ColorPicker, InputField, Button } from "@ui";
+import { ColorPicker, Input, Button } from "@ui";
 import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 
@@ -66,26 +66,26 @@ export default function XAxisSection({ chartId, updateChart, isHorizontal }) {
           store={useChartStore}
         />
 
-        <InputField
+        <Input
           label="Prefix"
           type="text"
           value={(s) => s[chartId].draft.layout.xLabelPrefix}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.xLabelPrefix = v;
+              chart.draft.layout.xLabelPrefix = e.target.value;
             })
           }
           placeholder="Enter Prefix"
           store={useChartStore}
         />
 
-        <InputField
+        <Input
           label="Suffix"
           type="text"
           value={(s) => s[chartId].draft.layout.xLabelSuffix}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.xLabelSuffix = v;
+              chart.draft.layout.xLabelSuffix = e.target.value;
             })
           }
           placeholder="Enter Suffix"
@@ -97,13 +97,13 @@ export default function XAxisSection({ chartId, updateChart, isHorizontal }) {
         <span className="font-light text-[var(--text-charts)] text-[0.85rem]">
           Leave blank to hide the title.{" "}
         </span>
-        <InputField
+        <Input
           label="Text"
           type="text"
           value={(s) => s[chartId].draft.layout.xTitleText}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.xTitleText = v;
+              chart.draft.layout.xTitleText = e.target.value;
             })
           }
           placeholder={"X-axis title"}

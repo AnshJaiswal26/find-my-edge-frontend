@@ -51,12 +51,11 @@
   --surface-light: hsl(211 21% 20%);
   --surface-muted: hsl(210 24% 15%);
   --surface-muted-soft: hsla(210, 24%, 15%, 0.643);
-  --surface-disabled: hsla(210, 29%, 24%, 0.467);
+  --surface-disabled: hsl(212, 22%, 15%);
 
   --border: hsl(210, 22%, 25%);
   --border-muted: hsl(210, 24%, 15%);
   --border-raised: hsl(210, 25%, 9%);
-
   --text: hsl(0 0% 100%);
   --text-muted: hsl(180 4% 80%);
   --text-charts: hsl(0, 0%, 100%);

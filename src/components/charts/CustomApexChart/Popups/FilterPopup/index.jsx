@@ -27,7 +27,8 @@ export default function FilterPopup({ chartId }) {
           }),
         selected: selectedSort,
         title: "Sort In Order",
-        list: sortOptions,
+        list: Object.keys(sortOptions),
+        label: (k) => sortOptions[k],
       },
       {
         onSelect: (v) =>
@@ -36,7 +37,8 @@ export default function FilterPopup({ chartId }) {
           }),
         selected: selectedFilter,
         title: "Filter By Condition",
-        list: filterOptions,
+        list: Object.keys(filterOptions),
+        label: (k) => filterOptions[k],
       },
     ],
     [selectedSort, selectedFilter]
@@ -88,6 +90,7 @@ export default function FilterPopup({ chartId }) {
             title={item.title}
             selected={item.selected}
             options={item.list}
+            getLabel={item.label}
             values={{ value, from, to }}
             onChange={(k, v) =>
               updateChart(chartId, (chart) => {

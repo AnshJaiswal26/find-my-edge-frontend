@@ -1,4 +1,4 @@
-import { ColorPicker, InputField, Button } from "@ui";
+import { ColorPicker, Input, Button } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
@@ -43,26 +43,26 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
           store={useChartStore}
         />
 
-        <InputField
+        <Input
           label="Prefix"
           type="text"
           value={(s) => s[chartId].draft.layout.yLabelPrefix}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.yLabelPrefix = v;
+              chart.draft.layout.yLabelPrefix = e.target.value;
             })
           }
           placeholder="Enter Prefix"
           store={useChartStore}
         />
 
-        <InputField
+        <Input
           label="Suffix"
           type="text"
           value={(s) => s[chartId].draft.layout.yLabelSuffix}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.yLabelSuffix = v;
+              chart.draft.layout.yLabelSuffix = e.target.value;
             })
           }
           placeholder="Enter Suffix"
@@ -74,13 +74,13 @@ export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
           Leave blank to hide the title.{" "}
         </span>
 
-        <InputField
+        <Input
           label="Text"
           type="text"
           value={(s) => s[chartId].draft.layout.yTitleText}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.yTitleText = v;
+              chart.draft.layout.yTitleText = e.target.value;
             })
           }
           placeholder={"Y-axis title"}

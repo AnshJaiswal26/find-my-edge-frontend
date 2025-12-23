@@ -15,6 +15,7 @@ export function ColumnHeader({ colId, index }) {
   const unselectColumn = useTableStore((s) => s.unselectColumn);
 
   const column = useTableStore((s) => s.columnsById[colId]);
+
   const width = useTableStore((s) => s.columnWidths?.[colId] ?? 150);
 
   const handlePointerDown = (e, mode) => {
@@ -73,7 +74,7 @@ export function ColumnHeader({ colId, index }) {
       />
 
       {/* HEADER BODY */}
-      <div className="flex items-center px-2 py-1 border-r border-(--border) bg-(--surface-muted)">
+      <div className="flex items-center px-2 py-1 border-r border-(--border)">
         {column.label}
       </div>
     </div>

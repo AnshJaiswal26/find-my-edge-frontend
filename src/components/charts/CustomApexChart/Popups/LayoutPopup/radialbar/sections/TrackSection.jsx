@@ -1,19 +1,19 @@
 import { Section } from "@layout";
-import { ColorPicker, InputField } from "@ui";
+import { ColorPicker, Input } from "@ui";
 import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 
 export default function TrackSection({ chartId, updateChart }) {
   return (
     <Section title="Track">
-      <InputField
+      <Input
         label={"Track Width"}
         type="range"
         value={(s) => s[chartId].draft.layout.strokeWidth}
         formatter={(v) => `${v}%`}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeWidth = v;
+            chart.draft.layout.strokeWidth = e.target.value;
           })
         }
         min={0}

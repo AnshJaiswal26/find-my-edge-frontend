@@ -1,5 +1,5 @@
 import { Section } from "@layout";
-import { ColorPicker, InputField, Select } from "@ui";
+import { ColorPicker, Input, Select } from "@ui";
 import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 
@@ -8,22 +8,24 @@ export default function RadialBarSection({ chartId, updateChart }) {
     <Section title="Radial Bar">
       <Select
         label={"Gradient Type"}
+        options={["Gradient", "Solid"]}
+        getKey={(v) => v.toLowerCase()}
         value={(s) => s[chartId].draft.layout.gradientType}
-        options={{ gradient: "Gradient", solid: "Solid" }}
-        onChange={(k) =>
+        onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.gradientType = k;
+            chart.draft.layout.gradientType = v.toLowerCase();
           })
         }
         store={useChartStore}
       />
       <Select
         label={"Radial Line Cap"}
+        options={["Round", "Square"]}
+        getKey={(v) => v.toLowerCase()}
         value={(s) => s[chartId].draft.layout.strokeLineCap}
-        options={{ round: "Round", square: "Square" }}
-        onChange={(k) =>
+        onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeLineCap = k;
+            chart.draft.layout.strokeLineCap = v.toLowerCase();
           })
         }
         store={useChartStore}
@@ -39,23 +41,23 @@ function RadialBarColors({ chartId, updateChart }) {
 
   return Array.from({ length }).map((_, i) => (
     <Section title={`Series ${i + 1}`} key={i} subSection>
-      <InputField
+      <Input
         label={"Name"}
         value={(s) => s[chartId].draft.seriesConfig[i].name}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[i].name = v;
+            chart.draft.seriesConfig[i].name = e.target.value;
           })
         }
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label={"Tooltip Label"}
         value={(s) => s[chartId].draft.seriesConfig[i].tooltipLabel}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[i].tooltipLabel = v;
+            chart.draft.seriesConfig[i].tooltipLabel = e.target.value;
           })
         }
         store={useChartStore}

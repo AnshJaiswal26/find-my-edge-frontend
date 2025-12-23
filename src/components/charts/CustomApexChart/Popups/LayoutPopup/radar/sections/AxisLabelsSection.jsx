@@ -1,5 +1,5 @@
 import { Section } from "@layout";
-import { Button, InputField } from "@ui";
+import { Button, Input } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function AxisLabelsSection({ chartId, updateChart }) {
@@ -37,14 +37,14 @@ function AxisLabels({ chartId, updateChart }) {
   const length = useChartStore((s) => s[chartId].series.filtered.length);
 
   return Array.from({ length }).map((_, i) => (
-    <InputField
+    <Input
       key={i}
       label={`Axis ${i + 1}`}
       value={(s) => s[chartId].series.filtered[i].axis}
       placeholder="Enter Axis Label"
-      onChange={(v) =>
+      onChange={(e) =>
         updateChart(chartId, (chart) => {
-          chart.series.filtered[i].axis = v;
+          chart.series.filtered[i].axis = e.target.value;
         })
       }
       store={useChartStore}

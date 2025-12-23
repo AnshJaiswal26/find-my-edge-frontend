@@ -1,4 +1,4 @@
-import { ColorPicker, InputField, Select, Button } from "@ui";
+import { ColorPicker, Input, Select, Button } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
@@ -9,13 +9,13 @@ export default function LineSettingsSection({ chartId, updateChart }) {
       <DataSeries chartId={chartId} updateChart={updateChart} />
       {/* Stroke Settings */}
       <Section title="Stroke">
-        <InputField
+        <Input
           label="Stroke Width"
           type="range"
           value={(s) => s[chartId].draft.layout.strokeWidth}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.strokeWidth = v;
+              chart.draft.layout.strokeWidth = e.target.value;
             })
           }
           min={1}
@@ -24,15 +24,12 @@ export default function LineSettingsSection({ chartId, updateChart }) {
         />
         <Select
           label={"Stroke Type"}
-          options={{
-            straight: "Straight",
-            smooth: "Smooth",
-            stepline: "StepLine",
-          }}
+          options={["Straight", "Smooth", "StepLine"]}
           value={(s) => s[chartId].draft.layout.curve}
-          onChange={(k) =>
+          getKey={(v) => v.toLowerCase()}
+          onChange={(v) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.curve = k;
+              chart.draft.layout.curve = v.toLowerCase();
             })
           }
           store={useChartStore}
@@ -47,13 +44,13 @@ export default function LineSettingsSection({ chartId, updateChart }) {
       </Section>
       {/* Marker Settings */}
       <Section title="Marker">
-        <InputField
+        <Input
           label="Marker Size"
           type="range"
           value={(s) => s[chartId].draft.layout.markerSize}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.markerSize = Number(v);
+              chart.draft.layout.markerSize = Number(e.target.value);
             })
           }
           min={0}
@@ -61,13 +58,13 @@ export default function LineSettingsSection({ chartId, updateChart }) {
           store={useChartStore}
         />
 
-        <InputField
+        <Input
           label="Marker Hover Size"
           type="range"
           value={(s) => s[chartId].draft.layout.markerHoverSize}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.layout.markerHoverSize = Number(v);
+              chart.draft.layout.markerHoverSize = Number(e.target.value);
             })
           }
           min={1}
@@ -105,31 +102,31 @@ function AreaSettingsSection({ chartId, updateChart }) {
 
       {isAreaVisible && (
         <>
-          <InputField
+          <Input
             label="Area Opacity From"
             type="range"
             min={0}
             max={1}
             step={0.05}
             value={(s) => s[chartId].draft.layout.areaOpacityFrom}
-            onChange={(v) =>
+            onChange={(e) =>
               updateChart(chartId, (chart) => {
-                chart.draft.layout.areaOpacityFrom = parseFloat(v);
+                chart.draft.layout.areaOpacityFrom = parseFloat(e.target.value);
               })
             }
             store={useChartStore}
           />
 
-          <InputField
+          <Input
             label="Area Opacity To"
             type="range"
             min={0}
             max={1}
             step={0.05}
             value={(s) => s[chartId].draft.layout.areaOpacityTo}
-            onChange={(v) =>
+            onChange={(e) =>
               updateChart(chartId, (chart) => {
-                chart.draft.layout.areaOpacityTo = parseFloat(v);
+                chart.draft.layout.areaOpacityTo = parseFloat(e.target.value);
               })
             }
             store={useChartStore}
@@ -188,7 +185,7 @@ function DataSeries({ chartId, updateChart }) {
     <Section title={"Data Series Name"}>
       {Array.from({ length }).map((_, index) => (
         <Section title={`Series ${index + 1}`} key={index} subSection>
-          <InputField
+          <Input
             label={"Name"}
             placeholder="Enter Name"
             value={(s) => parseColor(s[chartId].draft.seriesConfig[index].name)}
@@ -199,7 +196,7 @@ function DataSeries({ chartId, updateChart }) {
             }}
             store={useChartStore}
           />
-          <InputField
+          <Input
             label={`Tooltip Label`}
             placeholder="Enter Label"
             value={(s) =>

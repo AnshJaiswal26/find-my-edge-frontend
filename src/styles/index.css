@@ -38,3 +38,7 @@
 body {
   overscroll-behavior: none;
 }
+
+.dark-theme input[type="date"] {
+  color-scheme: dark;
+}

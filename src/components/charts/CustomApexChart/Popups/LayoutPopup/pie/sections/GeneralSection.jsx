@@ -1,17 +1,17 @@
 import { Section } from "@layout";
-import { Button, InputField } from "@ui";
+import { Button, Input } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function GeneralSection({ chartId, updateChart }) {
   return (
     <Section title="General">
-      <InputField
+      <Input
         label="Title"
         type="text"
         value={(s) => s[chartId].draft.layout.title}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.title = v;
+            chart.draft.layout.title = e.target.value;
           })
         }
         placeholder="Chart title"
@@ -39,14 +39,14 @@ export default function GeneralSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label="Donut Size"
         type="range"
         value={(s) => s[chartId].draft.layout.donutSize}
         formatter={(v) => `${v}%`}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.donutSize = v;
+            chart.draft.layout.donutSize = e.target.value;
           })
         }
         min={0}

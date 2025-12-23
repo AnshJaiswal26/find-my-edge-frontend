@@ -9,13 +9,16 @@ export function Row({ rowId, index }) {
 
   const columnOrder = useTableStore((s) => s.columnOrder);
   const draggingRow = useTableStore((s) => s.draggingRow);
-  const startRowDrag = useTableStore((s) => s.startRowDrag);
-  const updateRowDrag = useTableStore((s) => s.updateRowDrag);
-  const endRowDrag = useTableStore((s) => s.endRowDrag);
-  const setRowDragOverIndex = useTableStore((s) => s.setRowDragOverIndex);
-  const unselectColumn = useTableStore((s) => s.unselectColumn);
 
-  const updateCell = useTableStore((s) => s.updateCell);
+  const {
+    startRowDrag,
+    updateRowDrag,
+    endRowDrag,
+    setRowDragOverIndex,
+    unselectColumn,
+    updateCell,
+    selectCell,
+  } = useTableStore.getState();
 
   return (
     <div
@@ -54,7 +57,7 @@ export function Row({ rowId, index }) {
           border-r border-(--border)
           cursor-grab active:cursor-grabbing
           bg-(--surface-muted)
-          group
+          group z-20
         "
       >
         <GripVertical
@@ -71,10 +74,8 @@ export function Row({ rowId, index }) {
             key={colId}
             colId={colId}
             rowId={rowId}
-            onCommit={(input, row, column) => {
-              const parsed = column?.parse ? column.parse(input) : input;
-              const error = column.validate?.(parsed) ?? null;
-              updateCell(row.id, colId, parsed, error);
+            onCommit={(input, colId) => {
+              updateCell(rowId, colId, input);
             }}
           />
         ))}

@@ -1,18 +1,18 @@
 import { Section } from "@layout";
-import { ColorPicker, InputField } from "@ui";
+import { ColorPicker, Input } from "@ui";
 import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 
 export default function PolygonSection({ chartId, updateChart }) {
   return (
     <Section title="Polygon">
-      <InputField
+      <Input
         label="Stroke Width"
         type="range"
         value={(s) => s[chartId].draft.layout.polygonStrokeWidth}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.polygonStrokeWidth = v;
+            chart.draft.layout.polygonStrokeWidth = e.target.value;
           })
         }
         min={1}
@@ -20,13 +20,13 @@ export default function PolygonSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label="Opacity"
         type="range"
         value={(s) => s[chartId].draft.layout.radarOpacity}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.radarOpacity = v;
+            chart.draft.layout.radarOpacity = e.target.value;
           })
         }
         min={0}
@@ -78,14 +78,14 @@ function RadarSeries({ chartId, updateChart }) {
         { label: "Value Prefix", key: "prefix", placeholder: "Enter Prefix" },
         { label: "Value Suffix", key: "suffix", placeholder: "Enter Suffix" },
       ].map(({ label, key, placeholder }, idx) => (
-        <InputField
+        <Input
           key={idx}
           label={label}
           placeholder={placeholder}
           value={(s) => s[chartId].draft.seriesConfig[i][key]}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.seriesConfig[i][key] = v;
+              chart.draft.seriesConfig[i][key] = e.target.value;
             })
           }
           store={useChartStore}

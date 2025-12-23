@@ -1,18 +1,18 @@
 import { Section } from "@layout";
-import { ColorPicker, InputField } from "@ui";
+import { ColorPicker, Input } from "@ui";
 import { parseColor } from "@utils";
 import { useChartStore } from "@stores";
 
 export default function PolygonSection({ chartId, updateChart }) {
   return (
     <Section title="Polar">
-      <InputField
+      <Input
         label="Polar Stroke Width"
         type="range"
         value={(s) => s[chartId].draft.layout.strokeWidth}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeWidth = v;
+            chart.draft.layout.strokeWidth = e.target.value;
           })
         }
         min={0}
@@ -20,13 +20,13 @@ export default function PolygonSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label="Ring Width"
         type="range"
         value={(s) => s[chartId].draft.layout.ringBorderWidth}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.ringBorderWidth = v;
+            chart.draft.layout.ringBorderWidth = e.target.value;
           })
         }
         min={0}
@@ -46,13 +46,13 @@ export default function PolygonSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label="Polar Opacity From"
         type="range"
         value={(s) => s[chartId].draft.layout.fillOpacityFrom}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.fillOpacityFrom = v;
+            chart.draft.layout.fillOpacityFrom = e.target.value;
           })
         }
         min={0}
@@ -61,13 +61,13 @@ export default function PolygonSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label="Polar Opacity To"
         type="range"
         value={(s) => s[chartId].draft.layout.fillOpacityTo}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.fillOpacityTo = v;
+            chart.draft.layout.fillOpacityTo = e.target.value;
           })
         }
         min={0}
@@ -96,14 +96,14 @@ function PolarSeries({ chartId, updateChart }) {
         { label: "Value Prefix", key: "prefix", placeholder: "Enter Prefix" },
         { label: "Value Suffix", key: "suffix", placeholder: "Enter Suffix" },
       ].map(({ label, key, placeholder }, idx) => (
-        <InputField
+        <Input
           key={idx}
           label={label}
           placeholder={placeholder}
           value={(s) => s[chartId].draft.seriesConfig[i][key]}
-          onChange={(v) =>
+          onChange={(e) =>
             updateChart(chartId, (chart) => {
-              chart.draft.seriesConfig[i][key] = v;
+              chart.draft.seriesConfig[i][key] = e.target.value;
             })
           }
           store={useChartStore}

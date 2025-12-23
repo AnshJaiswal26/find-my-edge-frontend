@@ -42,15 +42,16 @@ const withSuspense = (Component) => {
 
 function App() {
   useEffect(() => {
-    const { setActiveSelector } = useUIStore.getState();
+    const { setSelect } = useUIStore.getState();
 
-    const close = () => setActiveSelector(null);
+    const close = () => setSelect(null);
 
     const handlePointerDown = (e) => {
-      const { activeSelector } = useUIStore.getState();
-      if (!activeSelector) return;
+      const { activeSelect } = useUIStore.getState();
+      if (!activeSelect) return;
 
-      const { buttonEl, listEl } = activeSelector;
+      const buttonEl = document.getElementById(activeSelect.buttonId);
+      const listEl = document.getElementById(activeSelect.listId);
 
       if (buttonEl?.contains(e.target) || listEl?.contains(e.target)) {
         return;
@@ -66,11 +67,16 @@ function App() {
     window.addEventListener("mousedown", handlePointerDown);
     window.addEventListener("resize", close);
     document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("scroll", handlePointerDown, {
+      passive: true,
+      capture: true,
+    });
 
     return () => {
       window.removeEventListener("mousedown", handlePointerDown);
       window.removeEventListener("resize", close);
       document.removeEventListener("visibilitychange", handleVisibility);
+      window.addEventListener("scroll", handlePointerDown);
     };
   }, []);
 

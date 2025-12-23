@@ -5,12 +5,14 @@ import { useTableStore } from "../store";
 export function TableHeader() {
   const columnOrder = useTableStore((s) => s.columnOrder);
 
+  console.log(columnOrder);
+
   return (
     <div
       className="
         sticky top-0 left-0 z-20
         flex border-b border-(--border)
-        bg-(--surface-muted)
+        bg-(--surface-disabled)
       "
     >
       {/* SN HEADER */}
@@ -19,8 +21,8 @@ export function TableHeader() {
           w-12 shrink-0 flex items-center justify-center
           border-r border-(--border)
           text-xs font-medium text-(--muted)
-          bg-(--surface-muted)
-          select-none
+          select-none  bg-(--surface-disabled)
+
         "
       />
 

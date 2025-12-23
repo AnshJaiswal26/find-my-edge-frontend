@@ -22,6 +22,14 @@ export function formatValue(value, column) {
     return isNumber ? `1:${value.toFixed(column.display.decimals ?? 0)}` : "—";
   }
 
+  if (column.display?.format === "date") {
+    return new Date(value).toLocaleDateString("en-IN", {
+      year: "numeric",
+      day: "numeric",
+      month: "short",
+    });
+  }
+
   return String(value);
 }
 

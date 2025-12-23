@@ -6,22 +6,23 @@ import { CellInput } from "./CellInput";
 import { CellDisplay } from "./CellDisplay";
 
 export function Cell({ rowId, colId, onCommit }) {
-  const row = useTableStore((s) => s.rowsById[rowId]);
-  const column = useTableStore((s) => s.columnsById[colId]);
-
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
 
-  const width = useTableStore((s) => s.columnWidths[column.id] ?? 150);
+  const cell = useTableStore((s) => s.rowsById[rowId].cells[colId]);
 
-  const CellComponent = column.type === "select" ? CellSelect : CellInput;
+  const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
+  const isSelect = useTableStore((s) => s.columnsById[colId].type === "select");
+
+  const CellComponent = isSelect ? CellSelect : CellInput;
 
   if (editing) {
     return (
-      <div style={{ width }} className="border-2 border-(--info)">
+      <div style={{ width }} className="border-1 border-(--info)">
         <CellComponent
-          row={row}
-          column={column}
+          rowId={rowId}
+          colId={colId}
+          cell={cell}
           draft={draft}
           setDraft={setDraft}
           onCommit={onCommit}
@@ -33,8 +34,9 @@ export function Cell({ rowId, colId, onCommit }) {
 
   return (
     <CellDisplay
-      row={row}
-      column={column}
+      rowId={rowId}
+      colId={colId}
+      cell={cell}
       width={width}
       setDraft={setDraft}
       setEditing={setEditing}

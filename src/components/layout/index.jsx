@@ -291,77 +291,6 @@ Popup.Footer = ({
   );
 };
 
-// export const Popup = ({
-//   title,
-//   children,
-//   text,
-//   large = false,
-//   isVisible = true,
-//   footer = true,
-//   onClose = () => {},
-//   onCancel = () => null,
-//   onApply = () => null,
-// }) => {
-//   if (!isVisible) return null;
-
-//   return (
-//     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40">
-//       <div
-//         className={`
-//           bg-(--surface-muted)
-//           rounded-lg
-//           max-w-[29rem]
-//           w-full
-//           m-4
-//           shadow-[0_10px_25px_rgba(0,0,0,0.15)]
-//           h-[80vh]
-//           overflow-hidden
-//           flex flex-col
-//           justify-between
-//           text-(--text-charts)
-//           ${large ? "max-w-[29rem]" : ""}
-//         `}
-//       >
-//         {/* Header */}
-//         <header className="bg-(--surface-muted) p-[15px] border-b border-(--border)">
-//           <div className="flex items-center justify-between">
-//             <div>{title}</div>
-
-//             <Button.Icon className="hover:text-(--error)" onClick={onClose}>
-//               <X size={16} className="text-inherit" />
-//             </Button.Icon>
-//           </div>
-//         </header>
-
-//         {/* Main */}
-//         <main
-//           className={`
-//             grid
-//             grid-cols-1
-//             gap-4
-//             overflow-y-auto
-//             overscroll-contain
-//             w-full
-//             py-1
-//             px-2
-//             ${large ? "grid-cols-2" : ""}
-//           `}
-//         >
-//           {children}
-//         </main>
-
-//         {/* Footer */}
-//         {footer && (
-//           <footer className="bg-(--surface-muted) p-[15px] border-t border-(--border) flex justify-end gap-4">
-//             <Button text={text?.[0] || "Cancel"} hollow onClick={onCancel} />
-//             <Button text={text?.[1] || "Apply"} onClick={onApply} />
-//           </footer>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
 export const ChartPopup = ({
   title,
   children,
@@ -378,7 +307,7 @@ export const ChartPopup = ({
     <div
       className="
         absolute right-full -top-[2px]
-        z-[100]
+        z-500
         flex flex-col
         h-fit w-fit
         min-w-[210px] max-h-[400px]
@@ -442,3 +371,15 @@ export function Loader() {
     </div>
   );
 }
+
+export const Divider = ({ vertical = false }) => {
+  return (
+    <div
+      className={
+        vertical
+          ? "self-stretch border-l border-(--border)"
+          : "w-full border-t border-(--border)"
+      }
+    />
+  );
+};

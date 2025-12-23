@@ -1,8 +1,8 @@
 import { Popup } from "@layout";
 import { useTableStore } from "../../store";
 import { filterOptions } from "@utils";
-import { Button, Input } from "@ui";
-import { Trash2 } from "lucide-react";
+import { Button, Input, Select } from "@ui";
+import { Plus, Trash2 } from "lucide-react";
 
 export const filterOptionsByType = {
   text: [
@@ -36,21 +36,27 @@ export const filterOptionsByType = {
     "isNotBetween",
   ],
   date: ["none", "dateIs", "dateBefore", "dateAfter"],
-  select: ["none", "textIsExactly", "textDoesNotContain"],
+  select: [
+    "none",
+    "textContains",
+    "textDoesNotContain",
+    "textStartsWith",
+    "textEndsWith",
+    "textIsExactly",
+  ],
 };
 
 export function FilterPopup() {
+  const { filters, columnsById, activePopup } = useTableStore();
+
   const {
-    filters,
-    activePopup,
-    columnsById,
     addFilter,
     updateFilter,
     removeFilter,
     clearFilters,
     closePopup,
     applyFilters,
-  } = useTableStore();
+  } = useTableStore.getState();
 
   if (activePopup !== "filter") return null;
 
@@ -59,10 +65,10 @@ export function FilterPopup() {
       <Popup.Container className="w-50 max-w-50">
         <Popup.Header title="Filters" onClose={closePopup} />
 
-        <Popup.Body className="px-4 py-3 space-y-4">
+        <Popup.Body className="px-4 py-3">
           {/* FILTER RULES */}
           {filters.length === 0 && (
-            <p className="text-sm text-(--muted)">
+            <p className="text-sm text-center pt-20 text-(--text-muted)">
               No filters applied. Add a rule to narrow results.
             </p>
           )}
@@ -80,7 +86,6 @@ export function FilterPopup() {
                   border border-(--border)
                   bg-(--surface-muted)
                   p-3
-                  space-y-2
                 "
               >
                 {/* Rule label */}
@@ -88,64 +93,45 @@ export function FilterPopup() {
                   Rule {index + 1}
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  {/* Column */}
-                  <select
-                    className="input col-span-4 border"
+                <div className="flex flex-col gap-3">
+                  <Select
+                    label={"Column Name: "}
+                    options={Object.values(columnsById)}
+                    getLabel={(o) => o.label}
+                    getKey={(o) => o.id}
                     value={f.columnId}
-                    onChange={(e) =>
+                    onChange={(o) =>
                       updateFilter(f.id, {
-                        columnId: e.target.value,
+                        columnId: o.id,
                         operator: "none",
                         value: "",
                         value2: "",
                       })
                     }
-                  >
-                    {Object.values(columnsById).map((c) => (
-                      <option
-                        className={"bg-(--surface-muted)"}
-                        key={c.id}
-                        value={c.id}
-                      >
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
+                  />
 
-                  {/* Operator */}
-                  <select
-                    className="input col-span-4 border"
+                  <Select
+                    label={"Filter: "}
+                    options={ops}
+                    getLabel={(o) => filterOptions[o]}
                     value={f.operator}
-                    onChange={(e) =>
-                      updateFilter(f.id, { operator: e.target.value })
-                    }
-                  >
-                    {ops.map((op) => (
-                      <option
-                        className={"bg-(--surface-muted)"}
-                        key={op}
-                        value={op}
-                      >
-                        {filterOptions[op]}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(o) => updateFilter(f.id, { operator: o })}
+                  />
 
                   {/* Value(s) */}
                   {f.operator.includes("Between") ? (
-                    <div className="col-span-3 flex gap-1">
-                      <input
-                        className="input border"
-                        placeholder="From"
+                    <div className="col-span-3 flex justify-between">
+                      <Input
+                        label="From"
+                        vertical
                         value={f.value}
                         onChange={(e) =>
                           updateFilter(f.id, { value: e.target.value })
                         }
                       />
-                      <input
-                        className="input"
-                        placeholder="To"
+                      <Input
+                        label="To"
+                        vertical
                         value={f.value2}
                         onChange={(e) =>
                           updateFilter(f.id, { value2: e.target.value })
@@ -153,17 +139,14 @@ export function FilterPopup() {
                       />
                     </div>
                   ) : (
-                    <Input className="flex-row justify-between gap-3">
-                      <Input.Label>Value:</Input.Label>
-                      <Input.Field
-                        className="max-w-full"
-                        size="md"
-                        value={f.value}
-                        onChange={(e) =>
-                          updateFilter(f.id, { value: e.target.value })
-                        }
-                      />
-                    </Input>
+                    <Input
+                      label="Value"
+                      vertical
+                      value={f.value}
+                      onChange={(e) =>
+                        updateFilter(f.id, { value: e.target.value })
+                      }
+                    />
                   )}
 
                   <Button.Icon onClick={() => removeFilter(f.id)}>
@@ -175,9 +158,17 @@ export function FilterPopup() {
           })}
 
           {/* ADD FILTER */}
-
           <div>
-            <Button text={"+ Add filter rule"} onClick={addFilter} />
+            <Button
+              text={
+                <span className="flex items-center gap-1">
+                  <Plus size={18} />
+                  Add filter rule
+                </span>
+              }
+              hollow
+              onClick={addFilter}
+            />
           </div>
         </Popup.Body>
 

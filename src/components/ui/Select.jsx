@@ -1,6 +1,6 @@
 import { useResolvedValue } from "@hooks";
-import { useEffect, useId, useRef, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useUIStore } from "@stores";
 
@@ -10,120 +10,154 @@ export default function Select({
   value,
   onChange = () => null,
   store,
-  className = "",
-  buttonClass = "",
+  classNames = {},
+  getLabel = (v) => v,
+  getKey = (v) => v,
 }) {
-  const listId = useId();
-  const buttonId = `${listId}-button`;
+  const selectId = useId();
+  const listId = `${selectId}-list`;
+  const buttonId = `${selectId}-button`;
+
   const buttonRef = useRef(null);
 
   const val = useResolvedValue(store, value);
 
-  const activeSelector = useUIStore((s) => s.activeSelector);
-  const toggleActiveSelector = useUIStore((s) => s.toggleActiveSelector);
+  const activeSelect = useUIStore((s) => s.activeSelect);
+  const toggleSelect = useUIStore((s) => s.toggleSelect);
 
-  const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
+  const active = activeSelect?.id === selectId;
 
-  const isArray = Array.isArray(options);
+  const [pos, setPos] = useState({
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: 0,
+    maxHeight: 0,
+    placement: "",
+  });
 
-  useEffect(() => {
-    if (activeSelector?.listId === listId && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setPos({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
-    }
-  }, [activeSelector]);
+  useLayoutEffect(() => {
+    if (!active || !buttonRef.current) return;
+
+    const rect = buttonRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    const MIN_HEIGHT = 200;
+
+    const openDown = spaceBelow >= MIN_HEIGHT || spaceBelow >= spaceAbove;
+
+    setPos({
+      placement: openDown ? "bottom" : "top",
+      top: openDown ? rect.bottom : undefined,
+      bottom: openDown ? undefined : viewportHeight - rect.top,
+      left: rect.left,
+      width: rect.width,
+      maxHeight: Math.max(100, (openDown ? spaceBelow : spaceAbove) - 8),
+    });
+  }, [active]);
+
+  const selectedItem = useMemo(
+    () => options.find((o) => getKey(o) === val) ?? null,
+    [val]
+  );
 
   return (
     <div
       className={`
-        flex items-center justify-between flex-wrap
+        flex items-center gap-1 flex-wrap
         text-sm
-        ${className}
+        ${classNames?.wrapper}
       `}
     >
-      {label && (
-        <div className="flex gap-1">
-          <span className="text-(--text-primary)">{label}</span>
-        </div>
-      )}
+      {label && <label className="shrink-0 w-32">{label}</label>}
 
-      <div className={`relative ${label ? "" : "w-full"}`}>
+      <div className={`relative flex flex-1 justify-start sm:justify-end`}>
         <button
           id={buttonId}
           ref={buttonRef}
           className={`
-            flex items-center justify-between gap-1
-            px-2.5 py-1.5
+            flex items-center justify-between
+            px-3 py-2
             rounded
             border border-(--border)
-            min-w-25 w-full
+            min-w-50 
             box-border
-            ${buttonClass}
+            text-nowrap
+            ${classNames?.button}
           `}
           onClick={(e) => {
             e.preventDefault();
-            toggleActiveSelector(listId, buttonId);
+            toggleSelect({ id: selectId, buttonId, listId });
           }}
         >
-          <span>{isArray ? val : options[val]}</span>
+          <span>{selectedItem ? getLabel(selectedItem) : "Select"}</span>
 
-          {activeSelector?.listId === listId ? (
-            <ChevronUp size={14} />
-          ) : (
-            <ChevronDown size={14} />
-          )}
+          <ChevronDown
+            size={14}
+            className={`transition-all duration-300 ${
+              active ? "rotate-180" : ""
+            }`}
+          />
         </button>
 
-        {activeSelector?.listId === listId &&
+        {active &&
           createPortal(
             <div
               id={listId}
-              className="
-                absolute
+              className={`
+                fixed 
+                w-full
                 flex flex-col
                 rounded-tl rounded-bl
                 border border-(--border)
                 bg-(--surface-muted)
                 text-(--text)
                 text-sm
-                max-h-100
                 min-w-25
                 overflow-y-auto
+                shadow-2xl
                 box-border
-                z-100001
-              "
+                z-10000
+                 ${
+                   pos.placement === "top"
+                     ? "origin-bottom rounded-b"
+                     : "origin-top rounded-t"
+                 }
+                ${classNames?.list}
+              `}
               style={{
                 top: pos.top,
+                bottom: pos.bottom,
                 left: pos.left,
                 width: pos.width,
+                maxHeight: pos.maxHeight,
               }}
             >
-              {(isArray ? options : Object.keys(options)).map((o, i) => (
+              {options.map((item, i) => (
                 <button
                   key={i}
-                  id={listId}
                   className={`
                     text-left
-                    px-2 py-1
+                    w-full
+                    px-3 py-2
                     border-b border-(--hover)
                     last:border-b-0
-                    hover:bg-(--hover)
-                    ${o === val ? "bg-(--hover)" : ""}
+                    hover:bg-(--cyan)
+                    hover:text-white
                   `}
                   onClick={() => {
-                    onChange(o, options[o]);
-                    toggleActiveSelector(listId, buttonId);
+                    onChange(item);
+                    toggleSelect({ id: selectId, buttonId, listId });
                   }}
                 >
-                  {isArray ? o : options[o]}
+                  {getLabel(item)}
                 </button>
               ))}
             </div>,
-            document.getElementById("root")
+            document.body
           )}
       </div>
     </div>

@@ -1,17 +1,17 @@
 import { Section } from "@layout";
-import { Button, InputField } from "@ui";
+import { Button, Input } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function RadialGeneralSection({ chartId, updateChart }) {
   return (
     <Section title="General">
-      <InputField
+      <Input
         label="Title"
         type="text"
         value={(s) => s[chartId].draft.layout.title}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.title = v;
+            chart.draft.layout.title = e.target.value;
           })
         }
         placeholder="Chart title"
@@ -29,14 +29,14 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label="Hollow Size"
         type="range"
         value={(s) => s[chartId].draft.layout.hollowSize}
         formatter={(v) => `${v}%`}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.hollowSize = v;
+            chart.draft.layout.hollowSize = e.target.value;
           })
         }
         min={30}
@@ -44,13 +44,13 @@ export default function RadialGeneralSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label={"End Angle"}
         type="range"
         value={(s) => parseInt(s[chartId].draft.layout.endAngle)}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.endAngle = v;
+            chart.draft.layout.endAngle = e.target.value;
           })
         }
         min={90}

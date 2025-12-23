@@ -1,18 +1,28 @@
 import { useTableStore } from "../store";
-import { formatValue, TONE_CLASS } from "../tableUtils";
+import { TONE_CLASS } from "../tableUtils";
 
-export const CellDisplay = ({ row, column, width, setDraft, setEditing }) => {
-  const unselectColumn = useTableStore((s) => s.unselectColumn);
+export const CellDisplay = ({ cell, colId, width, setDraft, setEditing }) => {
+  const column = useTableStore((s) => s.columnsById[colId]);
+
+  const { unselectColumn, selectCell } = useTableStore.getState();
 
   const editable = column.type !== "computed" && column.editable !== false;
-
-  const cell = row.cells[column.id];
 
   const tone = column.conditionalStyle?.(cell.value) ?? "neutral";
 
   return (
     <div
-      onClick={() => unselectColumn({ id: column.id })}
+      tabIndex={0}
+      onClick={(e) => {
+        const rect = e.target.getBoundingClientRect();
+        selectCell({
+          top: rect.top,
+          left: rect.left,
+          height: rect.height,
+          width: rect.width,
+        });
+        unselectColumn({ id: colId });
+      }}
       style={{ width }}
       className={`px-2 py-1 cursor-pointer border-r-1 border-r-(--border) ${TONE_CLASS[tone]}`}
       onDoubleClick={() => {
@@ -22,7 +32,7 @@ export const CellDisplay = ({ row, column, width, setDraft, setEditing }) => {
       }}
       title={cell.meta?.error}
     >
-      {formatValue(cell.value, column)}
+      {cell.display}
     </div>
   );
 };

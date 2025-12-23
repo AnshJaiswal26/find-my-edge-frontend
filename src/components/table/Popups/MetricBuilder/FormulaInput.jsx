@@ -48,32 +48,28 @@ export function FormulaInput({ value, onChange, ast, numericColumns }) {
   );
 
   return (
-    <Input>
-      <Input.Label>Formula</Input.Label>
-      <div className="relative">
-        <Input.Field
-          className="max-w-full"
-          value={value}
-          size="lg"
-          variant={ast ? "success" : "error"}
-          placeholder="eg. (Exit - Entry) * Qty"
-          onKeyDown={onKeyDown}
-          onBlur={() => setOpen(false)}
-          onChange={(e) => {
-            onChange(e.target.value);
-            setCursor(e.target.selectionStart);
-            setOpen(true);
-          }}
-        />
+    <div className="relative">
+      <Input
+        vertical
+        label="Formula"
+        value={value}
+        placeholder="eg. (Exit - Entry) * Qty"
+        onKeyDown={onKeyDown}
+        onBlur={() => setOpen(false)}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setCursor(e.target.selectionStart);
+          setOpen(true);
+        }}
+      />
 
-        {open && (
-          <FormulaSuggestions
-            suggestions={suggestions}
-            highlight={highlight}
-            onSelect={applySuggestion}
-          />
-        )}
-      </div>
-    </Input>
+      {open && (
+        <FormulaSuggestions
+          suggestions={suggestions}
+          highlight={highlight}
+          onSelect={applySuggestion}
+        />
+      )}
+    </div>
   );
 }

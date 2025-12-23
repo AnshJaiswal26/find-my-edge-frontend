@@ -8,9 +8,7 @@ export { default as ValidationTooltip } from "./ValidationTooltip";
 export { default as StatCard } from "./StatCard";
 export { default as ChartFilterPopup } from "../charts/CustomApexChart/Popups/FilterPopup";
 export { default as ColorPicker } from "./ColorPicker";
-export { default as InputField } from "./InputField";
-
+export { default as Input } from "./Input";
 export { default as Select } from "./Select";
 export { default as Table } from "./Table";
 export { default as Toast } from "./Toast";
-export { default as Input } from "./Input";

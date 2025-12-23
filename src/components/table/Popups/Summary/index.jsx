@@ -101,7 +101,7 @@ export function SummaryPopup() {
 
   return (
     <Popup open>
-      <Popup.Container className="w-[900px] max-w-[95vw]">
+      <Popup.Container className="w-180! max-w-full">
         <Popup.Header title="Summary" onClose={closePopup} />
 
         <Popup.Body className="px-5 py-4 space-y-6">

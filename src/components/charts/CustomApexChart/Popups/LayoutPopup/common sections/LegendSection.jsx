@@ -17,22 +17,24 @@ export default function LegendSection({ chartId, updateChart }) {
       />
       <Select
         label={"Position"}
-        options={{ top: "Top", bottom: "Bottom" }}
+        options={["Top", "Bottom"]}
+        getKey={(v) => v.toLowerCase()}
         value={(s) => s[chartId].draft.layout.legendPosition}
-        onChange={(k) =>
+        onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.legendPosition = k;
+            chart.draft.layout.legendPosition = v.toLowerCase();
           })
         }
         store={useChartStore}
       />
       <Select
         label={"Alignment"}
-        options={{ left: "Left", center: "Center", right: "Right" }}
+        options={["Left", "Center", "Right"]}
+        getKey={(v) => v.toLowerCase()}
         value={(s) => s[chartId].draft.layout.legendAlignment}
-        onChange={(k) =>
+        onChange={(v) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.legendAlignment = k;
+            chart.draft.layout.legendAlignment = v.toLowerCase();
           })
         }
         store={useChartStore}

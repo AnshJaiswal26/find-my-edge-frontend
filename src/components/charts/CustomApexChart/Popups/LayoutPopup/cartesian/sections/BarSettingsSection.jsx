@@ -1,4 +1,4 @@
-import { Button, ColorPicker, InputField, Input } from "@ui";
+import { Button, ColorPicker, Input } from "@ui";
 import { Section } from "@layout";
 import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
@@ -30,35 +30,12 @@ export default function BarSettingsSection({ chartId, updateChart }) {
       ))}
 
       <Input
-        className={"flex-row text-sm"}
-        value={(s) => s[chartId].draft.layout.barRadius}
-        store={useChartStore}
-      >
-        {({ value }) => (
-          <>
-            <Input.Label>Bar Radius</Input.Label>
-            <Input.Range
-              className="p-0! w-40!"
-              value={value}
-              min={0}
-              max={10}
-              onChange={(e) =>
-                updateChart(chartId, (chart) => {
-                  chart.draft.layout.barRadius = e.target.value;
-                })
-              }
-            />
-          </>
-        )}
-      </Input>
-
-      <InputField
         label="Bar Radius"
         type="range"
         value={(s) => s[chartId].draft.layout.barRadius}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.barRadius = v;
+            chart.draft.layout.barRadius = e.target.value;
           })
         }
         min={0}
@@ -96,12 +73,12 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
 
   return (
     <Section title={`Series ${seriesIndex + 1}`}>
-      <InputField
+      <Input
         label={"Series Name"}
         value={(s) => s[chartId].draft.seriesConfig[seriesIndex].name}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[seriesIndex].name = v;
+            chart.draft.seriesConfig[seriesIndex].name = e.target.value;
           })
         }
         store={useChartStore}
@@ -117,7 +94,7 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
               placeHoldder: "Enter Label",
             },
           ].map(({ key, label, placeHoldder }, idx) => (
-            <InputField
+            <Input
               key={idx}
               label={label}
               type={key === "tooltipLabel" ? "text" : "number"}
@@ -125,9 +102,10 @@ function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
               value={(s) =>
                 s[chartId].draft.seriesConfig[seriesIndex].colors[index][key]
               }
-              onChange={(v) =>
+              onChange={(e) =>
                 updateChart(chartId, (chart) => {
-                  chart.draft.seriesConfig[seriesIndex].colors[index][key] = v;
+                  chart.draft.seriesConfig[seriesIndex].colors[index][key] =
+                    e.target.value;
                 })
               }
               store={useChartStore}

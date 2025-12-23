@@ -3,6 +3,7 @@ export const columnsById = {
     id: "date",
     label: "Date",
     type: "date",
+    display: { format: "date" },
     parse: (v) => v,
   },
 

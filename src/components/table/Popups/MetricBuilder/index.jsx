@@ -57,7 +57,7 @@ export function MetricBuilder() {
       <Popup.Container className="h-90!">
         <Popup.Header title="Add Metric" onClose={closePopup} />
 
-        <Popup.Body className="px-4">
+        <Popup.Body className="px-4 flex items-center">
           <div className="space-y-4">
             <MetricNameInput value={name} onChange={setName} />
             <FormulaInput

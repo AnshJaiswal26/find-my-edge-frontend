@@ -1,25 +1,27 @@
 import {
   Plus,
   Filter,
-  Calendar,
   ArrowUpDown,
   Sigma,
-  Brain,
   Flame,
   Settings,
   Download,
   RotateCcw,
   LayoutGrid,
+  ColumnsSettings,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@ui";
 import { useTableStore } from "../store";
+import { Divider } from "@layout";
 
 export function Toolbar({
   onAddTrade,
   onAddMetric,
   onFilter,
+  onSort,
+  onDelete,
   onToggleSummary,
-  onToggleReview,
   onToggleHeatmap,
   onResetLayout,
   onExport,
@@ -29,8 +31,8 @@ export function Toolbar({
   return (
     <div
       className="
-        flex items-center justify-between
-        px-3 py-2 gap-4
+        flex items-center justify-start
+        px-8 py-2 gap-10
         border border-(--border)
         bg-(--surface-muted)
       "
@@ -42,11 +44,7 @@ export function Toolbar({
           tooltip={{ text: "Add Trade", position: "bottom" }}
           onClick={onAddTrade}
         >
-          <Plus size={16} className="text-inherit" />
-        </Button.Icon>
-
-        <Button.Icon tooltip={{ text: "Date Filter", position: "bottom" }}>
-          <Calendar size={16} className="text-inherit" />
+          <ColumnsSettings size={16} className="text-inherit" />
         </Button.Icon>
 
         <Button.Icon
@@ -57,10 +55,22 @@ export function Toolbar({
           <Filter size={16} className="text-inherit" />
         </Button.Icon>
 
-        <Button.Icon tooltip={{ text: "Sort", position: "bottom" }}>
+        <Button.Icon
+          tooltip={{ text: "Sort", position: "bottom" }}
+          onClick={onSort}
+        >
           <ArrowUpDown size={16} className="text-inherit" />
         </Button.Icon>
+
+        <Button.Icon
+          tooltip={{ text: "Sort", position: "bottom" }}
+          onClick={onDelete}
+        >
+          <Trash2 size={16} className="text-inherit" />
+        </Button.Icon>
       </div>
+
+      <Divider vertical />
 
       {/* CENTER */}
       <div className="flex items-center gap-1">
@@ -79,13 +89,6 @@ export function Toolbar({
         </Button.Icon>
 
         <Button.Icon
-          tooltip={{ text: "Trade Review", position: "bottom" }}
-          onClick={onToggleReview}
-        >
-          <Brain size={16} className="text-inherit" />
-        </Button.Icon>
-
-        <Button.Icon
           tooltip={{ text: "Heatmap", position: "bottom" }}
           onClick={onToggleHeatmap}
         >
@@ -93,13 +96,15 @@ export function Toolbar({
         </Button.Icon>
       </div>
 
+      <Divider vertical />
+
       {/* RIGHT */}
       <div className="flex items-center gap-1">
         <Button.Icon
           tooltip={{ text: "Column Settings", position: "bottom" }}
           onClick={onOpenColumnSettings}
         >
-          <Settings size={16} className="text-inherit" />
+          <ColumnsSettings size={16} className="text-inherit" />
         </Button.Icon>
 
         <Button.Icon

@@ -1,17 +1,17 @@
 import { Section } from "@layout";
-import { Button, InputField } from "@ui";
+import { Button, Input } from "@ui";
 import { useChartStore } from "@stores";
 
 export default function GeneralSection({ chartId, updateChart }) {
   return (
     <Section title="General">
-      <InputField
+      <Input
         label="Title"
         type="text"
         value={(s) => s[chartId].draft.layout.title}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.title = v;
+            chart.draft.layout.title = e.target.value;
           })
         }
         placeholder="Chart title"
@@ -40,13 +40,13 @@ export default function GeneralSection({ chartId, updateChart }) {
         store={useChartStore}
       />
 
-      <InputField
+      <Input
         label="Radar Size"
         type="range"
         value={(s) => s[chartId].draft.layout.radarSize}
-        onChange={(v) =>
+        onChange={(e) =>
           updateChart(chartId, (chart) => {
-            chart.draft.layout.radarSize = v;
+            chart.draft.layout.radarSize = e.target.value;
           })
         }
         min={100}

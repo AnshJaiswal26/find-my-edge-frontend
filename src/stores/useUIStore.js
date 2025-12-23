@@ -14,7 +14,7 @@ export const useUIStore = create((set) => ({
   isSidebarOpen: false,
   username: "Ansh Jaiswal",
   selectedAvatar: "Icons/avtar/user.png",
-  activeSelector: null,
+  activeSelect: null,
   toasts: [],
 
   toggleTheme: () =>
@@ -38,7 +38,12 @@ export const useUIStore = create((set) => ({
 
   setAvtar: (avtar) => set({ selectedAvatar: avtar }),
 
-  setActiveSelector: (payload) => set({ activeSelector: payload }),
+  setSelect: (payload) => set({ activeSelect: payload }),
+
+  toggleSelect: (payload) =>
+    set((s) => ({
+      activeSelect: s.activeSelect?.id === payload?.id ? null : payload,
+    })),
 
   showToast: (type = "INFO", message, duration = 5000) => {
     const id = Date.now() + Math.random();

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./SheetIntegration.module.css";
-import { Button, InputField, Select } from "@ui";
+import { Button, Input, Select } from "@ui";
 
 // Small UI helpers
 function Card({ children, className = "" }) {
@@ -163,12 +163,12 @@ export default function SheetIntegration() {
           </div>
 
           <div>
-            <InputField
+            <Input
               labelPosition="top"
               label={"Sheet Name"}
               value={""}
               placeholder="Sheet name"
-              onChange={(v) => setSheetName(v)}
+              onChange={(e) => setSheetName(e.target.value)}
               className="bg-[inherit] w-full p-3 rounded-[0.5rem]"
             />
 
