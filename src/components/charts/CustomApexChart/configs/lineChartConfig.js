@@ -1,11 +1,11 @@
 import { cartesianChartConfig } from "./cartesianChartConfig";
 
 export const getLineChartConfig = ({ chart, chartId, tooltipCallback }) => {
-  const config = chart.live.layout;
+  const config = chart.layout;
   const series = chart.series.filtered;
   const index = chart.runtime.selectedLegendIndex;
   const seriesConfig =
-    index !== null ? [chart.live.seriesConfig[index]] : chart.live.seriesConfig;
+    index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
 
   const base = cartesianChartConfig({
     chart,

@@ -1,157 +1,180 @@
 import { Button, ColorPicker, Input } from "@ui";
 import { Section } from "@layout";
-import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
 import { Trash2 } from "lucide-react";
 
-export default function BarSettingsSection({ chartId, updateChart }) {
+export default function BarSettingsSection({
+  layoutDraft,
+  seriesDraft,
+  setLayoutDraft,
+  setSeriesDraft,
+}) {
   return (
     <Section title="Bar Settings">
       {[
         { title: "Horizontal", key: "horizontal" },
         { title: "Stacked", key: "stacked" },
         { title: "Stacked 100%", key: "stacked100" },
-      ].map(({ title, key }, i) => (
+      ].map(({ title, key }) => (
         <Button.Toggle
-          key={i}
+          key={key}
           label={title}
-          value={(s) => s[chartId].draft.layout[key]}
-          onClick={() => {
-            updateChart(chartId, (chart) => {
-              chart.draft.layout[key] = !chart.draft.layout[key];
-              if (key === "stacked100")
-                chart.draft.layout.stacked = chart.draft.layout[key];
-              if (key === "stacked" && chart.draft.layout.stacked100)
-                chart.draft.layout.stacked100 = false;
-            });
-          }}
-          store={useChartStore}
+          value={layoutDraft[key]}
+          onChange={(v) =>
+            setLayoutDraft((p) => {
+              const next = { ...p, [key]: v };
+
+              if (key === "stacked100") next.stacked = v;
+              if (key === "stacked" && p.stacked100) next.stacked100 = false;
+
+              return next;
+            })
+          }
         />
       ))}
 
       <Input
         label="Bar Radius"
         type="range"
-        value={(s) => s[chartId].draft.layout.barRadius}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.barRadius = e.target.value;
-          })
-        }
         min={0}
         max={10}
-        store={useChartStore}
+        value={layoutDraft.barRadius}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({ ...p, barRadius: Number(v) }))
+        }
       />
 
-      <ConditionalColorRange chartId={chartId} updateChart={updateChart} />
+      <ConditionalColorRange
+        seriesDraft={seriesDraft}
+        setSeriesDraft={setSeriesDraft}
+      />
     </Section>
   );
 }
-function ConditionalColorRange({ chartId, updateChart }) {
-  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
 
+function ConditionalColorRange({ seriesDraft, setSeriesDraft }) {
   return (
     <>
-      {Array.from({ length }).map((_, index) => (
+      {seriesDraft.map((_, index) => (
         <ConditionalBarColor
           key={index}
           seriesIndex={index}
-          chartId={chartId}
-          updateChart={updateChart}
+          seriesDraft={seriesDraft}
+          setSeriesDraft={setSeriesDraft}
         />
       ))}
     </>
   );
 }
 
-function ConditionalBarColor({ seriesIndex, chartId, updateChart }) {
-  const length = useChartStore(
-    (s) => s[chartId].draft.seriesConfig[seriesIndex]?.colors.length || 0
-  );
+function ConditionalBarColor({ seriesIndex, seriesDraft, setSeriesDraft }) {
+  const series = seriesDraft[seriesIndex];
+  const colors = series.colors || [];
 
-  if (length === 0) return null;
+  if (colors.length === 0) return null;
 
   return (
     <Section title={`Series ${seriesIndex + 1}`}>
       <Input
-        label={"Series Name"}
-        value={(s) => s[chartId].draft.seriesConfig[seriesIndex].name}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[seriesIndex].name = e.target.value;
+        label="Series Name"
+        value={series.name}
+        onCommit={(v) =>
+          setSeriesDraft((prev) => {
+            const next = [...prev];
+            next[seriesIndex] = { ...next[seriesIndex], name: v };
+            return next;
           })
         }
-        store={useChartStore}
-      />{" "}
-      {Array.from({ length }).map((_, index) => (
+      />
+
+      {colors.map((color, index) => (
         <Section key={index} subSection title={`Range ${index + 1}`}>
           {[
-            { key: "from", label: "From", placeHoldder: "Enter From" },
-            { key: "to", label: "To", placeHoldder: "Enter To" },
-            {
-              key: "tooltipLabel",
-              label: "Tooltip Label",
-              placeHoldder: "Enter Label",
-            },
-          ].map(({ key, label, placeHoldder }, idx) => (
+            { key: "from", label: "From", type: "number" },
+            { key: "to", label: "To", type: "number" },
+            { key: "tooltipLabel", label: "Tooltip Label", type: "text" },
+          ].map(({ key, label, type }) => (
             <Input
-              key={idx}
+              key={key}
               label={label}
-              type={key === "tooltipLabel" ? "text" : "number"}
-              placeholder={placeHoldder}
-              value={(s) =>
-                s[chartId].draft.seriesConfig[seriesIndex].colors[index][key]
-              }
-              onChange={(e) =>
-                updateChart(chartId, (chart) => {
-                  chart.draft.seriesConfig[seriesIndex].colors[index][key] =
-                    e.target.value;
+              type={type}
+              value={color[key]}
+              onCommit={(v) =>
+                setSeriesDraft((prev) => {
+                  const next = [...prev];
+                  const updated = [...next[seriesIndex].colors];
+                  updated[index] = {
+                    ...updated[index],
+                    [key]: type === "number" ? Number(v) : v,
+                  };
+                  next[seriesIndex] = {
+                    ...next[seriesIndex],
+                    colors: updated,
+                  };
+                  return next;
                 })
               }
-              store={useChartStore}
             />
           ))}
 
           <div className="flex justify-between">
             <ColorPicker
               label="Color"
-              value={(s) =>
-                parseColor(
-                  s[chartId].draft.seriesConfig[seriesIndex].colors[index].color
-                )
-              }
-              onChange={(c) =>
-                updateChart(chartId, (chart) => {
-                  chart.draft.seriesConfig[seriesIndex].colors[index].color = c;
+              value={parseColor(color.color)}
+              onCommit={(c) =>
+                setSeriesDraft((prev) => {
+                  const next = [...prev];
+                  const updated = [...next[seriesIndex].colors];
+                  updated[index] = { ...updated[index], color: c };
+                  next[seriesIndex] = {
+                    ...next[seriesIndex],
+                    colors: updated,
+                  };
+                  return next;
                 })
               }
-              store={useChartStore}
             />
 
             <Button.Icon
               onClick={() =>
-                updateChart(chartId, (chart) => {
-                  chart.draft.seriesConfig[seriesIndex].colors.splice(index, 1);
+                setSeriesDraft((prev) => {
+                  const next = [...prev];
+                  next[seriesIndex] = {
+                    ...next[seriesIndex],
+                    colors: next[seriesIndex].colors.filter(
+                      (_, i) => i !== index
+                    ),
+                  };
+                  return next;
                 })
               }
             >
-              <Trash2 size={16} className="text-inherit" />
+              <Trash2 size={16} />
             </Button.Icon>
           </div>
         </Section>
       ))}
-      <div className="flex justify-end flex-1">
+
+      <div className="flex justify-end">
         <Button
-          text={"Add"}
+          text="Add"
           size="medium"
           onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.draft.seriesConfig[seriesIndex].colors.push({
-                from: 0,
-                to: 0,
-                color: "var(--info)",
-                tooltipLabel: "",
-              });
+            setSeriesDraft((prev) => {
+              const next = [...prev];
+              next[seriesIndex] = {
+                ...next[seriesIndex],
+                colors: [
+                  ...next[seriesIndex].colors,
+                  {
+                    from: 0,
+                    to: 0,
+                    color: "var(--info)",
+                    tooltipLabel: "",
+                  },
+                ],
+              };
+              return next;
             })
           }
         />

@@ -1,18 +1,24 @@
+import { useEffect, useState } from "react";
 import { Button } from "./Buttons";
-import { useResolvedValue } from "@hooks";
-import { parseColor } from "@utils";
 import { RefreshCcw } from "lucide-react";
 
 export default function ColorPicker({
   label,
-  onChange,
-  disable = false,
   value,
+  onChange,
+  onCommit,
   resetColor,
-  store,
+  disabled = false,
 }) {
-  const isDisable = useResolvedValue(store, disable);
-  const color = useResolvedValue(store, value);
+  const isCommitMode = typeof onCommit === "function";
+  const [local, setLocal] = useState(value);
+
+  // sync external → local draft
+  useEffect(() => {
+    if (isCommitMode) setLocal(value);
+  }, [value, isCommitMode]);
+
+  const displayColor = isCommitMode ? local : value;
 
   return (
     <div
@@ -23,20 +29,35 @@ export default function ColorPicker({
         rounded-[4px]
         w-fit
         border border-(--border)
-        ${isDisable ? "pointer-events-none opacity-40" : ""}
+        ${disabled ? "pointer-events-none opacity-40" : ""}
       `}
     >
       {/* Color indicator */}
       <span
         className="w-[0.85rem] h-[0.85rem] rounded-full"
-        style={{ background: color }}
+        style={{ background: displayColor }}
       />
 
       {/* Hidden color input */}
       <input
         type="color"
-        value={parseColor(color)}
-        onChange={(e) => onChange?.(e.target.value)}
+        value={displayColor}
+        onChange={(e) => {
+          const next = e.target.value;
+
+          if (isCommitMode) {
+            setLocal(next);
+            onChange?.(next); // optional live preview
+          } else {
+            onChange?.(next);
+          }
+        }}
+        onBlur={() => {
+          if (isCommitMode) onCommit(local);
+        }}
+        onPointerUp={() => {
+          if (isCommitMode) onCommit(local);
+        }}
         className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
       />
 
@@ -45,7 +66,14 @@ export default function ColorPicker({
 
       <Button.Icon
         tooltip={{ text: "Reset", position: "top" }}
-        onClick={() => onChange?.(resetColor)}
+        onClick={() => {
+          if (isCommitMode) {
+            setLocal(resetColor);
+            onCommit(resetColor);
+          } else {
+            onChange?.(resetColor);
+          }
+        }}
       >
         <RefreshCcw size={16} />
       </Button.Icon>

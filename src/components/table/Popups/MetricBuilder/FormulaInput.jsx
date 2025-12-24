@@ -1,11 +1,14 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Input } from "@ui";
 import { FormulaSuggestions } from "./FormulaSuggestions";
+import { FormulaValidation } from "./FormulaValidation";
 
 export function FormulaInput({ value, onChange, ast, numericColumns }) {
   const [cursor, setCursor] = useState(0);
   const [highlight, setHighlight] = useState(0);
   const [open, setOpen] = useState(true);
+
+  console.log(ast);
 
   const suggestions = useMemo(() => {
     const m = value.slice(0, cursor).match(/[a-zA-Z_]+$/);
@@ -70,6 +73,8 @@ export function FormulaInput({ value, onChange, ast, numericColumns }) {
           onSelect={applySuggestion}
         />
       )}
+
+      <FormulaValidation valid={!!ast} />
     </div>
   );
 }

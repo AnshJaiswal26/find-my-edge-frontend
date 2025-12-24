@@ -1,103 +1,103 @@
 import { ColorPicker, Input, Select, Button } from "@ui";
 import { Section } from "@layout";
-import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
 
-export default function LineSettingsSection({ chartId, updateChart }) {
+export default function LineSettingsSection({
+  layoutDraft,
+  seriesDraft,
+  setLayoutDraft,
+  setSeriesDraft,
+}) {
   return (
     <>
-      <DataSeries chartId={chartId} updateChart={updateChart} />
+      <DataSeries seriesDraft={seriesDraft} setSeriesDraft={setSeriesDraft} />
+
       {/* Stroke Settings */}
       <Section title="Stroke">
         <Input
           label="Stroke Width"
           type="range"
-          value={(s) => s[chartId].draft.layout.strokeWidth}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.strokeWidth = e.target.value;
-            })
-          }
+          value={layoutDraft.strokeWidth}
           min={1}
           max={10}
-          store={useChartStore}
+          onCommit={(v) =>
+            setLayoutDraft((p) => ({ ...p, strokeWidth: Number(v) }))
+          }
         />
+
         <Select
-          label={"Stroke Type"}
+          label="Stroke Type"
           options={["Straight", "Smooth", "StepLine"]}
-          value={(s) => s[chartId].draft.layout.curve}
+          value={layoutDraft.curve}
           getKey={(v) => v.toLowerCase()}
           onChange={(v) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.curve = v.toLowerCase();
-            })
+            setLayoutDraft((p) => ({ ...p, curve: v.toLowerCase() }))
           }
-          store={useChartStore}
         />
 
         <SeriesColors
-          title={"Stroke"}
-          chartId={chartId}
-          updateChart={updateChart}
+          title="Stroke"
           type="color"
+          seriesDraft={seriesDraft}
+          setSeriesDraft={setSeriesDraft}
         />
       </Section>
+
       {/* Marker Settings */}
       <Section title="Marker">
         <Input
           label="Marker Size"
           type="range"
-          value={(s) => s[chartId].draft.layout.markerSize}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.markerSize = Number(e.target.value);
-            })
-          }
           min={0}
           max={10}
-          store={useChartStore}
+          value={layoutDraft.markerSize}
+          onCommit={(v) =>
+            setLayoutDraft((p) => ({ ...p, markerSize: Number(v) }))
+          }
         />
 
         <Input
           label="Marker Hover Size"
           type="range"
-          value={(s) => s[chartId].draft.layout.markerHoverSize}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.markerHoverSize = Number(e.target.value);
-            })
-          }
           min={1}
           max={15}
-          store={useChartStore}
+          value={layoutDraft.markerHoverSize}
+          onCommit={(v) =>
+            setLayoutDraft((p) => ({ ...p, markerHoverSize: Number(v) }))
+          }
         />
 
         <SeriesColors
-          title={"Marker"}
-          updateChart={updateChart}
-          chartId={chartId}
+          title="Marker"
+          seriesDraft={seriesDraft}
+          setSeriesDraft={setSeriesDraft}
         />
       </Section>
-      {/* Area Settings */}
-      <AreaSettingsSection chartId={chartId} updateChart={updateChart} />
+
+      <AreaSettingsSection
+        layoutDraft={layoutDraft}
+        setLayoutDraft={setLayoutDraft}
+        seriesDraft={seriesDraft}
+        setSeriesDraft={setSeriesDraft}
+      />
     </>
   );
 }
 
-function AreaSettingsSection({ chartId, updateChart }) {
-  const isAreaVisible = useChartStore((s) => s[chartId].draft.layout.area);
+function AreaSettingsSection({
+  layoutDraft,
+  setLayoutDraft,
+  seriesDraft,
+  setSeriesDraft,
+}) {
+  const isAreaVisible = layoutDraft.area;
 
   return (
     <Section title="Area">
       <Button.Toggle
         label="Show Area"
-        value={(s) => s[chartId].draft.layout.area}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.area = !chart.draft.layout.area;
-          })
-        }
-        store={useChartStore}
+        value={layoutDraft.area}
+        onChange={(v) => setLayoutDraft((p) => ({ ...p, area: v }))}
       />
 
       {isAreaVisible && (
@@ -108,13 +108,13 @@ function AreaSettingsSection({ chartId, updateChart }) {
             min={0}
             max={1}
             step={0.05}
-            value={(s) => s[chartId].draft.layout.areaOpacityFrom}
-            onChange={(e) =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.areaOpacityFrom = parseFloat(e.target.value);
-              })
+            value={layoutDraft.areaOpacityFrom}
+            onCommit={(v) =>
+              setLayoutDraft((p) => ({
+                ...p,
+                areaOpacityFrom: Number(v),
+              }))
             }
-            store={useChartStore}
           />
 
           <Input
@@ -123,32 +123,31 @@ function AreaSettingsSection({ chartId, updateChart }) {
             min={0}
             max={1}
             step={0.05}
-            value={(s) => s[chartId].draft.layout.areaOpacityTo}
-            onChange={(e) =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.areaOpacityTo = parseFloat(e.target.value);
-              })
+            value={layoutDraft.areaOpacityTo}
+            onCommit={(v) =>
+              setLayoutDraft((p) => ({
+                ...p,
+                areaOpacityTo: Number(v),
+              }))
             }
-            store={useChartStore}
           />
 
           <Button.Toggle
-            label={"Area Horizontal"}
-            value={(s) => s[chartId].draft.layout.areaGradientHorizontal}
-            onClick={() =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.areaGradientHorizontal =
-                  !chart.draft.layout.areaGradientHorizontal;
-              })
+            label="Area Horizontal"
+            value={layoutDraft.areaGradientHorizontal}
+            onChange={(v) =>
+              setLayoutDraft((p) => ({
+                ...p,
+                areaGradientHorizontal: v,
+              }))
             }
-            store={useChartStore}
           />
 
           <SeriesColors
-            title={"Area"}
-            chartId={chartId}
-            updateChart={updateChart}
+            title="Area"
             type="areaColor"
+            seriesDraft={seriesDraft}
+            setSeriesDraft={setSeriesDraft}
           />
         </>
       )}
@@ -156,58 +155,61 @@ function AreaSettingsSection({ chartId, updateChart }) {
   );
 }
 
-function SeriesColors({ title, chartId, updateChart, type = "markerColor" }) {
-  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
-
+function SeriesColors({
+  title,
+  type = "markerColor",
+  seriesDraft,
+  setSeriesDraft,
+}) {
   return (
     <div className="flex flex-wrap gap-3">
-      {Array.from({ length }).map((_, index) => (
+      {seriesDraft.map((s, index) => (
         <ColorPicker
           key={index}
           label={`${title} ${index + 1}`}
-          value={(s) => parseColor(s[chartId].draft.seriesConfig[index][type])}
-          onChange={(c) => {
-            updateChart(chartId, (chart) => {
-              chart.draft.seriesConfig[index][type] = c;
-            });
-          }}
-          store={useChartStore}
+          value={parseColor(s[type])}
+          onCommit={(c) =>
+            setSeriesDraft((prev) => {
+              const next = [...prev];
+              next[index] = { ...next[index], [type]: c };
+              return next;
+            })
+          }
         />
       ))}
     </div>
   );
 }
 
-function DataSeries({ chartId, updateChart }) {
-  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
-
+function DataSeries({ seriesDraft, setSeriesDraft }) {
   return (
-    <Section title={"Data Series Name"}>
-      {Array.from({ length }).map((_, index) => (
+    <Section title="Data Series Name">
+      {seriesDraft.map((s, index) => (
         <Section title={`Series ${index + 1}`} key={index} subSection>
           <Input
-            label={"Name"}
+            label="Name"
             placeholder="Enter Name"
-            value={(s) => parseColor(s[chartId].draft.seriesConfig[index].name)}
-            onChange={(c) => {
-              updateChart(chartId, (chart) => {
-                chart.draft.seriesConfig[index].name = c;
-              });
-            }}
-            store={useChartStore}
-          />
-          <Input
-            label={`Tooltip Label`}
-            placeholder="Enter Label"
-            value={(s) =>
-              parseColor(s[chartId].draft.seriesConfig[index].tooltipLabel)
+            value={s.name}
+            onCommit={(v) =>
+              setSeriesDraft((prev) => {
+                const next = [...prev];
+                next[index] = { ...next[index], name: v };
+                return next;
+              })
             }
-            onChange={(c) => {
-              updateChart(chartId, (chart) => {
-                chart.draft.seriesConfig[index].tooltipLabel = c;
-              });
-            }}
-            store={useChartStore}
+          />
+
+          <Input
+            label="Tooltip Label"
+            placeholder="Enter Label"
+            value={s.tooltipLabel}
+            onCommit={(v) =>
+              setSeriesDraft((prev) => {
+                const next = [...prev];
+                next[index] = { ...next[index], tooltipLabel: v };
+                return next;
+              })
+            }
           />
         </Section>
       ))}

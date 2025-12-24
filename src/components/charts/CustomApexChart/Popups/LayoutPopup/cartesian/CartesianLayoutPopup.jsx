@@ -11,18 +11,16 @@ import {
 } from "./sections";
 import LegendSection from "../common sections/LegendSection";
 
-export default function CartesianLayoutPopup({
-  chartId,
-  type = "bar",
-  updateChart,
-}) {
+export default function CartesianLayoutPopup(props) {
+  const { chartId, type, layoutDraft, setLayoutDraft } = props;
+
   const state = useChartStore.getState();
   const chart = state[chartId];
-  const isHorizontal = chart.live.layout.horizontal;
+  const isHorizontal = chart.layout.horizontal;
 
   return (
     <>
-      <GeneralSection chartId={chartId} updateChart={updateChart} />
+      <GeneralSection {...props} />
       <Section title="Grid">
         {[
           { title: "X Grid", key: "xGrid" },
@@ -31,36 +29,23 @@ export default function CartesianLayoutPopup({
           <Button.Toggle
             key={i}
             label={title}
-            value={(s) => s[chartId].draft.layout[key]}
-            onClick={() =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout[key] = !chart.draft.layout[key];
-              })
-            }
-            store={useChartStore}
+            value={layoutDraft[key]}
+            onCommit={(v) => setLayoutDraft((p) => ({ ...p, [key]: v }))}
           />
         ))}
       </Section>
 
       {type === "line" ? (
-        <LineSettingsSection chartId={chartId} updateChart={updateChart} />
+        <LineSettingsSection {...props} />
       ) : type === "bar" ? (
-        <BarSettingsSection chartId={chartId} updateChart={updateChart} />
+        <BarSettingsSection {...props} />
       ) : null}
 
-      <XAxisSection
-        chartId={chartId}
-        updateChart={updateChart}
-        isHorizontal={isHorizontal}
-      />
+      <XAxisSection {...props} isHorizontal={isHorizontal} />
 
-      <YAxisSection
-        chartId={chartId}
-        updateChart={updateChart}
-        isHorizontal={isHorizontal}
-      />
+      <YAxisSection {...props} isHorizontal={isHorizontal} />
 
-      <LegendSection chartId={chartId} updateChart={updateChart} />
+      <LegendSection {...props} />
     </>
   );
 }

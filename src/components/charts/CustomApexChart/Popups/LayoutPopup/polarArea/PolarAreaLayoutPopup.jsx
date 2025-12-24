@@ -2,29 +2,29 @@ import GeneralSection from "./sections/GeneralSection";
 import PolarSection from "./sections/PolarSection";
 import LegendSection from "../common sections/LegendSection";
 import { Button } from "@ui";
-import { useChartStore } from "@stores";
 import { Section } from "@layout";
 
-export default function PolarAreaLayoutPopup({ chartId, updateChart }) {
+export default function PolarAreaLayoutPopup(props) {
+  const { layoutDraft, setLayoutDraft } = props;
   return (
     <>
-      <GeneralSection chartId={chartId} updateChart={updateChart} />
-      <PolarSection chartId={chartId} updateChart={updateChart} />
+      <GeneralSection {...props} />
+      <PolarSection {...props} />
 
-      <Section title={"Axis Labels"}>
+      <Section title="Axis Labels">
         <Button.Toggle
           label="Y Axis Labels"
-          value={(s) => s[chartId].draft.layout.showYAxisLabels}
-          onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.showYAxisLabels =
-                !chart.draft.layout.showYAxisLabels;
-            })
+          value={layoutDraft.showYAxisLabels}
+          onChange={(v) =>
+            setLayoutDraft((p) => ({
+              ...p,
+              showYAxisLabels: v,
+            }))
           }
-          store={useChartStore}
         />
       </Section>
-      <LegendSection chartId={chartId} updateChart={updateChart} />
+
+      <LegendSection {...props} />
     </>
   );
 }

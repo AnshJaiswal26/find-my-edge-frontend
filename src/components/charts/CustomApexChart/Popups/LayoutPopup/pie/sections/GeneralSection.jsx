@@ -1,57 +1,39 @@
 import { Section } from "@layout";
 import { Button, Input } from "@ui";
-import { useChartStore } from "@stores";
 
-export default function GeneralSection({ chartId, updateChart }) {
+export default function GeneralSection({ layoutDraft, setLayoutDraft }) {
   return (
     <Section title="General">
       <Input
         label="Title"
         type="text"
-        value={(s) => s[chartId].draft.layout.title}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.title = e.target.value;
-          })
-        }
+        value={layoutDraft.title}
         placeholder="Chart title"
-        store={useChartStore}
+        onCommit={(v) => setLayoutDraft((p) => ({ ...p, title: v }))}
       />
 
       <Button.Toggle
-        label={"Tooltip"}
-        value={(s) => s[chartId].draft.layout.tooltip}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.tooltip = !chart.draft.layout.tooltip;
-          })
-        }
-        store={useChartStore}
+        label="Tooltip"
+        value={layoutDraft.tooltip}
+        onChange={(v) => setLayoutDraft((p) => ({ ...p, tooltip: v }))}
       />
+
       <Button.Toggle
-        label={"Data Labels"}
-        value={(s) => s[chartId].draft.layout.dataLabels}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.dataLabels = !chart.draft.layout.dataLabels;
-          })
-        }
-        store={useChartStore}
+        label="Data Labels"
+        value={layoutDraft.dataLabels}
+        onChange={(v) => setLayoutDraft((p) => ({ ...p, dataLabels: v }))}
       />
 
       <Input
         label="Donut Size"
         type="range"
-        value={(s) => s[chartId].draft.layout.donutSize}
+        value={layoutDraft.donutSize}
         formatter={(v) => `${v}%`}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.donutSize = e.target.value;
-          })
-        }
         min={0}
         max={95}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({ ...p, donutSize: Number(v) }))
+        }
       />
     </Section>
   );

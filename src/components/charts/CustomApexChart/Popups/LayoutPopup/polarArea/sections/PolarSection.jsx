@@ -1,91 +1,93 @@
 import { Section } from "@layout";
 import { ColorPicker, Input } from "@ui";
 import { parseColor } from "@utils";
-import { useChartStore } from "@stores";
 
-export default function PolygonSection({ chartId, updateChart }) {
+export default function PolarSection({
+  layoutDraft,
+  seriesDraft,
+  setLayoutDraft,
+  setSeriesDraft,
+}) {
   return (
     <Section title="Polar">
       <Input
         label="Polar Stroke Width"
         type="range"
-        value={(s) => s[chartId].draft.layout.strokeWidth}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeWidth = e.target.value;
-          })
-        }
+        value={layoutDraft.strokeWidth}
         min={0}
         max={10}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({
+            ...p,
+            strokeWidth: Number(v),
+          }))
+        }
       />
 
       <Input
         label="Ring Width"
         type="range"
-        value={(s) => s[chartId].draft.layout.ringBorderWidth}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.ringBorderWidth = e.target.value;
-          })
-        }
+        value={layoutDraft.ringBorderWidth}
         min={0}
         max={10}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({
+            ...p,
+            ringBorderWidth: Number(v),
+          }))
+        }
       />
 
       <ColorPicker
         label="Ring Border"
-        value={(s) => parseColor(s[chartId].draft.layout.ringBorderColor)}
-        onChange={(c) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.ringBorderColor = c;
-          })
+        value={parseColor(layoutDraft.ringBorderColor)}
+        resetColor="var(--border)"
+        onCommit={(c) =>
+          setLayoutDraft((p) => ({
+            ...p,
+            ringBorderColor: c,
+          }))
         }
-        resetColor={"var(--border)"}
-        store={useChartStore}
       />
 
       <Input
         label="Polar Opacity From"
         type="range"
-        value={(s) => s[chartId].draft.layout.fillOpacityFrom}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.fillOpacityFrom = e.target.value;
-          })
-        }
+        value={layoutDraft.fillOpacityFrom}
         min={0}
         max={1}
         step={0.1}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({
+            ...p,
+            fillOpacityFrom: Number(v),
+          }))
+        }
       />
 
       <Input
         label="Polar Opacity To"
         type="range"
-        value={(s) => s[chartId].draft.layout.fillOpacityTo}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.fillOpacityTo = e.target.value;
-          })
-        }
+        value={layoutDraft.fillOpacityTo}
         min={0}
         max={1}
         step={0.1}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({
+            ...p,
+            fillOpacityTo: Number(v),
+          }))
+        }
       />
 
-      <PolarSeries chartId={chartId} updateChart={updateChart} />
+      <PolarSeries seriesDraft={seriesDraft} setSeriesDraft={setSeriesDraft} />
     </Section>
   );
 }
 
-function PolarSeries({ chartId, updateChart }) {
-  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
-
-  return Array.from({ length }).map((_, i) => (
-    <Section title={`Series ${i + 1}`} subSection={true} key={i}>
+function PolarSeries({ seriesDraft, setSeriesDraft }) {
+  return seriesDraft.map((series, i) => (
+    <Section title={`Series ${i + 1}`} subSection key={i}>
       {[
         { label: "Name", key: "name", placeholder: "Enter Name" },
         {
@@ -95,29 +97,32 @@ function PolarSeries({ chartId, updateChart }) {
         },
         { label: "Value Prefix", key: "prefix", placeholder: "Enter Prefix" },
         { label: "Value Suffix", key: "suffix", placeholder: "Enter Suffix" },
-      ].map(({ label, key, placeholder }, idx) => (
+      ].map(({ label, key, placeholder }) => (
         <Input
-          key={idx}
+          key={key}
           label={label}
           placeholder={placeholder}
-          value={(s) => s[chartId].draft.seriesConfig[i][key]}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.seriesConfig[i][key] = e.target.value;
+          value={series[key]}
+          onCommit={(v) =>
+            setSeriesDraft((prev) => {
+              const next = [...prev];
+              next[i] = { ...next[i], [key]: v };
+              return next;
             })
           }
-          store={useChartStore}
         />
       ))}
+
       <ColorPicker
         label="Color"
-        value={(s) => parseColor(s[chartId].draft.seriesConfig[i].color)}
-        onChange={(c) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[i].color = c;
+        value={parseColor(series.color)}
+        onCommit={(c) =>
+          setSeriesDraft((prev) => {
+            const next = [...prev];
+            next[i] = { ...next[i], color: c };
+            return next;
           })
         }
-        store={useChartStore}
       />
     </Section>
   ));

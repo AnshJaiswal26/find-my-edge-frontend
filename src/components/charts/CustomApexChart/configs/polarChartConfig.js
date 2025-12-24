@@ -1,11 +1,11 @@
 import { customTooltip, parseColor, shadeColor } from "@utils";
 
 export const getPolarChartConfig = ({ chartId, chart, tooltipCallback }) => {
-  const config = chart.live.layout;
+  const config = chart.layout;
 
   const index = chart.runtime.selectedLegendIndex;
   const seriesConfig =
-    index !== null ? [chart.live.seriesConfig[index]] : chart.live.seriesConfig;
+    index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
 
   return {
     chart: {

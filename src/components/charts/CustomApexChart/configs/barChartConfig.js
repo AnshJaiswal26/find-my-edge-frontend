@@ -1,7 +1,7 @@
 import { cartesianChartConfig } from "./cartesianChartConfig";
 
 export const getBarChartConfig = ({ chart, chartId, tooltipCallback }) => {
-  const config = chart.live.layout;
+  const config = chart.layout;
   const series = chart.series.filtered;
 
   const base = cartesianChartConfig({

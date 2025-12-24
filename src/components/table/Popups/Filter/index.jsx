@@ -47,7 +47,11 @@ export const filterOptionsByType = {
 };
 
 export function FilterPopup() {
-  const { filters, columnsById, activePopup } = useTableStore();
+  const filters = useTableStore((s) => s.filters);
+  const columnsById = useTableStore((s) => s.columnsById);
+  const activePopup = useTableStore((s) => s.activePopup);
+
+  if (activePopup !== "filter") return null;
 
   const {
     addFilter,
@@ -58,8 +62,6 @@ export function FilterPopup() {
     applyFilters,
   } = useTableStore.getState();
 
-  if (activePopup !== "filter") return null;
-
   return (
     <Popup open>
       <Popup.Container className="w-50 max-w-50">
@@ -68,7 +70,7 @@ export function FilterPopup() {
         <Popup.Body className="px-4 py-3">
           {/* FILTER RULES */}
           {filters.length === 0 && (
-            <p className="text-sm text-center pt-20 text-(--text-muted)">
+            <p className="text-sm text-center rounded border border-(--border) pt-20 text-(--text-muted)">
               No filters applied. Add a rule to narrow results.
             </p>
           )}

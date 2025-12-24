@@ -1,102 +1,73 @@
 import { ColorPicker, Input, Button } from "@ui";
 import { Section } from "@layout";
-import { useChartStore } from "@stores";
 import { parseColor } from "@utils";
 
-export default function YAxisSection({ chartId, updateChart, isHorizontal }) {
+export default function YAxisSection({
+  layoutDraft,
+  setLayoutDraft,
+  isHorizontal,
+}) {
   return (
     <Section title={isHorizontal ? "X-Axis" : "Y-Axis"}>
       {!isHorizontal && (
         <Button.Toggle
-          label={"Tooltip"}
-          value={(s) => s[chartId].draft.layout.xTooltip}
-          onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xTooltip = !chart.draft.layout.xTooltip;
-            })
-          }
-          store={useChartStore}
+          label="Tooltip"
+          value={layoutDraft.yTooltip}
+          onChange={(v) => setLayoutDraft((p) => ({ ...p, yTooltip: v }))}
         />
       )}
 
-      <Section title={"Labels"}>
+      {/* Labels */}
+      <Section title="Labels">
         <ColorPicker
           label="Color"
-          value={(s) => parseColor(s[chartId].draft.layout.yLabelsColor)}
-          disable={(s) => s[chartId].draft.layout.yLabels === false}
-          onChange={(c) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.yLabelsColor = c;
-            })
-          }
-          store={useChartStore}
+          value={parseColor(layoutDraft.yLabelsColor)}
+          disabled={!layoutDraft.yLabels}
+          onCommit={(c) => setLayoutDraft((p) => ({ ...p, yLabelsColor: c }))}
         />
 
         <Button.Toggle
-          label={"Show"}
-          value={(s) => s[chartId].draft.layout.yLabels}
-          onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.yLabels = !chart.draft.layout.yLabels;
-            })
-          }
-          store={useChartStore}
+          label="Show"
+          value={layoutDraft.yLabels}
+          onChange={(v) => setLayoutDraft((p) => ({ ...p, yLabels: v }))}
         />
 
         <Input
           label="Prefix"
           type="text"
-          value={(s) => s[chartId].draft.layout.yLabelPrefix}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.yLabelPrefix = e.target.value;
-            })
-          }
+          value={layoutDraft.yLabelPrefix}
           placeholder="Enter Prefix"
-          store={useChartStore}
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, yLabelPrefix: v }))}
         />
 
         <Input
           label="Suffix"
           type="text"
-          value={(s) => s[chartId].draft.layout.yLabelSuffix}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.yLabelSuffix = e.target.value;
-            })
-          }
+          value={layoutDraft.yLabelSuffix}
           placeholder="Enter Suffix"
-          store={useChartStore}
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, yLabelSuffix: v }))}
         />
       </Section>
-      <Section title={"Title"}>
+
+      {/* Title */}
+      <Section title="Title">
         <span className="font-light text-[var(--text-charts)] text-[0.85rem]">
-          Leave blank to hide the title.{" "}
+          Leave blank to hide the title.
         </span>
 
         <Input
           label="Text"
           type="text"
-          value={(s) => s[chartId].draft.layout.yTitleText}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.yTitleText = e.target.value;
-            })
-          }
-          placeholder={"Y-axis title"}
-          store={useChartStore}
+          value={layoutDraft.yTitleText}
+          placeholder="Y-axis title"
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, yTitleText: v }))}
         />
 
         <ColorPicker
           label="Color"
-          value={(s) => parseColor(s[chartId].draft.layout.yTitleColor)}
-          disable={(s) => s[chartId].draft.layout.yTitleText === ""}
-          onChange={(c) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.yTitleColor = c;
-            })
-          }
-          store={useChartStore}
+          value={parseColor(layoutDraft.yTitleColor)}
+          disabled={!layoutDraft.yTitleText}
+          onCommit={(c) => setLayoutDraft((p) => ({ ...p, yTitleColor: c }))}
         />
       </Section>
     </Section>

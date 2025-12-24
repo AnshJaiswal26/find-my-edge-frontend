@@ -1,4 +1,4 @@
-import { useResolvedValue } from "@hooks";
+import { useEffect, useState } from "react";
 
 const sizeClasses = {
   large: "px-3 py-2 text-lg rounded-lg",
@@ -53,17 +53,31 @@ export const Button = ({
 
 Button.Toggle = ({
   label,
-  store,
   value,
+  onChange,
+  onCommit,
   classNames = {},
-  className = "",
-  trackClass = "",
-  thumbClass = "",
-  activeTrackClass = "",
-  activeThumbClass = "",
   ...props
 }) => {
-  const active = useResolvedValue(store, value);
+  const isCommitMode = typeof onCommit === "function";
+  const [local, setLocal] = useState(value);
+
+  useEffect(() => {
+    if (isCommitMode) setLocal(value);
+  }, [value, isCommitMode]);
+
+  const active = isCommitMode ? local : value;
+
+  const handleToggle = () => {
+    const next = !active;
+
+    if (isCommitMode) {
+      setLocal(next);
+      onCommit(next);
+    } else {
+      onChange?.(next);
+    }
+  };
 
   return (
     <div
@@ -74,6 +88,7 @@ Button.Toggle = ({
       <div
         role="switch"
         aria-checked={active}
+        onClick={handleToggle}
         className={`
           cursor-pointer
           w-8 h-3
@@ -81,7 +96,7 @@ Button.Toggle = ({
           flex items-center
           transition-colors
           ${classNames?.track}
-          ${active ? `bg-(--info) ${activeTrackClass}` : "bg-(--hover)"}
+          ${active ? "bg-(--info)" : "bg-(--hover)"}
         `}
         {...props}
       >
@@ -91,11 +106,11 @@ Button.Toggle = ({
             bg-white
             rounded-full
             transition-transform
-            border 
+            border
             ${classNames?.thumb}
             ${
               active
-                ? `translate-x-full border-(--info) ${activeThumbClass}`
+                ? "translate-x-full border-(--info)"
                 : "translate-x-0 border-(--border)"
             }
           `}

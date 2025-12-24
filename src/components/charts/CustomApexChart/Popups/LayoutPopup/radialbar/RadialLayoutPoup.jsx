@@ -4,14 +4,14 @@ import TrackSection from "./sections/TrackSection";
 import BarSection from "./sections/RadialBarSection";
 import LegendSection from "../common sections/LegendSection";
 
-export default function RadialLayoutPopup({ chartId, updateChart }) {
+export default function RadialLayoutPopup(props) {
   return (
     <>
-      <GeneralSection chartId={chartId} updateChart={updateChart} />
-      <TrackSection chartId={chartId} updateChart={updateChart} />
-      <BarSection chartId={chartId} updateChart={updateChart} />
-      <DataLabelSection chartId={chartId} updateChart={updateChart} />
-      <LegendSection chartId={chartId} updateChart={updateChart} />
+      <GeneralSection {...props} />
+      <TrackSection {...props} />
+      <BarSection {...props} />
+      <DataLabelSection {...props} />
+      <LegendSection {...props} />
     </>
   );
 }

@@ -1,24 +1,26 @@
 import { useMemo, useState } from "react";
 import { MetricNameInput } from "./MetricNameInput";
 import { FormulaInput } from "./FormulaInput";
-import { FormulaValidation } from "./FormulaValidation";
 import { useTableStore } from "../../store";
 import { Popup } from "@layout";
 import { tokenize, toPostfix, buildAST } from "./expression";
 
 export function MetricBuilder() {
-  const activePopup = useTableStore((s) => s.activePopup);
-  const columnsById = useTableStore((s) => s.columnsById);
-  const addMetric = useTableStore((s) => s.addMetric);
-  const closePopup = useTableStore((s) => s.closePopup);
+  const isOpen = useTableStore((s) => s.activePopup === "add-metric");
 
-  const numericColumns = useMemo(
-    () =>
-      Object.values(columnsById).filter(
-        (c) => c.type === "number" || c.type === "computed"
-      ),
-    [columnsById]
+  if (!isOpen) return null;
+
+  return <MetricBuilderContent />;
+}
+
+function MetricBuilderContent() {
+  const numericColumns = useTableStore((s) =>
+    Object.values(s.columnsById).filter(
+      (c) => c.type === "number" || c.type === "computed"
+    )
   );
+
+  const { addMetric, closePopup } = useTableStore.getState();
 
   const labelToId = useMemo(() => {
     const map = {};
@@ -33,7 +35,7 @@ export function MetricBuilder() {
 
   const ast = useMemo(() => {
     try {
-      return buildAST(toPostfix(tokenize(expr)), labelToId);
+      return buildAST(toPostfix(tokenize(expr)), numericColumns);
     } catch {
       return null;
     }
@@ -46,11 +48,10 @@ export function MetricBuilder() {
       label: name,
       type: "computed",
       expression: ast,
+      formula: expr,
     });
     closePopup();
   };
-
-  if (activePopup !== "add-metric") return null;
 
   return (
     <Popup open>
@@ -66,7 +67,6 @@ export function MetricBuilder() {
               ast={ast}
               numericColumns={numericColumns}
             />
-            <FormulaValidation valid={!!ast} />
           </div>
         </Popup.Body>
 

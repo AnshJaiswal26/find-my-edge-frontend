@@ -1,53 +1,45 @@
 import { Section } from "@layout";
 import { Button, Input } from "@ui";
-import { useChartStore } from "@stores";
 
-export default function AxisLabelsSection({ chartId, updateChart }) {
+export default function AxisLabelsSection({
+  layoutDraft,
+  seriesDraft,
+  setLayoutDraft,
+  setSeriesDraft,
+}) {
   return (
     <Section title="Axis Labels">
       <Button.Toggle
         label="X Axis Labels"
-        value={(s) => s[chartId].draft.layout.showXAxisLabels}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.showXAxisLabels =
-              !chart.draft.layout.showXAxisLabels;
-          })
-        }
-        store={useChartStore}
+        value={layoutDraft.showXAxisLabels}
+        onChange={(v) => setLayoutDraft((p) => ({ ...p, showXAxisLabels: v }))}
       />
 
       <Button.Toggle
         label="Y Axis Labels"
-        value={(s) => s[chartId].draft.layout.showYAxisLabels}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.showYAxisLabels =
-              !chart.draft.layout.showYAxisLabels;
-          })
-        }
-        store={useChartStore}
+        value={layoutDraft.showYAxisLabels}
+        onChange={(v) => setLayoutDraft((p) => ({ ...p, showYAxisLabels: v }))}
       />
-      <AxisLabels chartId={chartId} updateChart={updateChart} />
+
+      <AxisLabels seriesDraft={seriesDraft} setSeriesDraft={setSeriesDraft} />
     </Section>
   );
 }
 
-function AxisLabels({ chartId, updateChart }) {
-  const length = useChartStore((s) => s[chartId].series.filtered.length);
-
-  return Array.from({ length }).map((_, i) => (
+function AxisLabels({ seriesDraft, setSeriesDraft }) {
+  return seriesDraft.map((series, i) => (
     <Input
       key={i}
       label={`Axis ${i + 1}`}
-      value={(s) => s[chartId].series.filtered[i].axis}
+      value={series.axis}
       placeholder="Enter Axis Label"
-      onChange={(e) =>
-        updateChart(chartId, (chart) => {
-          chart.series.filtered[i].axis = e.target.value;
+      onCommit={(v) =>
+        setSeriesDraft((prev) => {
+          const next = [...prev];
+          next[i] = { ...next[i], axis: v };
+          return next;
         })
       }
-      store={useChartStore}
     />
   ));
 }

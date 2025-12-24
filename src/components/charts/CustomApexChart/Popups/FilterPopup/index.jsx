@@ -105,7 +105,7 @@ export default function FilterPopup({ chartId }) {
 }
 
 function SeriesSelector({ chartId, updateChart, selectedSeries }) {
-  const seriesConfig = useChartStore((s) => s[chartId].live.seriesConfig);
+  const seriesConfig = useChartStore((s) => s[chartId].seriesConfig);
 
   return (
     <ExpandableSection

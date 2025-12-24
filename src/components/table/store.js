@@ -71,7 +71,7 @@ function computeColumn(rowsById, column) {
 export const useTableStore = create(
   immer((set, get) => ({
     /* ---------------------------------------------------------------------- */
-    /*                                CORE STATE                               */
+    /*                                CORE STATE                              */
     /* ---------------------------------------------------------------------- */
 
     rowsById: {},
@@ -84,7 +84,7 @@ export const useTableStore = create(
     activePopup: null,
 
     /* ---------------------------------------------------------------------- */
-    /*                              SELECTION STATE                            */
+    /*                              SELECTION STATE                           */
     /* ---------------------------------------------------------------------- */
 
     selectedColumn: null,
@@ -92,7 +92,7 @@ export const useTableStore = create(
     selectedCell: null,
 
     /* ---------------------------------------------------------------------- */
-    /*                               DRAG STATE                                */
+    /*                               DRAG STATE                               */
     /* ---------------------------------------------------------------------- */
 
     // column drag
@@ -108,7 +108,7 @@ export const useTableStore = create(
     rowDragOverIndex: null,
 
     /* ---------------------------------------------------------------------- */
-    /*                           FILTER & SORT STATE                           */
+    /*                           FILTER & SORT STATE                          */
     /* ---------------------------------------------------------------------- */
 
     filters: [],
@@ -120,7 +120,7 @@ export const useTableStore = create(
     },
 
     /* ---------------------------------------------------------------------- */
-    /*                             SELECTION ACTIONS                           */
+    /*                             SELECTION ACTIONS                          */
     /* ---------------------------------------------------------------------- */
 
     selectCell(payload) {
@@ -144,7 +144,7 @@ export const useTableStore = create(
     },
 
     /* ---------------------------------------------------------------------- */
-    /*                               FILTER ACTIONS                            */
+    /*                               FILTER ACTIONS                           */
     /* ---------------------------------------------------------------------- */
 
     addFilter() {
@@ -197,7 +197,7 @@ export const useTableStore = create(
     },
 
     /* ---------------------------------------------------------------------- */
-    /*                                SORT ACTIONS                             */
+    /*                                SORT ACTIONS                            */
     /* ---------------------------------------------------------------------- */
 
     setSort(columnId, operator) {
@@ -237,7 +237,7 @@ export const useTableStore = create(
     },
 
     /* ---------------------------------------------------------------------- */
-    /*                             POPUP ACTIONS                               */
+    /*                             POPUP ACTIONS                              */
     /* ---------------------------------------------------------------------- */
 
     openPopup(id) {
@@ -249,7 +249,7 @@ export const useTableStore = create(
     },
 
     /* ---------------------------------------------------------------------- */
-    /*                           COLUMN DRAG ACTIONS                           */
+    /*                           COLUMN DRAG ACTIONS                          */
     /* ---------------------------------------------------------------------- */
 
     startColumnDrag(payload) {
@@ -327,7 +327,7 @@ export const useTableStore = create(
     },
 
     /* ---------------------------------------------------------------------- */
-    /*                             ROW DRAG ACTIONS                            */
+    /*                             ROW DRAG ACTIONS                           */
     /* ---------------------------------------------------------------------- */
 
     startRowDrag(payload) {
@@ -376,9 +376,9 @@ export const useTableStore = create(
       });
     },
 
-    /* ---------------------------------------------------------------------- */
-    /*                              CELL ACTIONS                               */
-    /* ---------------------------------------------------------------------- */
+    /* ------------------------------------------------------------- */
+    /*                    CELL ACTIONS                               */
+    /* ------------------------------------------------------------- */
 
     updateCell(rowId, colId, input) {
       const state = get();
@@ -415,7 +415,7 @@ export const useTableStore = create(
     },
 
     /* ---------------------------------------------------------------------- */
-    /*                              DATA ACTIONS                               */
+    /*                              DATA ACTIONS                              */
     /* ---------------------------------------------------------------------- */
 
     initDemoData() {
@@ -461,12 +461,40 @@ export const useTableStore = create(
       state.recompute();
     },
 
+    /* ---------------------------------------------------------------------- */
+    /*                              ROW ACTIONS                               */
+    /* ---------------------------------------------------------------------- */
+
     addTrade() {
       const t = createTrade(get().columnsById, true);
       set((s) => {
         s.rowsById[t.id] = t;
         s.rowOrder.push(t.id);
       });
+    },
+
+    /* ---------------------------------------------------------------------- */
+    /*                              COLUMN ACTIONS                            */
+    /* ---------------------------------------------------------------------- */
+
+    addMetric(metric) {
+      set((s) => {
+        const column = {
+          ...metric,
+          editable: false,
+          display: { format: "", decimals: 2 },
+        };
+
+        s.columnsById[metric.id] = column;
+        s.columnOrder.push(metric.id);
+
+        Object.values(s.rowsById).forEach((row) => {
+          const value = getInitialCellValue(metric);
+          row.cells[metric.id] = { value, display: value, meta: {} };
+        });
+      });
+
+      get().recompute({ colId: metric.id });
     },
 
     deleteColumn() {
@@ -483,24 +511,26 @@ export const useTableStore = create(
       });
     },
 
-    addMetric(metric) {
+    updateColumn(activeColId, draft) {
       set((s) => {
-        const column = {
-          ...metric,
-          editable: false,
-          display: { format: "currency", decimals: 2 },
-        };
+        const col = s.columnsById[activeColId];
 
-        s.columnsById[metric.id] = column;
-        s.columnOrder.push(metric.id);
+        // label
+        col.label = draft.label;
 
-        Object.values(s.rowsById).forEach((row) => {
-          const value = getInitialCellValue(metric);
-          row.cells[metric.id] = { value, display: value, meta: {} };
-        });
+        // computed
+        if (col.type === "computed") {
+          col.formula = draft.formula;
+          col.expression = ast;
+        }
+
+        // select
+        if (col.type === "select") {
+          col.options = draft.options.map((o) => o.trim());
+        }
       });
 
-      get().recompute({ colId: metric.id });
+      if (draft.type === "computed") get().recompute({ colId: activeColId });
     },
   }))
 );

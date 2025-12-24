@@ -3,13 +3,13 @@ import PolygonSection from "./sections/PolygonSection";
 import AxisLabelsSection from "./sections/AxisLabelsSection";
 import LegendSection from "../common sections/LegendSection";
 
-export default function RadarLayoutPopup({ chartId, updateChart }) {
+export default function RadarLayoutPopup(props) {
   return (
     <>
-      <GeneralSection chartId={chartId} updateChart={updateChart} />
-      <PolygonSection chartId={chartId} updateChart={updateChart} />
-      <AxisLabelsSection chartId={chartId} updateChart={updateChart} />
-      <LegendSection chartId={chartId} updateChart={updateChart} />
+      <GeneralSection {...props} />
+      <PolygonSection {...props} />
+      <AxisLabelsSection {...props} />
+      <LegendSection {...props} />
     </>
   );
 }

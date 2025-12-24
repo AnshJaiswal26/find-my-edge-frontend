@@ -2,7 +2,7 @@ import { useChartStore } from "@stores";
 import { customTooltip } from "./customTooltip";
 
 export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
-  const config = chart.live.layout;
+  const config = chart.layout;
   const series = chart.series.filtered;
 
   const style = { fontSize: "0.75rem" };
@@ -62,7 +62,7 @@ export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
         click: (e, t, { dataPointIndex }) => {
           const state = useChartStore.getState();
           const chart = state[chartId];
-          const isSelecting = chart.live.layout.selection;
+          const isSelecting = chart.layout.selection;
           if (!isSelecting) return;
 
           const svgRect = t.el.getBoundingClientRect();
@@ -144,7 +144,7 @@ export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
           const svgRect = t.el.getBoundingClientRect();
 
           const chart = useChartStore.getState()[chartId];
-          const isSelecting = chart.live.layout.selection;
+          const isSelecting = chart.layout.selection;
           if (!isSelecting) return;
 
           if (config.horizontal) {

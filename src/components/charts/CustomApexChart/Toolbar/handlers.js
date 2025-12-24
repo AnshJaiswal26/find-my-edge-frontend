@@ -2,21 +2,21 @@ import { useChartStore } from "@stores";
 
 export const handleZoomIn = (updater, chartId) => {
   updater(chartId, (chart) => {
-    const prev = chart.live.layout.chartWidth;
+    const prev = chart.layout.chartWidth;
 
     if (prev === 1000) return;
 
-    chart.live.layout.chartWidth = typeof prev === "string" ? 200 : prev + 100;
+    chart.layout.chartWidth = typeof prev === "string" ? 200 : prev + 100;
   });
 };
 
 export const handleZoomOut = (updater, chartId) => {
   updater(chartId, (chart) => {
-    const prev = chart.live.layout.chartWidth;
+    const prev = chart.layout.chartWidth;
 
     if (prev === 100 || typeof prev === "string") return;
 
-    chart.live.layout.chartWidth = prev - 100;
+    chart.layout.chartWidth = prev - 100;
   });
 };
 

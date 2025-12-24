@@ -1,105 +1,70 @@
 import { Section } from "@layout";
 import { Button, Input } from "@ui";
-import { useChartStore } from "@stores";
 
-export default function DataLabelSection({ chartId, updateChart }) {
+export default function DataLabelSection({ layoutDraft, setLayoutDraft }) {
   return (
-    <>
-      <Section title="Center Labels">
-        <Section title={"Name"} subSection>
-          <Button.Toggle
-            label={"Show"}
-            value={(s) => s[chartId].draft.layout.name}
-            onClick={() =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.name = !chart.draft.layout.name;
-              })
-            }
-            store={useChartStore}
-          />
-        </Section>
-
-        <Section title={"Value"} subSection>
-          <Button.Toggle
-            label={"Show"}
-            value={(s) => s[chartId].draft.layout.value}
-            onClick={() =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.value = !chart.draft.layout.value;
-              })
-            }
-            store={useChartStore}
-          />
-          <Input
-            label={"Prefix"}
-            value={(s) => s[chartId].draft.layout.valuePrefix}
-            placeholder="Enter Prefix"
-            onChange={(e) =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.valuePrefix = e.target.value;
-              })
-            }
-            store={useChartStore}
-          />
-          <Input
-            label={"Suffix"}
-            value={(s) => s[chartId].draft.layout.valueSuffix}
-            placeholder="Enter Suffix"
-            onChange={(e) =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.valueSuffix = e.target.value;
-              })
-            }
-            store={useChartStore}
-          />
-        </Section>
-
-        <Section title={"Total"} subSection>
-          <Button.Toggle
-            label={"Show"}
-            value={(s) => s[chartId].draft.layout.total}
-            onClick={() =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.total = !chart.draft.layout.total;
-              })
-            }
-            store={useChartStore}
-          />
-          <Input
-            label={"Label"}
-            value={(s) => s[chartId].draft.layout.totalLabel}
-            placeholder="Enter Label"
-            onChange={(e) =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.totalLabel = e.target.value;
-              })
-            }
-            store={useChartStore}
-          />
-          <Input
-            label={"Prefix"}
-            value={(s) => s[chartId].draft.layout.totalPrefix}
-            placeholder="Enter Prefix"
-            onChange={(e) =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.totalPrefix = e.target.value;
-              })
-            }
-            store={useChartStore}
-          />
-          <Input
-            label={"Suffix"}
-            value={(s) => s[chartId].draft.layout.totalSuffix}
-            placeholder="Enter Suffix"
-            onChange={(e) =>
-              updateChart(chartId, (chart) => {
-                chart.draft.layout.totalSuffix = e.target.value;
-              })
-            }
-            store={useChartStore}
-          />
-        </Section>
+    <Section title="Center Labels">
+      {/* Name */}
+      <Section title="Name" subSection>
+        <Button.Toggle
+          label="Show"
+          value={layoutDraft.name}
+          onChange={(v) => setLayoutDraft((p) => ({ ...p, name: v }))}
+        />
       </Section>
-    </>
+
+      {/* Value */}
+      <Section title="Value" subSection>
+        <Button.Toggle
+          label="Show"
+          value={layoutDraft.value}
+          onChange={(v) => setLayoutDraft((p) => ({ ...p, value: v }))}
+        />
+
+        <Input
+          label="Prefix"
+          value={layoutDraft.valuePrefix}
+          placeholder="Enter Prefix"
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, valuePrefix: v }))}
+        />
+
+        <Input
+          label="Suffix"
+          value={layoutDraft.valueSuffix}
+          placeholder="Enter Suffix"
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, valueSuffix: v }))}
+        />
+      </Section>
+
+      {/* Total */}
+      <Section title="Total" subSection>
+        <Button.Toggle
+          label="Show"
+          value={layoutDraft.total}
+          onChange={(v) => setLayoutDraft((p) => ({ ...p, total: v }))}
+        />
+
+        <Input
+          label="Label"
+          value={layoutDraft.totalLabel}
+          placeholder="Enter Label"
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, totalLabel: v }))}
+        />
+
+        <Input
+          label="Prefix"
+          value={layoutDraft.totalPrefix}
+          placeholder="Enter Prefix"
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, totalPrefix: v }))}
+        />
+
+        <Input
+          label="Suffix"
+          value={layoutDraft.totalSuffix}
+          placeholder="Enter Suffix"
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, totalSuffix: v }))}
+        />
+      </Section>
+    </Section>
   );
 }

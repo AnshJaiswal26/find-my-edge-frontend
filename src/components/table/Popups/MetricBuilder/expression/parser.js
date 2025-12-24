@@ -3,10 +3,12 @@ const PRECEDENCE = { "+": 1, "-": 1, "*": 2, "/": 2 };
 export function toPostfix(tokens) {
   const out = [];
   const ops = [];
+  
 
   for (const t of tokens) {
     if (t.type === "identifier" || t.type === "number") {
       out.push(t);
+      if(t.type === "identifier") 
       continue;
     }
 

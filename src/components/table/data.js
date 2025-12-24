@@ -48,8 +48,8 @@ export const columnsById = {
     label: "PnL",
     type: "computed",
     editable: false,
+    dependsOn: ["exit", "entry", "qty"],
     display: { format: "currency", decimals: 2 },
-
     expression: {
       type: "binary",
       op: "*",
@@ -61,6 +61,7 @@ export const columnsById = {
       },
       right: { type: "column", columnId: "qty" },
     },
+    formula: "(Exit - Entry) * PnL",
 
     conditionalStyle(value) {
       if (value == null) return "muted";
@@ -75,8 +76,8 @@ export const columnsById = {
     label: "Risk-Reward",
     type: "computed",
     editable: false,
+    dependsOn: ["exit", "entry", "sl"],
     display: { format: "ratio", decimals: 2 },
-
     expression: {
       type: "binary",
       op: "/",
@@ -88,6 +89,7 @@ export const columnsById = {
       },
       right: { type: "column", columnId: "sl" },
     },
+    formula: "(Exit - Entry) / SL",
 
     conditionalStyle(value) {
       if (value == null) return "muted";

@@ -1,77 +1,84 @@
 import { Section } from "@layout";
 import { ColorPicker, Input, Select } from "@ui";
 import { parseColor } from "@utils";
-import { useChartStore } from "@stores";
 
-export default function PieSliceSection({ chartId, updateChart }) {
+export default function PieSliceSection({
+  layoutDraft,
+  seriesDraft,
+  setLayoutDraft,
+  setSeriesDraft,
+}) {
   return (
     <Section title="Pie Slice">
       <Select
-        label={"Gradient Type"}
+        label="Gradient Type"
         options={["Gradient", "Solid"]}
         getKey={(v) => v.toLowerCase()}
-        value={(s) => s[chartId].draft.layout.gradientType}
+        value={layoutDraft.gradientType}
         onChange={(v) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.gradientType = v.toLowerCase();
-          })
+          setLayoutDraft((p) => ({
+            ...p,
+            gradientType: v.toLowerCase(),
+          }))
         }
-        store={useChartStore}
       />
 
       <Input
-        label={"Slice Stroke Width"}
+        label="Slice Stroke Width"
         type="range"
-        value={(s) => s[chartId].draft.layout.strokeWidth}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeWidth = e.target.value;
-          })
-        }
+        value={layoutDraft.strokeWidth}
         min={0}
         max={20}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({
+            ...p,
+            strokeWidth: Number(v),
+          }))
+        }
       />
 
-      <PieColors chartId={chartId} updateChart={updateChart} />
+      <PieColors seriesDraft={seriesDraft} setSeriesDraft={setSeriesDraft} />
     </Section>
   );
 }
 
-function PieColors({ chartId, updateChart }) {
-  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
-
-  return Array.from({ length }).map((_, i) => (
+function PieColors({ seriesDraft, setSeriesDraft }) {
+  return seriesDraft.map((series, i) => (
     <Section title={`Series ${i + 1}`} key={i} subSection>
       <Input
-        label={"Name"}
-        value={(s) => s[chartId].draft.seriesConfig[i].name}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[i].name = e.target.value;
+        label="Name"
+        value={series.name}
+        onCommit={(v) =>
+          setSeriesDraft((prev) => {
+            const next = [...prev];
+            next[i] = { ...next[i], name: v };
+            return next;
           })
         }
-        store={useChartStore}
       />
+
       <Input
-        label={"Tooltip Label"}
-        value={(s) => s[chartId].draft.seriesConfig[i].tooltipLabel}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[i].tooltipLabel = e.target.value;
+        label="Tooltip Label"
+        value={series.tooltipLabel}
+        onCommit={(v) =>
+          setSeriesDraft((prev) => {
+            const next = [...prev];
+            next[i] = { ...next[i], tooltipLabel: v };
+            return next;
           })
         }
-        store={useChartStore}
       />
+
       <ColorPicker
         label="Slice Color"
-        value={(s) => parseColor(s[chartId].draft.seriesConfig[i].color)}
-        onChange={(c) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[i].color = c;
+        value={parseColor(series.color)}
+        onCommit={(c) =>
+          setSeriesDraft((prev) => {
+            const next = [...prev];
+            next[i] = { ...next[i], color: c };
+            return next;
           })
         }
-        store={useChartStore}
       />
     </Section>
   ));

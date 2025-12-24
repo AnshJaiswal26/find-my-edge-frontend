@@ -1,35 +1,26 @@
 import { Section } from "@layout";
 import { ColorPicker, Input } from "@ui";
 import { parseColor } from "@utils";
-import { useChartStore } from "@stores";
 
-export default function TrackSection({ chartId, updateChart }) {
+export default function TrackSection({ layoutDraft, setLayoutDraft }) {
   return (
     <Section title="Track">
       <Input
-        label={"Track Width"}
+        label="Track Width"
         type="range"
-        value={(s) => s[chartId].draft.layout.strokeWidth}
+        value={layoutDraft.strokeWidth}
         formatter={(v) => `${v}%`}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.strokeWidth = e.target.value;
-          })
-        }
         min={0}
         max={100}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({ ...p, strokeWidth: Number(v) }))
+        }
       />
 
       <ColorPicker
         label="Background"
-        value={(s) => parseColor(s[chartId].draft.layout.trackBackground)}
-        onChange={(c) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.trackBackground = c;
-          })
-        }
-        store={useChartStore}
+        value={parseColor(layoutDraft.trackBackground)}
+        onCommit={(c) => setLayoutDraft((p) => ({ ...p, trackBackground: c }))}
       />
     </Section>
   );

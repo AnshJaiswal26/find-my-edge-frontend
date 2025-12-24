@@ -13,6 +13,8 @@ import { SummaryPopup } from "./Popups/Summary";
 import { FilterPopup } from "./Popups/Filter";
 import { SortPopup } from "./Popups/Sort";
 import { CellGhost } from "./Cell/CellGhost";
+import { ColumnInspector } from "./Column/ColumnInspector";
+import { ColumnSettingsPopup } from "./Popups/ColumnSettings/ColumnSettingsPopup";
 
 export function Table() {
   const tableRef = useRef(null);
@@ -29,11 +31,12 @@ export function Table() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 relative -mx-4 -mb-4">
+    <div className="flex flex-col flex-1 h-full justify-between gap-4 relative">
       <MetricBuilder />
       <SummaryPopup />
       <FilterPopup />
       <SortPopup />
+      <ColumnSettingsPopup />
       <Toolbar
         onAddTrade={addTrade}
         onAddMetric={() => {
@@ -47,7 +50,7 @@ export function Table() {
         onToggleHeatmap={() => null}
         onResetLayout={() => null}
         onExport={() => null}
-        onOpenColumnSettings={() => null}
+        onOpenColumnSettings={() => openPopup("column-settings")}
       />
 
       {/* SINGLE SCROLL CONTAINER */}
@@ -57,7 +60,7 @@ export function Table() {
           border border-(--border)
           rounded
           overflow-auto
-          max-h-[435px]
+          max-h-[430px]
           w-full
           text-(--text)
           text-sm

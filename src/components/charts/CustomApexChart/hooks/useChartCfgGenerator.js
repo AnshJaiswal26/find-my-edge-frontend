@@ -12,9 +12,7 @@ const seriesGenerator = {
   bar: (chart) => {
     const index = chart.selectedLegendIndex;
     const cfg =
-      index !== null
-        ? [chart.live.seriesConfig[index]]
-        : chart.live.seriesConfig;
+      index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
 
     return cfg.map((s) => ({
       name: s.name,
@@ -28,9 +26,7 @@ const seriesGenerator = {
   line: (chart) => {
     const index = chart.selectedLegendIndex;
     const cfg =
-      index !== null
-        ? [chart.live.seriesConfig[index]]
-        : chart.live.seriesConfig;
+      index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
 
     return cfg.map((s) => ({
       name: s.name,
@@ -50,7 +46,7 @@ const seriesGenerator = {
       chart.series.map((d) => Number(d[s.key] ?? 0));
 
     if (index !== null) {
-      const s = chart.live.seriesConfig[index];
+      const s = chart.seriesConfig[index];
       return [
         {
           name: s.name,
@@ -60,7 +56,7 @@ const seriesGenerator = {
       ];
     }
 
-    return chart.live.seriesConfig.map((s) => ({
+    return chart.seriesConfig.map((s) => ({
       name: s.name,
       data: getSeriesValues(s),
       color: s.color,
@@ -71,7 +67,7 @@ const seriesGenerator = {
     const index = chart.selectedLegendIndex;
 
     if (index !== null) {
-      const s = chart.live.seriesConfig[index];
+      const s = chart.seriesConfig[index];
       return [chart.series[index][s.key]];
     }
 
@@ -80,9 +76,8 @@ const seriesGenerator = {
 };
 
 export default function useChartCfgGenerator({ chartId, type }) {
-  const live = useChartStore((s) => s[chartId].live);
-  const layout = live.layout;
-  const seriesConfig = live.seriesConfig;
+  const layout = useChartStore((s) => s[chartId].layout);
+  const seriesConfig = useChartStore((s) => s[chartId].seriesConfig);
 
   const filteredSeries = useChartStore((s) => s[chartId].series.filtered);
   const selectedLegendIndex = useChartStore(
@@ -91,7 +86,8 @@ export default function useChartCfgGenerator({ chartId, type }) {
 
   // --- Tooltip callback ---
   const tooltipCallback = (seriesValue, index, seriesIndex) => {
-    const { series, meta, live, runtime } = useChartStore.getState()[chartId];
+    const { series, meta, seriesConfig, layout, runtime } =
+      useChartStore.getState()[chartId];
 
     if (type === "bar") {
       return {
@@ -102,7 +98,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
               ? runtime.selectedLegendIndex
               : i;
 
-          const { color, tooltipLabel } = live.seriesConfig[
+          const { color, tooltipLabel } = seriesConfig[
             legendIndex
           ].colors.filter((r) => r.from <= value && value <= r.to)[0] || {
             color: "var(--info)",
@@ -110,7 +106,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
           };
 
           return {
-            value: live.layout.yLabelPrefix + value + live.layout.yLabelSuffix,
+            value: layout.yLabelPrefix + value + layout.yLabelSuffix,
             label: tooltipLabel,
             color,
           };
@@ -122,16 +118,16 @@ export default function useChartCfgGenerator({ chartId, type }) {
           ? runtime.selectedLegendIndex
           : seriesIndex;
       return {
-        // title: live.seriesConfig[legendIndex].name,
+        // title: seriesConfig[legendIndex].name,
 
         dataArray: [
           {
             value:
-              live.layout.valuePrefix +
+              layout.valuePrefix +
               series.filtered[legendIndex] +
-              live.layout.valueSuffix,
-            label: live.seriesConfig[legendIndex].tooltipLabel,
-            color: live.seriesConfig[legendIndex].color,
+              layout.valueSuffix,
+            label: seriesConfig[legendIndex].tooltipLabel,
+            color: seriesConfig[legendIndex].color,
           },
         ],
       };
@@ -144,11 +140,11 @@ export default function useChartCfgGenerator({ chartId, type }) {
         dataArray: [
           {
             value:
-              live.layout.valuePrefix +
+              layout.valuePrefix +
               series.filtered[legendIndex] +
-              live.layout.valueSuffix,
-            label: live.seriesConfig[legendIndex].tooltipLabel,
-            color: live.seriesConfig[legendIndex].color,
+              layout.valueSuffix,
+            label: seriesConfig[legendIndex].tooltipLabel,
+            color: seriesConfig[legendIndex].color,
             // indicator: false,
           },
         ],
@@ -159,7 +155,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
           ? runtime.selectedLegendIndex
           : seriesIndex;
 
-      const s = live.seriesConfig[legendIndex];
+      const s = seriesConfig[legendIndex];
 
       return {
         title: series.filtered[index].axis,
@@ -172,14 +168,15 @@ export default function useChartCfgGenerator({ chartId, type }) {
         ],
       };
     } else if (type === "polarArea") {
-      const { live, series, runtime } = useChartStore.getState()[chartId];
+      const { seriesConfig, series, runtime } =
+        useChartStore.getState()[chartId];
 
       const legendIndex =
         runtime.selectedLegendIndex !== null
           ? runtime.selectedLegendIndex
           : seriesIndex;
 
-      const s = live.seriesConfig[legendIndex];
+      const s = seriesConfig[legendIndex];
 
       return {
         title: series.filtered[legendIndex]?.axis,
@@ -207,8 +204,8 @@ export default function useChartCfgGenerator({ chartId, type }) {
 
         return {
           value: layout.yLabelPrefix + value + layout.yLabelSuffix,
-          label: live.seriesConfig[legendIndex].tooltipLabel,
-          color: live.seriesConfig[legendIndex].color,
+          label: seriesConfig[legendIndex].tooltipLabel,
+          color: seriesConfig[legendIndex].color,
         };
       }),
     };
@@ -222,12 +219,13 @@ export default function useChartCfgGenerator({ chartId, type }) {
         tooltipCallback,
       }),
       computedSeries: seriesGenerator[type]({
-        live,
+        seriesConfig,
+        layout,
         series: filteredSeries,
         selectedLegendIndex,
       }),
     }),
-    [live, filteredSeries, selectedLegendIndex]
+    [seriesConfig, layout, , filteredSeries, selectedLegendIndex]
   );
 
   useEffect(() => {
@@ -244,7 +242,7 @@ export default function useChartCfgGenerator({ chartId, type }) {
     if (type === "radialBar" || type === "donut") {
       ApexCharts.exec(chartId, "updateSeries", computedSeries, true);
     }
-  }, [live, filteredSeries, selectedLegendIndex]);
+  }, [seriesConfig, layout, filteredSeries, selectedLegendIndex]);
 
   return {
     options,

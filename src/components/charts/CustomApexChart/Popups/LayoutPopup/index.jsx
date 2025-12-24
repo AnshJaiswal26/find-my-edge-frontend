@@ -6,40 +6,36 @@ import RadarLayoutPopup from "./radar/RadarLayoutPopup";
 import { Popup } from "@layout";
 import styles from "./LayoutPopup.module.css";
 import PolarAreaLayoutPopup from "./polarArea/PolarAreaLayoutPopup";
+import { useChartStore } from "@stores";
 
-function PopupContent({ id, type, updateChart }) {
-  switch (type) {
+function PopupContent(props) {
+  switch (props.type) {
     case "radialBar":
-      return <RadialLayoutPopup chartId={id} updateChart={updateChart} />;
+      return <RadialLayoutPopup {...props} />;
 
     case "donut":
-      return <PieLayoutPopup chartId={id} updateChart={updateChart} />;
+      return <PieLayoutPopup {...props} />;
 
     case "radar":
-      return <RadarLayoutPopup chartId={id} updateChart={updateChart} />;
+      return <RadarLayoutPopup {...props} />;
 
     case "polarArea":
-      return <PolarAreaLayoutPopup chartId={id} updateChart={updateChart} />;
+      return <PolarAreaLayoutPopup {...props} />;
 
     default:
-      return (
-        <CartesianLayoutPopup
-          chartId={id}
-          type={type}
-          updateChart={updateChart}
-        />
-      );
+      return <CartesianLayoutPopup {...props} />;
   }
 }
 
 export default function ChartLayoutPopup({ chartId, type, updateChart }) {
-  const [isAnyChange, setIsAnyChange] = useState(true);
+  const chart = useChartStore.getState()[chartId];
+
+  const [layoutDraft, setLayoutDraft] = useState({ ...chart.layout });
+  const [seriesDraft, setSeriesDraft] = useState([...chart.seriesConfig]);
 
   const handleClose = () => {
-    updateChart(chartId, (chart, s) => {
+    updateChart(chartId, (_, s) => {
       s.activeChart.activePopup = null;
-      chart.draft.layout = chart.live.layout;
-      chart.draft.seriesConfig = chart.live.seriesConfig;
     });
     document.body.style.overflow = "";
   };
@@ -47,8 +43,8 @@ export default function ChartLayoutPopup({ chartId, type, updateChart }) {
   const handleApply = () => {
     updateChart(chartId, (chart, s) => {
       s.activeChart.activePopup = null;
-      chart.live.layout = chart.draft.layout;
-      chart.live.seriesConfig = chart.draft.seriesConfig;
+      chart.layout = layoutDraft;
+      chart.seriesConfig = seriesDraft;
     });
     document.body.style.overflow = "";
   };
@@ -62,13 +58,20 @@ export default function ChartLayoutPopup({ chartId, type, updateChart }) {
         {/* Body */}
         <Popup.Body>
           <div className={styles.contentWrapper}>
-            <PopupContent id={chartId} type={type} updateChart={updateChart} />
+            <PopupContent
+              chartId={chartId}
+              type={type}
+              layoutDraft={layoutDraft}
+              seriesDraft={seriesDraft}
+              setLayoutDraft={setLayoutDraft}
+              setSeriesDraft={setSeriesDraft}
+            />
           </div>
         </Popup.Body>
 
         {/* Footer */}
         <Popup.Footer
-          text={["Cancel", isAnyChange ? "Apply" : "Ok"]}
+          text={["Cancel", "Apply"]}
           onCancel={handleClose}
           onApply={handleApply}
         />

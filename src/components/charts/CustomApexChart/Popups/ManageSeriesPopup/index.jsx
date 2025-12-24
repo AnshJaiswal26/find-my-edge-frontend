@@ -1,10 +1,10 @@
 import { Popup } from "@layout";
 import styles from "./ManageSeriesPopup.module.css";
 import { tradeData } from "@data";
-import { useChartStore } from "@stores";
 import { useState } from "react";
 import { Button } from "@ui";
 import { Plus, Trash2 } from "lucide-react";
+import { useChartStore } from "@stores";
 
 const seriesCfgGenerator = {
   bar: (key) => ({
@@ -70,84 +70,75 @@ function MetricsSection({
 }
 
 export default function ManageSeriesPopup({ chartId, type, updateChart }) {
-  const seriesConfig = useChartStore((s) => s[chartId].draft.seriesConfig);
-  const currentSeries = seriesConfig.map((cfg) => cfg.key);
-
   const [selected, setSelected] = useState([]);
 
+  const chart = useChartStore.getState()[chartId];
+  const [seriesDraft, setSeriesDraft] = useState([...chart.seriesConfig]);
+
+  const currentKeys = seriesDraft.map((s) => s.key);
+
   const availableMetrics = Object.keys(tradeData[0]).filter(
-    (k) => !currentSeries.includes(k) && !selected.includes(k)
+    (k) => !currentKeys.includes(k) && !selected.includes(k)
   );
 
-  const handleClose = () => {
+  const handleCancel = () => {
     updateChart(chartId, (chart, s) => {
       s.activeChart.activePopup = null;
-      chart.draft.seriesConfig = chart.live.seriesConfig;
     });
     document.body.style.overflow = "";
   };
 
   const handleApply = () => {
+    const newSeries = selected.map((k) => seriesCfgGenerator[type](k));
+
+    const finalSeries = [...seriesDraft, ...newSeries];
+
     updateChart(chartId, (chart, s) => {
-      const selectedMetrics = selected.map((k) => seriesCfgGenerator[type](k));
       s.activeChart.activePopup = null;
-      chart.live.seriesConfig = [
-        ...chart.draft.seriesConfig,
-        ...selectedMetrics,
-      ];
-      chart.draft.seriesConfig = [
-        ...chart.draft.seriesConfig,
-        ...selectedMetrics,
-      ];
+      chart.seriesConfig = finalSeries;
     });
+
     document.body.style.overflow = "";
   };
 
   return (
-    <Popup open={true}>
+    <Popup open>
       <Popup.Container>
-        {/* Header */}
-        <Popup.Header title="Manage Series" onClose={handleClose} />
+        <Popup.Header title="Manage Series" onClose={handleCancel} />
 
-        {/* Body */}
         <Popup.Body>
           <div className={styles.contentWrapper}>
-            {/* Note */}
             <div className="text-[var(--error)] text-[0.8rem]">
               <strong>Note:</strong> You can have up to 3 active series at a
               time, and at least 1 must remain active.
             </div>
 
-            {/* Content */}
             <div className="flex gap-3">
-              {/* Available Metrics */}
+              {/* Available */}
               <MetricsSection
                 title="Available Metrics"
                 list={availableMetrics}
                 icon={Plus}
-                disable={selected.length + currentSeries.length > 2}
+                disable={selected.length + currentKeys.length > 2}
                 onClick={(k) => setSelected((p) => [...p, k])}
                 className="availableMetricsList"
               />
 
               <div className={styles.section}>
-                {/* Active Metrics */}
+                {/* Active */}
                 <MetricsSection
                   title="Active Metrics"
-                  list={currentSeries}
+                  list={currentKeys}
                   icon={Trash2}
-                  disable={currentSeries.length < 2}
                   color="success"
+                  disable={currentKeys.length < 2}
                   className="activeMetricsList"
                   onClick={(k) =>
-                    updateChart(chartId, (chart) => {
-                      chart.draft.seriesConfig =
-                        chart.draft.seriesConfig.filter((s) => s.key !== k);
-                    })
+                    setSeriesDraft((p) => p.filter((s) => s.key !== k))
                   }
                 />
 
-                {/* Selected Metrics */}
+                {/* Selected */}
                 <MetricsSection
                   title="Selected Metrics"
                   list={selected}
@@ -161,10 +152,9 @@ export default function ManageSeriesPopup({ chartId, type, updateChart }) {
           </div>
         </Popup.Body>
 
-        {/* Footer */}
         <Popup.Footer
           text={["Cancel", "Apply"]}
-          onCancel={handleClose}
+          onCancel={handleCancel}
           onApply={handleApply}
         />
       </Popup.Container>

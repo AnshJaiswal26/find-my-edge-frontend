@@ -10,16 +10,8 @@ const getChartStructure = (acc, [chartId, chart]) => {
     },
 
     // --- current state of chart ---
-    live: {
-      layout: { ...chart.layout },
-      seriesConfig: [...chart.seriesConfig],
-    },
-
-    // --- temprory state of chart popups ---
-    draft: {
-      layout: { ...chart.layout },
-      seriesConfig: [...chart.seriesConfig],
-    },
+    layout: { ...chart.layout },
+    seriesConfig: [...chart.seriesConfig],
 
     // --- instant changed states of chart
     runtime: {

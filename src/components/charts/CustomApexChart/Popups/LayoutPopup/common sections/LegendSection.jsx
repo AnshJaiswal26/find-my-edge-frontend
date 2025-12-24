@@ -1,43 +1,33 @@
 import { Section } from "@layout";
 import { Button, Select } from "@ui";
-import { useChartStore } from "@stores";
 
-export default function LegendSection({ chartId, updateChart }) {
+export default function LegendSection({ layoutDraft, setLayoutDraft }) {
   return (
-    <Section title={"Legend"}>
+    <Section title="Legend">
       <Button.Toggle
-        label={"Show"}
-        value={(s) => s[chartId].draft.layout.legend}
-        onClick={() =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.legend = !chart.draft.layout.legend;
-          })
-        }
-        store={useChartStore}
+        label="Show"
+        value={layoutDraft.legend}
+        onChange={(v) => setLayoutDraft((p) => ({ ...p, legend: v }))}
       />
+
       <Select
-        label={"Position"}
+        label="Position"
         options={["Top", "Bottom"]}
         getKey={(v) => v.toLowerCase()}
-        value={(s) => s[chartId].draft.layout.legendPosition}
+        value={layoutDraft.legendPosition}
         onChange={(v) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.legendPosition = v.toLowerCase();
-          })
+          setLayoutDraft((p) => ({ ...p, legendPosition: v.toLowerCase() }))
         }
-        store={useChartStore}
       />
+
       <Select
-        label={"Alignment"}
+        label="Alignment"
         options={["Left", "Center", "Right"]}
         getKey={(v) => v.toLowerCase()}
-        value={(s) => s[chartId].draft.layout.legendAlignment}
+        value={layoutDraft.legendAlignment}
         onChange={(v) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.legendAlignment = v.toLowerCase();
-          })
+          setLayoutDraft((p) => ({ ...p, legendAlignment: v.toLowerCase() }))
         }
-        store={useChartStore}
       />
     </Section>
   );

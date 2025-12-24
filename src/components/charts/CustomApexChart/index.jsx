@@ -24,7 +24,7 @@ export default function CustomApexChart({ chartId, type }) {
 }
 
 function Title({ chartId }) {
-  const title = useChartStore((s) => s[chartId].live.layout.title);
+  const title = useChartStore((s) => s[chartId].layout.title);
   return <span>{title}</span>;
 }
 
@@ -56,7 +56,7 @@ function ChartWithConfig({ chartId, type }) {
                 onClick={() => {
                   if (type === "donut") return;
                   updateChart(chartId, (chart) => {
-                    if (chart.live.seriesConfig.length === 1) return;
+                    if (chart.seriesConfig.length === 1) return;
                     const idx = chart.runtime.selectedLegendIndex;
                     chart.runtime.selectedLegendIndex = idx === i ? null : i;
                   });

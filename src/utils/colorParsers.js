@@ -1,11 +1,39 @@
-export const parseColor = (color) => {
-  const val = color.includes("--")
-    ? getComputedStyle(document.documentElement).getPropertyValue(
-        color.substring(4, color.length - 1)
-      )
-    : color;
-  return val;
-};
+export function parseColor(color) {
+  if (!color) return "#000000";
+
+  // 1️⃣ Resolve CSS variables
+  let resolved = color;
+
+  if (color.startsWith("var(")) {
+    const varName = color.slice(4, -1);
+    resolved = getComputedStyle(document.documentElement)
+      .getPropertyValue(varName)
+      .trim();
+  }
+
+  // 2️⃣ Let the browser parse the color
+  const ctx = document.createElement("canvas").getContext("2d");
+
+  // Invalid colors throw → catch fallback
+  try {
+    ctx.fillStyle = resolved;
+  } catch {
+    return "#000000";
+  }
+
+  // 3️⃣ Browser converts everything → rgb(r, g, b)
+  const rgb = ctx.fillStyle;
+
+  // 4️⃣ Convert rgb(...) → hex
+  if (rgb.startsWith("rgb")) {
+    const [r, g, b] = rgb.match(/\d+/g).map(Number);
+
+    return "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
+  }
+
+  // Already hex
+  return rgb;
+}
 
 export const shadeColor = (color, percent) => {
   let num = parseInt(color.replace("#", ""), 16);

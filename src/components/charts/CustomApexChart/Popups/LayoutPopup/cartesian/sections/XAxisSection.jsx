@@ -1,125 +1,95 @@
 import { Section } from "@layout";
 import { ColorPicker, Input, Button } from "@ui";
 import { parseColor } from "@utils";
-import { useChartStore } from "@stores";
 
-export default function XAxisSection({ chartId, updateChart, isHorizontal }) {
+export default function XAxisSection({
+  layoutDraft,
+  setLayoutDraft,
+  isHorizontal,
+}) {
   return (
     <Section title={isHorizontal ? "Y-Axis" : "X-Axis"}>
       {!isHorizontal && (
         <Button.Toggle
-          label={"Tooltip"}
-          value={(s) => s[chartId].draft.layout.xTooltip}
-          onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xTooltip = !chart.draft.layout.xTooltip;
-            })
-          }
-          store={useChartStore}
+          label="Tooltip"
+          value={layoutDraft.xTooltip}
+          onChange={(v) => setLayoutDraft((p) => ({ ...p, xTooltip: v }))}
         />
       )}
 
-      <Section title={"Labels"}>
+      {/* Labels */}
+      <Section title="Labels">
         <ColorPicker
           label="Color"
-          value={(s) => parseColor(s[chartId].draft.layout.xLabelsColor)}
-          disable={(s) => s[chartId].draft.layout.xLabels === false}
-          onChange={(c) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xLabelsColor = c;
-            })
-          }
-          store={useChartStore}
-        />
-        <Button.Toggle
-          label={"Show"}
-          value={(s) => s[chartId].draft.layout.xLabels}
-          onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xLabels = !chart.draft.layout.xLabels;
-            })
-          }
-          store={useChartStore}
+          value={parseColor(layoutDraft.xLabelsColor)}
+          disabled={!layoutDraft.xLabels}
+          onCommit={(c) => setLayoutDraft((p) => ({ ...p, xLabelsColor: c }))}
         />
 
         <Button.Toggle
-          label={"Prefix Indexing"}
-          value={(s) => s[chartId].draft.layout.xLabelPrefixIndexing}
-          onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xLabelPrefixIndexing =
-                !chart.draft.layout.xLabelPrefixIndexing;
-            })
-          }
-          store={useChartStore}
+          label="Show"
+          value={layoutDraft.xLabels}
+          onChange={(v) => setLayoutDraft((p) => ({ ...p, xLabels: v }))}
         />
 
         <Button.Toggle
-          label={"Suffix Indexing"}
-          value={(s) => s[chartId].draft.layout.xLabelSuffixIndexing}
-          onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xLabelSuffixIndexing =
-                !chart.draft.layout.xLabelSuffixIndexing;
-            })
+          label="Prefix Indexing"
+          value={layoutDraft.xLabelPrefixIndexing}
+          onChange={(v) =>
+            setLayoutDraft((p) => ({
+              ...p,
+              xLabelPrefixIndexing: v,
+            }))
           }
-          store={useChartStore}
+        />
+
+        <Button.Toggle
+          label="Suffix Indexing"
+          value={layoutDraft.xLabelSuffixIndexing}
+          onChange={(v) =>
+            setLayoutDraft((p) => ({
+              ...p,
+              xLabelSuffixIndexing: v,
+            }))
+          }
         />
 
         <Input
           label="Prefix"
           type="text"
-          value={(s) => s[chartId].draft.layout.xLabelPrefix}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xLabelPrefix = e.target.value;
-            })
-          }
+          value={layoutDraft.xLabelPrefix}
           placeholder="Enter Prefix"
-          store={useChartStore}
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, xLabelPrefix: v }))}
         />
 
         <Input
           label="Suffix"
           type="text"
-          value={(s) => s[chartId].draft.layout.xLabelSuffix}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xLabelSuffix = e.target.value;
-            })
-          }
+          value={layoutDraft.xLabelSuffix}
           placeholder="Enter Suffix"
-          store={useChartStore}
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, xLabelSuffix: v }))}
         />
       </Section>
 
-      <Section title={"Title"}>
+      {/* Title */}
+      <Section title="Title">
         <span className="font-light text-[var(--text-charts)] text-[0.85rem]">
-          Leave blank to hide the title.{" "}
+          Leave blank to hide the title.
         </span>
+
         <Input
           label="Text"
           type="text"
-          value={(s) => s[chartId].draft.layout.xTitleText}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xTitleText = e.target.value;
-            })
-          }
-          placeholder={"X-axis title"}
-          store={useChartStore}
+          value={layoutDraft.xTitleText}
+          placeholder="X-axis title"
+          onCommit={(v) => setLayoutDraft((p) => ({ ...p, xTitleText: v }))}
         />
 
         <ColorPicker
           label="Color"
-          value={(s) => parseColor(s[chartId].draft.layout.xTitleColor)}
-          disable={(s) => s[chartId].draft.layout.xTitleText === ""}
-          onChange={(c) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.xTitleColor = c;
-            })
-          }
-          store={useChartStore}
+          value={parseColor(layoutDraft.xTitleColor)}
+          disabled={!layoutDraft.xTitleText}
+          onCommit={(c) => setLayoutDraft((p) => ({ ...p, xTitleColor: c }))}
         />
       </Section>
     </Section>

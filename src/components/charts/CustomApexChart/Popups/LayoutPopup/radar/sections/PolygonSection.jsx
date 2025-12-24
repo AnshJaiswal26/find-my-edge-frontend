@@ -1,73 +1,66 @@
 import { Section } from "@layout";
 import { ColorPicker, Input } from "@ui";
 import { parseColor } from "@utils";
-import { useChartStore } from "@stores";
 
-export default function PolygonSection({ chartId, updateChart }) {
+export default function PolygonSection({
+  layoutDraft,
+  seriesDraft,
+  setLayoutDraft,
+  setSeriesDraft,
+}) {
   return (
     <Section title="Polygon">
       <Input
         label="Stroke Width"
         type="range"
-        value={(s) => s[chartId].draft.layout.polygonStrokeWidth}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.polygonStrokeWidth = e.target.value;
-          })
-        }
+        value={layoutDraft.polygonStrokeWidth}
         min={1}
         max={10}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({
+            ...p,
+            polygonStrokeWidth: Number(v),
+          }))
+        }
       />
 
       <Input
         label="Opacity"
         type="range"
-        value={(s) => s[chartId].draft.layout.radarOpacity}
-        onChange={(e) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.layout.radarOpacity = e.target.value;
-          })
-        }
+        value={layoutDraft.radarOpacity}
         min={0}
         max={1}
         step={0.1}
-        store={useChartStore}
+        onCommit={(v) =>
+          setLayoutDraft((p) => ({
+            ...p,
+            radarOpacity: Number(v),
+          }))
+        }
       />
 
       <div className="flex gap-3">
         <ColorPicker
           label="Stroke"
-          value={(s) => parseColor(s[chartId].draft.layout.polygonStroke)}
-          onChange={(c) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.polygonStroke = c;
-            })
-          }
-          store={useChartStore}
+          value={parseColor(layoutDraft.polygonStroke)}
+          onCommit={(c) => setLayoutDraft((p) => ({ ...p, polygonStroke: c }))}
         />
 
         <ColorPicker
           label="Fill"
-          value={(s) => parseColor(s[chartId].draft.layout.polygonFill)}
-          onChange={(c) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.layout.polygonFill = c;
-            })
-          }
-          store={useChartStore}
+          value={parseColor(layoutDraft.polygonFill)}
+          onCommit={(c) => setLayoutDraft((p) => ({ ...p, polygonFill: c }))}
         />
       </div>
-      <RadarSeries chartId={chartId} updateChart={updateChart} />
+
+      <RadarSeries seriesDraft={seriesDraft} setSeriesDraft={setSeriesDraft} />
     </Section>
   );
 }
 
-function RadarSeries({ chartId, updateChart }) {
-  const length = useChartStore((s) => s[chartId].draft.seriesConfig.length);
-
-  return Array.from({ length }).map((_, i) => (
-    <Section title={`Series ${i + 1}`} subSection={true} key={i}>
+function RadarSeries({ seriesDraft, setSeriesDraft }) {
+  return seriesDraft.map((series, i) => (
+    <Section title={`Series ${i + 1}`} subSection key={i}>
       {[
         { label: "Name", key: "name", placeholder: "Enter Name" },
         {
@@ -77,29 +70,32 @@ function RadarSeries({ chartId, updateChart }) {
         },
         { label: "Value Prefix", key: "prefix", placeholder: "Enter Prefix" },
         { label: "Value Suffix", key: "suffix", placeholder: "Enter Suffix" },
-      ].map(({ label, key, placeholder }, idx) => (
+      ].map(({ label, key, placeholder }) => (
         <Input
-          key={idx}
+          key={key}
           label={label}
           placeholder={placeholder}
-          value={(s) => s[chartId].draft.seriesConfig[i][key]}
-          onChange={(e) =>
-            updateChart(chartId, (chart) => {
-              chart.draft.seriesConfig[i][key] = e.target.value;
+          value={series[key]}
+          onCommit={(v) =>
+            setSeriesDraft((prev) => {
+              const next = [...prev];
+              next[i] = { ...next[i], [key]: v };
+              return next;
             })
           }
-          store={useChartStore}
         />
       ))}
+
       <ColorPicker
         label="Color"
-        value={(s) => parseColor(s[chartId].draft.seriesConfig[i].color)}
-        onChange={(c) =>
-          updateChart(chartId, (chart) => {
-            chart.draft.seriesConfig[i].color = c;
+        value={parseColor(series.color)}
+        onCommit={(c) =>
+          setSeriesDraft((prev) => {
+            const next = [...prev];
+            next[i] = { ...next[i], color: c };
+            return next;
           })
         }
-        store={useChartStore}
       />
     </Section>
   ));
