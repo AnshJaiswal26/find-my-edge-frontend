@@ -1,6 +1,8 @@
+import { Section } from "@layout";
+import { Input } from "@ui";
 import { Plus, Trash2 } from "lucide-react";
 
-export function SelectOptionsEditor({ options, onChange }) {
+export default function SelectOptionsEditor({ options, onChange }) {
   function updateOption(index, value) {
     const next = [...options];
     next[index] = value;
@@ -17,39 +19,35 @@ export function SelectOptionsEditor({ options, onChange }) {
   }
 
   return (
-    <div className="space-y-2">
+    <Section>
       <div className="text-xs text-(--muted)">Options</div>
 
       {options.map((opt, i) => (
-        <div key={i} className="flex items-center gap-2">
-          <input
-            className="
-              flex-1
-              bg-(--surface)
-              border border-(--border)
-              px-2 py-1
-              text-sm
-            "
+        <div key={i} className="flex items-center gap-2 mb-2">
+          <Input
+            size="sm"
             value={opt}
             placeholder={`Option ${i + 1}`}
-            onChange={(e) => updateOption(i, e.target.value)}
+            onCommit={(v) => updateOption(i, v)}
           />
 
           <button
             onClick={() => removeOption(i)}
-            className="text-(--muted) hover:text-red-500"
+            className="text-(--text) hover:text-red-500"
           >
             <Trash2 size={14} />
           </button>
         </div>
       ))}
 
-      <button
-        onClick={addOption}
-        className="flex items-center gap-1 text-xs text-(--info)"
-      >
-        <Plus size={14} /> Add option
-      </button>
-    </div>
+      <div>
+        <button
+          onClick={addOption}
+          className="text-xs text-(--info) cursor-pointer hover:underline"
+        >
+          + Add option
+        </button>
+      </div>
+    </Section>
   );
 }

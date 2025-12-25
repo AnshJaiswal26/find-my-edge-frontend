@@ -7,14 +7,16 @@ import { ColumnGhost } from "./Header/ColumnGhost";
 
 import { Row } from "./Row/Row";
 import { RowGhost } from "./Row/RowGhost";
-
-import { MetricBuilder } from "./Popups/MetricBuilder";
-import { SummaryPopup } from "./Popups/Summary";
-import { FilterPopup } from "./Popups/Filter";
-import { SortPopup } from "./Popups/Sort";
 import { CellGhost } from "./Cell/CellGhost";
-import { ColumnInspector } from "./Column/ColumnInspector";
-import { ColumnSettingsPopup } from "./Popups/ColumnSettings/ColumnSettingsPopup";
+
+
+import {
+  AddColumnPopup,
+  ColumnSettingsPopup,
+  FilterPopup,
+  SortPopup,
+  SummaryPopup,
+} from "./Popups";
 
 export function Table() {
   const tableRef = useRef(null);
@@ -32,16 +34,15 @@ export function Table() {
 
   return (
     <div className="flex flex-col flex-1 h-full justify-between gap-4 relative">
-      <MetricBuilder />
       <SummaryPopup />
       <FilterPopup />
       <SortPopup />
       <ColumnSettingsPopup />
+      <AddColumnPopup />
+
       <Toolbar
         onAddTrade={addTrade}
-        onAddMetric={() => {
-          openPopup("add-metric");
-        }}
+        onAddColumn={() => openPopup("add-column")}
         onFilter={() => openPopup("filter")}
         onSort={() => openPopup("sort")}
         onToggleSummary={(e) => openPopup("summary")}

@@ -50,6 +50,10 @@ export const columnsById = {
     editable: false,
     dependsOn: ["exit", "entry", "qty"],
     display: { format: "currency", decimals: 2 },
+    colorRules: [
+      { operator: "greaterThan", value: 0, color: "var(--success)" },
+      { operator: "lessThan", value: 0, color: "var(--error)" },
+    ],
     expression: {
       type: "binary",
       op: "*",
@@ -62,13 +66,6 @@ export const columnsById = {
       right: { type: "column", columnId: "qty" },
     },
     formula: "(Exit - Entry) * PnL",
-
-    conditionalStyle(value) {
-      if (value == null) return "muted";
-      if (value > 0) return "profit";
-      if (value < 0) return "loss";
-      return "neutral";
-    },
   },
 
   rr: {
@@ -78,6 +75,10 @@ export const columnsById = {
     editable: false,
     dependsOn: ["exit", "entry", "sl"],
     display: { format: "ratio", decimals: 2 },
+    colorRules: [
+      { operator: "greaterThan", value: 0, color: "var(--success)" },
+      { operator: "lessThan", value: 0, color: "var(--warning)" },
+    ],
     expression: {
       type: "binary",
       op: "/",
@@ -90,13 +91,6 @@ export const columnsById = {
       right: { type: "column", columnId: "sl" },
     },
     formula: "(Exit - Entry) / SL",
-
-    conditionalStyle(value) {
-      if (value == null) return "muted";
-      if (value > 0) return "profit";
-      if (value < 0) return "loss";
-      return "neutral";
-    },
   },
 
   emotion: {

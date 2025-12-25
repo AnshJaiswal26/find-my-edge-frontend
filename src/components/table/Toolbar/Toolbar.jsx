@@ -8,6 +8,8 @@ import {
   LayoutGrid,
   ColumnsSettings,
   Trash2,
+  Rows3,
+  Columns3,
 } from "lucide-react";
 import { Button } from "@ui";
 import { useTableStore } from "../store";
@@ -16,7 +18,7 @@ import { ColumnInspector } from "../Column/ColumnInspector";
 
 export function Toolbar({
   onAddTrade,
-  onAddMetric,
+  onAddColumn,
   onFilter,
   onSort,
   onDelete,
@@ -54,7 +56,14 @@ export function Toolbar({
               tooltip={{ text: "Add Trade", position: "bottom" }}
               onClick={onAddTrade}
             >
-              <ColumnsSettings size={16} />
+              <Rows3 size={16} />
+            </Button.Icon>
+
+            <Button.Icon
+              tooltip={{ text: "Add Column", position: "bottom" }}
+              onClick={onAddColumn}
+            >
+              <Columns3 size={16} />
             </Button.Icon>
 
             <Button.Icon
@@ -84,13 +93,6 @@ export function Toolbar({
 
           {/* CENTER */}
           <div className="flex items-center gap-1">
-            <Button.Icon
-              tooltip={{ text: "Add Metric", position: "bottom" }}
-              onClick={onAddMetric}
-            >
-              <Sigma size={16} />
-            </Button.Icon>
-
             <Button.Icon
               tooltip={{ text: "Summary View", position: "bottom" }}
               onClick={onToggleSummary}

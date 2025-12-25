@@ -69,7 +69,7 @@ export const Container = ({
   );
 };
 
-export const Section = ({ title, children, subSection = false }) => {
+export const Section = ({ title, children, subSection = false, className }) => {
   return (
     <div
       className={`
@@ -86,11 +86,10 @@ export const Section = ({ title, children, subSection = false }) => {
       {title && (
         <h3
           className="
-            text-sm
+            text-[0.75rem]
             font-semibold
-            text-(--text)
+            text-(--text-muted)
             mb-3
-            uppercase
             tracking-wider
           "
         >
@@ -98,7 +97,7 @@ export const Section = ({ title, children, subSection = false }) => {
         </h3>
       )}
 
-      <div className="flex flex-col gap-3">{children}</div>
+      <div className="flex flex-col gap-3 text-sm relative">{children}</div>
     </div>
   );
 };
@@ -261,7 +260,6 @@ Popup.Body = ({ children, className = "" }) => {
         overflow-y-auto
         overscroll-contain
         px-2 py-1
-        grid gap-4
         ${className}
       `}
     >

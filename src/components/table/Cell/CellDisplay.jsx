@@ -1,5 +1,6 @@
+import { useMemo } from "react";
 import { useTableStore } from "../store";
-import { TONE_CLASS } from "../tableUtils";
+import { evaluateColorRules, formatValue } from "../tableUtils";
 
 export const CellDisplay = ({ cell, colId, width, setDraft, setEditing }) => {
   const column = useTableStore((s) => s.columnsById[colId]);
@@ -8,7 +9,16 @@ export const CellDisplay = ({ cell, colId, width, setDraft, setEditing }) => {
 
   const editable = column.type !== "computed" && column.editable !== false;
 
-  const tone = column.conditionalStyle?.(cell.value) ?? "neutral";
+  const color = useMemo(
+    () => evaluateColorRules(cell.value, column?.colorRules),
+    [(cell.value, column?.colorRules)]
+  );
+
+  const displayValue = useMemo(
+    () => formatValue(cell.value, column),
+    [cell.value, column]
+  );
+  console.log("render///");
 
   return (
     <div
@@ -23,8 +33,8 @@ export const CellDisplay = ({ cell, colId, width, setDraft, setEditing }) => {
         });
         unselectColumn({ id: colId });
       }}
-      style={{ width }}
-      className={`px-2 py-1 cursor-pointer border-r-1 border-r-(--border) ${TONE_CLASS[tone]}`}
+      style={{ width, color }}
+      className={`px-2 py-1 cursor-pointer border-r-1 border-r-(--border)`}
       onDoubleClick={() => {
         if (!editable) return;
         setDraft(cell.value ?? "");
@@ -32,7 +42,7 @@ export const CellDisplay = ({ cell, colId, width, setDraft, setEditing }) => {
       }}
       title={cell.meta?.error}
     >
-      {cell.display}
+      {displayValue}
     </div>
   );
 };

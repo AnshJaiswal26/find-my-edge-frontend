@@ -1,5 +1,3 @@
-import React from "react";
-
 export function FormulaSuggestions({ suggestions, highlight, onSelect }) {
   if (!suggestions.length) return null;
 

@@ -2,7 +2,12 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { columnsById } from "./data";
-import { evaluateExpression, formatValue, moveItem } from "./tableUtils";
+import {
+  evaluateExpression,
+  formatValue,
+  moveItem,
+  evaluateColorRules,
+} from "./tableUtils";
 import { filterOperationMap, sortOperationMap } from "@utils";
 
 /* -------------------------------------------------------------------------- */
@@ -477,15 +482,9 @@ export const useTableStore = create(
     /*                              COLUMN ACTIONS                            */
     /* ---------------------------------------------------------------------- */
 
-    addMetric(metric) {
+    addColumn(metric) {
       set((s) => {
-        const column = {
-          ...metric,
-          editable: false,
-          display: { format: "", decimals: 2 },
-        };
-
-        s.columnsById[metric.id] = column;
+        s.columnsById[metric.id] = metric;
         s.columnOrder.push(metric.id);
 
         Object.values(s.rowsById).forEach((row) => {

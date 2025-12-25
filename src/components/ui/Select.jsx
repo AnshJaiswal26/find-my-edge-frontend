@@ -74,7 +74,11 @@ export default function Select({
     >
       {label && <label className="shrink-0 w-32">{label}</label>}
 
-      <div className={`relative flex flex-1 justify-start sm:justify-end`}>
+      <div
+        className={`relative flex flex-1 justify-start sm:justify-end ${
+          !label ? "justify-start!" : ""
+        }`}
+      >
         <button
           id={buttonId}
           ref={buttonRef}

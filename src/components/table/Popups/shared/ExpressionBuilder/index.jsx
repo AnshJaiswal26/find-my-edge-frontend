@@ -2,29 +2,49 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Input } from "@ui";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
+import { useNumericColumns } from "../../../hooks";
+import { buildAST, tokenize, toPostfix } from "./expression";
+import { Section } from "@layout";
 
-export function FormulaInput({ value, onChange, ast, numericColumns }) {
+export function ExpressionBuilder({ value, onCommit, onChange }) {
+  const { numericColumns, labelToId } = useNumericColumns();
+
   const [cursor, setCursor] = useState(0);
   const [highlight, setHighlight] = useState(0);
   const [open, setOpen] = useState(true);
-
-  console.log(ast);
+  const [expr, setExpr] = useState(value);
 
   const suggestions = useMemo(() => {
-    const m = value.slice(0, cursor).match(/[a-zA-Z_]+$/);
+    const m = expr.slice(0, cursor).match(/[a-zA-Z_]+$/);
     if (!m) return [];
     const q = m[0].toLowerCase();
     return numericColumns.filter((c) => c.label.toLowerCase().startsWith(q));
-  }, [value, cursor, numericColumns]);
+  }, [expr, cursor, numericColumns]);
+
+  const generatedAst = useMemo(() => {
+    try {
+      return buildAST(toPostfix(tokenize(expr)), labelToId);
+    } catch {
+      return null;
+    }
+  }, [expr, labelToId]);
+
+  const { ast, dependency } = generatedAst
+    ? generatedAst
+    : { ast: null, dependency: null };
 
   const applySuggestion = useCallback(
     (label) => {
-      const before = value.slice(0, cursor).replace(/[a-zA-Z_]+$/, "");
-      const after = value.slice(cursor);
-      onChange(`${before}${label}${after}`);
+      const formatted = /[^a-zA-Z0-9_-]/.test(label) ? `[${label}]` : label;
+
+      const before = expr.slice(0, cursor).replace(/[a-zA-Z_]+$/, "");
+
+      const after = expr.slice(cursor);
+
+      setExpr(`${before}${formatted}${after}`);
       setOpen(false);
     },
-    [value, cursor, onChange]
+    [expr, cursor]
   );
 
   const onKeyDown = useCallback(
@@ -50,20 +70,29 @@ export function FormulaInput({ value, onChange, ast, numericColumns }) {
     [suggestions, highlight, applySuggestion]
   );
 
+  const handleChange = useCallback(
+    (e) => {
+      const exp = e.target.value;
+      setExpr(exp);
+      onChange?.(exp, ast, dependency);
+      setCursor(e.target.selectionStart);
+      setOpen(true);
+    },
+    [expr, setExpr, setCursor, setOpen]
+  );
+
   return (
-    <div className="relative">
+    <Section title={"Formula"}>
       <Input
         vertical
-        label="Formula"
-        value={value}
+        value={expr}
         placeholder="eg. (Exit - Entry) * Qty"
         onKeyDown={onKeyDown}
-        onBlur={() => setOpen(false)}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setCursor(e.target.selectionStart);
-          setOpen(true);
+        onBlur={() => {
+          onCommit?.(expr, ast, dependency);
+          setOpen(false);
         }}
+        onChange={handleChange}
       />
 
       {open && (
@@ -74,7 +103,7 @@ export function FormulaInput({ value, onChange, ast, numericColumns }) {
         />
       )}
 
-      <FormulaValidation valid={!!ast} />
-    </div>
+      {expr !== "" && <FormulaValidation valid={!!ast} />}
+    </Section>
   );
 }

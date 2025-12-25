@@ -2,7 +2,7 @@ import { Popup } from "@layout";
 import { useTableStore } from "../../store";
 import { filterOptions } from "@utils";
 import { Button, Input, Select } from "@ui";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 export const filterOptionsByType = {
   text: [
@@ -46,7 +46,7 @@ export const filterOptionsByType = {
   ],
 };
 
-export function FilterPopup() {
+export default function FilterPopup() {
   const filters = useTableStore((s) => s.filters);
   const columnsById = useTableStore((s) => s.columnsById);
   const activePopup = useTableStore((s) => s.activePopup);
@@ -67,10 +67,9 @@ export function FilterPopup() {
       <Popup.Container className="w-50 max-w-50">
         <Popup.Header title="Filters" onClose={closePopup} />
 
-        <Popup.Body className="px-4 py-3">
-          {/* FILTER RULES */}
+        <Popup.Body className="px-4 py-3 flex flex-col gap-4 justify-between">
           {filters.length === 0 && (
-            <p className="text-sm text-center rounded border border-(--border) pt-20 text-(--text-muted)">
+            <p className="text-sm text-center rounded border border-(--border) p-20 text-(--text-muted)">
               No filters applied. Add a rule to narrow results.
             </p>
           )}
@@ -161,16 +160,12 @@ export function FilterPopup() {
 
           {/* ADD FILTER */}
           <div>
-            <Button
-              text={
-                <span className="flex items-center gap-1">
-                  <Plus size={18} />
-                  Add filter rule
-                </span>
-              }
-              hollow
+            <button
+              className="text-sm text-(--info) cursor-pointer hover:underline"
               onClick={addFilter}
-            />
+            >
+              + Add rule
+            </button>
           </div>
         </Popup.Body>
 

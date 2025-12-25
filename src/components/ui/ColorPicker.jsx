@@ -9,6 +9,7 @@ export default function ColorPicker({
   onCommit,
   resetColor,
   disabled = false,
+  reset = true,
 }) {
   const isCommitMode = typeof onCommit === "function";
   const [local, setLocal] = useState(value);
@@ -28,6 +29,7 @@ export default function ColorPicker({
         p-0.5 pl-2
         rounded-[4px]
         w-fit
+        min-h-8
         border border-(--border)
         ${disabled ? "pointer-events-none opacity-40" : ""}
       `}
@@ -64,19 +66,21 @@ export default function ColorPicker({
       {/* Label */}
       <span className="text-[0.85rem]">{label}</span>
 
-      <Button.Icon
-        tooltip={{ text: "Reset", position: "top" }}
-        onClick={() => {
-          if (isCommitMode) {
-            setLocal(resetColor);
-            onCommit(resetColor);
-          } else {
-            onChange?.(resetColor);
-          }
-        }}
-      >
-        <RefreshCcw size={16} />
-      </Button.Icon>
+      {reset && (
+        <Button.Icon
+          tooltip={{ text: "Reset", position: "top" }}
+          onClick={() => {
+            if (isCommitMode) {
+              setLocal(resetColor);
+              onCommit(resetColor);
+            } else {
+              onChange?.(resetColor);
+            }
+          }}
+        >
+          <RefreshCcw size={16} />
+        </Button.Icon>
+      )}
     </div>
   );
 }

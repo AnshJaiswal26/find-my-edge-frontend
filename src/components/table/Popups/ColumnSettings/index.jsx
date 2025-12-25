@@ -2,29 +2,31 @@ import { useEffect, useState } from "react";
 import { Popup } from "@layout";
 import { useTableStore } from "../../store";
 import { ColumnList } from "./ColumnList";
-import { ColumnDetails } from "./ColumnDetails";
-import { tokenize, toPostfix, buildAST } from "../MetricBuilder/expression";
-import { useNumericColumns } from "../../hooks";
+import { ColumnDetails } from "../shared";
 
-export function ColumnSettingsPopup() {
+export default function ColumnSettingsPopup() {
   const isOpen = useTableStore((s) => s.activePopup === "column-settings");
+  if (!isOpen) return null;
+
+  return <ColumnSettingsPopupContent />;
+}
+
+function ColumnSettingsPopupContent() {
   const columnsById = useTableStore((s) => s.columnsById);
   const columnOrder = useTableStore((s) => s.columnOrder);
-  const { numericColumns, labelToId } = useNumericColumns();
 
   const closePopup = useTableStore((s) => s.closePopup);
   const updateColumn = useTableStore((s) => s.updateColumn);
 
   const [activeColId, setActiveColId] = useState(null);
   const [draft, setDraft] = useState(null);
-  const [ast, setAst] = useState(null);
 
   /* ---------------- select default column ---------------- */
 
   useEffect(() => {
-    if (!isOpen || !columnOrder.length) return;
+    if (!columnOrder.length) return;
     setActiveColId((prev) => prev ?? columnOrder[0]);
-  }, [isOpen, columnOrder]);
+  }, [columnOrder]);
 
   /* ---------------- sync draft on column change ---------------- */
 
@@ -35,35 +37,27 @@ export function ColumnSettingsPopup() {
     if (!col) return;
 
     setDraft({
-      ast: col.type === "computed" ? safeAST(col.formula, labelToId) : null,
-      type: col.type,
+      id: col.id,
       label: col.label,
-      formula: col.type === "computed" ? col.formula || "" : "",
-      options: col.type === "select" ? [...(col.options || [])] : [],
+      type: col.type,
+      editable: col?.editable,
+      dependsOn: col?.dependsOn,
+      display: col?.display,
+      expression: col?.expression,
+      formula: col?.formula,
+      colorRules: col?.colorRules,
     });
   }, [activeColId, columnsById]);
 
-  useEffect(() => {
-    if (draft) {
-      // console.log(
-      //   draft.type === "computed",
-      //   draft.formula,
-      //   labelToId,
-      //   safeAST(draft.formula, labelToId)
-      // );
-      setAst(
-        draft.type === "computed" ? safeAST(draft.formula, labelToId) : null
-      );
-    }
-  }, [draft]);
+  if (!activeColId || !draft) return null;
 
-  if (!isOpen || !activeColId || !draft) return null;
+  console.log(draft);
 
   /* ---------------- validation ---------------- */
 
   const isValid =
     draft.label.trim() &&
-    (draft.type !== "computed" || ast) &&
+    (draft.type !== "computed" || draft.ast) &&
     (draft.type !== "select" ||
       (draft.options.length > 0 && draft.options.every((o) => o.trim())));
 
@@ -88,20 +82,19 @@ export function ColumnSettingsPopup() {
             onSelect={setActiveColId}
           />
 
-          <ColumnDetails
-            column={columnsById[activeColId]}
-            draft={draft}
-            ast={ast}
-            numericColumns={numericColumns}
-            onDraftChange={setDraft}
-          />
+          {activeColId && (
+            <ColumnDetails
+              column={columnsById[activeColId]}
+              draft={draft}
+              onDraftChange={setDraft}
+            />
+          )}
         </Popup.Body>
 
         <Popup.Footer
           text={["Cancel", "Apply"]}
           onCancel={closePopup}
           onApply={applyChanges}
-          applyDisabled={!isValid}
         />
       </Popup.Container>
     </Popup>
@@ -109,11 +102,3 @@ export function ColumnSettingsPopup() {
 }
 
 /* ---------------- helpers ---------------- */
-
-function safeAST(expr, labelToId) {
-  try {
-    return buildAST(toPostfix(tokenize(expr)), labelToId);
-  } catch (e) {
-    return null;
-  }
-}

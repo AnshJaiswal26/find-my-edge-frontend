@@ -17,6 +17,7 @@ export default function Input({
   value,
   onChange,
   onCommit,
+  onBlur,
   classNames,
   formatter = (v) => v,
   ...props
@@ -49,7 +50,7 @@ export default function Input({
       )}
 
       <div
-        className={`flex flex-1 w-full justify-start sm:justify-end ${
+        className={`flex flex-1 gap-1 w-full justify-start sm:justify-end ${
           classNames?.inputWrapper
         } ${vertical ? "justify-start!" : ""}`}
       >
@@ -66,8 +67,9 @@ export default function Input({
           onChange={(e) => {
             isCommitMode ? setLocal(e.target.value) : onChange?.(e);
           }}
-          onBlur={() => {
+          onBlur={(e) => {
             if (isCommitMode) onCommit(local);
+            onBlur?.(e);
           }}
           className={`
             w-full rounded max-w-40 min-w-30

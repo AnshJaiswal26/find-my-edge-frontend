@@ -4,6 +4,7 @@ import { useTableStore } from "../store";
 import { CellSelect } from "./CellSelect";
 import { CellInput } from "./CellInput";
 import { CellDisplay } from "./CellDisplay";
+import { evaluateColorRules } from "../tableUtils";
 
 export function Cell({ rowId, colId, onCommit }) {
   const [editing, setEditing] = useState(false);

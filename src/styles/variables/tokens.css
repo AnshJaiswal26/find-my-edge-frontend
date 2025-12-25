@@ -12,7 +12,7 @@
   --border-raised: hsl(0, 0%, 100%);
 
   --text: hsl(210 10% 23%);
-  --text-muted: hsl(216, 15%, 34%);
+  --text-muted: hsl(216, 15%, 63%);
   --text-charts: hsl(210, 29%, 29%);
   --text-charts-muted: hsl(210, 13%, 62%);
   --text-disabled: hsl(0 0% 70%);

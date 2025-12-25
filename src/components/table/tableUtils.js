@@ -1,3 +1,5 @@
+import { filterOperationMap } from "@utils";
+
 export const TONE_CLASS = {
   profit: "text-(--success) bg-(--success-soft)",
   loss: "text-(--error) bg-(--error-soft)",
@@ -7,6 +9,8 @@ export const TONE_CLASS = {
 
 export function formatValue(value, column) {
   if (value == null) return "—";
+
+  console.log(column.display?.format);
 
   const isNumber = typeof value === "number" && !Number.isNaN(value);
 
@@ -51,6 +55,18 @@ export function evaluateExpression(expr, row) {
       return cell?.value ?? null;
     }
 
+    case "unary": {
+      const value = evaluateExpression(expr.arg, row);
+      if (value == null) return null;
+
+      switch (expr.op) {
+        case "-":
+          return -value;
+        default:
+          return null;
+      }
+    }
+
     case "binary": {
       const left = evaluateExpression(expr.left, row);
       const right = evaluateExpression(expr.right, row);
@@ -87,4 +103,16 @@ export function bindGlobalPointer(from, onMove, onUp) {
   }
   window.addEventListener("pointermove", move);
   window.addEventListener("pointerup", up);
+}
+
+export function evaluateColorRules(value, rules = []) {
+  for (const rule of rules) {
+    const fn = filterOperationMap[rule.operator];
+    if (!fn) continue;
+
+    const match = fn(value, rule.value, rule?.value2);
+    if (match) return rule.color;
+  }
+
+  return null;
 }

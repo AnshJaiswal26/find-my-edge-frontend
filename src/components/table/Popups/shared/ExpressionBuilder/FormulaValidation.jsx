@@ -1,5 +1,3 @@
-import React from "react";
-
 export const FormulaValidation = ({ valid }) => (
   <div className="text-sm">
     {valid ? (

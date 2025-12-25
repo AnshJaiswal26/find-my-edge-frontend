@@ -1,3 +1,44 @@
+export const filterByType = {
+  text: [
+    "textContains",
+    "textContains",
+    "textDoesNotContain",
+    "textStartsWith",
+    "textEndsWith",
+    "textIsExactly",
+  ],
+  select: [
+    "textContains",
+    "textContains",
+    "textDoesNotContain",
+    "textStartsWith",
+    "textEndsWith",
+    "textIsExactly",
+  ],
+  number: [
+    "greaterThan",
+    "greaterThanEqualTo",
+    "lessThan",
+    "lessThanEqualTo",
+    "isEqualTo",
+    "isNotEqualTo",
+    "isBetween",
+    "isNotBetween",
+  ],
+  computed: [
+    "greaterThan",
+    "greaterThanEqualTo",
+    "lessThan",
+    "lessThanEqualTo",
+    "isEqualTo",
+    "isNotEqualTo",
+    "isBetween",
+    "isNotBetween",
+  ],
+  date: ["dateIs", "dateBefore", "dateAfter"],
+  time: ["dateIs", "dateBefore", "dateAfter"],
+};
+
 export const filterOperationMap = {
   // General
   none: () => true,

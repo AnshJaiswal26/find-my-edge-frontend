@@ -3,7 +3,7 @@ import { useTableStore } from "../../store";
 import { Select } from "@ui";
 import { sortOptions } from "@utils";
 
-export function SortPopup() {
+export default function SortPopup() {
   const { activePopup, columnsById, sort } = useTableStore();
 
   const { setSort, clearSort, applySort, closePopup } =
