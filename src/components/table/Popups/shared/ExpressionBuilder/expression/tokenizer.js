@@ -1,16 +1,28 @@
 const OPS = "+-*/()";
+const FUNCTIONS = new Set(["PREV"]);
 
 export function tokenize(expr) {
   const tokens = [];
   let buf = "";
 
+  let i = 0;
+  let prevToken = null;
+  let parenBalance = 0;
+
   const flushIdentifier = () => {
-    if (buf) {
-      const t = { type: "identifier", value: buf };
-      tokens.push(t);
-      prevToken = t; // 🔥 IMPORTANT
-      buf = "";
-    }
+    if (!buf) return;
+
+    const upper = buf.toUpperCase();
+    const isFunction = FUNCTIONS.has(upper) && expr[i] === "(";
+
+    const t = {
+      type: isFunction ? "function" : "identifier",
+      value: buf,
+    };
+
+    tokens.push(t);
+    prevToken = t;
+    buf = "";
   };
 
   const flushNumber = (num) => {
@@ -19,22 +31,19 @@ export function tokenize(expr) {
     prevToken = t;
   };
 
-  let i = 0;
-  let prevToken = null;
-  let parenBalance = 0;
-
   while (i < expr.length) {
     const ch = expr[i];
 
-    // whitespace
+    /* ---------- whitespace ---------- */
     if (ch === " ") {
       flushIdentifier();
       i++;
       continue;
     }
 
-    // bracketed identifier: [T  N]
+    /* ---------- bracketed identifier [Trade PnL] ---------- */
     if (ch === "[") {
+      flushIdentifier();
       i++; // skip '['
       let name = "";
 
@@ -54,13 +63,13 @@ export function tokenize(expr) {
       continue;
     }
 
-    // identifier (supports hyphen inside)
+    /* ---------- identifier / function ---------- */
     if (/[a-zA-Z_]/.test(ch)) {
       buf += ch;
       i++;
 
       while (i < expr.length && /[a-zA-Z0-9_-]/.test(expr[i])) {
-        // ❗ prevent leading or trailing '-'
+        // prevent invalid hyphen usage
         if (
           expr[i] === "-" &&
           (!/[a-zA-Z0-9_]/.test(expr[i - 1]) ||
@@ -68,7 +77,6 @@ export function tokenize(expr) {
         ) {
           break;
         }
-
         buf += expr[i++];
       }
 
@@ -77,21 +85,23 @@ export function tokenize(expr) {
 
     flushIdentifier();
 
-    // 🔥 unary minus (FIX)
+    /* ---------- unary minus ---------- */
     const isUnaryMinus =
       ch === "-" &&
       (prevToken === null ||
         prevToken.type === "op" ||
-        prevToken.type === "lparen");
+        prevToken.type === "lparen" ||
+        prevToken.type === "function");
 
     if (isUnaryMinus) {
-      tokens.push({ type: "op", value: "u-" });
-      prevToken = tokens[tokens.length - 1];
+      const t = { type: "op", value: "u-" };
+      tokens.push(t);
+      prevToken = t;
       i++;
       continue;
     }
 
-    // number
+    /* ---------- number ---------- */
     if (/[0-9.]/.test(ch)) {
       let num = "";
       let dotCount = 0;
@@ -111,22 +121,25 @@ export function tokenize(expr) {
       continue;
     }
 
-    // operators & parentheses
+    /* ---------- operators & parentheses ---------- */
     if (OPS.includes(ch)) {
       if (ch === "(") {
-        tokens.push({ type: "lparen" });
-        prevToken = tokens[tokens.length - 1];
+        const t = { type: "lparen" };
+        tokens.push(t);
+        prevToken = t;
         parenBalance++;
       } else if (ch === ")") {
         parenBalance--;
         if (parenBalance < 0) {
           throw new Error("Unmatched closing parenthesis");
         }
-        tokens.push({ type: "rparen" });
-        prevToken = tokens[tokens.length - 1];
+        const t = { type: "rparen" };
+        tokens.push(t);
+        prevToken = t;
       } else {
-        tokens.push({ type: "op", value: ch });
-        prevToken = tokens[tokens.length - 1];
+        const t = { type: "op", value: ch };
+        tokens.push(t);
+        prevToken = t;
       }
       i++;
       continue;

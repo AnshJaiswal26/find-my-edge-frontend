@@ -2,12 +2,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { columnsById } from "./data";
-import {
-  evaluateExpression,
-  formatValue,
-  moveItem,
-  evaluateColorRules,
-} from "./tableUtils";
+import { evaluateExpression, formatValue, moveItem } from "./tableUtils";
 import { filterOperationMap, sortOperationMap } from "@utils";
 
 /* -------------------------------------------------------------------------- */
@@ -30,7 +25,7 @@ function getInitialCellValue(column) {
   }
 }
 
-function createTrade(columnsById, format = false) {
+function createTrade(columnsById) {
   const cells = {};
 
   Object.values(columnsById).forEach((column) => {
@@ -38,7 +33,6 @@ function createTrade(columnsById, format = false) {
 
     cells[column.id] = {
       value,
-      display: format ? formatValue(value, column) : value,
       meta: {},
     };
   });
@@ -49,24 +43,90 @@ function createTrade(columnsById, format = false) {
   };
 }
 
+export function buildAffectedMap(columnsById) {
+  const affected = {};
+
+  Object.values(columnsById).forEach((col) => {
+    col.dependsOn?.forEach((dep) => {
+      if (!affected[dep]) affected[dep] = [];
+      affected[dep].push(col.id);
+    });
+  });
+
+  return affected;
+}
+
 function computeRows(row, columnsById) {
   Object.values(columnsById).forEach((column) => {
     if (column.type !== "computed" || !column.expression) return;
 
     const value = evaluateExpression(column.expression, row);
     row.cells[column.id].value = value;
-    row.cells[column.id].display = formatValue(value, column);
   });
 }
 
-function computeColumn(rowsById, column) {
-  if (column.type !== "computed" || !column.expression) return;
+export function computeCumulativeColumn(rowsById, rowOrder, column) {
+  if (column.type !== "computed" || !usesPrev(column.expression)) return;
 
-  Object.values(rowsById).forEach((row) => {
-    const value = evaluateExpression(column.expression, row);
+  const rows = rowOrder.map((id) => rowsById[id]);
+
+  let prevSelf = column.startValue ?? 0;
+
+  rows.forEach((row) => {
+    const value = evaluateExpression(column.expression, row, prevSelf);
     row.cells[column.id].value = value;
-    row.cells[column.id].display = formatValue(value, column);
+    prevSelf = value;
   });
+}
+
+function computeAffectedRowCascade(
+  row,
+  changedColId,
+  columnsById,
+  affectedMap,
+  rowsById,
+  rowOrder
+) {
+  const queue = [changedColId];
+  const visited = new Set();
+
+  while (queue.length) {
+    const colId = queue.shift();
+
+    affectedMap[colId]?.forEach((nextColId) => {
+      if (visited.has(nextColId)) return;
+      visited.add(nextColId);
+
+      const column = columnsById[nextColId];
+
+      if (usesPrev(column.expression)) {
+        computeCumulativeColumn(rowsById, rowOrder, column);
+      } else {
+        const value = evaluateExpression(column.expression, row);
+        row.cells[nextColId].value = value;
+      }
+
+      queue.push(nextColId);
+    });
+  }
+}
+
+function usesPrev(expr) {
+  if (!expr || typeof expr !== "object") return false;
+
+  if (expr.type === "prev") {
+    return true;
+  }
+
+  if (expr.type === "binary") {
+    return usesPrev(expr.left) || usesPrev(expr.right);
+  }
+
+  if (expr.type === "unary") {
+    return usesPrev(expr.arg);
+  }
+
+  return false;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -85,6 +145,8 @@ export const useTableStore = create(
     columnsById: { ...columnsById },
     columnOrder: [],
     columnWidths: {},
+
+    affectedMap: {},
 
     activePopup: null,
 
@@ -402,19 +464,82 @@ export const useTableStore = create(
         s.rowsById[rowId].cells[colId].meta.error = error;
       });
 
-      if (column.type === "number") state.recompute({ rowId, colId });
+      if (column.type === "number")
+        state.recompute({
+          reason: "cell",
+          rowId,
+          colId,
+        });
     },
 
     recompute(payload) {
       set((state) => {
-        if (!payload) {
-          state.rowOrder.forEach((rowId) =>
-            computeRows(state.rowsById[rowId], state.columnsById)
+        const { rowsById, rowOrder, columnsById, affectedMap } = state;
+
+        /* ---------- FULL RECOMPUTE ---------- */
+        if (!payload || payload.reason === "all") {
+          rowOrder.forEach((rowId) => {
+            const row = rowsById[rowId];
+
+            // recompute row-based first
+            Object.values(columnsById).forEach((col) => {
+              if (
+                col.type === "computed" &&
+                col.expression &&
+                !usesPrev(col.expression)
+              ) {
+                row.cells[col.id].value = evaluateExpression(
+                  col.expression,
+                  row
+                );
+              }
+            });
+          });
+
+          // recompute cumulatives last
+          Object.values(columnsById).forEach((col) => {
+            if (col.type === "computed" && usesPrev(col.expression)) {
+              computeCumulativeColumn(rowsById, rowOrder, col);
+            }
+          });
+
+          return;
+        }
+
+        /* ---------- CELL CHANGE ---------- */
+        if (payload.reason === "cell" && payload.rowId && payload.colId) {
+          const row = rowsById[payload.rowId];
+
+          computeAffectedRowCascade(
+            row,
+            payload.colId,
+            columnsById,
+            affectedMap,
+            rowsById,
+            rowOrder
           );
-        } else if (payload.rowId) {
-          computeRows(state.rowsById[payload.rowId], state.columnsById);
-        } else if (payload.colId) {
-          computeColumn(state.rowsById, state.columnsById[payload.colId]);
+
+          return;
+        }
+
+        /* ---------- COLUMN CHANGE ---------- */
+        if (payload.reason === "column" && payload.colId) {
+          const column = columnsById[payload.colId];
+
+          // row-based → recompute all rows
+          if (!usesPrev(column.expression)) {
+            rowOrder.forEach((rowId) => {
+              const row = rowsById[rowId];
+              row.cells[column.id].value = evaluateExpression(
+                column.expression,
+                row
+              );
+            });
+          }
+          // cumulative → recompute full column
+          else {
+            computeCumulativeColumn(rowsById, rowOrder, column);
+          }
         }
       });
     },
@@ -443,27 +568,13 @@ export const useTableStore = create(
       t2.cells.qty.value = 10;
       t2.cells.sl.value = 10;
 
-      t1.cells.date.display = "2025-04-15";
-      t1.cells.symbol.display = "NIFTY";
-      t1.cells.entry.display = 100;
-      t1.cells.exit.display = 110;
-      t1.cells.qty.display = 10;
-      t1.cells.sl.display = 10;
-
-      t2.cells.date.display = "2025-04-16";
-      t2.cells.symbol.display = "BANKNIFTY";
-      t2.cells.entry.display = 100;
-      t2.cells.exit.display = 90;
-      t2.cells.qty.display = 10;
-      t2.cells.sl.display = 10;
-
       set({
         rowsById: { [t1.id]: t1, [t2.id]: t2 },
         rowOrder: [t1.id, t2.id],
         columnOrder: Object.keys(state.columnsById),
       });
 
-      state.recompute();
+      state.recompute({ reason: "all" });
     },
 
     /* ---------------------------------------------------------------------- */
@@ -471,7 +582,7 @@ export const useTableStore = create(
     /* ---------------------------------------------------------------------- */
 
     addTrade() {
-      const t = createTrade(get().columnsById, true);
+      const t = createTrade(get().columnsById);
       set((s) => {
         s.rowsById[t.id] = t;
         s.rowOrder.push(t.id);
@@ -487,13 +598,18 @@ export const useTableStore = create(
         s.columnsById[metric.id] = metric;
         s.columnOrder.push(metric.id);
 
+        s.affectedMap = buildAffectedMap(s.columnsById);
+
         Object.values(s.rowsById).forEach((row) => {
           const value = getInitialCellValue(metric);
           row.cells[metric.id] = { value, display: value, meta: {} };
         });
       });
 
-      get().recompute({ colId: metric.id });
+      get().recompute({
+        reason: "column",
+        colId: metric.id,
+      });
     },
 
     deleteColumn() {
@@ -507,25 +623,17 @@ export const useTableStore = create(
         Object.values(s.rowsById).forEach((row) => delete row.cells[colId]);
         delete s.columnsById[colId];
         s.selectedColumn = null;
+        delete s.affectedMap[colId];
+        delete s.columnWidths[colId];
       });
     },
 
     updateColumn(activeColId, draft) {
       set((s) => {
-        const col = s.columnsById[activeColId];
+        Object.assign(s.columnsById[activeColId], draft);
 
-        // label
-        col.label = draft.label;
-
-        // computed
-        if (col.type === "computed") {
-          col.formula = draft.formula;
-          col.expression = ast;
-        }
-
-        // select
-        if (col.type === "select") {
-          col.options = draft.options.map((o) => o.trim());
+        if (s.columnsById[activeColId]?.formula !== draft?.formula) {
+          s.affectedMap = buildAffectedMap(s.columnsById);
         }
       });
 

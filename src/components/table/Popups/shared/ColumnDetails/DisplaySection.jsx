@@ -57,7 +57,7 @@ export function DisplaySection({ display, onChange, type }) {
           />
         ))}
 
-      {display?.format === "Custom" && (
+      {display?.format === "custom" && (
         <div className="flex justify-between">
           <Input
             vertical

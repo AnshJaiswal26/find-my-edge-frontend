@@ -7,6 +7,8 @@ import { Section } from "@layout";
 export default function ColumnDetails({ column, draft, onDraftChange }) {
   if (!column) return null;
 
+  console.log("Col Details:", draft);
+
   return (
     <div className="flex-1 w-full space-y-4 overflow-auto">
       {/* Label */}
@@ -33,11 +35,6 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
               });
             }}
           />
-          {column?.dependsOn && column.dependsOn.length !== 0 && (
-            <Section title={"Depends on"}>
-              {column.dependsOn?.join(", ") || "—"}
-            </Section>
-          )}
         </>
       )}
 

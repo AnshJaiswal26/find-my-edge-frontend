@@ -6,7 +6,7 @@ export function FormulaSuggestions({ suggestions, highlight, onSelect }) {
       {suggestions.map((c, i) => (
         <div
           key={c.id}
-          onMouseDown={() => onSelect(c.label)}
+          onMouseDown={() => onSelect(c.label, c.id)}
           className={`px-2 py-1 cursor-pointer ${
             i === highlight ? "bg-(--info)" : ""
           }`}

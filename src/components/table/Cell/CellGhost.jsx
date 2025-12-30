@@ -4,7 +4,9 @@ export const CellGhost = ({ ref }) => {
   const select = useTableStore((s) => s.selectedCell);
   if (!select) return null;
 
-  const rect = ref.current.getBoundingClientRect();
+  const rect = ref.current?.getBoundingClientRect();
+
+  if (!rect) return null;
 
   return (
     <div

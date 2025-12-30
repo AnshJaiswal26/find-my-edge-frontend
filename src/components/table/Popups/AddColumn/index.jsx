@@ -29,7 +29,6 @@ function AddColumnPopupConent() {
 
   const save = () => {
     if (!draft.label) return;
-
     addColumn({ id: crypto.randomUUID(), ...draft });
     closePopup();
   };
@@ -45,7 +44,13 @@ function AddColumnPopupConent() {
             value={draft.type}
             options={["computed", "number", "text", "date", "time", "select"]}
             getLabel={(v) => v.toUpperCase()}
-            onChange={(v) => setDraft((p) => ({ ...p, type: v }))}
+            onChange={(v) =>
+              setDraft((p) => ({
+                ...p,
+                type: v,
+                display: { format: "", decimals: 2, prefix: "", suffix: "" },
+              }))
+            }
           />
 
           <ColumnDetails

@@ -11,14 +11,13 @@ export const CellDisplay = ({ cell, colId, width, setDraft, setEditing }) => {
 
   const color = useMemo(
     () => evaluateColorRules(cell.value, column?.colorRules),
-    [(cell.value, column?.colorRules)]
+    [cell.value, column?.colorRules]
   );
 
   const displayValue = useMemo(
     () => formatValue(cell.value, column),
     [cell.value, column]
   );
-  console.log("render///");
 
   return (
     <div

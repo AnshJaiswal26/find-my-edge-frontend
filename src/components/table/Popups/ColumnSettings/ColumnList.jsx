@@ -11,7 +11,9 @@ export function ColumnList({
         return (
           <div
             key={id}
-            onClick={() => onSelect(id)}
+            onClick={() => {
+              onSelect(id);
+            }}
             className={`
               flex items-center gap-2 px-3 py-2 cursor-pointer
               ${id === activeColId ? "bg-(--hover)" : ""}

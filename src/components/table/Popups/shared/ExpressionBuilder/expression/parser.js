@@ -1,6 +1,8 @@
 const PRECEDENCE = { "u-": 3, "+": 1, "-": 1, "*": 2, "/": 2 };
 
 export function toPostfix(tokens) {
+  // console.log(tokens);
+
   const out = [];
   const ops = [];
 
@@ -8,6 +10,11 @@ export function toPostfix(tokens) {
     if (t.type === "identifier" || t.type === "number") {
       out.push(t);
       if (t.type === "identifier") continue;
+    }
+
+    if (t.type === "function") {
+      ops.push(t); // 🔥 push function
+      continue;
     }
 
     if (t.type === "op") {

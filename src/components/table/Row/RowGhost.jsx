@@ -17,12 +17,12 @@ export const RowGhost = ({ ref }) => {
         border-(--cyan-soft)
         rounded
         shadow-lg
-        w-full
         left-0
       "
       style={{
         top: draggingRow.top + rowDragY - rect.top,
         height: draggingRow.height,
+        width: rect.width,
         zIndex: 40,
       }}
     />

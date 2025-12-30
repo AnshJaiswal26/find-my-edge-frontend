@@ -37,7 +37,7 @@ export function ColorRulesSection({ rules, onChange, type }) {
                   ? "1"
                   : ""
               }`}
-              type="number"
+              type={type === "date" ? "date" : "number"}
               onChange={(e) =>
                 updateRule(i, { value: e.target.value }, onChange)
               }

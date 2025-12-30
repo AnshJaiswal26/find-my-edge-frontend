@@ -34,7 +34,7 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
     : { ast: null, dependency: null };
 
   const applySuggestion = useCallback(
-    (label) => {
+    (label, colId) => {
       const formatted = /[^a-zA-Z0-9_-]/.test(label) ? `[${label}]` : label;
 
       const before = expr.slice(0, cursor).replace(/[a-zA-Z_]+$/, "");

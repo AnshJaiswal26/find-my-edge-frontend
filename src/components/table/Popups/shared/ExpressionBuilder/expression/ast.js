@@ -1,23 +1,48 @@
 export function buildAST(postfix, labelToId) {
+  // console.log(postfix);
+
   const stack = [];
   const dependency = [];
 
   for (const t of postfix) {
+    /* ---------- FUNCTION ---------- */
+    if (t.type === "function") {
+      const name = t.value.toLowerCase();
+
+      if (name === "prev") {
+        const arg = stack.pop();
+        if (!arg || arg.type !== "column") return null;
+
+        // 🔥 PREV(column)
+        stack.push({
+          type: "prev",
+          columnId: arg.columnId,
+        });
+
+        continue;
+      }
+
+      return null;
+    }
+
+    /* ---------- IDENTIFIER ---------- */
     if (t.type === "identifier") {
       const colId = labelToId[t.value.toLowerCase()];
       if (!colId) return null;
+
       stack.push({ type: "column", columnId: colId });
-      dependency.push(t.value);
+      dependency.push(colId);
       continue;
     }
 
+    /* ---------- NUMBER ---------- */
     if (t.type === "number") {
       stack.push({ type: "constant", value: t.value });
       continue;
     }
 
+    /* ---------- OPERATOR ---------- */
     if (t.type === "op") {
-      // 🔥 unary minus
       if (t.value === "u-") {
         if (stack.length < 1) return null;
         const arg = stack.pop();
@@ -25,7 +50,6 @@ export function buildAST(postfix, labelToId) {
         continue;
       }
 
-      // binary operators
       if (stack.length < 2) return null;
       const right = stack.pop();
       const left = stack.pop();
@@ -33,5 +57,8 @@ export function buildAST(postfix, labelToId) {
     }
   }
 
-  return { ast: stack.length === 1 ? stack[0] : null, dependency };
+  return {
+    ast: stack.length === 1 ? stack[0] : null,
+    dependency,
+  };
 }

@@ -18,53 +18,37 @@ function ColumnSettingsPopupContent() {
   const closePopup = useTableStore((s) => s.closePopup);
   const updateColumn = useTableStore((s) => s.updateColumn);
 
-  const [activeColId, setActiveColId] = useState(null);
-  const [draft, setDraft] = useState(null);
+  const [activeColId, setActiveColId] = useState(columnOrder[0] || null);
+  const [draft, setDraft] = useState(columnsById[activeColId] || null);
 
-  /* ---------------- select default column ---------------- */
-
-  useEffect(() => {
-    if (!columnOrder.length) return;
-    setActiveColId((prev) => prev ?? columnOrder[0]);
-  }, [columnOrder]);
-
-  /* ---------------- sync draft on column change ---------------- */
-
-  useEffect(() => {
-    if (!activeColId) return;
-
-    const col = columnsById[activeColId];
-    if (!col) return;
-
-    setDraft({
-      id: col.id,
-      label: col.label,
-      type: col.type,
-      editable: col?.editable,
-      dependsOn: col?.dependsOn,
-      display: col?.display,
-      expression: col?.expression,
-      formula: col?.formula,
-      colorRules: col?.colorRules,
-    });
-  }, [activeColId, columnsById]);
-
-  if (!activeColId || !draft) return null;
-
-  console.log(draft);
+  if (columnOrder.length === 0 || !activeColId || !draft) {
+    closePopup();
+    return null;
+  }
 
   /* ---------------- validation ---------------- */
 
-  const isValid =
-    draft.label.trim() &&
-    (draft.type !== "computed" || draft.ast) &&
-    (draft.type !== "select" ||
-      (draft.options.length > 0 && draft.options.every((o) => o.trim())));
+  const isValid = () => {
+    if (!draft.label.trim()) return false;
+    if (draft.type === "computed" && !draft.expression) return false;
+    if (draft.type === "select") {
+      if (
+        !draft.options ||
+        draft.options.length === 0 ||
+        !draft.options.every((o) => o.trim())
+      )
+        return false;
+    }
+    return true;
+  };
+
+  const validation = isValid();
 
   /* ---------------- apply ---------------- */
 
   function applyChanges() {
-    if (!isValid) return;
+    console.log("Applying changes:", draft);
+    if (!validation) return;
     updateColumn(activeColId, draft);
     closePopup();
   }
@@ -79,16 +63,21 @@ function ColumnSettingsPopupContent() {
             columnsById={columnsById}
             columnOrder={columnOrder}
             activeColId={activeColId}
-            onSelect={setActiveColId}
+            onSelect={(id) => {
+              setDraft(columnsById[id]);
+              setActiveColId(id);
+            }}
           />
 
-          {activeColId && (
-            <ColumnDetails
-              column={columnsById[activeColId]}
-              draft={draft}
-              onDraftChange={setDraft}
-            />
-          )}
+          <div className="p-3 w-full overflow-auto">
+            {activeColId && (
+              <ColumnDetails
+                column={columnsById[activeColId]}
+                draft={draft}
+                onDraftChange={setDraft}
+              />
+            )}
+          </div>
         </Popup.Body>
 
         <Popup.Footer
@@ -100,5 +89,3 @@ function ColumnSettingsPopupContent() {
     </Popup>
   );
 }
-
-/* ---------------- helpers ---------------- */

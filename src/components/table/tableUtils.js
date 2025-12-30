@@ -10,7 +10,7 @@ export const TONE_CLASS = {
 export function formatValue(value, column) {
   if (value == null) return "—";
 
-  console.log(column.display?.format);
+  // console.log(column.display?.format);
 
   const isNumber = typeof value === "number" && !Number.isNaN(value);
 
@@ -45,7 +45,7 @@ export function moveItem(arr, from, to) {
   return copy;
 }
 
-export function evaluateExpression(expr, row) {
+export function evaluateExpression(expr, row, prev = 0) {
   switch (expr.type) {
     case "constant":
       return expr.value;
@@ -56,7 +56,7 @@ export function evaluateExpression(expr, row) {
     }
 
     case "unary": {
-      const value = evaluateExpression(expr.arg, row);
+      const value = evaluateExpression(expr.arg, row, prev);
       if (value == null) return null;
 
       switch (expr.op) {
@@ -67,9 +67,13 @@ export function evaluateExpression(expr, row) {
       }
     }
 
+    case "prev": {
+      return prev + row.cells[expr.columnId]?.value ?? null;
+    }
+
     case "binary": {
-      const left = evaluateExpression(expr.left, row);
-      const right = evaluateExpression(expr.right, row);
+      const left = evaluateExpression(expr.left, row, prev);
+      const right = evaluateExpression(expr.right, row, prev);
 
       if (left == null || right == null) return null;
 
