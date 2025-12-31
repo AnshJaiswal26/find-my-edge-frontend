@@ -37,7 +37,13 @@ export function ColorRulesSection({ rules, onChange, type }) {
                   ? "1"
                   : ""
               }`}
-              type={type === "date" ? "date" : "number"}
+              type={
+                type === "select"
+                  ? "text"
+                  : type === "computed"
+                  ? "number"
+                  : type
+              }
               onChange={(e) =>
                 updateRule(i, { value: e.target.value }, onChange)
               }
@@ -80,7 +86,7 @@ export function ColorRulesSection({ rules, onChange, type }) {
             onChange((p) => ({
               ...p,
               colorRules: [
-                ...rules,
+                ...p.colorRules,
                 { operator: ">", value: 0, color: "#22c55e" },
               ],
             }))

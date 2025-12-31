@@ -73,7 +73,7 @@ function RadialBarColors({ seriesDraft, setSeriesDraft }) {
 
       <ColorPicker
         label="Bar Color"
-        value={parseColor(series.color)}
+        value={series.color}
         onCommit={(c) =>
           setSeriesDraft((prev) => {
             const next = [...prev];

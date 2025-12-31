@@ -9,12 +9,74 @@ export const columnsById = {
 
     parse: (v) => v,
 
-    display: { format: "date" },
+    display: { format: "YYYY-MM-DD" },
 
     colorRules: [],
 
     expression: null,
     formula: null,
+  },
+
+  entryTime: {
+    id: "entryTime",
+    label: "Entry Time",
+    type: "time",
+    editable: true,
+
+    dependsOn: [],
+
+    // expect value like "09:30" or ISO datetime
+    parse: (v) => v,
+
+    display: { format: "HH:mm" },
+
+    colorRules: [],
+
+    expression: null,
+    formula: null,
+  },
+
+  exitTime: {
+    id: "exitTime",
+    label: "Exit Time",
+    type: "time",
+    editable: true,
+
+    dependsOn: [],
+
+    parse: (v) => v,
+
+    display: { format: "HH:mm" },
+
+    colorRules: [],
+
+    expression: null,
+    formula: null,
+  },
+
+  duration: {
+    id: "duration",
+    label: "Duration",
+    type: "computed",
+    editable: false,
+
+    dependsOn: ["entryTime", "exitTime"],
+
+    display: { format: "number", decimals: 0 },
+
+    colorRules: [
+      { operator: "lessThan", value: 5, color: "var(--warning)" },
+      { operator: "greaterThan", value: 30, color: "var(--info)" },
+    ],
+
+    // custom expression handled in evaluator
+    expression: {
+      type: "duration",
+      from: { type: "column", columnId: "entryTime" },
+      to: { type: "column", columnId: "exitTime" },
+    },
+
+    formula: "(Exit Time - Entry Time) in minutes",
   },
 
   symbol: {

@@ -1,4 +1,4 @@
-import { Button, Editor, Sidebar, Toast } from "@ui";
+import { Button, Editor, Sidebar, Toast, Tooltip } from "@ui";
 import { Loader2, X } from "lucide-react";
 
 export const PageContainer = ({
@@ -10,6 +10,7 @@ export const PageContainer = ({
   return (
     <div>
       {sidebar && <Sidebar />}
+      <Tooltip />
       <div
         className={`flex flex-col justify-center items-center font-(--font-faimily-base) w-full h-full box-border ${className}`}
       >

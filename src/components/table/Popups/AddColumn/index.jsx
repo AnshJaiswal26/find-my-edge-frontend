@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ColumnDetails } from "../shared";
 import { useTableStore } from "../../store";
 import { Popup } from "@layout";
-import { Select } from "@ui";
 
 export default function AddColumnPopup() {
   const isOpen = useTableStore((s) => s.activePopup === "add-column");
@@ -39,20 +38,6 @@ function AddColumnPopupConent() {
         <Popup.Header title="Add Metric" onClose={closePopup} />
 
         <Popup.Body className="!p-4 space-y-4 items-center">
-          <Select
-            label={"Column Type"}
-            value={draft.type}
-            options={["computed", "number", "text", "date", "time", "select"]}
-            getLabel={(v) => v.toUpperCase()}
-            onChange={(v) =>
-              setDraft((p) => ({
-                ...p,
-                type: v,
-                display: { format: "", decimals: 2, prefix: "", suffix: "" },
-              }))
-            }
-          />
-
           <ColumnDetails
             column={{ type: draft.type, dependsOn: draft.dependsOn }}
             draft={draft}

@@ -152,8 +152,7 @@ export default function SummaryPopup() {
             )}
           </div>
         </Popup.Body>
-
-        <Popup.Footer text={["", "Close"]} onApply={closePopup} />
+        <div className="w-full h-3 border-t border-(--border)"></div>
       </Popup.Container>
     </Popup>
   );

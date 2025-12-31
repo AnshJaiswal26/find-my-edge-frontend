@@ -1,133 +1,18 @@
-// store/useTableStore.ts
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { columnsById } from "./data";
-import { evaluateExpression, formatValue, moveItem } from "./tableUtils";
+import {
+  buildAffectedMap,
+  computeAffectedRowCascade,
+  computeCumulativeColumn,
+  createTrade,
+  evaluateExpression,
+  formatValue,
+  getInitialCellValue,
+  moveItem,
+  usesPrev,
+} from "./tableUtils";
 import { filterOperationMap, sortOperationMap } from "@utils";
-
-/* -------------------------------------------------------------------------- */
-/*                                  HELPERS                                   */
-/* -------------------------------------------------------------------------- */
-
-function getInitialCellValue(column) {
-  switch (column.type) {
-    case "number":
-    case "computed":
-      return 0;
-    case "date":
-      return new Date().toISOString().slice(0, 10);
-    case "text":
-      return "-";
-    case "select":
-      return "";
-    default:
-      return null;
-  }
-}
-
-function createTrade(columnsById) {
-  const cells = {};
-
-  Object.values(columnsById).forEach((column) => {
-    let value = getInitialCellValue(column);
-
-    cells[column.id] = {
-      value,
-      meta: {},
-    };
-  });
-
-  return {
-    id: crypto.randomUUID(),
-    cells,
-  };
-}
-
-export function buildAffectedMap(columnsById) {
-  const affected = {};
-
-  Object.values(columnsById).forEach((col) => {
-    col.dependsOn?.forEach((dep) => {
-      if (!affected[dep]) affected[dep] = [];
-      affected[dep].push(col.id);
-    });
-  });
-
-  return affected;
-}
-
-function computeRows(row, columnsById) {
-  Object.values(columnsById).forEach((column) => {
-    if (column.type !== "computed" || !column.expression) return;
-
-    const value = evaluateExpression(column.expression, row);
-    row.cells[column.id].value = value;
-  });
-}
-
-export function computeCumulativeColumn(rowsById, rowOrder, column) {
-  if (column.type !== "computed" || !usesPrev(column.expression)) return;
-
-  const rows = rowOrder.map((id) => rowsById[id]);
-
-  let prevSelf = column.startValue ?? 0;
-
-  rows.forEach((row) => {
-    const value = evaluateExpression(column.expression, row, prevSelf);
-    row.cells[column.id].value = value;
-    prevSelf = value;
-  });
-}
-
-function computeAffectedRowCascade(
-  row,
-  changedColId,
-  columnsById,
-  affectedMap,
-  rowsById,
-  rowOrder
-) {
-  const queue = [changedColId];
-  const visited = new Set();
-
-  while (queue.length) {
-    const colId = queue.shift();
-
-    affectedMap[colId]?.forEach((nextColId) => {
-      if (visited.has(nextColId)) return;
-      visited.add(nextColId);
-
-      const column = columnsById[nextColId];
-
-      if (usesPrev(column.expression)) {
-        computeCumulativeColumn(rowsById, rowOrder, column);
-      } else {
-        const value = evaluateExpression(column.expression, row);
-        row.cells[nextColId].value = value;
-      }
-
-      queue.push(nextColId);
-    });
-  }
-}
-
-function usesPrev(expr) {
-  if (!expr || typeof expr !== "object") return false;
-
-  if (expr.type === "prev") {
-    return true;
-  }
-
-  if (expr.type === "binary") {
-    return usesPrev(expr.left) || usesPrev(expr.right);
-  }
-
-  if (expr.type === "unary") {
-    return usesPrev(expr.arg);
-  }
-
-  return false;
-}
 
 /* -------------------------------------------------------------------------- */
 /*                                   STORE                                    */
@@ -156,7 +41,6 @@ export const useTableStore = create(
 
     selectedColumn: null,
     selectedRow: null,
-    selectedCell: null,
 
     /* ---------------------------------------------------------------------- */
     /*                               DRAG STATE                               */
@@ -189,10 +73,6 @@ export const useTableStore = create(
     /* ---------------------------------------------------------------------- */
     /*                             SELECTION ACTIONS                          */
     /* ---------------------------------------------------------------------- */
-
-    selectCell(payload) {
-      set({ selectedCell: payload });
-    },
 
     selectColumn(payload) {
       set({
@@ -459,17 +339,16 @@ export const useTableStore = create(
 
       set((s) => {
         s.rowsById[rowId].cells[colId].value = value;
-        s.rowsById[rowId].cells[colId].display =
-          column.type === "date" ? formatValue(value, column) : value;
         s.rowsById[rowId].cells[colId].meta.error = error;
       });
 
-      if (column.type === "number")
+      if (column.type === "number") {
         state.recompute({
           reason: "cell",
           rowId,
           colId,
         });
+      }
     },
 
     recompute(payload) {
@@ -572,6 +451,7 @@ export const useTableStore = create(
         rowsById: { [t1.id]: t1, [t2.id]: t2 },
         rowOrder: [t1.id, t2.id],
         columnOrder: Object.keys(state.columnsById),
+        affectedMap: buildAffectedMap(state.columnsById),
       });
 
       state.recompute({ reason: "all" });

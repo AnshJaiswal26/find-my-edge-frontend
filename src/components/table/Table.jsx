@@ -7,8 +7,6 @@ import { ColumnGhost } from "./Header/ColumnGhost";
 
 import { Row } from "./Row/Row";
 import { RowGhost } from "./Row/RowGhost";
-import { CellGhost } from "./Cell/CellGhost";
-
 
 import {
   AddColumnPopup,
@@ -33,7 +31,7 @@ export function Table() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 h-full justify-between gap-4 relative">
+    <div className="flex flex-col flex-1 h-full justify-between -mb-4 gap-4 relative">
       <SummaryPopup />
       <FilterPopup />
       <SortPopup />
@@ -76,7 +74,6 @@ export function Table() {
         </div>
         <ColumnGhost ref={tableRef} />
         <RowGhost ref={tableRef} />
-        <CellGhost ref={tableRef} />
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ export default function TrackSection({ layoutDraft, setLayoutDraft }) {
 
       <ColorPicker
         label="Background"
-        value={parseColor(layoutDraft.trackBackground)}
+        value={layoutDraft.trackBackground}
         onCommit={(c) => setLayoutDraft((p) => ({ ...p, trackBackground: c }))}
       />
     </Section>

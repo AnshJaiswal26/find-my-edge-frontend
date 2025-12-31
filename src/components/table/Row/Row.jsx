@@ -57,7 +57,7 @@ export function Row({ rowId, index }) {
           border-r border-(--border)
           cursor-grab active:cursor-grabbing
           bg-(--surface-muted)
-          group z-20
+          group z-2
         "
       >
         <GripVertical

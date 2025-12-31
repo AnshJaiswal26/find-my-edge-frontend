@@ -43,3 +43,46 @@ body {
 .dark-theme input[type="date"] {
   color-scheme: dark;
 }
+
+.dark-theme input[type="time"] {
+  color-scheme: dark;
+}
+
+.alpha-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* TRACK */
+.alpha-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--alpha-gradient);
+}
+
+.alpha-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--alpha-gradient);
+}
+
+/* THUMB */
+.alpha-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #666;
+  margin-top: -2px;
+}
+
+.alpha-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #666;
+}

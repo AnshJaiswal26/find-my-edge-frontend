@@ -1,21 +1,18 @@
 import { Section } from "@layout";
 import { Input, Select } from "@ui";
+import {
+  DATE_FORMATS,
+  NUMBER_FORMATS,
+  TIME_FORMATS,
+} from "../../../tableUtils";
+
+const numberFomart = Object.values(NUMBER_FORMATS).map(({ key }) => key);
 
 const formats = {
-  number: [
-    { key: "currency", value: "Currency" },
-    { key: "ratio", value: "Ratio" },
-    { key: "percent", value: "Percent" },
-    { key: "custom", value: "Custom" },
-  ],
-  computed: [
-    { key: "currency", value: "Currency" },
-    { key: "ratio", value: "Ratio" },
-    { key: "percent", value: "Percent" },
-    { key: "custom", value: "Custom" },
-  ],
-  time: ["HH:MM", "HH:MM:SS", "HH:MM:SS PM/AM"],
-  date: ["YYYY/MM/DD", "DD/MM/YYYY", "DD/mmm/YYYY"],
+  number: numberFomart,
+  computed: numberFomart,
+  time: Object.values(TIME_FORMATS).map(({ key }) => key),
+  date: Object.values(DATE_FORMATS).map(({ key }) => key),
 };
 
 export function DisplaySection({ display, onChange, type }) {

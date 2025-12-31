@@ -15,7 +15,35 @@ export const useUIStore = create((set) => ({
   username: "Ansh Jaiswal",
   selectedAvatar: "Icons/avtar/user.png",
   activeSelect: null,
+  activeColorPicker: false,
   toasts: [],
+
+  tooltip: {
+    color: null,
+    visible: false,
+    rect: null,
+    content: null,
+    placement: null,
+  },
+
+  showTooltip: ({ rect, color, placement, content }) => {
+    set({
+      tooltip: {
+        visible: true,
+        color,
+        rect: rect
+          ? {
+              left: rect.left,
+              top: rect.top,
+              width: rect.width,
+              height: rect.height,
+            }
+          : null,
+        content,
+        placement,
+      },
+    });
+  },
 
   toggleTheme: () =>
     set((prev) => {
@@ -43,6 +71,12 @@ export const useUIStore = create((set) => ({
   toggleSelect: (payload) =>
     set((s) => ({
       activeSelect: s.activeSelect?.id === payload?.id ? null : payload,
+    })),
+
+  setColorPicker: (payload) =>
+    set((s) => ({
+      activeColorPicker:
+        s.activeColorPicker?.id === payload?.id ? null : payload,
     })),
 
   showToast: (type = "INFO", message, duration = 5000) => {

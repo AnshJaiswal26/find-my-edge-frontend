@@ -42,18 +42,29 @@ const withSuspense = (Component) => {
 
 function App() {
   useEffect(() => {
-    const { setSelect } = useUIStore.getState();
+    const { setSelect, setColorPicker } = useUIStore.getState();
 
-    const close = () => setSelect(null);
+    const close = () => {
+      setSelect(null);
+      setColorPicker(null);
+    };
 
     const handlePointerDown = (e) => {
-      const { activeSelect } = useUIStore.getState();
-      if (!activeSelect) return;
+      const { activeSelect, activeColorPicker } = useUIStore.getState();
 
-      const buttonEl = document.getElementById(activeSelect.buttonId);
-      const listEl = document.getElementById(activeSelect.listId);
+      if (!activeSelect && !activeColorPicker) return;
 
-      if (buttonEl?.contains(e.target) || listEl?.contains(e.target)) {
+      const buttonEl = document.getElementById(activeSelect?.buttonId);
+      const listEl = document.getElementById(activeSelect?.listId);
+      const triggerEl = document.getElementById(activeColorPicker?.triggerId);
+      const palleteEl = document.getElementById(activeColorPicker?.paletteId);
+
+      if (
+        buttonEl?.contains(e.target) ||
+        listEl?.contains(e.target) ||
+        triggerEl?.contains(e.target) ||
+        palleteEl?.contains(e.target)
+      ) {
         return;
       }
 
