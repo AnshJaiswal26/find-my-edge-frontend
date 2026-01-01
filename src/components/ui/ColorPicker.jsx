@@ -7,110 +7,22 @@ import {
   useState,
 } from "react";
 import { RgbaStringColorPicker } from "react-colorful";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, ArrowLeftRight, Copy } from "lucide-react";
 import { Button } from "./Buttons";
 import { createPortal } from "react-dom";
 import { useUIStore } from "@stores";
+import { resolveCssColor, rgbaToHex } from "@utils";
+import Input from "./Input";
 
-/* -------- resolve CSS vars -------- */
-/* ---------- helpers ---------- */
-
-function hexToRgba(hex) {
-  let h = hex.replace("#", "").trim();
-
-  // #RGB
-  if (h.length === 3) {
-    h =
-      h
-        .split("")
-        .map((c) => c + c)
-        .join("") + "ff";
+function normalizeInputColor(input) {
+  try {
+    return resolveCssColor(input);
+  } catch {
+    return null;
   }
-
-  // #RRGGBB
-  if (h.length === 6) {
-    h += "ff";
-  }
-
-  // #RRGGBBAA
-  if (h.length !== 8) return null;
-
-  const r = parseInt(h.slice(0, 2), 16);
-  const g = parseInt(h.slice(2, 4), 16);
-  const b = parseInt(h.slice(4, 6), 16);
-  const a = parseInt(h.slice(6, 8), 16) / 255;
-
-  return `rgba(${r}, ${g}, ${b}, ${Number(a.toFixed(3))})`;
 }
 
-function hslToRgb(h, s, l) {
-  s /= 100;
-  l /= 100;
-
-  const k = (n) => (n + h / 30) % 12;
-  const a = s * Math.min(l, 1 - l);
-  const f = (n) =>
-    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-
-  return {
-    r: Math.round(255 * f(0)),
-    g: Math.round(255 * f(8)),
-    b: Math.round(255 * f(4)),
-  };
-}
-
-function parseHsl(color) {
-  const m = color.match(
-    /hsla?\(\s*([\d.]+)(?:deg)?[\s,]+([\d.]+)%[\s,]+([\d.]+)%\s*(?:[\/,]\s*([\d.]+))?\s*\)/
-  );
-
-  if (!m) return null;
-
-  const h = Number(m[1]);
-  const s = Number(m[2]);
-  const l = Number(m[3]);
-  const a = m[4] !== undefined ? Number(m[4]) : 1;
-
-  const { r, g, b } = hslToRgb(h, s, l);
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
-
-/* ---------- main resolver ---------- */
-
-export function resolveCssColor(color) {
-  if (!color) return "rgba(0,0,0,1)";
-
-  /* already safe */
-  if (color.startsWith("rgba") || color.startsWith("rgb")) {
-    return color;
-  }
-
-  /* hex */
-  if (color.startsWith("#")) {
-    return hexToRgba(color) ?? "rgba(0,0,0,1)";
-  }
-
-  /* CSS variable */
-  if (color.startsWith("var(")) {
-    const varName = color.slice(4, -1).trim();
-    const raw = getComputedStyle(document.documentElement)
-      .getPropertyValue(varName)
-      .trim();
-    console.log(raw, varName);
-
-    if (!raw) return "rgba(0,0,0,1)";
-    return resolveCssColor(raw); // recurse
-  }
-
-  /* hsl / hsla */
-  if (color.startsWith("hsl")) {
-    return parseHsl(color) ?? "rgba(0,0,0,1)";
-  }
-
-  /* named colors */
-  return color;
-}
-
+/* ---------- component ---------- */
 export default function ColorPicker({
   label,
   value,
@@ -124,26 +36,43 @@ export default function ColorPicker({
   const triggerId = `${pickerId}-trigger`;
   const paletteId = `${pickerId}-palette`;
 
-  /* ---------- UI store ---------- */
   const activeColorPicker = useUIStore((s) => s.activeColorPicker);
   const setColorPicker = useUIStore((s) => s.setColorPicker);
   const active = activeColorPicker?.id === pickerId;
 
   const triggerRef = useRef(null);
 
-  console.log("incoming picker value:", value);
-
-  /* ---------- source of truth (RGBA string) ---------- */
+  /* ---------- single source of truth ---------- */
   const resolvedValue = useMemo(() => resolveCssColor(value), [value]);
-  const [color, setColor] = useState(resolvedValue);
 
-  /* ---------- sync when opened / value changes ---------- */
-  useEffect(() => {
-    if (!active) return;
+  const [color, setColor] = useState(resolvedValue);
+  const [dirty, setDirty] = useState(false);
+  const [format, setFormat] = useState("hex");
+  const [input, setInput] = useState("");
+
+  /* ---------- sync ONLY when picker opens ---------- */
+  useLayoutEffect(() => {
     setColor(resolvedValue);
+
+    if (!active) return;
+    setInput(format === "hex" ? rgbaToHex(resolvedValue) : resolvedValue);
+    setDirty(false);
   }, [active, resolvedValue]);
 
-  /* ---------- positioning ---------- */
+  /* ---------- commit on pointer up ---------- */
+  useEffect(() => {
+    if (!active || !dirty) return;
+
+    const handlePointerUp = () => {
+      onCommit?.(color);
+      setDirty(false);
+    };
+
+    document.addEventListener("pointerup", handlePointerUp);
+    return () => document.removeEventListener("pointerup", handlePointerUp);
+  }, [active, dirty, color, onCommit]);
+
+  /* ---------- position ---------- */
   const [pos, setPos] = useState({});
 
   useLayoutEffect(() => {
@@ -151,45 +80,47 @@ export default function ColorPicker({
 
     const rect = triggerRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
-    const openDown = spaceBelow >= 300 || spaceBelow >= spaceAbove;
 
     setPos({
-      top: openDown ? rect.bottom + 6 : undefined,
-      bottom: openDown ? undefined : viewportHeight - rect.top + 6,
+      top: spaceBelow >= spaceAbove ? rect.bottom + 6 : undefined,
+      bottom:
+        spaceBelow < spaceAbove ? viewportHeight - rect.top + 6 : undefined,
       left: rect.left,
     });
   }, [active]);
 
-  console.log(color);
-
   /* ---------- handlers ---------- */
-  const handleChange = (next) => {
-    console.log("picker emitted:", next);
+  const handleColorChange = (next) => {
     setColor(next);
+    setDirty(true);
     onChange?.(next);
+    setInput(format === "hex" ? rgbaToHex(next) : next);
   };
 
-  const handleCommit = () => {
-    console.log("committing color:", color);
-    onCommit?.(color);
-    setColorPicker(null);
+  const handleInputChange = (e) => {
+    const resolved = normalizeInputColor(e.target.value);
+    if (resolved) setColor(resolved);
+    setInput(e.target.value);
+  };
+
+  const commitColor = (next) => {
+    setColor(next);
+    onChange?.(next);
+    onCommit?.(next);
+    setDirty(false);
+    setInput(format === "hex" ? rgbaToHex(next) : next);
   };
 
   const handleReset = () => {
     const resolved = resolveCssColor(resetColor);
-    setColor(resolved);
-    onChange?.(resolved);
-    onCommit?.(resolved);
+    commitColor(resolved);
     setColorPicker(null);
   };
 
-  /* ---------- render ---------- */
   return (
     <div className="inline-flex items-center gap-2 border border-(--border) px-2 py-1 rounded w-fit">
-      {/* TRIGGER */}
       <button
         id={triggerId}
         ref={triggerRef}
@@ -198,37 +129,47 @@ export default function ColorPicker({
         onClick={() => setColorPicker({ id: pickerId, triggerId, paletteId })}
         className="w-5 h-5 rounded border border-(--border)"
         style={{ backgroundColor: color }}
-        title={label}
       />
 
       <span className="text-xs">{label}</span>
 
       {reset && (
-        <Button.Icon
-          tooltip={{ text: "Reset", position: "top" }}
-          onClick={handleReset}
-        >
+        <Button.Icon onClick={handleReset}>
           <RefreshCcw size={14} />
         </Button.Icon>
       )}
 
-      {/* OVERLAY */}
       {active &&
         createPortal(
           <div
             id={paletteId}
             style={pos}
-            className="fixed z-9999 w-64 rounded-xl border border-(--border) bg-(--surface) shadow-xl p-3"
+            className="fixed space-y-2 z-9999 text-(--text) w-64 rounded-xl border border-(--border) bg-(--surface) shadow-xl p-3"
           >
-            <RgbaStringColorPicker color={color} onChange={handleChange} />
+            <RgbaStringColorPicker
+              color={color}
+              onChange={handleColorChange}
+              className="!w-full"
+            />
 
-            <div className="flex justify-end mt-2">
-              <button
-                className="text-xs px-2 py-1 rounded bg-(--info) text-white"
-                onClick={handleCommit}
-              >
-                Done
-              </button>
+            <div className="flex items-center gap-2 text-xs">
+              <div className="flex justify-between gap-2 items-center">
+                <span>{format.toUpperCase()}</span>
+                <Button.Icon
+                  onClick={() =>
+                    setFormat((f) => (f === "hex" ? "rgba" : "hex"))
+                  }
+                >
+                  <ArrowLeftRight size={12} />
+                </Button.Icon>
+              </div>
+
+              <Input
+                vertical
+                size="sm"
+                value={input}
+                onChange={handleInputChange}
+              />
             </div>
           </div>,
           document.body

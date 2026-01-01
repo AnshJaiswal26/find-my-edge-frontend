@@ -1,0 +1,1 @@
+export { evaluateColorRules } from "./evaluateColorRules";

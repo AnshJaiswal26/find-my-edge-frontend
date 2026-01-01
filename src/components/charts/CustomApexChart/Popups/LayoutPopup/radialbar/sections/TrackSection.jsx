@@ -1,6 +1,5 @@
 import { Section } from "@layout";
 import { ColorPicker, Input } from "@ui";
-import { parseColor } from "@utils";
 
 export default function TrackSection({ layoutDraft, setLayoutDraft }) {
   return (

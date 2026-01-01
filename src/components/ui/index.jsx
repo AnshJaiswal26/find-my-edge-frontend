@@ -10,7 +10,6 @@ export { default as ChartFilterPopup } from "../charts/CustomApexChart/Popups/Fi
 export { default as ColorPicker } from "./ColorPicker";
 export { default as Input } from "./Input";
 export { default as Select } from "./Select";
-export { default as Table } from "./Table";
 export { default as Toast } from "./Toast";
 export { default as SelectOptionsEditor } from "./SelectOptionsEditor";
 export { default as Tooltip } from "./Tooltip";

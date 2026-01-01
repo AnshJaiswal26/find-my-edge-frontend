@@ -1,6 +1,6 @@
 import { tradeData } from "@data";
 import { Container } from "@layout";
-import { Table } from "../../components/table/Table";
+import { Table } from "./table/Table";
 
 export default function TradeMetrics() {
   const data = tradeData.map(Object.values);
