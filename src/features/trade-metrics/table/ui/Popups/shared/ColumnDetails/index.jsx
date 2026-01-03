@@ -25,6 +25,14 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
         }
       />
 
+      <Select
+        label={"Computation Mode"}
+        value={draft.mode}
+        options={["row", "cumulative", "grouped"]}
+        getLabel={(v) => v.toUpperCase()}
+        onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
+      />
+
       {/* Label */}
       <Section title={"Label"}>
         <Input

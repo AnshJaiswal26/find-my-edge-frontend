@@ -81,6 +81,20 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
     [expr, setExpr, setCursor, setOpen]
   );
 
+  const handleBlur = useCallback(
+    (e) => {
+      const parsedExp = expr
+        .replace(/\(\s+/g, "(")
+        .replace(/\s+\)/g, ")")
+        .replace(/\s*([+\-*/])\s*/g, " $1 ");
+
+      setExpr(parsedExp);
+      onCommit?.(parsedExp, ast, dependency);
+      setOpen(false);
+    },
+    [expr, setExpr, setOpen]
+  );
+
   return (
     <Section title={"Formula"}>
       <Input
@@ -88,10 +102,7 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
         value={expr}
         placeholder="eg. (Exit - Entry) * Qty"
         onKeyDown={onKeyDown}
-        onBlur={() => {
-          onCommit?.(expr, ast, dependency);
-          setOpen(false);
-        }}
+        onBlur={handleBlur}
         onChange={handleChange}
       />
 

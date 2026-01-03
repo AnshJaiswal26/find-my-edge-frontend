@@ -12,4 +12,4 @@ export { default as Input } from "./Input";
 export { default as Select } from "./Select";
 export { default as Toast } from "./Toast";
 export { default as SelectOptionsEditor } from "./SelectOptionsEditor";
-export { default as Tooltip } from "./Tooltip";
+export { default as Tooltip, tooltipApi } from "./Tooltip";

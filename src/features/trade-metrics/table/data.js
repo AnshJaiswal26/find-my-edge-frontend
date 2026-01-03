@@ -3,6 +3,7 @@ export const columnsById = {
     id: "date",
     label: "Date",
     type: "date",
+    mode: "row",
     editable: true,
 
     dependencies: [],
@@ -10,6 +11,8 @@ export const columnsById = {
     display: { format: "YYYY-MM-DD" },
 
     colorRules: [],
+
+    initialValue: 0,
 
     expression: null,
     formula: null,
@@ -19,6 +22,7 @@ export const columnsById = {
     id: "entryTime",
     label: "Entry Time",
     type: "time",
+    mode: "row",
     editable: true,
 
     dependencies: [],
@@ -26,6 +30,8 @@ export const columnsById = {
     display: { format: "HH:mm" },
 
     colorRules: [],
+
+    initialValue: 0,
 
     expression: null,
     formula: null,
@@ -35,6 +41,8 @@ export const columnsById = {
     id: "exitTime",
     label: "Exit Time",
     type: "time",
+    mode: "row",
+
     editable: true,
 
     dependencies: [],
@@ -42,6 +50,8 @@ export const columnsById = {
     display: { format: "HH:mm" },
 
     colorRules: [],
+
+    initialValue: 0,
 
     expression: null,
     formula: null,
@@ -51,6 +61,8 @@ export const columnsById = {
     id: "duration",
     label: "Duration",
     type: "computed",
+    mode: "row",
+
     editable: false,
 
     dependencies: ["entryTime", "exitTime"],
@@ -61,6 +73,8 @@ export const columnsById = {
       { operator: "lessThan", value: 5, color: "var(--warning)" },
       { operator: "greaterThan", value: 30, color: "var(--info)" },
     ],
+
+    initialValue: 0,
 
     // custom expression handled in evaluator
     expression: {
@@ -76,6 +90,7 @@ export const columnsById = {
     id: "symbol",
     label: "Symbol",
     type: "text",
+    mode: "row",
     editable: true,
 
     dependencies: [],
@@ -83,6 +98,8 @@ export const columnsById = {
     display: { format: "text" },
 
     colorRules: [],
+
+    initialValue: 0,
 
     expression: null,
     formula: null,
@@ -92,6 +109,7 @@ export const columnsById = {
     id: "entry",
     label: "Entry",
     type: "number",
+    mode: "row",
     editable: true,
 
     dependencies: [],
@@ -99,6 +117,8 @@ export const columnsById = {
     display: { format: "NUMBER", decimals: 2 },
 
     colorRules: [],
+
+    initialValue: 0,
 
     expression: null,
     formula: null,
@@ -108,6 +128,7 @@ export const columnsById = {
     id: "exit",
     label: "Exit",
     type: "number",
+    mode: "row",
     editable: true,
 
     dependencies: [],
@@ -115,6 +136,8 @@ export const columnsById = {
     display: { format: "NUMBER", decimals: 2 },
 
     colorRules: [],
+
+    initialValue: 0,
 
     expression: null,
     formula: null,
@@ -124,6 +147,7 @@ export const columnsById = {
     id: "qty",
     label: "Qty",
     type: "number",
+    mode: "row",
     editable: true,
 
     dependencies: [],
@@ -131,6 +155,8 @@ export const columnsById = {
     display: { format: "NUMBER" },
 
     colorRules: [],
+
+    initialValue: 0,
 
     expression: null,
     formula: null,
@@ -140,6 +166,7 @@ export const columnsById = {
     id: "sl",
     label: "SL",
     type: "number",
+    mode: "row",
     editable: true,
 
     dependencies: [],
@@ -147,6 +174,8 @@ export const columnsById = {
     display: { format: "NUMBER", decimals: 2 },
 
     colorRules: [],
+
+    initialValue: 0,
 
     expression: null,
     formula: null,
@@ -179,7 +208,7 @@ export const columnsById = {
     dependencies: ["exit", "entry", "qty"], // auto-generated
 
     /* ---------- cumulative only ---------- */
-    initialValue: 0, // only for cumulative columns
+    initialValue: 0,
 
     /* ---------- display ---------- */
     display: { format: "CURRENCY", decimals: 2 },
@@ -194,43 +223,47 @@ export const columnsById = {
     id: "rr",
     label: "Risk-Reward",
     type: "computed",
+    mode: "row",
+
     editable: false,
+
     dependencies: ["exit", "entry", "sl"],
+
     display: { format: "RATIO", decimals: 2 },
+
     colorRules: [
       { operator: "greaterThan", value: 0, color: "var(--success)" },
-      { operator: "lessThan", value: 0, color: "var(--warning)" },
+      { operator: "lessThan", value: 0, color: "var(--error)" },
     ],
+
+    initialValue: 0,
+
     expression: {
       type: "binary",
       op: "/",
-      left: {
-        type: "binary",
-        op: "-",
-        left: { type: "column", columnId: "exit" },
-        right: { type: "column", columnId: "entry" },
-      },
-      right: { type: "column", columnId: "sl" },
+      left: { type: "column", columnId: "pnl" },
+      right: { type: "constant", value: 500 },
     },
-    formula: "(Exit - Entry) / SL",
+    formula: "Pnl / 500",
   },
 
   emotion: {
     id: "emotion",
     label: "Emotion",
     type: "select",
+    mode: "row",
+
     editable: true,
 
     dependencies: [],
 
     options: ["Calm", "Fear", "Greed"],
 
-    parse: (v) => v,
-
     display: { format: "badge" },
 
     colorRules: [],
 
+    initialValue: 0,
     expression: null,
     formula: null,
   },

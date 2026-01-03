@@ -51,7 +51,7 @@ export function Toolbar({
           {/* LEFT */}
           <div className="flex items-center gap-1">
             <Button.Icon
-              disabled={filteredRowOrder.length > 0}
+              disabled={filteredRowOrder?.length > 0}
               tooltip={{ text: "Add Trade", position: "bottom" }}
               onClick={onAddTrade}
             >
@@ -66,7 +66,7 @@ export function Toolbar({
             </Button.Icon>
 
             <Button.Icon
-              className={filteredRowOrder.length > 0 ? "bg-(--hover)!" : ""}
+              className={filteredRowOrder?.length > 0 ? "bg-(--hover)!" : ""}
               tooltip={{ text: "Filter Trades", position: "bottom" }}
               onClick={onFilter}
             >

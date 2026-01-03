@@ -1,4 +1,6 @@
-export function evaluateExpression(expr, row, prev = 0) {
+import { FUNCTION_REGISTRY } from "../functions/registry";
+
+export function evaluateExpression(expr, row, ctx = {}) {
   switch (expr.type) {
     case "constant":
       return expr.value;
@@ -9,7 +11,7 @@ export function evaluateExpression(expr, row, prev = 0) {
     }
 
     case "unary": {
-      const value = evaluateExpression(expr.arg, row, prev);
+      const value = evaluateExpression(expr.arg, row, ctx);
       if (value == null) return null;
 
       switch (expr.op) {
@@ -20,13 +22,9 @@ export function evaluateExpression(expr, row, prev = 0) {
       }
     }
 
-    case "prev": {
-      return prev + row.cells[expr.columnId]?.value ?? null;
-    }
-
     case "binary": {
-      const left = evaluateExpression(expr.left, row, prev);
-      const right = evaluateExpression(expr.right, row, prev);
+      const left = evaluateExpression(expr.left, row, ctx);
+      const right = evaluateExpression(expr.right, row, ctx);
 
       if (left == null || right == null) return null;
 
@@ -39,9 +37,33 @@ export function evaluateExpression(expr, row, prev = 0) {
           return left * right;
         case "/":
           return right === 0 ? null : left / right;
+
+        case ">":
+          return left > right;
+        case "<":
+          return left < right;
+        case ">=":
+          return left >= right;
+        case "<=":
+          return left <= right;
+        case "==":
+          return left === right;
+        case "!=":
+          return left !== right;
+
         default:
           return null;
       }
+    }
+
+    case "function": {
+      const impl = FUNCTION_REGISTRY[expr.name.toUpperCase()];
+      if (!impl) return null;
+
+      return impl(expr, row, {
+        ...ctx,
+        evaluate: evaluateExpression,
+      });
     }
 
     default:

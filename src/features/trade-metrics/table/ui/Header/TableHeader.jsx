@@ -7,6 +7,7 @@ export function TableHeader() {
   return (
     <div
       className="
+       w-max
         sticky top-0 left-0
         flex border-b border-(--border)
         bg-(--surface-disabled) z-3
@@ -24,7 +25,7 @@ export function TableHeader() {
 
       {/* COLUMN HEADERS */}
       <div className="flex">
-        {columnOrder.map((id, index) => (
+        {columnOrder?.map((id, index) => (
           <ColumnHeader key={id} colId={id} index={index} />
         ))}
       </div>

@@ -17,10 +17,12 @@ function AddColumnPopupConent() {
   const [draft, setDraft] = useState({
     label: "",
     type: "computed",
+    mode: "row",
     editable: true,
     options: [],
     dependencies: [],
-    display: { format: "", decimals: 2, prefix: "", suffix: "" },
+    display: { format: "NUMBER", decimals: 2, prefix: "", suffix: "" },
+    initialValue: 15000,
     expression: null,
     formula: "",
     colorRules: [],
@@ -28,8 +30,10 @@ function AddColumnPopupConent() {
 
   const save = () => {
     if (!draft.label) return;
+    console.time("save");
     addColumn({ id: crypto.randomUUID(), ...draft });
     closePopup();
+    console.timeEnd("save");
   };
 
   return (

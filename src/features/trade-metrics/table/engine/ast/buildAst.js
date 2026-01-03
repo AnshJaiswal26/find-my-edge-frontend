@@ -1,3 +1,13 @@
+export const FUNCTION_ARITY = {
+  PREV: 1,
+  SELF: 0,
+  CUM: 1, // optional start handled in eval
+  SUM: 1,
+  AVG: 2,
+  RESET: 2,
+  IF: 3,
+};
+
 export function buildAST(postfix, labelToId) {
   // console.log(postfix);
 
@@ -7,22 +17,24 @@ export function buildAST(postfix, labelToId) {
   for (const t of postfix) {
     /* ---------- FUNCTION ---------- */
     if (t.type === "function") {
-      const name = t.value.toLowerCase();
+      const name = t.value.toUpperCase();
 
-      if (name === "prev") {
-        const arg = stack.pop();
-        if (!arg || arg.type !== "column") return null;
+      // how many args?
+      const arity = FUNCTION_ARITY[name];
+      if (!arity) return null;
 
-        // 🔥 PREV(column)
-        stack.push({
-          type: "prev",
-          columnId: arg.columnId,
-        });
-
-        continue;
+      const args = [];
+      for (let i = 0; i < arity; i++) {
+        args.unshift(stack.pop());
       }
 
-      return null;
+      stack.push({
+        type: "function",
+        name,
+        args,
+      });
+
+      continue;
     }
 
     /* ---------- IDENTIFIER ---------- */

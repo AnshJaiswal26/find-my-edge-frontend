@@ -95,9 +95,9 @@ export default function SummaryPopup() {
   const activePopup = useTableStore((s) => s.activePopup);
   const closePopup = useTableStore((s) => s.closePopup);
 
-  const summary = computeSummary(useTableStore.getState());
-
   if (activePopup !== "summary") return null;
+
+  const summary = computeSummary(useTableStore.getState());
 
   return (
     <Popup open>

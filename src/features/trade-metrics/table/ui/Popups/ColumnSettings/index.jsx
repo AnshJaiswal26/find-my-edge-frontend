@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Popup } from "@layout";
 import { useTableStore } from "../../../store/useTableStore";
 import { ColumnList } from "./ColumnList";
@@ -15,8 +15,7 @@ function ColumnSettingsPopupContent() {
   const columnsById = useTableStore((s) => s.columnsById);
   const columnOrder = useTableStore((s) => s.columnOrder);
 
-  const closePopup = useTableStore((s) => s.closePopup);
-  const updateColumn = useTableStore((s) => s.updateColumn);
+  const { closePopup, updateColumn, deleteColumn } = useTableStore.getState();
 
   const [activeColId, setActiveColId] = useState(columnOrder[0] || null);
   const [draft, setDraft] = useState(columnsById[activeColId] || null);
@@ -80,10 +79,12 @@ function ColumnSettingsPopupContent() {
           </div>
         </Popup.Body>
 
-        <Popup.Footer
-          text={["Cancel", "Apply"]}
-          onCancel={closePopup}
-          onApply={applyChanges}
+        <Popup.MultiButtonFooter
+          fnMap={{
+            Delete: { fn: () => deleteColumn(activeColId) },
+            Cancel: { fn: closePopup, align: "right" },
+            Apply: { fn: applyChanges },
+          }}
         />
       </Popup.Container>
     </Popup>

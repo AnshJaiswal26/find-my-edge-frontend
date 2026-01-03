@@ -1,4 +1,4 @@
-import { useUIStore } from "@stores";
+import { useEffect, useRef } from "react";
 
 function getTooltipPosition(rect, placement, offset = 8) {
   switch (placement) {
@@ -76,42 +76,67 @@ function getArrowStyle(placement) {
 
 const ESTIMATED_TOOLTIP_SIZE = { width: 260, height: 80 };
 
+export const tooltipApi = {
+  show: () => {},
+  hide: () => {},
+};
+
 export default function Tooltip() {
-  const tooltip = useUIStore((s) => s.tooltip);
+  const ref = useRef(null);
 
-  if (!tooltip.visible || !tooltip.rect) return null;
+  useEffect(() => {
+    tooltipApi.show = ({
+      rect,
+      content,
+      placement = "auto",
+      color = "white",
+    }) => {
+      const el = ref.current;
+      if (!el || !rect) return;
 
-  const placement = resolvePlacement(
-    tooltip.rect,
-    tooltip.placement || "auto",
-    ESTIMATED_TOOLTIP_SIZE
-  );
+      const resolved = resolvePlacement(
+        rect,
+        placement,
+        ESTIMATED_TOOLTIP_SIZE
+      );
 
-  const { x, y } = getTooltipPosition(tooltip.rect, placement);
+      const { x, y } = getTooltipPosition(rect, resolved);
+
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      el.style.transform = getTransform(resolved);
+      el.style.color = color;
+
+      el.querySelector("[data-content]").textContent = content;
+      el.querySelector("[data-arrow]").className = getArrowStyle(resolved);
+
+      el.style.opacity = "1";
+    };
+
+    tooltipApi.hide = () => {
+      if (ref.current) ref.current.style.opacity = "0";
+    };
+  }, []);
 
   return (
     <div
+      ref={ref}
       style={{
         position: "fixed",
-        top: y,
-        left: x,
-        transform: getTransform(placement),
         zIndex: 9999,
-        color: tooltip?.color || "white",
+        opacity: 0,
+        transition: "opacity 80ms linear",
       }}
       className="
         pointer-events-none
-        relative
         rounded bg-black/95 text-white
         text-xs px-2 py-1
         whitespace-pre
         shadow-lg
       "
     >
-      {tooltip.content}
-
-      {/* Arrow */}
-      <div className={getArrowStyle(placement)} />
+      <span data-content />
+      <div data-arrow />
     </div>
   );
 }

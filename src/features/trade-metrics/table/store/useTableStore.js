@@ -3,16 +3,13 @@ import { immer } from "zustand/middleware/immer";
 
 import { filterOperationMap, sortOperationMap } from "@utils";
 
-import { buildAffectedMap } from "../dependency";
-import {
-  evaluateCummulative,
-  evaluateExpression,
-  evaluateRows,
-  usesPrev,
-} from "../engine/execute";
+import { buildAffectedMap, collectAffectedColumns } from "../dependency";
+import { computeColumn, PARTIAL_RUNNERS } from "../engine/execute";
 import { createCell, createRow } from "../model";
 import { moveItem } from "../interaction";
+import { getRowIndex } from "../utils";
 import { columnsById } from "../data";
+import { tradeData } from "@data";
 
 /* -------------------------------------------------------------------------- */
 /*                                   STORE                                    */
@@ -69,6 +66,8 @@ export const useTableStore = create(
       columnId: null,
       operator: "none",
     },
+
+    isDataLoading: false,
 
     /* ---------------------------------------------------------------------- */
     /*                             SELECTION ACTIONS                          */
@@ -259,7 +258,6 @@ export const useTableStore = create(
     },
 
     startColumnResize(payload) {
-      get().selectCell(null);
       set({
         draggingColumn: {
           id: payload.id,
@@ -351,70 +349,37 @@ export const useTableStore = create(
       set((state) => {
         const { rowsById, rowOrder, columnsById, affectedMap } = state;
 
-        /* ---------- FULL RECOMPUTE ---------- */
+        /* ================= FULL RECOMPUTE ================= */
         if (!payload || payload.reason === "all") {
-          rowOrder.forEach((rowId) => {
-            const row = rowsById[rowId];
-
-            // recompute row-based first
-            Object.values(columnsById).forEach((col) => {
-              if (
-                col.type === "computed" &&
-                col.expression &&
-                !usesPrev(col.expression)
-              ) {
-                row.cells[col.id].value = evaluateExpression(
-                  col.expression,
-                  row
-                );
-              }
-            });
+          Object.values(columnsById).forEach((column) => {
+            computeColumn(rowsById, rowOrder, column);
           });
-
-          // recompute cumulatives last
-          Object.values(columnsById).forEach((col) => {
-            if (col.type === "computed" && usesPrev(col.expression)) {
-              evaluateCummulative(rowsById, rowOrder, col);
-            }
-          });
-
           return;
         }
 
-        /* ---------- CELL CHANGE ---------- */
+        /* ================= CELL CHANGE ================= */
         if (payload.reason === "cell" && payload.rowId && payload.colId) {
-          const row = rowsById[payload.rowId];
+          const rowIndex = getRowIndex(rowOrder, payload.rowId);
 
-          evaluateRows(
-            row,
-            payload.colId,
-            columnsById,
-            affectedMap,
-            rowsById,
-            rowOrder
-          );
+          // 🔹 get dependency chain
+          const chain = collectAffectedColumns(payload.colId, affectedMap);
+
+          chain.forEach((colId) => {
+            const column = columnsById[colId];
+            if (!column || column.type !== "computed") return;
+
+            PARTIAL_RUNNERS[column.mode](rowsById, rowOrder, rowIndex, column);
+          });
 
           return;
         }
 
-        /* ---------- COLUMN CHANGE ---------- */
+        /* ================= COLUMN CHANGE ================= */
         if (payload.reason === "column" && payload.colId) {
           const column = columnsById[payload.colId];
+          if (!column) return;
 
-          // row-based → recompute all rows
-          if (!usesPrev(column.expression)) {
-            rowOrder.forEach((rowId) => {
-              const row = rowsById[rowId];
-              row.cells[column.id].value = evaluateExpression(
-                column.expression,
-                row
-              );
-            });
-          }
-          // cumulative → recompute full column
-          else {
-            evaluateCummulative(rowsById, rowOrder, column);
-          }
+          computeColumn(rowsById, rowOrder, column);
         }
       });
     },
@@ -424,33 +389,40 @@ export const useTableStore = create(
     /* ---------------------------------------------------------------------- */
 
     initDemoData() {
+      set({ isDataLoading: true });
       const state = get();
-      const t1 = createRow(state.columnsById);
-      const t2 = createRow(state.columnsById);
 
-      // values
-      t1.cells.date.value = "2025-04-15";
-      t1.cells.symbol.value = "NIFTY";
-      t1.cells.entry.value = 100;
-      t1.cells.exit.value = 110;
-      t1.cells.qty.value = 10;
-      t1.cells.sl.value = 10;
+      const rowOrder = [];
+      const rowsById = {};
 
-      t2.cells.date.value = "2025-04-16";
-      t2.cells.symbol.value = "BANKNIFTY";
-      t2.cells.entry.value = 100;
-      t2.cells.exit.value = 90;
-      t2.cells.qty.value = 10;
-      t2.cells.sl.value = 10;
+      Array.from({ length: 10 }).forEach(() => {
+        tradeData.forEach((t) => {
+          const trade = createRow(state.columnsById);
+
+          trade.cells.date.value = t.Date;
+          trade.cells.entryTime.value = t["Entry Time"];
+          trade.cells.exitTime.value = t["Exit Time"];
+          trade.cells.symbol.value = t.Symbol;
+          trade.cells.entry.value = t.Entry;
+          trade.cells.exit.value = t.Exit;
+          trade.cells.qty.value = t.Qty;
+          trade.cells.sl.value = t.SL;
+
+          rowOrder.push(trade.id);
+          rowsById[trade.id] = trade;
+        });
+      });
 
       set({
-        rowsById: { [t1.id]: t1, [t2.id]: t2 },
-        rowOrder: [t1.id, t2.id],
+        rowsById,
+        rowOrder,
         columnOrder: Object.keys(state.columnsById),
         affectedMap: buildAffectedMap(state.columnsById),
       });
 
       state.recompute({ reason: "all" });
+
+      set({ isDataLoading: false });
     },
 
     /* ---------------------------------------------------------------------- */
@@ -470,11 +442,16 @@ export const useTableStore = create(
     /* ---------------------------------------------------------------------- */
 
     addColumn(metric) {
+      const state = get();
+
       set((s) => {
         s.columnsById[metric.id] = metric;
         s.columnOrder.push(metric.id);
 
-        s.affectedMap = buildAffectedMap(s.columnsById);
+        const affectedMap = buildAffectedMap(s.columnsById);
+
+        console.log(affectedMap);
+        s.affectedMap = affectedMap;
 
         Object.values(s.rowsById).forEach((row) => {
           const { value } = createCell(metric);
@@ -482,17 +459,16 @@ export const useTableStore = create(
         });
       });
 
-      get().recompute({
+      state.recompute({
         reason: "column",
         colId: metric.id,
       });
+
+      state.closePopup();
     },
 
-    deleteColumn() {
-      const { selectedColumn } = get();
-      if (!selectedColumn?.id) return;
-
-      const colId = selectedColumn.id;
+    deleteColumn(colId) {
+      if (!colId) return;
 
       set((s) => {
         s.columnOrder = s.columnOrder.filter((id) => id !== colId);
@@ -502,9 +478,12 @@ export const useTableStore = create(
         delete s.affectedMap[colId];
         delete s.columnWidths[colId];
       });
+
+      get().closePopup();
     },
 
     updateColumn(activeColId, draft) {
+      const state = get();
       set((s) => {
         Object.assign(s.columnsById[activeColId], draft);
 
@@ -513,7 +492,10 @@ export const useTableStore = create(
         }
       });
 
-      if (draft.type === "computed") get().recompute({ colId: activeColId });
+      if (draft.type === "computed")
+        state.recompute({ reason: "column", colId: activeColId });
+
+      state.closePopup();
     },
   }))
 );

@@ -3,6 +3,7 @@ import { useTableStore } from "../../store/useTableStore";
 import { useUIStore } from "@stores";
 import { explainFormulaFromColumn } from "./cellUtils";
 import { evaluateColorRules, formatValue } from "../../utils";
+import { tooltipApi } from "@ui";
 
 export const CellDisplay = ({
   cell,
@@ -13,8 +14,6 @@ export const CellDisplay = ({
   setEditing,
 }) => {
   const column = useTableStore((s) => s.columnsById[colId]);
-
-  const showTooltip = useUIStore((s) => s.showTooltip);
 
   const { unselectColumn } = useTableStore.getState();
 
@@ -51,7 +50,7 @@ export const CellDisplay = ({
       style={{ width, color }}
       className="
         relative px-2 py-1 cursor-pointer
-        border-r-1 border-r-(--border) !z-1
+        border-r-1 border-r-(--border) !z-1 flex-none truncate
       "
       onClick={(e) => {
         setSelect(true);
@@ -59,23 +58,18 @@ export const CellDisplay = ({
       }}
       onBlur={() => setSelect(false)}
       onMouseEnter={(e) => {
-        if (!explanation) return null;
-        showTooltip({
-          color,
-          visible: true,
-          content,
-          rect: e.target.getBoundingClientRect(),
-          placement: "",
-        });
+        if (!explanation) return;
+        setTimeout(
+          () =>
+            tooltipApi.show({
+              rect: e.target.getBoundingClientRect(),
+              content: content,
+              placement: "top",
+            }),
+          100
+        );
       }}
-      onMouseLeave={() => {
-        showTooltip({
-          visible: false,
-          content: null,
-          rect: null,
-          placement: "",
-        });
-      }}
+      onMouseLeave={() => tooltipApi.hide()}
       onDoubleClick={() => {
         if (!editable) return;
         setDraft(cell.value ?? "");

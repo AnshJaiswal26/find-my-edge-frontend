@@ -290,6 +290,36 @@ Popup.Footer = ({
   );
 };
 
+Popup.MultiButtonFooter = ({ fnMap = {}, className = "" }) => {
+  const entries = Object.entries(fnMap);
+  const firstRightIndex = entries.findIndex(([, p]) => p?.align === "right");
+
+  return (
+    <footer
+      className={`
+        p-[15px]
+        border-t border-(--border)
+        flex items-center gap-2
+        ${className}
+      `}
+    >
+      {entries.map(([label, p], idx) => (
+        <Button
+          key={label}
+          text={label}
+          onClick={p?.fn}
+          classNames={{
+            wrapper:
+              p?.align === "right" && idx === firstRightIndex
+                ? "ml-auto"
+                : p?.className,
+          }}
+        />
+      ))}
+    </footer>
+  );
+};
+
 export const ChartPopup = ({
   title,
   children,

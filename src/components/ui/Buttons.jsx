@@ -24,12 +24,12 @@ export const Button = ({
   hollow = false,
   size = "medium",
   variant = "cyan",
-  className = "",
+  classNames = {},
   disabled = false,
   ...props
 }) => {
   return (
-    <div className="flex">
+    <div className={`flex ${classNames?.wrapper || ""}`}>
       <button
         style={{ backgroundColor: hollow ? "" : `var(--${variant})` }}
         {...props}
@@ -42,7 +42,7 @@ export const Button = ({
           ${typeClasses[hollow ? "hollow" : "fill"]}
           ${variantClasses[variant]}
           ${disabled ? "opacity-40 pointer-events-none" : ""}
-          ${className}
+          ${classNames?.button || ""}
         `}
       >
         <span>{text}</span>

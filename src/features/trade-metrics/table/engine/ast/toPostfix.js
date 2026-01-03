@@ -1,4 +1,19 @@
-const PRECEDENCE = { "u-": 3, "+": 1, "-": 1, "*": 2, "/": 2 };
+const PRECEDENCE = {
+  "u-": 4,
+
+  "*": 3,
+  "/": 3,
+
+  "+": 2,
+  "-": 2,
+
+  ">": 1,
+  "<": 1,
+  ">=": 1,
+  "<=": 1,
+  "==": 1,
+  "!=": 1,
+};
 
 export function toPostfix(tokens) {
   // console.log(tokens);
@@ -13,7 +28,7 @@ export function toPostfix(tokens) {
     }
 
     if (t.type === "function") {
-      ops.push(t); // 🔥 push function
+      ops.push(t); // push function
       continue;
     }
 
@@ -35,7 +50,12 @@ export function toPostfix(tokens) {
       while (ops.length && ops.at(-1).type !== "lparen") {
         out.push(ops.pop());
       }
-      ops.pop();
+      ops.pop(); // remove lparen
+
+      // 🔥 if function is on top, pop it
+      if (ops.length && ops.at(-1).type === "function") {
+        out.push(ops.pop());
+      }
     }
   }
 

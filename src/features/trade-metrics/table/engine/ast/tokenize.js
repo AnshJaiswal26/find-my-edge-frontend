@@ -1,5 +1,8 @@
+import { FUNCTION_ARITY } from "./buildAst";
+
 const OPS = "+-*/()";
-const FUNCTIONS = new Set(["PREV"]);
+const FUNCTIONS = new Set(Object.keys(FUNCTION_ARITY));
+const COMPARATORS = ["<=", ">=", "==", "!=", "<", ">"];
 
 export function tokenize(expr) {
   const tokens = [];
@@ -12,8 +15,7 @@ export function tokenize(expr) {
   const flushIdentifier = () => {
     if (!buf) return;
 
-    const upper = buf.toUpperCase();
-    const isFunction = FUNCTIONS.has(upper) && expr[i] === "(";
+    const isFunction = FUNCTIONS.has(buf) && expr[i] === "(";
 
     const t = {
       type: isFunction ? "function" : "identifier",
@@ -62,6 +64,22 @@ export function tokenize(expr) {
       prevToken = t;
       continue;
     }
+
+    // ---------- comparison operators ----------
+    let matchedComparator = false;
+
+    for (const op of COMPARATORS) {
+      if (expr.slice(i, i + op.length) === op) {
+        flushIdentifier();
+        tokens.push({ type: "op", value: op });
+        prevToken = tokens.at(-1);
+        i += op.length;
+        matchedComparator = true;
+        break;
+      }
+    }
+
+    if (matchedComparator) continue;
 
     /* ---------- identifier / function ---------- */
     if (/[a-zA-Z_]/.test(ch)) {
@@ -118,6 +136,15 @@ export function tokenize(expr) {
       }
 
       flushNumber(num);
+      continue;
+    }
+
+    /* ---------- comma (function argument separator) ---------- */
+    if (ch === ",") {
+      flushIdentifier();
+      tokens.push({ type: "comma" });
+      prevToken = null;
+      i++;
       continue;
     }
 
