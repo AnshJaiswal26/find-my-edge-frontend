@@ -1,27 +1,35 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useTableStore } from "../../store/useTableStore";
-import { CellSelect } from "./CellSelect";
 import { CellInput } from "./CellInput";
+import { CellSelect } from "./CellSelect";
 import { CellDisplay } from "./CellDisplay";
 
-export function Cell({ rowId, colId, onCommit }) {
+export const Cell = memo(function Cell({ rowId, colId }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
 
   const cell = useTableStore((s) => s.rowsById[rowId].cells[colId]);
 
   const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
-  const isSelect = useTableStore((s) => s.columnsById[colId].type === "select");
 
-  const CellComponent = isSelect ? CellSelect : CellInput;
+  const type = useTableStore((s) => s.columnsById[colId].type);
+
+  const updateCell = useTableStore((s) => s.updateCell);
+
+  const onCommit = (value) => {
+    updateCell(rowId, colId, value);
+  };
 
   if (editing) {
+    const Editor = type === "select" ? CellSelect : CellInput;
+
     return (
-      <div style={{ width }} className="border-1 border-(--info)">
-        <CellComponent
-          rowId={rowId}
+      <div
+        style={{ width }}
+        className="border-1 border-(--info) overflow-hidden"
+      >
+        <Editor
           colId={colId}
-          cell={cell}
           draft={draft}
           setDraft={setDraft}
           onCommit={onCommit}
@@ -33,12 +41,13 @@ export function Cell({ rowId, colId, onCommit }) {
 
   return (
     <CellDisplay
-      rowId={rowId}
-      colId={colId}
+      type={type}
       cell={cell}
+      colId={colId}
+      rowId={rowId}
       width={width}
       setDraft={setDraft}
       setEditing={setEditing}
     />
   );
-}
+});

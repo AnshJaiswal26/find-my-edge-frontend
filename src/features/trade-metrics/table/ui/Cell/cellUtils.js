@@ -4,8 +4,10 @@ function isSafeIdentifier(label) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(label);
 }
 
-export function explainFormulaFromColumn(column, rowId) {
+export function explainFormulaFromColumn(colId, rowId) {
   const { columnsById, rowsById } = useTableStore.getState();
+
+  const column = columnsById[colId];
   const row = rowsById[rowId];
 
   if (

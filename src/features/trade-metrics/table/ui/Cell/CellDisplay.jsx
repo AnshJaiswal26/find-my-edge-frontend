@@ -1,86 +1,74 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { useTableStore } from "../../store/useTableStore";
-import { useUIStore } from "@stores";
 import { explainFormulaFromColumn } from "./cellUtils";
 import { evaluateColorRules, formatValue } from "../../utils";
 import { tooltipApi } from "@ui";
 
-export const CellDisplay = ({
+const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
+  if (type !== "computed") return;
+
+  const explanation = explainFormulaFromColumn(colId, rowId);
+
+  tooltipApi.show({
+    rect: e.target.getBoundingClientRect(),
+    content: `= ${explanation.formula}\n= ${explanation.expanded}\n= ${cell.value}`,
+    color,
+    slide: -30,
+    placement: "top",
+  });
+};
+
+export const CellDisplay = memo(function CellDisplay({
   cell,
-  colId,
   rowId,
+  colId,
   width,
+  type,
   setDraft,
   setEditing,
-}) => {
-  const column = useTableStore((s) => s.columnsById[colId]);
+}) {
+  const colorRules = useTableStore((s) => s.columnsById[colId].colorRules);
+  const display = useTableStore((s) => s.columnsById[colId].display);
+  const editable = useTableStore(
+    (s) => s.columnsById[colId].editable !== false && type !== "computed"
+  );
 
-  const { unselectColumn } = useTableStore.getState();
+  const unselectColumn = useTableStore((s) => s.unselectColumn);
 
-  const [select, setSelect] = useState(false);
-
-  const editable = column.type !== "computed" && column.editable !== false;
+  const [selected, setSelected] = useState(false);
 
   const color = useMemo(
-    () => evaluateColorRules(cell.value, column?.colorRules),
-    [cell.value, column?.colorRules]
+    () => evaluateColorRules(cell.value, colorRules),
+    [cell.value, colorRules]
   );
 
   const displayValue = useMemo(
-    () => formatValue(cell.value, column),
-    [cell.value, column]
+    () => formatValue(cell.value, type, display),
+    [cell.value, type, display]
   );
-
-  const explanation = useMemo(() => {
-    if (column.type !== "computed") return null;
-    return explainFormulaFromColumn(column, rowId);
-  }, [column, cell.value]);
-
-  const content = explanation
-    ? [
-        `= ${explanation.formula}`,
-        `= ${explanation.expanded}`,
-        `= ${cell.value || 0}`,
-      ].join("\n")
-    : null;
 
   return (
     <div
       tabIndex={0}
       style={{ width, color }}
-      className="
-        relative px-2 py-1 cursor-pointer
-        border-r-1 border-r-(--border) !z-1 flex-none truncate
-      "
-      onClick={(e) => {
-        setSelect(true);
+      className="relative px-2 py-1 border-r border-(--border) truncate overflow-hidden"
+      onClick={() => {
+        setSelected(true);
         unselectColumn({ id: colId });
       }}
-      onBlur={() => setSelect(false)}
-      onMouseEnter={(e) => {
-        if (!explanation) return;
-        setTimeout(
-          () =>
-            tooltipApi.show({
-              rect: e.target.getBoundingClientRect(),
-              content: content,
-              placement: "top",
-            }),
-          100
-        );
-      }}
-      onMouseLeave={() => tooltipApi.hide()}
+      onBlur={() => setSelected(false)}
       onDoubleClick={() => {
         if (!editable) return;
         setDraft(cell.value ?? "");
         setEditing(true);
       }}
-      title={cell.meta?.error}
+      onMouseEnter={(e) => handleMouseEnter(e, type, cell, colId, rowId, color)}
+      onMouseLeave={tooltipApi.hide}
     >
       {displayValue}
-      {select && (
-        <div className="absolute border w-full h-full top-0 left-0 border-(--info) bg-(--info-soft)" />
+      {selected && (
+        <div className="absolute inset-0 border border-(--info) bg-(--info-soft)" />
       )}
     </div>
   );
-};
+});

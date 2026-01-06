@@ -1,12 +1,8 @@
-export const FUNCTION_ARITY = {
-  PREV: 1,
-  SELF: 0,
-  CUM: 1, // optional start handled in eval
-  SUM: 1,
-  AVG: 2,
-  RESET: 2,
-  IF: 3,
-};
+import { FUNCTION_REGISTRY } from "../functions/registry";
+
+export const FUNCTION_ARITY = Object.fromEntries(
+  Object.entries(FUNCTION_REGISTRY).map(([name, def]) => [name, def.arity])
+);
 
 export function buildAST(postfix, labelToId) {
   // console.log(postfix);
@@ -18,14 +14,24 @@ export function buildAST(postfix, labelToId) {
     /* ---------- FUNCTION ---------- */
     if (t.type === "function") {
       const name = t.value.toUpperCase();
-
-      // how many args?
       const arity = FUNCTION_ARITY[name];
-      if (!arity) return null;
+
+      if (arity == null) {
+        throw new Error(`Unknown function: ${name}`);
+      }
+
+      // 🔥 STRICT ARITY CHECK
+      if (stack.length < arity) {
+        throw new Error(`Function ${name} expects ${arity} argument(s)`);
+      }
 
       const args = [];
       for (let i = 0; i < arity; i++) {
-        args.unshift(stack.pop());
+        const arg = stack.pop();
+        if (!arg) {
+          throw new Error(`Function ${name} expects ${arity} argument(s)`);
+        }
+        args.unshift(arg);
       }
 
       stack.push({
@@ -52,6 +58,7 @@ export function buildAST(postfix, labelToId) {
       stack.push({ type: "constant", value: t.value });
       continue;
     }
+    console.log(t.type);
 
     /* ---------- OPERATOR ---------- */
     if (t.type === "op") {
@@ -69,8 +76,12 @@ export function buildAST(postfix, labelToId) {
     }
   }
 
+  if (stack.length !== 1) {
+    throw new Error("Invalid expression");
+  }
+
   return {
-    ast: stack.length === 1 ? stack[0] : null,
+    ast: stack[0],
     dependency,
   };
 }

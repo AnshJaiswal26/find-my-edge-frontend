@@ -4,6 +4,7 @@ import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
 import { useNumericColumns } from "../../../hooks";
 import { buildAST, tokenize, toPostfix } from "../../../../engine/ast";
+import { FUNCTION_REGISTRY } from "../../../../engine/functions/registry";
 import { Section } from "@layout";
 
 export function ExpressionBuilder({ value, onCommit, onChange }) {
@@ -17,8 +18,27 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
   const suggestions = useMemo(() => {
     const m = expr.slice(0, cursor).match(/[a-zA-Z_]+$/);
     if (!m) return [];
+
     const q = m[0].toLowerCase();
-    return numericColumns.filter((c) => c.label.toLowerCase().startsWith(q));
+
+    const columnSuggestions = numericColumns
+      .filter((c) => c.label.toLowerCase().startsWith(q))
+      .map((c) => ({
+        type: "column",
+        label: c.label,
+        colId: c.id,
+      }));
+
+    const functionSuggestions = Object.entries(FUNCTION_REGISTRY)
+      .filter(([name, _]) => name.toLowerCase().startsWith(q))
+      .map(([name, value]) => ({
+        type: "function",
+        name: name,
+        icon: value.icon,
+        signature: value.signature,
+      }));
+
+    return [...functionSuggestions, ...columnSuggestions];
   }, [expr, cursor, numericColumns]);
 
   const generatedAst = useMemo(() => {
@@ -34,14 +54,24 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
     : { ast: null, dependency: null };
 
   const applySuggestion = useCallback(
-    (label, colId) => {
-      const formatted = /[^a-zA-Z0-9_-]/.test(label) ? `[${label}]` : label;
+    (item) => {
+      let insert = "";
+
+      if (item.type === "column") {
+        insert = /[^a-zA-Z0-9_-]/.test(item.label)
+          ? `[${item.label}]`
+          : item.label;
+      }
+
+      if (item.type === "function") {
+        insert = `${item.name}(`;
+      }
 
       const before = expr.slice(0, cursor).replace(/[a-zA-Z_]+$/, "");
-
       const after = expr.slice(cursor);
 
-      setExpr(`${before}${formatted}${after}`);
+      setExpr(`${before}${insert}${after}`);
+      setCursor(before.length + insert.length);
       setOpen(false);
     },
     [expr, cursor]
@@ -63,7 +93,7 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
 
       if (e.key === "Enter") {
         e.preventDefault();
-        applySuggestion(suggestions[highlight].label);
+        applySuggestion(suggestions[highlight]);
         setHighlight(0);
       }
     },

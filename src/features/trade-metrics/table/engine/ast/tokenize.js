@@ -1,7 +1,7 @@
-import { FUNCTION_ARITY } from "./buildAst";
+import { FUNCTION_REGISTRY } from "../functions/registry";
 
 const OPS = "+-*/()";
-const FUNCTIONS = new Set(Object.keys(FUNCTION_ARITY));
+const FUNCTIONS = new Set(Object.keys(FUNCTION_REGISTRY));
 const COMPARATORS = ["<=", ">=", "==", "!=", "<", ">"];
 
 export function tokenize(expr) {

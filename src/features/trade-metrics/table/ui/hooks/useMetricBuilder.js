@@ -6,7 +6,11 @@ export function useNumericColumns() {
 
   const numericColumns = useMemo(() => {
     return Object.values(columnsById).filter(
-      (c) => c.type === "number" || c.type === "computed"
+      (c) =>
+        c.type === "number" ||
+        c.type === "computed" ||
+        c.type === "date" ||
+        c.type === "time"
     );
   }, [columnsById]);
 

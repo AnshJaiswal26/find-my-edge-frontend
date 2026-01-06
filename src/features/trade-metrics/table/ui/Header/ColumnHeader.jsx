@@ -1,66 +1,107 @@
 import { GripHorizontal } from "lucide-react";
+import { useRef } from "react";
 import { useTableStore } from "../../store/useTableStore";
-import { bindGlobalPointer } from "../../interaction";
+import { createColumnDragController } from "../../interaction/columnDragController";
 
-export function ColumnHeader({ colId, index }) {
-  const draggingColumn = useTableStore((s) => s.draggingColumn);
+const controller = createColumnDragController();
 
-  const startColumnDrag = useTableStore((s) => s.startColumnDrag);
-  const setColDragOverIndex = useTableStore((s) => s.setColDragOverIndex);
-  const endColumnDrag = useTableStore((s) => s.endColumnDrag);
-  const updateColumnDrag = useTableStore((s) => s.updateColumnDrag);
-  const startColumnResize = useTableStore((s) => s.startColumnResize);
+function getColumnRects(tableEl) {
+  return Array.from(tableEl.querySelectorAll("[data-col-header]")).map(
+    (el, index) => {
+      const r = el.getBoundingClientRect();
+      return { index, left: r.left, right: r.right };
+    }
+  );
+}
 
-  const selectColumn = useTableStore((s) => s.selectColumn);
-  const unselectColumn = useTableStore((s) => s.unselectColumn);
+export function ColumnHeader({ colId, index, tableRef }) {
+  const headerRef = useRef(null);
 
   const column = useTableStore((s) => s.columnsById[colId]);
-
   const width = useTableStore((s) => s.columnWidths?.[colId] ?? 150);
 
+  const {
+    startColumnDrag,
+    startColumnResize,
+    setColDragOverIndex,
+    endColumnDrag,
+    selectColumn,
+    unselectColumn,
+  } = useTableStore.getState();
+
   const handlePointerDown = (e, mode) => {
+    e.preventDefault();
     unselectColumn();
 
-    const rect = e.currentTarget
-      .closest("[data-col-header]")
-      .getBoundingClientRect();
+    const headerEl = headerRef.current;
+    const tableEl = tableRef.current;
 
-    const start = mode === "drag" ? startColumnDrag : startColumnResize;
+    const rect = headerEl.getBoundingClientRect();
+    const tableRect = tableEl.getBoundingClientRect();
 
-    start({
-      id: colId,
-      index,
-      width: rect.width,
-      left: rect.left,
-      startX: e.clientX,
+    const startX = e.clientX;
+    const columnRects = getColumnRects(tableEl);
+
+    if (mode === "drag") {
+      startColumnDrag({ id: colId, index });
+    } else {
+      startColumnResize({ id: colId });
+    }
+
+    controller.start({
+      rect,
+      tableRect,
+      mode: mode === "drag" ? "reorder" : "resize",
     });
 
-    bindGlobalPointer("clientX", updateColumnDrag, endColumnDrag);
+    function onMove(ev) {
+      const x = ev.clientX;
+      const deltaX = x - startX;
 
-    e.preventDefault();
+      if (mode === "drag") {
+        controller.move(deltaX);
+
+        for (const col of columnRects) {
+          if (x > col.left + 6 && x < col.right - 6) {
+            setColDragOverIndex(col.index);
+            break;
+          }
+        }
+      } else {
+        controller.resize(Math.max(40, rect.width + deltaX));
+      }
+    }
+
+    function onUp(ev) {
+      controller.end();
+
+      if (mode === "resize") {
+        const finalWidth = Math.max(60, rect.width + (ev.clientX - startX));
+        endColumnDrag({ width: finalWidth });
+      } else {
+        endColumnDrag();
+      }
+
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    }
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
   };
 
   return (
     <div
+      ref={headerRef}
       data-col-header
-      className="group relative select-none"
+      className="group relative select-none overflow-hidden"
       style={{ width }}
       onClick={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
-
-        selectColumn({
-          id: colId,
-          width: rect.width,
-          left: rect.left,
-        });
-      }}
-      onPointerEnter={() => {
-        if (draggingColumn) {
-          setColDragOverIndex(index);
-        }
+        selectColumn({ id: colId, width: rect.width, left: rect.left });
       }}
     >
-      {/* DRAG HANDLE */}
+      {/* DRAG */}
       <div
         onPointerDown={(e) => handlePointerDown(e, "drag")}
         className="opacity-0 group-hover:opacity-60 absolute -bottom-1 left-1/2 -translate-x-1/2 cursor-grab"
@@ -68,12 +109,12 @@ export function ColumnHeader({ colId, index }) {
         <GripHorizontal size={18} />
       </div>
 
+      {/* RESIZE */}
       <div
         onPointerDown={(e) => handlePointerDown(e, "resize")}
         className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-(--cyan)"
       />
 
-      {/* HEADER BODY */}
       <div className="flex items-center px-2 py-1 border-r border-(--border)">
         {column.label}
       </div>

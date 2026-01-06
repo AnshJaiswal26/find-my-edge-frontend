@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { List } from "react-window";
+import { useEffect, useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTableStore } from "./store/useTableStore";
 
 import { Toolbar } from "./ui/Toolbar/Toolbar";
 import { TableHeader } from "./ui/Header/TableHeader";
-import { ColumnGhost } from "./ui/Header/ColumnGhost";
 import { Row } from "./ui/Row/Row";
 
 import {
@@ -15,41 +14,13 @@ import {
   SummaryPopup,
 } from "./ui/Popups";
 
-/* ---------------- Virtual Row ---------------- */
-
-function VirtualRow({ index, style, rowOrder }) {
-  style.width = "fit-content";
-
-  // HEADER
-  if (index === 0) {
-    return (
-      <div style={style}>
-        <TableHeader />
-      </div>
-    );
-  }
-
-  // DATA ROWS
-  const rowIndex = index - 1;
-  const rowId = rowOrder[rowIndex];
-
-  return (
-    <div style={style}>
-      <Row rowId={rowId} index={rowIndex} />
-    </div>
-  );
-}
-
-/* ---------------- Table ---------------- */
-
 export function Table() {
   const tableRef = useRef(null);
-  const [viewportWidth, setViewportWidth] = useState(0);
+  const scrollRef = useRef(null);
 
   const rowOrder = useTableStore((s) =>
-    s.filteredRowOrder?.length ? s.filteredRowOrder : s.rowOrder
+    s.filteredRowOrder.length ? s.filteredRowOrder : s.rowOrder
   );
-
   const isDataLoading = useTableStore((s) => s.isDataLoading);
 
   const { initDemoData, addTrade, openPopup, deleteColumn } =
@@ -57,16 +28,16 @@ export function Table() {
 
   useEffect(() => {
     initDemoData();
-
-    if (!tableRef.current) return;
-
-    const ro = new ResizeObserver(([entry]) => {
-      setViewportWidth(entry.contentRect.width);
-    });
-
-    ro.observe(tableRef.current);
-    return () => ro.disconnect();
   }, []);
+
+  /* ---------------- Virtualizer ---------------- */
+
+  const rowVirtualizer = useVirtualizer({
+    count: rowOrder.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => 31.3,
+    overscan: 6,
+  });
 
   return (
     <div className="flex flex-col flex-1 gap-4 relative">
@@ -97,33 +68,51 @@ export function Table() {
           rounded
           text-(--text)
           text-sm
-          h-[420px]
-          w-full
+          h-[430px]
           -mb-4
+          w-full
           overflow-hidden
         "
       >
-        {/* <TableHeader /> */}
-        {/* BODY (virtualized, owns scrolling) */}
-        {isDataLoading ? (
-          <div className="p-4 space-y-2 animate-pulse">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="h-6 bg-(--hover) rounded" />
-            ))}
-          </div>
-        ) : (
-          <List
-            height={400}
-            rowCount={rowOrder.length + 1}
-            rowHeight={31.3}
-            rowComponent={VirtualRow}
-            rowProps={{ rowOrder }}
-            overscanCount={4}
-          />
-        )}
-        {/* GHOSTS */}
-        <ColumnGhost ref={tableRef} />
-        {/* <RowGhost ref={tableRef} /> */}
+        {/* SCROLL CONTAINER */}
+        <div ref={scrollRef} className="relative h-full w-full overflow-auto">
+          <TableHeader tableRef={tableRef} />
+
+          {/* BODY */}
+          {isDataLoading ? (
+            <div className="p-4 space-y-2 animate-pulse">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="h-6 bg-(--hover) rounded" />
+              ))}
+            </div>
+          ) : (
+            <div
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                position: "relative",
+              }}
+            >
+              {rowVirtualizer.getVirtualItems().map((vRow) => {
+                const rowId = rowOrder[vRow.index];
+
+                return (
+                  <div
+                    key={rowId}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "fit-content",
+                      transform: `translateY(${vRow.start}px)`,
+                    }}
+                  >
+                    <Row rowId={rowId} index={vRow.index} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

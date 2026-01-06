@@ -2,10 +2,9 @@ import { formatDate } from "./date";
 import { numberFormatters } from "./number";
 import { formatTime } from "./time";
 
-export function formatValue(value, column) {
-  const type = column.type;
-  const format = column.display?.format;
-  const decimals = column.display?.decimals ?? 0;
+export function formatValue(value, type, display) {
+  const format = display?.format;
+  const decimals = display?.decimals ?? 0;
 
   // ---------- null / invalid ----------
   if (value === null || value === undefined) return "—";

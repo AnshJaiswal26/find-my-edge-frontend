@@ -20,6 +20,7 @@ export function fnCUM(fn, row, ctx) {
 export function fnRESET(fn, row, ctx) {
   const [valueExpr, condExpr] = fn.args;
   const cond = ctx.evaluate(condExpr, row, ctx);
+  console.log(cond, ctx.evaluate(valueExpr, row, ctx));
   if (cond) return ctx.evaluate(valueExpr, row, ctx);
   return ctx.prevValue ?? null;
 }

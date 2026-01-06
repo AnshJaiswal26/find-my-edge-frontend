@@ -57,7 +57,7 @@ export function evaluateExpression(expr, row, ctx = {}) {
     }
 
     case "function": {
-      const impl = FUNCTION_REGISTRY[expr.name.toUpperCase()];
+      const impl = FUNCTION_REGISTRY[expr.name.toUpperCase()].exec;
       if (!impl) return null;
 
       return impl(expr, row, {

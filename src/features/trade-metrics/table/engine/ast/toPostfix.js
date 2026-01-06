@@ -16,19 +16,28 @@ const PRECEDENCE = {
 };
 
 export function toPostfix(tokens) {
-  // console.log(tokens);
-
   const out = [];
   const ops = [];
 
   for (const t of tokens) {
     if (t.type === "identifier" || t.type === "number") {
       out.push(t);
-      if (t.type === "identifier") continue;
+      continue;
     }
 
     if (t.type === "function") {
-      ops.push(t); // push function
+      ops.push(t);
+      continue;
+    }
+
+    if (t.type === "comma") {
+      // 🔥 FIX
+      while (ops.length && ops.at(-1).type !== "lparen") {
+        out.push(ops.pop());
+      }
+      if (!ops.length) {
+        throw new Error("Misplaced comma");
+      }
       continue;
     }
 
@@ -44,15 +53,17 @@ export function toPostfix(tokens) {
       continue;
     }
 
-    if (t.type === "lparen") ops.push(t);
+    if (t.type === "lparen") {
+      ops.push(t);
+      continue;
+    }
 
     if (t.type === "rparen") {
       while (ops.length && ops.at(-1).type !== "lparen") {
         out.push(ops.pop());
       }
-      ops.pop(); // remove lparen
+      ops.pop(); // remove '('
 
-      // 🔥 if function is on top, pop it
       if (ops.length && ops.at(-1).type === "function") {
         out.push(ops.pop());
       }

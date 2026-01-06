@@ -227,7 +227,7 @@ export const columnsById = {
 
     editable: false,
 
-    dependencies: ["exit", "entry", "sl"],
+    dependencies: ["pnl", 500],
 
     display: { format: "RATIO", decimals: 2 },
 

@@ -90,6 +90,7 @@ export default function Tooltip() {
       content,
       placement = "auto",
       color = "white",
+      slide = 0,
     }) => {
       const el = ref.current;
       if (!el || !rect) return;
@@ -102,7 +103,7 @@ export default function Tooltip() {
 
       const { x, y } = getTooltipPosition(rect, resolved);
 
-      el.style.left = `${x}px`;
+      el.style.left = `${x + slide}px`;
       el.style.top = `${y}px`;
       el.style.transform = getTransform(resolved);
       el.style.color = color;
