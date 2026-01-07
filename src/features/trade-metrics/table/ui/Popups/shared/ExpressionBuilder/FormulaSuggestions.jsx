@@ -10,7 +10,7 @@ export function FormulaSuggestions({ suggestions, highlight, onSelect }) {
         >
           {s.type === "function" && (
             <>
-              <span className="text-xs opacity-70">{s.icon}</span>
+              <span className="text-xs opacity-70">ƒ</span>
               <span className="font-mono">{s.signature}</span>
             </>
           )}

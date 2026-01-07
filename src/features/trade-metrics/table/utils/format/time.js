@@ -7,19 +7,23 @@ export const TIME_FORMATS = [
 ];
 
 export function formatTime(value, format) {
-  if (!value) return "—";
+  if (typeof value !== "number") return "—";
 
-  const [h, m, s = "00"] = value.split(":");
+  // seconds since midnight → h:m:s
+  const totalSeconds = Math.max(0, Math.floor(value));
 
-  const hour = Number(h);
-  const hour12 = hour % 12 || 12;
-  const ampm = hour < 12 ? "AM" : "PM";
+  const h24 = Math.floor(totalSeconds / 3600) % 24;
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+
+  const h12 = h24 % 12 || 12;
+  const ampm = h24 < 12 ? "AM" : "PM";
 
   const map = {
-    HH: h.padStart(2, "0"),
-    hh: String(hour12).padStart(2, "0"),
-    mm: m.padStart(2, "0"),
-    ss: s.padStart(2, "0"),
+    HH: String(h24).padStart(2, "0"),
+    hh: String(h12).padStart(2, "0"),
+    mm: String(m).padStart(2, "0"),
+    ss: String(s).padStart(2, "0"),
     A: ampm,
   };
 

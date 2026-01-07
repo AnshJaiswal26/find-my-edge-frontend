@@ -10,4 +10,8 @@ export { computePartialGrouped } from "./computePartialGrouped";
 
 export { PARTIAL_RUNNERS } from "./partialRunners";
 
-export { evaluateExpression } from "./evaluateExpression";
+export {
+  evaluateExpression,
+  parseInputValue,
+  formatForInput,
+} from "./evaluateExpression";

@@ -1,10 +1,11 @@
+import { parseInputValue } from "../../engine/execute";
 import { useTableStore } from "../../store/useTableStore";
 
 function normalizeValue(type, raw) {
   if (type === "number" || type === "computed") {
     return raw === "" ? null : Number(raw);
   }
-  return raw;
+  return parseInputValue(raw, type);
 }
 
 export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
@@ -12,17 +13,19 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
 
   return (
     <input
-      className="w-full h-full px-2 py-1 outline-0    
+      className="w-ful px-2 py-1 outline-0  h-[28px]  
       appearance-none
       [-moz-appearance:textfield]
       [&::-webkit-outer-spin-button]:appearance-none
       [&::-webkit-inner-spin-button]:appearance-none"
       autoFocus
       type={["date", "time", "number"].includes(type) ? type : "text"}
+      step={1}
       value={draft ?? ""}
-      onChange={(e) => setDraft(normalizeValue(type, e.target.value))}
+      onChange={(e) => setDraft(e.target.value)}
       onBlur={() => {
-        onCommit(draft);
+        const normalized = normalizeValue(type, draft);
+        onCommit(normalized);
         setEditing(false);
       }}
     />

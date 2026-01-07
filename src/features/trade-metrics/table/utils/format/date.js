@@ -11,18 +11,37 @@ export const DATE_FORMATS = [
 ];
 
 export function formatDate(value, format) {
-  const d = new Date(value);
+  if (typeof value !== "number") return "—";
+
+  // days since epoch → ms
+  const d = new Date(value * 86400000);
+
   if (Number.isNaN(d.getTime())) return "—";
 
   const map = {
-    YYYY: d.getFullYear(),
-    YY: String(d.getFullYear()).slice(-2),
-    MM: String(d.getMonth() + 1).padStart(2, "0"),
-    DD: String(d.getDate()).padStart(2, "0"),
-    MMM: d.toLocaleString("en-IN", { month: "short" }),
-    MMMM: d.toLocaleString("en-IN", { month: "long" }),
-    ddd: d.toLocaleString("en-IN", { weekday: "short" }),
-    dddd: d.toLocaleString("en-IN", { weekday: "long" }),
+    YYYY: d.getUTCFullYear(),
+    YY: String(d.getUTCFullYear()).slice(-2),
+
+    MM: String(d.getUTCMonth() + 1).padStart(2, "0"),
+    DD: String(d.getUTCDate()).padStart(2, "0"),
+
+    MMM: d.toLocaleString("en-IN", {
+      month: "short",
+      timeZone: "UTC",
+    }),
+    MMMM: d.toLocaleString("en-IN", {
+      month: "long",
+      timeZone: "UTC",
+    }),
+
+    ddd: d.toLocaleString("en-IN", {
+      weekday: "short",
+      timeZone: "UTC",
+    }),
+    dddd: d.toLocaleString("en-IN", {
+      weekday: "long",
+      timeZone: "UTC",
+    }),
   };
 
   return format.replace(/YYYY|YY|MMMM|MMM|MM|DD|dddd|ddd/g, (k) => map[k]);

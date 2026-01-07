@@ -15,28 +15,38 @@ const getDateBeforeDays = (daysBefore) => {
   return date;
 };
 
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+function formatTimeWithSeconds(date) {
+  return `${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(
+    date.getSeconds()
+  )}`;
+}
+
 function getRandomTradingDuration() {
   const start = new Date();
-  start.setHours(9, 15, 0, 0);
+  start.setHours(9, 15, 0, 0); // 09:15:00
 
   const end = new Date();
-  end.setHours(15, 30, 0, 0);
+  end.setHours(15, 30, 0, 0); // 15:30:00
 
-  const entry = new Date(start.getTime() + Math.random() * (end - start));
-  const durationMinutes = Math.floor(Math.random() * 56) + 5;
-  const exit = new Date(entry.getTime() + durationMinutes * 60000);
+  // random entry time (ms precision)
+  const entry = new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
+
+  // duration between 5 and 60 minutes, with seconds precision
+  const durationSeconds = Math.floor(Math.random() * (56 * 60)) + 5 * 60;
+
+  const exit = new Date(entry.getTime() + durationSeconds * 1000);
 
   return {
-    entryTime: entry.toLocaleTimeString("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }),
-    exitTime: exit.toLocaleTimeString("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }),
+    entryTime: formatTimeWithSeconds(entry), // "HH:mm:ss"
+    exitTime: formatTimeWithSeconds(exit), // "HH:mm:ss"
+    durationSeconds, // number
+    durationMinutes: +(durationSeconds / 60).toFixed(2),
   };
 }
 
@@ -79,7 +89,7 @@ export const tradeData = Array.from({ length: days }).map((_, i) => {
   // ✅ derived PnL
   const pnl = fix((exit - entry) * qty);
 
-  const { entryTime, exitTime } = getRandomTradingDuration();
+  const { entryTime, exitTime, durationSeconds } = getRandomTradingDuration();
   const charges = fix(65 + num * 10);
   const trade = `Trade ${i + 1}`;
   const rr = fix(pnl / risk);
@@ -87,11 +97,16 @@ export const tradeData = Array.from({ length: days }).map((_, i) => {
   cumulativePnl = fix(cumulativePnl + pnl);
   capital = fix(capital + pnl);
 
+  if (i === 0) {
+    console.log(entryTime, exitTime, durationSeconds);
+  }
+
   return {
     "Trade Id": tradeId,
     Date: date,
     "Entry Time": entryTime,
     "Exit Time": exitTime,
+    Duration: durationSeconds,
     Symbol: randomSymbol(num),
     Entry: entry,
     Exit: exit,

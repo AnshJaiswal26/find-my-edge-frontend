@@ -34,7 +34,7 @@ export const createComputeSlice = (set, get) => ({
       /* ================= FULL RECOMPUTE ================= */
       if (!payload || payload.reason === "all") {
         Object.values(columnsById).forEach((column) => {
-          computeColumn(rowsById, rowOrder, column);
+          computeColumn(rowsById, rowOrder, column, columnsById);
         });
         return;
       }
@@ -50,7 +50,13 @@ export const createComputeSlice = (set, get) => ({
           const column = columnsById[colId];
           if (!column || column.type !== "computed") return;
 
-          PARTIAL_RUNNERS[column.mode](rowsById, rowOrder, rowIndex, column);
+          PARTIAL_RUNNERS[column.mode](
+            rowsById,
+            rowOrder,
+            rowIndex,
+            column,
+            columnsById
+          );
         });
 
         return;
@@ -61,7 +67,7 @@ export const createComputeSlice = (set, get) => ({
         const column = columnsById[payload.colId];
         if (!column) return;
 
-        computeColumn(rowsById, rowOrder, column);
+        computeColumn(rowsById, rowOrder, column, columnsById);
       }
     });
   },

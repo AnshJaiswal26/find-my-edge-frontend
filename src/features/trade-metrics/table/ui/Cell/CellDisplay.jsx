@@ -3,6 +3,7 @@ import { useTableStore } from "../../store/useTableStore";
 import { explainFormulaFromColumn } from "./cellUtils";
 import { evaluateColorRules, formatValue } from "../../utils";
 import { tooltipApi } from "@ui";
+import { formatForInput } from "../../engine/execute";
 
 const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
   if (type !== "computed") return;
@@ -59,7 +60,7 @@ export const CellDisplay = memo(function CellDisplay({
       onBlur={() => setSelected(false)}
       onDoubleClick={() => {
         if (!editable) return;
-        setDraft(cell.value ?? "");
+        setDraft(formatForInput(cell.value ?? "", type));
         setEditing(true);
       }}
       onMouseEnter={(e) => handleMouseEnter(e, type, cell, colId, rowId, color)}
