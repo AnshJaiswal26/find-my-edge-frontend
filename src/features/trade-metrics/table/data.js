@@ -3,7 +3,6 @@ export const columnsById = {
     id: "date",
     label: "Date",
     type: "date",
-    valueType: "date",
     mode: "row",
     editable: true,
 
@@ -23,7 +22,6 @@ export const columnsById = {
     id: "entryTime",
     label: "Entry Time",
     type: "time",
-    valueType: "time",
     mode: "row",
     editable: true,
 
@@ -43,7 +41,6 @@ export const columnsById = {
     id: "exitTime",
     label: "Exit Time",
     type: "time",
-    valueType: "time",
     mode: "row",
 
     editable: true,
@@ -63,15 +60,14 @@ export const columnsById = {
   duration: {
     id: "duration",
     label: "Duration",
-    type: "computed",
-    valueType: "number",
+    type: "time computed",
     mode: "row",
 
     editable: false,
 
     dependencies: ["entryTime", "exitTime"],
 
-    display: { format: "NUMBER", decimals: 0 },
+    display: { format: "HH:mm:ss", decimals: 0 },
 
     colorRules: [
       { operator: "lessThan", value: 5, color: "var(--warning)" },
@@ -95,7 +91,6 @@ export const columnsById = {
     id: "symbol",
     label: "Symbol",
     type: "text",
-    valueType: "text",
     mode: "row",
     editable: true,
 
@@ -115,7 +110,6 @@ export const columnsById = {
     id: "entry",
     label: "Entry",
     type: "number",
-    valueType: "number",
     mode: "row",
     editable: true,
 
@@ -135,7 +129,6 @@ export const columnsById = {
     id: "exit",
     label: "Exit",
     type: "number",
-    valueType: "number",
     mode: "row",
     editable: true,
 
@@ -155,7 +148,6 @@ export const columnsById = {
     id: "qty",
     label: "Qty",
     type: "number",
-    valueType: "number",
     mode: "row",
     editable: true,
 
@@ -175,7 +167,6 @@ export const columnsById = {
     id: "sl",
     label: "SL",
     type: "number",
-    valueType: "number",
     mode: "row",
     editable: true,
 
@@ -196,8 +187,7 @@ export const columnsById = {
     label: "PnL",
 
     /* ---------- column role ---------- */
-    type: "computed", // replaces type
-    valueType: "number",
+    type: "number computed", // replaces type
     mode: "row", //  (row | cumulative | aggregate)
 
     editable: false,
@@ -233,8 +223,7 @@ export const columnsById = {
   rr: {
     id: "rr",
     label: "Risk-Reward",
-    type: "computed",
-    valueType: "number",
+    type: "number computed",
     mode: "row",
 
     editable: false,
@@ -263,7 +252,6 @@ export const columnsById = {
     id: "emotion",
     label: "Emotion",
     type: "select",
-    valueType: "text",
     mode: "row",
 
     editable: true,

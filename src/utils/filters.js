@@ -1,40 +1,30 @@
+const text = [
+  "textContains",
+  "textContains",
+  "textDoesNotContain",
+  "textStartsWith",
+  "textEndsWith",
+  "textIsExactly",
+];
+
+const number = [
+  "greaterThan",
+  "greaterThanEqualTo",
+  "lessThan",
+  "lessThanEqualTo",
+  "isEqualTo",
+  "isNotEqualTo",
+  "isBetween",
+  "isNotBetween",
+];
+
 export const filterByType = {
-  text: [
-    "textContains",
-    "textContains",
-    "textDoesNotContain",
-    "textStartsWith",
-    "textEndsWith",
-    "textIsExactly",
-  ],
-  select: [
-    "textContains",
-    "textContains",
-    "textDoesNotContain",
-    "textStartsWith",
-    "textEndsWith",
-    "textIsExactly",
-  ],
-  number: [
-    "greaterThan",
-    "greaterThanEqualTo",
-    "lessThan",
-    "lessThanEqualTo",
-    "isEqualTo",
-    "isNotEqualTo",
-    "isBetween",
-    "isNotBetween",
-  ],
-  computed: [
-    "greaterThan",
-    "greaterThanEqualTo",
-    "lessThan",
-    "lessThanEqualTo",
-    "isEqualTo",
-    "isNotEqualTo",
-    "isBetween",
-    "isNotBetween",
-  ],
+  text: text,
+  select: text,
+  number: number,
+  "number computed": number,
+  "time computed": ["dateIs", "dateBefore", "dateAfter"],
+  "date computed": ["dateIs", "dateBefore", "dateAfter"],
   date: ["dateIs", "dateBefore", "dateAfter"],
   time: ["dateIs", "dateBefore", "dateAfter"],
 };

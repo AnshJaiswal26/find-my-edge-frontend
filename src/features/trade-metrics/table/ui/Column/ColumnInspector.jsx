@@ -11,7 +11,8 @@ export function ColumnInspector() {
 
   const column = columnsById[selectedColId];
   if (!column) return null;
-  if (column.type !== "number" && column.type !== "computed") return null;
+  if (column.type !== "number" && !column.type.includes("computed"))
+    return null;
 
   return (
     <ColumnInspectorContent column={column} selectedColId={selectedColId} />

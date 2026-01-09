@@ -2,32 +2,17 @@ import { computeCumulative } from "./computeCumulative";
 import { computeGrouped } from "./computeGrouped";
 import { computeRow } from "./computeRow";
 
-export function computeColumn(rowsById, rowOrder, column, columnsById) {
-  if (column.type !== "computed" || !column.expression) return;
+const computeMap = {
+  row: computeRow,
+  cumulative: computeCumulative,
+  grouped: computeGrouped,
+};
 
-  switch (column.mode ?? "row") {
-    case "row":
-      computeRow(
-        rowOrder.map((id) => rowsById[id]),
-        column,
-        columnsById
-      );
-      break;
+export function computeColumn(rowsById, rowOrder, column) {
+  if (!column.type.includes("computed") || !column.expression) return;
 
-    case "cumulative":
-      computeCumulative(
-        rowOrder.map((id) => rowsById[id]),
-        column,
-        columnsById
-      );
-      break;
-
-    case "grouped":
-      computeGrouped(
-        rowOrder.map((id) => rowsById[id]),
-        column,
-        columnsById
-      );
-      break;
-  }
+  computeMap[column.mode ?? "row"](
+    rowOrder.map((id) => rowsById[id]),
+    column
+  );
 }

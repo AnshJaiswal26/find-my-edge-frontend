@@ -40,7 +40,7 @@ export function ColorRulesSection({ rules, onChange, type }) {
               type={
                 type === "select"
                   ? "text"
-                  : type === "computed"
+                  : type.includes("computed")
                   ? "number"
                   : type
               }

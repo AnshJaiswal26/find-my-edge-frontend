@@ -22,7 +22,7 @@ function computeSummary(state) {
   const rows = rowOrder.map((id) => rowsById[id]);
 
   const numericColumns = Object.values(columnsById).filter(
-    (c) => c.type === "number" || c.type === "computed"
+    (c) => c.type === "number" || c.type.includes("computed")
   );
 
   const stats = {};

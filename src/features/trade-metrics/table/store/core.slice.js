@@ -121,7 +121,7 @@ export const createCoreSlice = (set, get) => ({
       }
     });
 
-    if (draft.type === "computed")
+    if (draft.type.includes("computed"))
       state.recompute({ reason: "column", colId: activeColId });
 
     state.closePopup();

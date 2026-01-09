@@ -1,50 +1,27 @@
 import { evaluateExpression } from "./evaluateExpression";
 
-export function computeGrouped(rows, column, columnsById) {
+export function computeGrouped(rows, column) {
   const { by, startValue = 0 } = column.mode;
 
-  let prevValue = {
-    value: startValue,
-    valueType: column.valueType ?? null,
-  };
-
+  let prevValue = startValue;
   let prevRow = null;
   let lastGroup = null;
 
-  rows.forEach((row, rowIndex) => {
+  rows.forEach((row) => {
     const group = row.cells[by]?.value;
 
-    // 🔄 reset on group change
     if (group !== lastGroup) {
-      prevValue = {
-        value: startValue,
-        valueType: column.valueType,
-      };
+      prevValue = startValue;
       lastGroup = group;
     }
 
-    const res = evaluateExpression(column.expression, row, {
+    const value = evaluateExpression(column.expression, row, {
       prevValue,
       prevRow,
-      rows,
-      rowIndex,
-      columnsById,
-      evaluate: evaluateExpression,
     });
 
-    if (res) {
-      // 🔒 lock column type once
-      if (!column.valueType) {
-        column.valueType = res.valueType;
-        prevValue.valueType = res.valueType;
-      }
-
-      row.cells[column.id].value = res.value;
-      prevValue = res;
-    } else {
-      row.cells[column.id].value = null;
-    }
-
+    row.cells[column.id].value = value;
+    prevValue = value;
     prevRow = row;
   });
 }

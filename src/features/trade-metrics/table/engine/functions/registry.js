@@ -83,7 +83,7 @@ export const FUNCTION_REGISTRY = {
 
   COALESCE: {
     exec: fnCOALESCE,
-    arity: -1, // variable
+    arity: -1,
     signature: "COALESCE(a, b, ...)",
     description: "First non-null value",
   },
@@ -98,8 +98,8 @@ export const FUNCTION_REGISTRY = {
   AVG: {
     exec: fnAVG,
     arity: 2,
-    signature: "AVG(expr, n)",
-    description: "Moving average (row-based)",
+    signature: "AVG(expr)",
+    description: "Row avg",
   },
 
   MAX: {

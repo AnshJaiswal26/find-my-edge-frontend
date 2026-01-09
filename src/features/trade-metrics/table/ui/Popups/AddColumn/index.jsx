@@ -16,13 +16,13 @@ function AddColumnPopupConent() {
 
   const [draft, setDraft] = useState({
     label: "",
-    type: "computed",
+    type: "number computed",
     mode: "row",
     editable: true,
     options: [],
     dependencies: [],
     display: { format: "NUMBER", decimals: 2, prefix: "", suffix: "" },
-    initialValue: 15000,
+    initialValue: 0,
     expression: null,
     formula: "",
     colorRules: [],

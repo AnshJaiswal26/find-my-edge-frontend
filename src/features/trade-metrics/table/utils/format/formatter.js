@@ -11,7 +11,7 @@ export function formatValue(value, type, display) {
 
   try {
     // ---------- NUMBER & COMPUTED ----------
-    if (type === "number" || type === "computed") {
+    if (type === "number" || type === "number computed") {
       let num = Number(value);
       if (typeof num !== "number" || !Number.isFinite(num)) num = 0;
 
@@ -20,12 +20,12 @@ export function formatValue(value, type, display) {
     }
 
     // ---------- DATE ----------
-    if (type === "date") {
+    if (type === "date" || type === "date computed") {
       return formatDate(value, format);
     }
 
     // ---------- TIME ----------
-    if (type === "time") {
+    if (type === "time" || type === "time computed") {
       return formatTime(value, format);
     }
   } catch {

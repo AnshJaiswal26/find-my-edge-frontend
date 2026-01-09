@@ -11,7 +11,7 @@ export function explainFormulaFromColumn(colId, rowId) {
   const row = rowsById[rowId];
 
   if (
-    column.type !== "computed" ||
+    !column.type.includes("computed") ||
     !column.formula ||
     !column.dependencies?.length
   ) {

@@ -29,7 +29,7 @@ function ColumnSettingsPopupContent() {
 
   const isValid = () => {
     if (!draft.label.trim()) return false;
-    if (draft.type === "computed" && !draft.expression) return false;
+    if (!draft.type.includes("computed") && !draft.expression) return false;
     if (draft.type === "select") {
       if (
         !draft.options ||

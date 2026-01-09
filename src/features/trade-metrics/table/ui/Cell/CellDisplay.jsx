@@ -6,7 +6,7 @@ import { tooltipApi } from "@ui";
 import { formatForInput } from "../../engine/execute";
 
 const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
-  if (type !== "computed") return;
+  if (!type.includes("computed")) return;
 
   const explanation = explainFormulaFromColumn(colId, rowId);
 
@@ -31,7 +31,7 @@ export const CellDisplay = memo(function CellDisplay({
   const colorRules = useTableStore((s) => s.columnsById[colId].colorRules);
   const display = useTableStore((s) => s.columnsById[colId].display);
   const editable = useTableStore(
-    (s) => s.columnsById[colId].editable !== false && type !== "computed"
+    (s) => s.columnsById[colId].editable !== false && !type.includes("computed")
   );
 
   const unselectColumn = useTableStore((s) => s.unselectColumn);
@@ -51,7 +51,11 @@ export const CellDisplay = memo(function CellDisplay({
   return (
     <div
       tabIndex={0}
-      style={{ width, color }}
+      style={{
+        width,
+        color,
+        border: cell.meta?.error ? "1px solid var(--error)" : "",
+      }}
       className="relative px-2 py-1 border-r border-(--border) truncate overflow-hidden"
       onClick={() => {
         setSelected(true);

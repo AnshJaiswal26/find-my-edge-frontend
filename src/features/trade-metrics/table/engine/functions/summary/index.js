@@ -3,19 +3,16 @@ export function fnTOTAL(fn, row, ctx) {
   let total = 0;
 
   for (let i = 0; i <= ctx.rowIndex; i++) {
-    const v = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, ctx.rows[i], {
       ...ctx,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
 
-    if (v && v.valueType === "number") {
-      total += v.value;
-    }
+    if (value === null) continue;
+
+    total += value;
   }
 
-  return {
-    value: total,
-    valueType: "number",
-  };
+  return total;
 }

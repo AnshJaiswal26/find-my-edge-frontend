@@ -34,7 +34,7 @@ export const createComputeSlice = (set, get) => ({
       /* ================= FULL RECOMPUTE ================= */
       if (!payload || payload.reason === "all") {
         Object.values(columnsById).forEach((column) => {
-          computeColumn(rowsById, rowOrder, column, columnsById);
+          computeColumn(rowsById, rowOrder, column);
         });
         return;
       }
@@ -43,20 +43,14 @@ export const createComputeSlice = (set, get) => ({
       if (payload.reason === "cell" && payload.rowId && payload.colId) {
         const rowIndex = getRowIndex(rowOrder, payload.rowId);
 
-        // 🔹 get dependency chain
+        // get dependency chain
         const chain = collectAffectedColumns(payload.colId, affectedMap);
 
         chain.forEach((colId) => {
           const column = columnsById[colId];
-          if (!column || column.type !== "computed") return;
+          if (!column || !column.type.includes("computed")) return;
 
-          PARTIAL_RUNNERS[column.mode](
-            rowsById,
-            rowOrder,
-            rowIndex,
-            column,
-            columnsById
-          );
+          PARTIAL_RUNNERS[column.mode](rowsById, rowOrder, rowIndex, column);
         });
 
         return;
@@ -67,7 +61,7 @@ export const createComputeSlice = (set, get) => ({
         const column = columnsById[payload.colId];
         if (!column) return;
 
-        computeColumn(rowsById, rowOrder, column, columnsById);
+        computeColumn(rowsById, rowOrder, column);
       }
     });
   },

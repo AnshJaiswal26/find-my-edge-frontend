@@ -5,13 +5,9 @@ export function fnPREV(fn, row, ctx) {
   if (arg.type === "column") {
     if (!ctx.prevRow) return null;
 
-    const col = ctx.columnsById[arg.columnId];
     const cell = ctx.prevRow.cells[arg.columnId];
 
-    return {
-      value: cell?.value ?? null,
-      valueType: col.valueType,
-    };
+    return cell?.value ?? null;
   }
 
   // PREV(expr)
@@ -23,28 +19,20 @@ export function fnSELF(fn, row, ctx) {
 }
 
 export function fnCUM(fn, row, ctx) {
-  const cur = ctx.evaluate(fn.args[0], row, ctx);
-  if (!cur) return ctx.prevValue ?? null;
+  const value = ctx.evaluate(fn.args[0], row, ctx);
 
-  // first row
-  if (!ctx.prevValue) return cur;
+  if (ctx.prevValue === null || ctx.prevValue === undefined)
+    return value ?? null;
 
-  // type safety
-  if (cur.valueType !== ctx.prevValue.valueType) return null;
-
-  return {
-    value: ctx.prevValue.value + cur.value,
-    valueType: cur.valueType,
-  };
+  return value !== null ? ctx.prevValue + value : null;
 }
 
 export function fnRESET(fn, row, ctx) {
   const [valueExpr, condExpr] = fn.args;
 
-  const cond = ctx.evaluate(condExpr, row, ctx);
-  if (!cond || cond.valueType !== "boolean") return null;
+  const value = ctx.evaluate(condExpr, row, ctx);
 
-  if (cond.value) {
+  if (value) {
     return ctx.evaluate(valueExpr, row, ctx);
   }
 

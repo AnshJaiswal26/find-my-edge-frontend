@@ -14,7 +14,16 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
       <Select
         label={"Column Type"}
         value={draft.type}
-        options={["computed", "number", "text", "date", "time", "select"]}
+        options={[
+          "number computed",
+          "time computed",
+          "date computed",
+          "number",
+          "text",
+          "date",
+          "time",
+          "select",
+        ]}
         getLabel={(v) => v.toUpperCase()}
         onChange={(v) =>
           onDraftChange((p) => ({
@@ -46,7 +55,7 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
       </Section>
 
       {/* Computed */}
-      {draft.type === "computed" && (
+      {draft.type.includes("computed") && (
         <>
           <ExpressionBuilder
             value={draft.formula}

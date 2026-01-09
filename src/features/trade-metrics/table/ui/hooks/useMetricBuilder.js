@@ -8,7 +8,7 @@ export function useNumericColumns() {
     return Object.values(columnsById).filter(
       (c) =>
         c.type === "number" ||
-        c.type === "computed" ||
+        c.type.includes("computed") ||
         c.type === "date" ||
         c.type === "time"
     );

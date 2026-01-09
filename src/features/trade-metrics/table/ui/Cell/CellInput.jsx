@@ -2,7 +2,7 @@ import { parseInputValue } from "../../engine/execute";
 import { useTableStore } from "../../store/useTableStore";
 
 function normalizeValue(type, raw) {
-  if (type === "number" || type === "computed") {
+  if (type === "number" || type.includes("computed")) {
     return raw === "" ? null : Number(raw);
   }
   return parseInputValue(raw, type);

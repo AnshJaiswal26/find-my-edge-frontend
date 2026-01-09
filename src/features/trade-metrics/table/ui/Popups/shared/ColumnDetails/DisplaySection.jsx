@@ -7,12 +7,16 @@ import {
 } from "@features/trade-metrics/table/utils";
 
 const numberFomart = Object.values(NUMBER_FORMATS).map(({ key }) => key);
+const timeFormat = Object.values(TIME_FORMATS).map(({ key }) => key);
+const dateFormat = Object.values(DATE_FORMATS).map(({ key }) => key);
 
 const formats = {
   number: numberFomart,
-  computed: numberFomart,
-  time: Object.values(TIME_FORMATS).map(({ key }) => key),
-  date: Object.values(DATE_FORMATS).map(({ key }) => key),
+  "number computed": numberFomart,
+  time: timeFormat,
+  date: dateFormat,
+  "time computed": [timeFormat[0], timeFormat[1]],
+  "date computed": dateFormat,
 };
 
 export function DisplaySection({ display, onChange, type }) {
@@ -34,25 +38,24 @@ export function DisplaySection({ display, onChange, type }) {
         }
       />
 
-      {type === "number" ||
-        (type === "computed" && (
-          <Input
-            label="Decimals"
-            type="range"
-            min={0}
-            max={5}
-            value={display.decimals}
-            onChange={(e) =>
-              onChange((p) => ({
-                ...p,
-                display: {
-                  ...p.display,
-                  decimals: Number(e.target.value),
-                },
-              }))
-            }
-          />
-        ))}
+      {(type === "number" || type.includes("computed")) && (
+        <Input
+          label="Decimals"
+          type="range"
+          min={0}
+          max={5}
+          value={display.decimals}
+          onChange={(e) =>
+            onChange((p) => ({
+              ...p,
+              display: {
+                ...p.display,
+                decimals: Number(e.target.value),
+              },
+            }))
+          }
+        />
+      )}
 
       {display?.format === "custom" && (
         <div className="flex justify-between">

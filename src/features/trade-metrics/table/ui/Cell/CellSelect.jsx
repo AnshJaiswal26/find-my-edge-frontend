@@ -17,13 +17,10 @@ export const CellSelect = ({
       value={draft}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={() => {
-        onCommit(draft, colId);
+        onCommit(draft);
         setEditing(false);
       }}
     >
-      <option value="" className="bg-(--surface)">
-        —
-      </option>
       {options.map((o) => (
         <option key={o} className="bg-(--surface)">
           {o}
