@@ -31,7 +31,10 @@ export const CellDisplay = memo(function CellDisplay({
   const colorRules = useTableStore((s) => s.columnsById[colId].colorRules);
   const display = useTableStore((s) => s.columnsById[colId].display);
   const editable = useTableStore(
-    (s) => s.columnsById[colId].editable !== false && !type.includes("computed")
+    (s) =>
+      s.columnsById[colId].editable !== false &&
+      !type.includes("computed") &&
+      s.groupBy !== colId
   );
 
   const unselectColumn = useTableStore((s) => s.unselectColumn);

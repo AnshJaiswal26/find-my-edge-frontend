@@ -8,6 +8,7 @@ import { createSortSlice } from "./sort.slice";
 import { createDragSlice } from "./drag.slice";
 import { createCoreSlice } from "./core.slice";
 import { createComputeSlice } from "./compute.slice";
+import { createGroupSlice } from "./group.slice";
 
 /* -------------------------------------------------------------------------- */
 /*                                   STORE                                    */
@@ -16,6 +17,8 @@ import { createComputeSlice } from "./compute.slice";
 export const useTableStore = create(
   immer((set, get) => ({
     isDataLoading: false,
+
+    ...createGroupSlice(set, get),
 
     ...createSelectionSlice(set, get),
 

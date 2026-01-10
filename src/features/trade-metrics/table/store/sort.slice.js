@@ -10,7 +10,7 @@ export const createSortSlice = (set, get) => ({
   /*                                SORT ACTIONS                            */
   /* ---------------------------------------------------------------------- */
 
-  setSort(columnId, operator) {
+  updateSort(columnId, operator) {
     set((s) => {
       s.sort.columnId = columnId;
       s.sort.operator = operator;

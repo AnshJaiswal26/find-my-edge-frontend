@@ -27,7 +27,8 @@ export function Toolbar({
   onExport,
   onOpenColumnSettings,
 }) {
-  const filteredRowOrder = useTableStore((s) => s.filteredRowOrder);
+  const isFilterApplied = useTableStore((s) => s.filters.length !== 0);
+  const isSortingApplied = useTableStore((s) => s.sort.columnId !== null);
 
   return (
     <div
@@ -51,7 +52,7 @@ export function Toolbar({
           {/* LEFT */}
           <div className="flex items-center gap-1">
             <Button.Icon
-              disabled={filteredRowOrder?.length > 0}
+              disabled={isFilterApplied}
               tooltip={{ text: "Add Trade", position: "bottom" }}
               onClick={onAddTrade}
             >
@@ -66,7 +67,7 @@ export function Toolbar({
             </Button.Icon>
 
             <Button.Icon
-              className={filteredRowOrder?.length > 0 ? "bg-(--hover)!" : ""}
+              className={isFilterApplied ? "bg-(--hover)!" : ""}
               tooltip={{ text: "Filter Trades", position: "bottom" }}
               onClick={onFilter}
             >
@@ -74,6 +75,7 @@ export function Toolbar({
             </Button.Icon>
 
             <Button.Icon
+              className={isSortingApplied ? "bg-(--hover)!" : ""}
               tooltip={{ text: "Sort", position: "bottom" }}
               onClick={onSort}
             >

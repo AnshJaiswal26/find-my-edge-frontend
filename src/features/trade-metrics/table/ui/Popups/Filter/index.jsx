@@ -1,50 +1,8 @@
 import { Popup } from "@layout";
 import { useTableStore } from "../../../store/useTableStore";
-import { filterOptions } from "@utils";
+import { filterOptions, filterByType } from "@utils";
 import { Button, Input, Select } from "@ui";
 import { Trash2 } from "lucide-react";
-
-export const filterOptionsByType = {
-  text: [
-    "none",
-    "textContains",
-    "textDoesNotContain",
-    "textStartsWith",
-    "textEndsWith",
-    "textIsExactly",
-  ],
-  number: [
-    "none",
-    "greaterThan",
-    "greaterThanEqualTo",
-    "lessThan",
-    "lessThanEqualTo",
-    "isEqualTo",
-    "isNotEqualTo",
-    "isBetween",
-    "isNotBetween",
-  ],
-  computed: [
-    "none",
-    "greaterThan",
-    "greaterThanEqualTo",
-    "lessThan",
-    "lessThanEqualTo",
-    "isEqualTo",
-    "isNotEqualTo",
-    "isBetween",
-    "isNotBetween",
-  ],
-  date: ["none", "dateIs", "dateBefore", "dateAfter"],
-  select: [
-    "none",
-    "textContains",
-    "textDoesNotContain",
-    "textStartsWith",
-    "textEndsWith",
-    "textIsExactly",
-  ],
-};
 
 export default function FilterPopup() {
   const filters = useTableStore((s) => s.filters);
@@ -76,7 +34,7 @@ export default function FilterPopup() {
 
           {filters.map((f, index) => {
             const column = columnsById[f.columnId];
-            const ops = filterOptionsByType[column.type];
+            const ops = filterByType[column.type];
 
             return (
               <div

@@ -1,4 +1,4 @@
-import { GripHorizontal } from "lucide-react";
+import { GripHorizontal, LockKeyholeIcon } from "lucide-react";
 import { useRef } from "react";
 import { useTableStore } from "../../store/useTableStore";
 import { createColumnDragController } from "../../interaction/columnDragController";
@@ -115,8 +115,8 @@ export function ColumnHeader({ colId, index, tableRef }) {
         className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-(--cyan)"
       />
 
-      <div className="flex items-center px-2 py-1 border-r border-(--border)">
-        {column.label}
+      <div className="flex items-center px-2 py-1 border-r border-(--border) justify-between">
+        {column.label} {!column.editable && <LockKeyholeIcon size={12} />}
       </div>
     </div>
   );

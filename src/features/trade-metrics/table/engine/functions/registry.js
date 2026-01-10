@@ -90,8 +90,8 @@ export const FUNCTION_REGISTRY = {
 
   SUM: {
     exec: fnSUM,
-    arity: 1,
-    signature: "SUM(expr)",
+    arity: 2,
+    signature: "SUM(a, b, ....)",
     description: "Row sum",
   },
 

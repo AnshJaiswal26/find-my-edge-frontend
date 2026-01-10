@@ -1,6 +1,6 @@
 import { filterOperationMap } from "@utils";
 
-export const createFilterSlice = () => ({
+export const createFilterSlice = (set, get) => ({
   filters: [],
   filteredRowOrder: [],
 

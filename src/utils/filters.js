@@ -91,6 +91,17 @@ export const filterOptions = {
   isNotBetween: "Is not between",
 };
 
+export const sortByType = {
+  text: ["sortAToZ", "sortZToA"],
+  select: ["sortAToZ", "sortZToA"],
+  number: ["sortLowToHigh", "sortHighToLow"],
+  "number computed": ["sortLowToHigh", "sortHighToLow"],
+  "time computed": ["sortOldestFirst", "sortNewestFirst"],
+  "date computed": ["sortOldestFirst", "sortNewestFirst"],
+  date: ["sortOldestFirst", "sortNewestFirst"],
+  time: ["sortOldestFirst", "sortNewestFirst"],
+};
+
 // Sort operations
 export const sortOperationMap = {
   sortAToZ: (a, b) => String(a).localeCompare(String(b)), // alphabetical ascending
