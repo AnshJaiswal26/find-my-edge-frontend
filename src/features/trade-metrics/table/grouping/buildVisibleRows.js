@@ -5,15 +5,12 @@ export function buildVisibleRows(groups, expandedGroups) {
     result.push({
       type: "group",
       groupId: group.groupId,
-      label: String(group.groupKey),
+      label: group.label,
     });
 
     if (expandedGroups[group.groupId]) {
       for (const rowId of group.rowIds) {
-        result.push({
-          type: "row",
-          rowId,
-        });
+        result.push({ type: "row", rowId });
       }
     }
   }

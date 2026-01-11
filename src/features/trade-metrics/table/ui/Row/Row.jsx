@@ -4,6 +4,8 @@ import { Cell } from "../Cell/Cell";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { buildVisibleRows, groupRowsBy } from "../../grouping";
 import { GroupRow } from "./GroupRow";
+import { createGetGroupKey } from "../../grouping/createGetGroupKey";
+import { filterOptions } from "@utils";
 
 export const VirtualizedRow = ({ scrollRef }) => {
   const rowOrder = useTableStore((s) => s.rowOrder);
@@ -18,14 +20,29 @@ export const VirtualizedRow = ({ scrollRef }) => {
   const groups = useMemo(() => {
     if (!groupBy) return null;
 
-    const rowsById = useTableStore.getState().rowsById;
+    const { rowsById } = useTableStore.getState();
+
+    const getGroupKey = createGetGroupKey({
+      rowsById,
+      groupBy,
+    });
+
+    const labels =
+      groupBy.mode === "condition"
+        ? {
+            MATCHED: `${filterOptions[groupBy.operation]} ${groupBy.value} ${
+              `to ${groupBy?.valueTo}` ?? ""
+            }`,
+            NOT_MATCHED: `Not ${filterOptions[groupBy.operation]} ${
+              groupBy.value
+            } ${`to ${groupBy?.valueTo}` ?? ""}`,
+          }
+        : null;
 
     return groupRowsBy({
       rowOrder: effectiveRowOrder,
-      getGroupKey: (rowId) => {
-        const cell = rowsById[rowId]?.cells[groupBy];
-        return cell?.value ?? "__EMPTY__";
-      },
+      getGroupKey,
+      groupLabels: labels,
     });
   }, [effectiveRowOrder, groupBy]);
 
@@ -75,7 +92,11 @@ export const VirtualizedRow = ({ scrollRef }) => {
             {item.type === "group" ? (
               <>
                 <div className="w-full h-2" />
-                <GroupRow groupId={item.groupId} label={item.label} />
+                <GroupRow
+                  groupId={item.groupId}
+                  label={item.label}
+                  groupBy={groupBy}
+                />
               </>
             ) : (
               <Row rowId={item.rowId} index={vRow.index} />

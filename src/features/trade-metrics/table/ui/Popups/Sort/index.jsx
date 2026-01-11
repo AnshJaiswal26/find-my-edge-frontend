@@ -11,8 +11,7 @@ export default function SortPopup() {
     operator: "none",
   });
 
-  const { updateSort, clearSort, applySort, closePopup } =
-    useTableStore.getState();
+  const { updateSort, applySort, closePopup } = useTableStore.getState();
 
   if (activePopup !== "sort") return null;
 

@@ -9,6 +9,7 @@ import {
   Trash2,
   Rows3,
   Columns3,
+  Group,
 } from "lucide-react";
 import { Button } from "@ui";
 import { Divider } from "@layout";
@@ -20,6 +21,7 @@ export function Toolbar({
   onAddColumn,
   onFilter,
   onSort,
+  onGroup,
   onDelete,
   onToggleSummary,
   onToggleHeatmap,
@@ -29,6 +31,7 @@ export function Toolbar({
 }) {
   const isFilterApplied = useTableStore((s) => s.filters.length !== 0);
   const isSortingApplied = useTableStore((s) => s.sort.columnId !== null);
+  const isGroupingApplied = useTableStore((s) => s.groupBy !== null);
 
   return (
     <div
@@ -80,6 +83,14 @@ export function Toolbar({
               onClick={onSort}
             >
               <ArrowUpDown size={16} />
+            </Button.Icon>
+
+            <Button.Icon
+              className={isGroupingApplied ? "bg-(--hover)!" : ""}
+              tooltip={{ text: "Group", position: "bottom" }}
+              onClick={onGroup}
+            >
+              <Group size={16} />
             </Button.Icon>
 
             <Button.Icon

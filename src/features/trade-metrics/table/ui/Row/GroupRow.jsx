@@ -1,13 +1,12 @@
 import { memo } from "react";
-import { ChevronRight, LockKeyholeIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useTableStore } from "../../store/useTableStore";
 
-export const GroupRow = memo(function GroupRow({ groupId, label }) {
+export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
   const columnOrder = useTableStore((s) => s.columnOrder);
   const columnWidths = useTableStore((s) => s.columnWidths);
   const expanded = useTableStore((s) => !!s.expandedGroups[groupId]);
   const toggleGroup = useTableStore((s) => s.toggleGroup);
-  const groupBy = useTableStore((s) => s.groupBy);
 
   return (
     <div
@@ -36,13 +35,9 @@ export const GroupRow = memo(function GroupRow({ groupId, label }) {
           style={{ width: columnWidths[colId] ?? 150 }}
           className="px-2 py-1 font-medium border-r border-(--border) overflow-ellipsis overflow-hidden text-nowrap"
         >
-          {colId === groupBy ? label : ""}
+          {colId === groupBy.key ? label : ""}
         </div>
       ))}
-
-      {/* non-sticky columns */}
-      {/* <div className="w-[120px]" /> */}
-      {/* <div className="w-[140px]" /> */}
     </div>
   );
 });

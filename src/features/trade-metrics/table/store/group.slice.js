@@ -1,11 +1,28 @@
 export const createGroupSlice = (set, get) => ({
   /* ---------------- Grouping config ---------------- */
-  groupBy: "symbol", // e.g. "symbol", "date", etc.
 
-  setGroupBy: (key) =>
+  groupBy: null,
+
+  setGroupBy: (config) =>
     set(() => ({
-      groupBy: key,
-      expandedGroups: {}, // reset expand state on regroup
+      groupBy: {
+        mode: "value",
+        ...config,
+      },
+      expandedGroups: {},
+    })),
+
+  setConditionGroupBy: ({ key, type, operation, value, valueTo }) =>
+    set(() => ({
+      groupBy: {
+        key,
+        type,
+        mode: "condition",
+        operation,
+        value,
+        valueTo,
+      },
+      expandedGroups: {},
     })),
 
   clearGroupBy: () =>
@@ -15,6 +32,7 @@ export const createGroupSlice = (set, get) => ({
     })),
 
   /* ---------------- Expand / Collapse ---------------- */
+
   expandedGroups: {},
 
   toggleGroup: (groupId) =>
@@ -22,22 +40,6 @@ export const createGroupSlice = (set, get) => ({
       expandedGroups: {
         ...state.expandedGroups,
         [groupId]: !state.expandedGroups[groupId],
-      },
-    })),
-
-  expandGroup: (groupId) =>
-    set((state) => ({
-      expandedGroups: {
-        ...state.expandedGroups,
-        [groupId]: true,
-      },
-    })),
-
-  collapseGroup: (groupId) =>
-    set((state) => ({
-      expandedGroups: {
-        ...state.expandedGroups,
-        [groupId]: false,
       },
     })),
 

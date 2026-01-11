@@ -34,7 +34,8 @@ export const createFilterSlice = (set, get) => ({
   },
 
   clearFilters() {
-    set({ filters: [] });
+    set({ filters: [], filteredRowOrder: [] });
+    get().closePopup();
   },
 
   applyFilters() {

@@ -9,6 +9,7 @@ import {
   AddColumnPopup,
   ColumnSettingsPopup,
   FilterPopup,
+  GroupBy,
   SortPopup,
   SummaryPopup,
 } from "./ui/Popups";
@@ -31,6 +32,7 @@ export function Table() {
       <SortPopup />
       <ColumnSettingsPopup />
       <AddColumnPopup />
+      <GroupBy />
 
       {/* TOOLBAR */}
       <Toolbar
@@ -38,6 +40,7 @@ export function Table() {
         onAddColumn={() => openPopup("add-column")}
         onFilter={() => openPopup("filter")}
         onSort={() => openPopup("sort")}
+        onGroup={() => openPopup("group")}
         onToggleSummary={() => openPopup("summary")}
         onDelete={deleteColumn}
         onOpenColumnSettings={() => openPopup("column-settings")}
