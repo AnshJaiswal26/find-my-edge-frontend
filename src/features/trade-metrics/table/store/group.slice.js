@@ -1,35 +1,32 @@
+import { createGetGroupKey, groupRowsBy } from "../grouping";
+
 export const createGroupSlice = (set, get) => ({
-  /* ---------------- Grouping config ---------------- */
-
   groupBy: null,
+  groups: null,
 
-  setGroupBy: (config) =>
+  /* ------------------------------------------------ */
+  /*                 Group ACTIONS                    */
+  /* ------------------------------------------------ */
+
+  setGroupBy: (config) => {
     set(() => ({
-      groupBy: {
-        mode: "value",
-        ...config,
-      },
+      groupBy: config,
       expandedGroups: {},
-    })),
+    }));
+    const { buildGroups, closePopup } = get();
+    buildGroups();
+    closePopup();
+  },
 
-  setConditionGroupBy: ({ key, type, operation, value, valueTo }) =>
-    set(() => ({
-      groupBy: {
-        key,
-        type,
-        mode: "condition",
-        operation,
-        value,
-        valueTo,
-      },
-      expandedGroups: {},
-    })),
-
-  clearGroupBy: () =>
+  clearGroupBy: () => {
     set(() => ({
       groupBy: null,
+      groups: null,
       expandedGroups: {},
-    })),
+    }));
+
+    get().closePopup();
+  },
 
   /* ---------------- Expand / Collapse ---------------- */
 
@@ -47,4 +44,32 @@ export const createGroupSlice = (set, get) => ({
     set(() => ({
       expandedGroups: {},
     })),
+
+  buildGroups: () => {
+    const { rowOrder, sortedRowOrder, filteredRowOrder, rowsById, groupBy } =
+      get();
+
+    if (!groupBy) {
+      set({ groups: null });
+      return;
+    }
+
+    const effectiveRowOrder = sortedRowOrder.length
+      ? sortedRowOrder
+      : filteredRowOrder.length
+      ? filteredRowOrder
+      : rowOrder;
+
+    const getGroupName = createGetGroupKey({
+      rowsById,
+      groupBy,
+    });
+
+    const groups = groupRowsBy({
+      rowOrder: effectiveRowOrder,
+      getGroupName,
+    });
+
+    set({ groups });
+  },
 });

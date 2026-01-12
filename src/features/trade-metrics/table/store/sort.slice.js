@@ -6,9 +6,11 @@ export const createSortSlice = (set, get) => ({
     operator: "none",
   },
 
-  /* ---------------------------------------------------------------------- */
-  /*                                SORT ACTIONS                            */
-  /* ---------------------------------------------------------------------- */
+  sortedRowOrder: [],
+
+  /* ----------------------------------------------- */
+  /*                SORT ACTIONS                     */
+  /* ----------------------------------------------- */
 
   updateSort(columnId, operator) {
     set((s) => {
@@ -18,31 +20,40 @@ export const createSortSlice = (set, get) => ({
   },
 
   clearSort() {
+    const { buildGroups, groupBy, closePopup } = get();
     set((s) => {
       s.sort.columnId = null;
       s.sort.operator = "none";
+      s.sortedRowOrder = [];
     });
+
+    if (groupBy) buildGroups();
+    closePopup();
   },
 
   applySort() {
-    const { sort, rowOrder, rowsById } = get();
+    const { sort, rowsById, groupBy, closePopup, buildGroups } = get();
 
     if (!sort.columnId || sort.operator === "none") {
-      set({ filteredRowOrder: [] });
-      get().closePopup();
+      set({ sortedRowOrder: [] });
+      closePopup();
       return;
     }
 
     const fn = sortOperationMap[sort.operator];
 
     set((s) => {
-      s.filteredRowOrder = [...rowOrder].sort((a, b) => {
+      const order = s.filteredRowOrder.length ? s.filteredRowOrder : s.rowOrder;
+
+      s.sortedRowOrder = [...order].sort((a, b) => {
         const va = rowsById[a].cells[sort.columnId]?.value;
         const vb = rowsById[b].cells[sort.columnId]?.value;
         return fn?.(va, vb) ?? 0;
       });
     });
 
-    get().closePopup();
+    if (groupBy) buildGroups();
+
+    closePopup();
   },
 });

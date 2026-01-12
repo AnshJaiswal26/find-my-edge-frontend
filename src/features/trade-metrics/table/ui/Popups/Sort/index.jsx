@@ -5,15 +5,15 @@ import { sortByType, sortOptions } from "@utils";
 import { useState } from "react";
 
 export default function SortPopup() {
-  const { activePopup, columnsById } = useTableStore();
+  const columnsById = useTableStore((s) => s.columnsById);
+
   const [sort, setSort] = useState({
     columnId: null,
     operator: "none",
   });
 
-  const { updateSort, applySort, closePopup } = useTableStore.getState();
-
-  if (activePopup !== "sort") return null;
+  const { updateSort, applySort, clearSort, closePopup } =
+    useTableStore.getState();
 
   return (
     <Popup open>
@@ -44,7 +44,10 @@ export default function SortPopup() {
 
         <Popup.Footer
           text={["Clear", "Apply"]}
-          onCancel={() => setSort({ columnId: null, operator: "none" })}
+          onCancel={() => {
+            setSort({ columnId: null, operator: "none" });
+            clearSort();
+          }}
           onApply={() => {
             updateSort(sort.columnId, sort.operator);
             applySort();

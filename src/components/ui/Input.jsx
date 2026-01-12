@@ -63,7 +63,7 @@ export default function Input({
         <input
           {...props}
           type={type}
-          value={displayValue}
+          value={displayValue ?? ""}
           onChange={(e) => {
             isCommitMode ? setLocal(e.target.value) : onChange?.(e);
           }}

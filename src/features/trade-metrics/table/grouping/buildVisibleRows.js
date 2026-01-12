@@ -1,5 +1,6 @@
 export function buildVisibleRows(groups, expandedGroups) {
   const result = [];
+  let index = 0;
 
   for (const group of groups) {
     result.push({
@@ -10,7 +11,8 @@ export function buildVisibleRows(groups, expandedGroups) {
 
     if (expandedGroups[group.groupId]) {
       for (const rowId of group.rowIds) {
-        result.push({ type: "row", rowId });
+        result.push({ type: "row", rowId, index });
+        index++;
       }
     }
   }

@@ -4,14 +4,14 @@ import { useTableStore } from "../../../store/useTableStore";
 import { ColumnList } from "./ColumnList";
 import { ColumnDetails } from "../shared";
 
-export default function ColumnSettingsPopup() {
+function ColumnSettingsPopupContent() {
   const isOpen = useTableStore((s) => s.activePopup === "column-settings");
   if (!isOpen) return null;
 
   return <ColumnSettingsPopupContent />;
 }
 
-function ColumnSettingsPopupContent() {
+export default function ColumnSettingsPopup() {
   const columnsById = useTableStore((s) => s.columnsById);
   const columnOrder = useTableStore((s) => s.columnOrder);
 

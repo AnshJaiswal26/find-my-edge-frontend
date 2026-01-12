@@ -7,9 +7,6 @@ import { Trash2 } from "lucide-react";
 export default function FilterPopup() {
   const filters = useTableStore((s) => s.filters);
   const columnsById = useTableStore((s) => s.columnsById);
-  const activePopup = useTableStore((s) => s.activePopup);
-
-  if (activePopup !== "filter") return null;
 
   const {
     addFilter,

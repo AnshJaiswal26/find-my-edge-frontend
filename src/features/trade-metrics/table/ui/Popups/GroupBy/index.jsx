@@ -4,28 +4,28 @@ import { Input, Select } from "@ui";
 import { filterByType, filterOptions } from "@utils";
 import { useState } from "react";
 
-export default function GroupBy() {
-  const { activePopup, columnsById } = useTableStore();
-  const { setGroupBy, setConditionGroupBy, clearGroupBy, closePopup } =
-    useTableStore.getState();
+export default function GroupByPopup() {
+  const columnsById = useTableStore((s) => s.columnsById);
+
+  const { setGroupBy, clearGroupBy, closePopup } = useTableStore.getState();
 
   const [draft, setDraft] = useState({
     key: null,
     type: null,
     mode: "value",
     operation: "none",
+    group1Name: "",
+    group2Name: "",
     value: "",
     valueTo: "",
   });
-
-  if (activePopup !== "group") return null;
 
   const column = columnsById[draft.key];
   const operations = filterByType[column?.type] ?? ["none"];
 
   return (
     <Popup open>
-      <Popup.Container className="w-100! h-90! max-w-55">
+      <Popup.Container className="h-100!">
         <Popup.Header title="Group By" onClose={closePopup} />
 
         <Popup.Body className="px-4 py-4 flex flex-col gap-4">
@@ -74,7 +74,13 @@ export default function GroupBy() {
               {draft.operation !== "none" && (
                 <>
                   <Input
-                    label="Value"
+                    type="number"
+                    label={
+                      draft.operation === "isBetween" ||
+                      draft.operation === "isNotBetween"
+                        ? "From"
+                        : "Value"
+                    }
                     value={draft.value}
                     onChange={(e) =>
                       setDraft((p) => ({
@@ -87,6 +93,7 @@ export default function GroupBy() {
                   {(draft.operation === "isBetween" ||
                     draft.operation === "isNotBetween") && (
                     <Input
+                      type="number"
                       label="To"
                       value={draft.valueTo}
                       onChange={(e) =>
@@ -99,35 +106,38 @@ export default function GroupBy() {
                   )}
                 </>
               )}
+
+              <Input
+                label={"Group-1 Name"}
+                value={draft.group1Name}
+                onChange={(e) =>
+                  setDraft((p) => ({
+                    ...p,
+                    group1Name: e.target.value,
+                  }))
+                }
+              />
+
+              <Input
+                label={"Group-2 Name"}
+                value={draft.group2Name}
+                onChange={(e) =>
+                  setDraft((p) => ({
+                    ...p,
+                    group2Name: e.target.value,
+                  }))
+                }
+              />
             </>
           )}
         </Popup.Body>
 
         <Popup.Footer
           text={["Clear", "Apply"]}
-          onCancel={() => {
-            clearGroupBy();
-            closePopup();
-          }}
+          onCancel={clearGroupBy}
           onApply={() => {
             if (!draft.key) return;
-
-            if (draft.mode === "value") {
-              setGroupBy({
-                key: draft.key,
-                type: draft.type,
-              });
-            } else {
-              setConditionGroupBy({
-                key: draft.key,
-                type: draft.type,
-                operation: draft.operation,
-                value: draft.value,
-                valueTo: draft.valueTo,
-              });
-            }
-
-            closePopup();
+            setGroupBy(draft);
           }}
         />
       </Popup.Container>

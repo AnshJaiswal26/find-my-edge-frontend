@@ -57,7 +57,7 @@ export default function ColorPicker({
     if (!active) return;
     setInput(format === "hex" ? rgbaToHex(resolvedValue) : resolvedValue);
     setDirty(false);
-  }, [active, resolvedValue]);
+  }, [active, resolvedValue, format]);
 
   /* ---------- commit on pointer up ---------- */
   useEffect(() => {
@@ -101,7 +101,10 @@ export default function ColorPicker({
 
   const handleInputChange = (e) => {
     const resolved = normalizeInputColor(e.target.value);
-    if (resolved) setColor(resolved);
+    if (resolved) {
+      setColor(resolved);
+      onCommit?.(resolved);
+    }
     setInput(e.target.value);
   };
 
@@ -156,9 +159,9 @@ export default function ColorPicker({
               <div className="flex justify-between gap-2 items-center">
                 <span>{format.toUpperCase()}</span>
                 <Button.Icon
-                  onClick={() =>
-                    setFormat((f) => (f === "hex" ? "rgba" : "hex"))
-                  }
+                  onClick={() => {
+                    setFormat((f) => (f === "hex" ? "rgba" : "hex"));
+                  }}
                 >
                   <ArrowLeftRight size={12} />
                 </Button.Icon>

@@ -284,8 +284,8 @@ Popup.Footer = ({
         ${className}
       `}
     >
-      {onCancel && <Button hollow text={text[0]} onClick={onCancel} />}
-      {onApply && <Button onClick={onApply} text={text[1]} />}
+      {onCancel && <Button text={text[0]} onClick={onCancel} hollow />}
+      {onApply && <Button text={text[1]} onClick={onApply} />}
     </footer>
   );
 };

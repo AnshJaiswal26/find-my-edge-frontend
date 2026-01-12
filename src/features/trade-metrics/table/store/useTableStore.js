@@ -10,9 +10,9 @@ import { createCoreSlice } from "./core.slice";
 import { createComputeSlice } from "./compute.slice";
 import { createGroupSlice } from "./group.slice";
 
-/* -------------------------------------------------------------------------- */
-/*                                   STORE                                    */
-/* -------------------------------------------------------------------------- */
+/* ----------------------------------------------- */
+/*                     STORE                       */
+/* ----------------------------------------------- */
 
 export const useTableStore = create(
   immer((set, get) => ({

@@ -4,9 +4,9 @@ export const createFilterSlice = (set, get) => ({
   filters: [],
   filteredRowOrder: [],
 
-  /* ---------------------------------------------------------------------- */
-  /*                               FILTER ACTIONS                           */
-  /* ---------------------------------------------------------------------- */
+  /* ------------------------------------------------ */
+  /*                 FILTER ACTIONS                   */
+  /* ------------------------------------------------ */
 
   addFilter() {
     set((s) => {
@@ -35,19 +35,23 @@ export const createFilterSlice = (set, get) => ({
 
   clearFilters() {
     set({ filters: [], filteredRowOrder: [] });
-    get().closePopup();
+
+    const { closePopup, groupBy, buildGroups } = get();
+
+    if (groupBy) buildGroups();
+    closePopup();
   },
 
   applyFilters() {
-    const state = get();
+    const { filters, closePopup, groupBy, buildGroups } = get();
 
-    if (!state.filters.length) {
+    if (!filters.length) {
       set({ filteredRowOrder: [] });
     } else {
       set((s) => {
         s.filteredRowOrder = s.rowOrder.filter((rowId) => {
           const row = s.rowsById[rowId];
-          return s.filters.every((f) => {
+          return s.filters.some((f) => {
             const fn = filterOperationMap[f.operator];
             return fn?.(row.cells[f.columnId]?.value, f.value, f.value2);
           });
@@ -55,6 +59,8 @@ export const createFilterSlice = (set, get) => ({
       });
     }
 
-    state.closePopup();
+    if (groupBy) buildGroups();
+
+    closePopup();
   },
 });

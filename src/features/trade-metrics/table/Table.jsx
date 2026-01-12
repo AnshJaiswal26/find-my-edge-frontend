@@ -3,16 +3,8 @@ import { useTableStore } from "./store/useTableStore";
 
 import { Toolbar } from "./ui/Toolbar/Toolbar";
 import { TableHeader } from "./ui/Header/TableHeader";
-import { VirtualizedRow } from "./ui/Row/Row";
-
-import {
-  AddColumnPopup,
-  ColumnSettingsPopup,
-  FilterPopup,
-  GroupBy,
-  SortPopup,
-  SummaryPopup,
-} from "./ui/Popups";
+import VirtualizedRow from "./ui/Row/VirtualizedRows";
+import Popups from "./ui/Popups";
 
 export function Table() {
   const tableRef = useRef(null);
@@ -26,13 +18,7 @@ export function Table() {
 
   return (
     <div className="flex flex-col flex-1 gap-4 relative">
-      {/* POPUPS */}
-      <SummaryPopup />
-      <FilterPopup />
-      <SortPopup />
-      <ColumnSettingsPopup />
-      <AddColumnPopup />
-      <GroupBy />
+      <Popups />
 
       {/* TOOLBAR */}
       <Toolbar

@@ -29,7 +29,7 @@ export function Toolbar({
   onExport,
   onOpenColumnSettings,
 }) {
-  const isFilterApplied = useTableStore((s) => s.filters.length !== 0);
+  const isFilterApplied = useTableStore((s) => s.filteredRowOrder.length !== 0);
   const isSortingApplied = useTableStore((s) => s.sort.columnId !== null);
   const isGroupingApplied = useTableStore((s) => s.groupBy !== null);
 

@@ -1,4 +1,4 @@
-import { filterOperationMap } from "@utils";
+import { filterOperationMap, filterOptions } from "@utils";
 
 export function createGetGroupKey({ rowsById, groupBy }) {
   if (!groupBy) return () => "Ungrouped";
@@ -23,6 +23,14 @@ export function createGetGroupKey({ rowsById, groupBy }) {
         ? opFn(v, value, valueTo)
         : opFn(v, value);
 
-    return matched ? "MATCHED" : "NOT_MATCHED";
+    return matched
+      ? groupBy.group1Name ||
+          `${filterOptions[groupBy.operation]} ${groupBy.value} ${
+            groupBy.valueTo ? `to ${groupBy.valueTo}` : ""
+          }`
+      : groupBy.group2Name ||
+          `Not ${filterOptions[groupBy.operation]} ${groupBy.value} ${
+            groupBy.valueTo ? `to ${groupBy.valueTo}` : ""
+          }`;
   };
 }

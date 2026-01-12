@@ -4,14 +4,6 @@ import { useTableStore } from "../../../store/useTableStore";
 import { Popup } from "@layout";
 
 export default function AddColumnPopup() {
-  const isOpen = useTableStore((s) => s.activePopup === "add-column");
-
-  if (!isOpen) return null;
-
-  return <AddColumnPopupConent />;
-}
-
-function AddColumnPopupConent() {
   const { addColumn, closePopup } = useTableStore.getState();
 
   const [draft, setDraft] = useState({
