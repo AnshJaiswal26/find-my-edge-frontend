@@ -3,10 +3,17 @@ import { computePartialGrouped } from "./computePartialGrouped";
 import { evaluateExpression } from "./evaluateExpression";
 
 export const PARTIAL_RUNNERS = {
-  row: (rowsById, rowOrder, i, col) => {
-    const row = rowsById[rowOrder[i]];
-    row.cells[col.id].value = evaluateExpression(col.expression, row, {});
+  row: ({ rowsById, rowId, column }) => {
+    const row = rowsById[rowId];
+    const value = evaluateExpression(column.expression, row, {});
+    row.cells[column.id].value = value;
   },
-  cumulative: computePartialCumulative,
-  grouped: computePartialGrouped,
+
+  cumulative: ({ rowsById, rowOrder, rowIndex, column }) => {
+    computePartialCumulative(rowsById, rowOrder, rowIndex, column);
+  },
+
+  grouped: ({ rowsById, group, groupIndex, column }) => {
+    computePartialGrouped(rowsById, group, groupIndex, column);
+  },
 };

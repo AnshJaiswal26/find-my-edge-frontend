@@ -13,9 +13,9 @@ export const createGroupSlice = (set, get) => ({
       groupBy: config,
       expandedGroups: {},
     }));
-    const { buildGroups, closePopup } = get();
-    buildGroups();
-    closePopup();
+
+    get().buildGroups(config);
+    get().closePopup();
   },
 
   clearGroupBy: () => {
@@ -45,11 +45,19 @@ export const createGroupSlice = (set, get) => ({
       expandedGroups: {},
     })),
 
-  buildGroups: () => {
-    const { rowOrder, sortedRowOrder, filteredRowOrder, rowsById, groupBy } =
-      get();
+  buildGroups: (config) => {
+    const {
+      rowOrder,
+      sortedRowOrder,
+      groupBy,
+      filteredRowOrder,
+      rowsById,
+      recompute,
+    } = get();
 
-    if (!groupBy) {
+    const groupConfig = config ?? groupBy;
+
+    if (!groupConfig) {
       set({ groups: null });
       return;
     }
@@ -62,7 +70,7 @@ export const createGroupSlice = (set, get) => ({
 
     const getGroupName = createGetGroupKey({
       rowsById,
-      groupBy,
+      groupBy: groupConfig,
     });
 
     const groups = groupRowsBy({
@@ -71,5 +79,7 @@ export const createGroupSlice = (set, get) => ({
     });
 
     set({ groups });
+
+    recompute({ reason: "grouped" });
   },
 });

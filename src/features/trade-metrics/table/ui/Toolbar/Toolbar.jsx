@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@ui";
 import { Divider } from "@layout";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { ColumnInspector } from "../Column/ColumnInspector";
 
 export function Toolbar({

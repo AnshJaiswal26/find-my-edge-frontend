@@ -1,9 +1,11 @@
 import { evaluateExpression } from "./evaluateExpression";
 
-export function computeCumulative(rows, column) {
+export function computeCumulative(rowsById, rowOrder, column) {
   let prevValue = column.initialValue ?? 0;
 
   let prevRow = null;
+
+  const rows = rowOrder.map((id) => rowsById[id]);
 
   rows.forEach((row, rowIndex) => {
     const value = evaluateExpression(column.expression, row, {

@@ -1,7 +1,8 @@
 import { GripHorizontal, LockKeyholeIcon } from "lucide-react";
 import { useRef } from "react";
-import { useTableStore } from "../../store/useTableStore";
-import { createColumnDragController } from "../../interaction/columnDragController";
+import { useTableStore } from "@table/store/useTableStore";
+import { createColumnDragController } from "@table/interaction/columnDragController";
+import { isColumnEditable } from "@table/dependency";
 
 const controller = createColumnDragController();
 
@@ -19,6 +20,13 @@ export function ColumnHeader({ colId, index, tableRef }) {
 
   const column = useTableStore((s) => s.columnsById[colId]);
   const width = useTableStore((s) => s.columnWidths?.[colId] ?? 150);
+  const editable = useTableStore((s) => isColumnEditable(colId, s));
+
+  const isNotGrouped = useTableStore(
+    (s) => !s.groupBy && s.columnsById[colId].mode === "grouped"
+  );
+
+  if (isNotGrouped) return null;
 
   const {
     startColumnDrag,
@@ -116,7 +124,7 @@ export function ColumnHeader({ colId, index, tableRef }) {
       />
 
       <div className="flex items-center px-2 py-1 border-r border-(--border) justify-between">
-        {column.label} {!column.editable && <LockKeyholeIcon size={12} />}
+        {column.label} {!editable && <LockKeyholeIcon size={12} />}
       </div>
     </div>
   );

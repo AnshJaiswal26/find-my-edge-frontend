@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { ChevronRight } from "lucide-react";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 
 export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
   const columnOrder = useTableStore((s) => s.columnOrder);

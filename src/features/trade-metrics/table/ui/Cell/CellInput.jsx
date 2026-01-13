@@ -1,5 +1,5 @@
-import { parseInputValue } from "../../engine/execute";
-import { useTableStore } from "../../store/useTableStore";
+import { parseInputValue } from "@table/engine/execute";
+import { useTableStore } from "@table/store/useTableStore";
 
 function normalizeValue(type, raw) {
   if (type === "number" || type.includes("computed")) {

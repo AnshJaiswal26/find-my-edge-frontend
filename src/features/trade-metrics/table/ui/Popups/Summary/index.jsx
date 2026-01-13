@@ -1,9 +1,9 @@
 import { Popup } from "@layout";
-import { useTableStore } from "../../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { MetricStatsRow } from "./MetricStatsRow";
 import { KpiGrid } from "./KpiGrid";
 import { MetricTableHeader } from "./MetricTableHeader";
-import { formatValue } from "../../../utils";
+import { formatValue } from "@table/utils";
 
 function Divider() {
   return <div className="h-px bg-(--border)" />;

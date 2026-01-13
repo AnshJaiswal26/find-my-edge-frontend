@@ -1,4 +1,4 @@
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 
 function isSafeIdentifier(label) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(label);

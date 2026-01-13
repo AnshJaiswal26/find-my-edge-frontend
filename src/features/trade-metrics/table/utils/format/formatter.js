@@ -2,6 +2,17 @@ import { formatDate } from "./date";
 import { numberFormatters } from "./number";
 import { formatTime } from "./time";
 
+export const DEFAULTS_FORMATS = {
+  number: "NUMBER",
+  text: "",
+  select: "",
+  time: "hh:mm:ss A",
+  date: "YYYY-MM-DD",
+  "number computed": "NUMBER",
+  "time computed": "HH:mm:ss",
+  "date computed": "YYYY-MM-DD",
+};
+
 export function formatValue(value, type, display) {
   const format = display?.format;
   const decimals = display?.decimals ?? 0;

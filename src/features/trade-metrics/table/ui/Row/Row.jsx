@@ -1,9 +1,15 @@
 import { memo } from "react";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { Cell } from "../Cell/Cell";
 
-export const Row = memo(function Row({ rowId, index }) {
+export const Row = memo(function Row({ rowId, index, groupId }) {
   const columnOrder = useTableStore((s) => s.columnOrder);
+
+  const updateCell = useTableStore((s) => s.updateCell);
+
+  const onCommit = (value) => {
+    updateCell(rowId, colId, value, groupId);
+  };
 
   if (!rowId) return null;
 
@@ -26,8 +32,8 @@ export const Row = memo(function Row({ rowId, index }) {
 
       {/* CELLS */}
       <div className="flex">
-        {columnOrder.map((colId, i) => (
-          <Cell key={colId} rowId={rowId} colId={colId} />
+        {columnOrder.map((colId) => (
+          <Cell key={colId} rowId={rowId} colId={colId} onCommit={onCommit} />
         ))}
       </div>
     </div>

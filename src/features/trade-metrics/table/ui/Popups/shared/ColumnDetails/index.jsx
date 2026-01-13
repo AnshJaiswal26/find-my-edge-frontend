@@ -3,33 +3,26 @@ import { Input, Select, SelectOptionsEditor } from "@ui";
 import { DisplaySection } from "./DisplaySection";
 import { ColorRulesSection } from "./ColorRulesSection";
 import { Section } from "@layout";
+import { COLUMN_TYPES } from "@table/model";
+import { useTableStore } from "@table/store/useTableStore";
 
 export default function ColumnDetails({ column, draft, onDraftChange }) {
   if (!column) return null;
 
-  console.log("Col Details:", draft);
+  const isGrouped = useTableStore((s) => s.groupBy !== null);
 
   return (
     <div className="flex-1 w-full space-y-4 overflow-auto">
       <Select
         label={"Column Type"}
         value={draft.type}
-        options={[
-          "number computed",
-          "time computed",
-          "date computed",
-          "number",
-          "text",
-          "date",
-          "time",
-          "select",
-        ]}
+        options={COLUMN_TYPES}
         getLabel={(v) => v.toUpperCase()}
         onChange={(v) =>
           onDraftChange((p) => ({
             ...p,
             type: v,
-            display: { format: "", decimals: 2, prefix: "", suffix: "" },
+            display: { format: "", decimals: 2 },
           }))
         }
       />
@@ -37,7 +30,7 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
       <Select
         label={"Computation Mode"}
         value={draft.mode}
-        options={["row", "cumulative", "grouped"]}
+        options={["row", "cumulative", ...(isGrouped ? ["grouped"] : [])]}
         getLabel={(v) => v.toUpperCase()}
         onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
       />
@@ -56,19 +49,17 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
 
       {/* Computed */}
       {draft.type.includes("computed") && (
-        <>
-          <ExpressionBuilder
-            value={draft.formula}
-            onCommit={(v, exp, dependencies) => {
-              onDraftChange((p) => ({
-                ...p,
-                formula: v,
-                expression: exp,
-                dependencies,
-              }));
-            }}
-          />
-        </>
+        <ExpressionBuilder
+          value={draft.formula}
+          onCommit={(v, exp, dependencies) => {
+            onDraftChange((p) => ({
+              ...p,
+              formula: v,
+              expression: exp,
+              dependencies,
+            }));
+          }}
+        />
       )}
 
       {/* Select */}

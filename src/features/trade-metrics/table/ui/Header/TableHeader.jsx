@@ -1,5 +1,5 @@
 import { ColumnHeader } from "./ColumnHeader";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 
 export function TableHeader({ tableRef }) {
   const columnOrder = useTableStore((s) => s.columnOrder);

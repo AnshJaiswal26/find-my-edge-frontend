@@ -86,15 +86,7 @@ export function tokenize(expr) {
       buf += ch;
       i++;
 
-      while (i < expr.length && /[a-zA-Z0-9_-]/.test(expr[i])) {
-        // prevent invalid hyphen usage
-        if (
-          expr[i] === "-" &&
-          (!/[a-zA-Z0-9_]/.test(expr[i - 1]) ||
-            !/[a-zA-Z0-9_]/.test(expr[i + 1]))
-        ) {
-          break;
-        }
+      while (i < expr.length && /[a-zA-Z0-9_]/.test(expr[i])) {
         buf += expr[i++];
       }
 

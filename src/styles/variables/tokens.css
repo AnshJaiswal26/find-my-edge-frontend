@@ -48,8 +48,13 @@
 
 .dark-theme {
   --surface: hsl(210 25% 9%);
-  --surface-light: hsl(211 21% 20%);
   --surface-muted: hsl(210 24% 15%);
+
+  /* --surface: hsl(0 0% 5%);
+  --surface-muted: hsl(0 0% 8%); */
+
+  --surface-light: hsl(211 21% 20%);
+  /* --surface-muted: hsl(210 24% 15%); */
   --surface-muted-soft: hsla(210, 24%, 15%, 0.643);
   --surface-disabled: hsl(212, 22%, 15%);
 

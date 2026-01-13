@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { ChevronLeft } from "lucide-react";
 import { Divider } from "@layout";
 

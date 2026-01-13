@@ -1,29 +1,22 @@
 import { useState } from "react";
 import { ColumnDetails } from "../shared";
-import { useTableStore } from "../../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { Popup } from "@layout";
+import { createColumn } from "@table/model";
 
 export default function AddColumnPopup() {
   const { addColumn, closePopup } = useTableStore.getState();
 
-  const [draft, setDraft] = useState({
-    label: "",
-    type: "number computed",
-    mode: "row",
-    editable: true,
-    options: [],
-    dependencies: [],
-    display: { format: "NUMBER", decimals: 2, prefix: "", suffix: "" },
-    initialValue: 0,
-    expression: null,
-    formula: "",
-    colorRules: [],
-  });
+  const [draft, setDraft] = useState(
+    createColumn({
+      id: "id",
+    })
+  );
 
   const save = () => {
     if (!draft.label) return;
     console.time("save");
-    addColumn({ id: crypto.randomUUID(), ...draft });
+    addColumn({ ...draft, id: crypto.randomUUID() });
     closePopup();
     console.timeEnd("save");
   };

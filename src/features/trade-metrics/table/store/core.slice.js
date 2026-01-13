@@ -88,6 +88,8 @@ export const createCoreSlice = (set, get) => ({
       });
     });
 
+    if (metric.mode === "grouped") return;
+
     state.recompute({
       reason: "column",
       colId: metric.id,
@@ -115,10 +117,7 @@ export const createCoreSlice = (set, get) => ({
     const state = get();
     set((s) => {
       Object.assign(s.columnsById[activeColId], draft);
-
-      if (s.columnsById[activeColId]?.formula !== draft?.formula) {
-        s.affectedMap = buildAffectedMap(s.columnsById);
-      }
+      s.affectedMap = buildAffectedMap(s.columnsById);
     });
 
     if (draft.type.includes("computed"))

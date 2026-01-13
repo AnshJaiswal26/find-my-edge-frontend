@@ -34,7 +34,10 @@ export const createFilterSlice = (set, get) => ({
   },
 
   clearFilters() {
-    set({ filters: [], filteredRowOrder: [] });
+    set((s) => {
+      s.filters = [];
+      s.filteredRowOrder = [];
+    });
 
     const { closePopup, groupBy, buildGroups } = get();
 

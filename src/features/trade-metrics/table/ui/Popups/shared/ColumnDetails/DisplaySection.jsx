@@ -4,11 +4,12 @@ import {
   DATE_FORMATS,
   NUMBER_FORMATS,
   TIME_FORMATS,
-} from "@features/trade-metrics/table/utils";
+  DEFAULTS_FORMATS,
+} from "@table/utils";
 
-const numberFomart = Object.values(NUMBER_FORMATS).map(({ key }) => key);
-const timeFormat = Object.values(TIME_FORMATS).map(({ key }) => key);
-const dateFormat = Object.values(DATE_FORMATS).map(({ key }) => key);
+const numberFomart = NUMBER_FORMATS.map(({ key }) => key);
+const timeFormat = TIME_FORMATS.map(({ key }) => key);
+const dateFormat = DATE_FORMATS.map(({ key }) => key);
 
 const formats = {
   number: numberFomart,
@@ -26,14 +27,14 @@ export function DisplaySection({ display, onChange, type }) {
     <Section title={"Display"}>
       <Select
         label="Format"
-        value={display.format}
+        value={display.format || DEFAULTS_FORMATS[type]}
         options={formats[type]}
-        getLabel={(ob) => ob?.value || ob}
-        getKey={(ob) => ob?.key || ob}
-        onChange={(ob) =>
+        getLabel={(f) => f}
+        getKey={(f) => f}
+        onChange={(f) =>
           onChange((p) => ({
             ...p,
-            display: { ...p?.display, format: ob?.key || ob },
+            display: { ...p?.display, format: f },
           }))
         }
       />

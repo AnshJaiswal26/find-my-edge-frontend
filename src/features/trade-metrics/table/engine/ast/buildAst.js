@@ -58,7 +58,6 @@ export function buildAST(postfix, labelToId) {
       stack.push({ type: "constant", value: t.value });
       continue;
     }
-    console.log(t.type);
 
     /* ---------- OPERATOR ---------- */
     if (t.type === "op") {

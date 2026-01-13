@@ -1,10 +1,10 @@
 import { memo, useState } from "react";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { CellInput } from "./CellInput";
 import { CellSelect } from "./CellSelect";
 import { CellDisplay } from "./CellDisplay";
 
-export const Cell = memo(function Cell({ rowId, colId }) {
+export const Cell = memo(function Cell({ rowId, colId, onCommit }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
 
@@ -14,11 +14,11 @@ export const Cell = memo(function Cell({ rowId, colId }) {
 
   const type = useTableStore((s) => s.columnsById[colId].type);
 
-  const updateCell = useTableStore((s) => s.updateCell);
+  const isNotGrouped = useTableStore(
+    (s) => !s.groupBy && s.columnsById[colId].mode === "grouped"
+  );
 
-  const onCommit = (value) => {
-    updateCell(rowId, colId, value);
-  };
+  if (isNotGrouped) return null;
 
   if (editing) {
     const Editor = type === "select" ? CellSelect : CellInput;

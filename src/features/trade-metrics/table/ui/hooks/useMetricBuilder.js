@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 
 export function useNumericColumns() {
   const columnsById = useTableStore((s) => s.columnsById);

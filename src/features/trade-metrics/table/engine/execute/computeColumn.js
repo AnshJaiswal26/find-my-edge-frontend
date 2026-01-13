@@ -3,16 +3,33 @@ import { computeGrouped } from "./computeGrouped";
 import { computeRow } from "./computeRow";
 
 const computeMap = {
-  row: computeRow,
-  cumulative: computeCumulative,
-  grouped: computeGrouped,
+  row: ({ rowsById, rowOrder, column }) => {
+    computeRow(rowsById, rowOrder, column);
+  },
+
+  cumulative: ({ rowsById, rowOrder, column }) => {
+    computeCumulative(rowsById, rowOrder, column);
+  },
+
+  grouped: ({ rowsById, groups, column }) => {
+    computeGrouped(rowsById, groups, column);
+  },
 };
 
-export function computeColumn(rowsById, rowOrder, column) {
-  if (!column.type.includes("computed") || !column.expression) return;
+export function computeColumn(rowsById, rowOrder, column, groups) {
+  if (!column.type.includes("computed")) return;
+  if (!column.expression) return;
+  if (column.mode === "grouped" && !groups) return;
 
-  computeMap[column.mode ?? "row"](
-    rowOrder.map((id) => rowsById[id]),
-    column
-  );
+  const mode = column.mode ?? "row";
+  const runner = computeMap[mode];
+
+  if (!runner) return;
+
+  runner({
+    rowsById,
+    rowOrder,
+    groups,
+    column,
+  });
 }

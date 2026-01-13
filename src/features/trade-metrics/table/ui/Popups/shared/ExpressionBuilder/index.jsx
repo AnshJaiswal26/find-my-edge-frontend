@@ -2,10 +2,12 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Input } from "@ui";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
-import { useNumericColumns } from "../../../hooks";
-import { buildAST, tokenize, toPostfix } from "../../../../engine/ast";
-import { FUNCTION_REGISTRY } from "../../../../engine/functions/registry";
+import { useNumericColumns } from "@table/ui/hooks";
+import { buildAST, tokenize, toPostfix } from "@table/engine/ast";
+
 import { Section } from "@layout";
+import { formatExpression } from "./formatExpression";
+import { getColumnSuggestions, getFunctionSuggestions } from "./suggestions";
 
 export function ExpressionBuilder({ value, onCommit, onChange }) {
   const { numericColumns, labelToId } = useNumericColumns();
@@ -20,28 +22,14 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
     if (!m) return [];
 
     const q = m[0].toLowerCase();
-
-    const columnSuggestions = numericColumns
-      .filter((c) => c.label.toLowerCase().startsWith(q))
-      .map((c) => ({
-        type: "column",
-        label: c.label,
-        colId: c.id,
-      }));
-
-    const functionSuggestions = Object.entries(FUNCTION_REGISTRY)
-      .filter(([name, _]) => name.toLowerCase().startsWith(q))
-      .map(([name, value]) => ({
-        type: "function",
-        name: name,
-        icon: value.icon,
-        signature: value.signature,
-      }));
-
-    return [...functionSuggestions, ...columnSuggestions];
+    return [
+      ...getFunctionSuggestions(q),
+      ...getColumnSuggestions(q, numericColumns),
+    ];
   }, [expr, cursor, numericColumns]);
 
-  const generatedAst = useMemo(() => {
+  const parseResult = useMemo(() => {
+    if (!expr.trim()) return null;
     try {
       return buildAST(toPostfix(tokenize(expr)), labelToId);
     } catch {
@@ -49,18 +37,17 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
     }
   }, [expr, labelToId]);
 
-  const { ast, dependency } = generatedAst
-    ? generatedAst
-    : { ast: null, dependency: null };
+  const ast = parseResult?.ast ?? null;
+  const dependency = parseResult?.dependency ?? null;
 
   const applySuggestion = useCallback(
     (item) => {
       let insert = "";
 
       if (item.type === "column") {
-        insert = /[^a-zA-Z0-9_-]/.test(item.label)
-          ? `[${item.label}]`
-          : item.label;
+        insert = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item.label)
+          ? item.label
+          : `[${item.label}]`;
       }
 
       if (item.type === "function") {
@@ -104,26 +91,19 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
     (e) => {
       const exp = e.target.value;
       setExpr(exp);
-      onChange?.(exp, ast, dependency);
       setCursor(e.target.selectionStart);
       setOpen(true);
+      onChange?.(exp, ast, dependency);
     },
-    [expr, setExpr, setCursor, setOpen]
+    [ast, dependency, onChange]
   );
 
-  const handleBlur = useCallback(
-    (e) => {
-      const parsedExp = expr
-        .replace(/\(\s+/g, "(")
-        .replace(/\s+\)/g, ")")
-        .replace(/\s*([+\-*/])\s*/g, " $1 ");
-
-      setExpr(parsedExp);
-      onCommit?.(parsedExp, ast, dependency);
-      setOpen(false);
-    },
-    [expr, setExpr, setOpen]
-  );
+  const handleBlur = useCallback(() => {
+    const formatted = formatExpression(expr);
+    setExpr(formatted);
+    onCommit?.(formatted, ast, dependency);
+    setOpen(false);
+  }, [expr, ast, dependency]);
 
   return (
     <Section title={"Formula"}>

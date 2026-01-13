@@ -1,5 +1,5 @@
 import { Popup } from "@layout";
-import { useTableStore } from "../../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { filterOptions, filterByType } from "@utils";
 import { Button, Input, Select } from "@ui";
 import { Trash2 } from "lucide-react";

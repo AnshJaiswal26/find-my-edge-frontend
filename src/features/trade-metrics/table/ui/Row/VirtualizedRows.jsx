@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
-import { buildVisibleRows } from "../../grouping";
-import { useTableStore } from "../../store/useTableStore";
+import { buildVisibleRows } from "@table/grouping";
+import { useTableStore } from "@table/store/useTableStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { GroupRow } from "./GroupRow";
 import { Row } from "./Row";
@@ -70,7 +70,11 @@ export default function VirtualizedRow({ scrollRef }) {
                 />
               </>
             ) : (
-              <Row rowId={item.rowId} index={item.index} />
+              <Row
+                rowId={item.rowId}
+                index={item.index}
+                groupId={item?.groupId}
+              />
             )}
           </div>
         );

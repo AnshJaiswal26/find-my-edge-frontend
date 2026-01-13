@@ -1,4 +1,4 @@
-import { useTableStore } from "@features/trade-metrics/table/store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { Popup } from "@layout";
 import { Input, Select } from "@ui";
 import { filterByType, filterOptions } from "@utils";
@@ -6,19 +6,24 @@ import { useState } from "react";
 
 export default function GroupByPopup() {
   const columnsById = useTableStore((s) => s.columnsById);
+  const groupBy = useTableStore((s) => s.groupBy);
 
   const { setGroupBy, clearGroupBy, closePopup } = useTableStore.getState();
 
-  const [draft, setDraft] = useState({
-    key: null,
-    type: null,
-    mode: "value",
-    operation: "none",
-    group1Name: "",
-    group2Name: "",
-    value: "",
-    valueTo: "",
-  });
+  const [draft, setDraft] = useState(
+    groupBy != null
+      ? groupBy
+      : {
+          key: null,
+          type: null,
+          mode: "value",
+          operation: "none",
+          group1Name: "",
+          group2Name: "",
+          value: "",
+          valueTo: "",
+        }
+  );
 
   const column = columnsById[draft.key];
   const operations = filterByType[column?.type] ?? ["none"];

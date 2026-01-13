@@ -1,199 +1,100 @@
+import { createColumn } from "./model";
+
 export const columnsById = {
-  date: {
+  date: createColumn({
     id: "date",
     label: "Date",
     type: "date",
-    mode: "row",
     editable: true,
-
-    dependencies: [],
-
     display: { format: "YYYY-MM-DD" },
+  }),
 
-    colorRules: [],
-
-    initialValue: 0,
-
-    expression: null,
-    formula: null,
-  },
-
-  entryTime: {
+  entryTime: createColumn({
     id: "entryTime",
     label: "Entry Time",
     type: "time",
-    mode: "row",
     editable: true,
-
-    dependencies: [],
-
     display: { format: "hh:mm:ss A" },
+  }),
 
-    colorRules: [],
-
-    initialValue: 0,
-
-    expression: null,
-    formula: null,
-  },
-
-  exitTime: {
+  exitTime: createColumn({
     id: "exitTime",
     label: "Exit Time",
     type: "time",
-    mode: "row",
-
     editable: true,
-
-    dependencies: [],
-
     display: { format: "hh:mm:ss A" },
+  }),
 
-    colorRules: [],
-
-    initialValue: 0,
-
-    expression: null,
-    formula: null,
-  },
-
-  duration: {
+  duration: createColumn({
     id: "duration",
     label: "Duration",
     type: "time computed",
-    mode: "row",
-
     editable: false,
-
     dependencies: ["entryTime", "exitTime"],
-
     display: { format: "HH:mm:ss", decimals: 0 },
-
     colorRules: [
       { operator: "lessThan", value: 5, color: "var(--warning)" },
       { operator: "greaterThan", value: 30, color: "var(--info)" },
     ],
-
-    initialValue: 0,
-
-    // custom expression handled in evaluator
     expression: {
       type: "binary",
       op: "-",
       left: { type: "column", columnId: "exitTime" },
       right: { type: "column", columnId: "entryTime" },
     },
-
     formula: "[Exit Time] - [Entry Time]",
-  },
+  }),
 
-  symbol: {
+  symbol: createColumn({
     id: "symbol",
     label: "Symbol",
     type: "text",
-    mode: "row",
     editable: true,
+  }),
 
-    dependencies: [],
-
-    display: { format: "text" },
-
-    colorRules: [],
-
-    initialValue: 0,
-
-    expression: null,
-    formula: null,
-  },
-
-  entry: {
+  entry: createColumn({
     id: "entry",
     label: "Entry",
     type: "number",
-    mode: "row",
     editable: true,
-
-    dependencies: [],
-
     display: { format: "NUMBER", decimals: 2 },
+  }),
 
-    colorRules: [],
-
-    initialValue: 0,
-
-    expression: null,
-    formula: null,
-  },
-
-  exit: {
+  exit: createColumn({
     id: "exit",
     label: "Exit",
     type: "number",
-    mode: "row",
     editable: true,
-
-    dependencies: [],
-
     display: { format: "NUMBER", decimals: 2 },
+  }),
 
-    colorRules: [],
-
-    initialValue: 0,
-
-    expression: null,
-    formula: null,
-  },
-
-  qty: {
+  qty: createColumn({
     id: "qty",
     label: "Qty",
     type: "number",
-    mode: "row",
     editable: true,
-
-    dependencies: [],
-
     display: { format: "NUMBER" },
+  }),
 
-    colorRules: [],
-
-    initialValue: 0,
-
-    expression: null,
-    formula: null,
-  },
-
-  sl: {
+  sl: createColumn({
     id: "sl",
     label: "SL",
     type: "number",
-    mode: "row",
     editable: true,
-
-    dependencies: [],
-
     display: { format: "NUMBER", decimals: 2 },
+  }),
 
-    colorRules: [],
-
-    initialValue: 0,
-
-    expression: null,
-    formula: null,
-  },
-
-  pnl: {
+  pnl: createColumn({
     id: "pnl",
     label: "PnL",
-
-    /* ---------- column role ---------- */
-    type: "number computed", // replaces type
-    mode: "row", //  (row | cumulative | aggregate)
-
+    type: "number computed",
     editable: false,
-
-    /* ---------- expression ---------- */
-    formula: "(Exit - Entry) * Qty", // user input
+    dependencies: ["exit", "entry", "qty"],
+    display: { format: "CURRENCY", decimals: 2 },
+    colorRules: [
+      { operator: "greaterThan", value: 0, color: "var(--success)" },
+      { operator: "lessThan", value: 0, color: "var(--error)" },
+    ],
     expression: {
       type: "binary",
       op: "*",
@@ -205,40 +106,20 @@ export const columnsById = {
       },
       right: { type: "column", columnId: "qty" },
     },
+    formula: "(Exit - Entry) * Qty",
+  }),
 
-    dependencies: ["exit", "entry", "qty"], // auto-generated
-
-    /* ---------- cumulative only ---------- */
-    initialValue: 0,
-
-    /* ---------- display ---------- */
-    display: { format: "CURRENCY", decimals: 2 },
-
-    colorRules: [
-      { operator: "greaterThan", value: 0, color: "var(--success)" },
-      { operator: "lessThan", value: 0, color: "var(--error)" },
-    ],
-  },
-
-  rr: {
+  rr: createColumn({
     id: "rr",
     label: "Risk-Reward",
     type: "number computed",
-    mode: "row",
-
     editable: false,
-
-    dependencies: ["pnl", 500],
-
+    dependencies: ["pnl"],
     display: { format: "RATIO", decimals: 2 },
-
     colorRules: [
       { operator: "greaterThan", value: 0, color: "var(--success)" },
       { operator: "lessThan", value: 0, color: "var(--error)" },
     ],
-
-    initialValue: 0,
-
     expression: {
       type: "binary",
       op: "/",
@@ -246,28 +127,16 @@ export const columnsById = {
       right: { type: "constant", value: 500 },
     },
     formula: "Pnl / 500",
-  },
+  }),
 
-  emotion: {
+  emotion: createColumn({
     id: "emotion",
     label: "Emotion",
     type: "select",
-    mode: "row",
-
     editable: true,
-
-    dependencies: [],
-
     options: ["Calm", "Fear", "Greed"],
-
     display: { format: "badge" },
-
-    colorRules: [],
-
-    initialValue: 0,
-    expression: null,
-    formula: null,
-  },
+  }),
 };
 
 export const columnOrder = [

@@ -4,7 +4,7 @@ import FilterPopup from "./Filter";
 import SortPopup from "./Sort";
 import SummaryPopup from "./Summary";
 import GroupByPopup from "./GroupBy";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 
 export default function Popups() {
   const activePopup = useTableStore((s) => s.activePopup);

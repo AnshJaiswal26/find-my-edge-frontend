@@ -1,15 +1,8 @@
 import { useState } from "react";
 import { Popup } from "@layout";
-import { useTableStore } from "../../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { ColumnList } from "./ColumnList";
 import { ColumnDetails } from "../shared";
-
-function ColumnSettingsPopupContent() {
-  const isOpen = useTableStore((s) => s.activePopup === "column-settings");
-  if (!isOpen) return null;
-
-  return <ColumnSettingsPopupContent />;
-}
 
 export default function ColumnSettingsPopup() {
   const columnsById = useTableStore((s) => s.columnsById);

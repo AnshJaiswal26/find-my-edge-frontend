@@ -1,9 +1,10 @@
 import { memo, useMemo, useState } from "react";
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 import { explainFormulaFromColumn } from "./cellUtils";
-import { evaluateColorRules, formatValue } from "../../utils";
+import { evaluateColorRules, formatValue } from "@table/utils";
 import { tooltipApi } from "@ui";
-import { formatForInput } from "../../engine/execute";
+import { formatForInput } from "@table/engine/execute";
+import { isColumnEditable } from "@table/dependency";
 
 const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
   if (!type.includes("computed")) return;
@@ -30,12 +31,7 @@ export const CellDisplay = memo(function CellDisplay({
 }) {
   const colorRules = useTableStore((s) => s.columnsById[colId].colorRules);
   const display = useTableStore((s) => s.columnsById[colId].display);
-  const editable = useTableStore(
-    (s) =>
-      s.columnsById[colId].editable !== false &&
-      !type.includes("computed") &&
-      s.groupBy !== colId
-  );
+  const editable = useTableStore((s) => isColumnEditable(colId, s));
 
   const unselectColumn = useTableStore((s) => s.unselectColumn);
 

@@ -1,16 +1,14 @@
+import { useState } from "react";
 import { Popup } from "@layout";
-import { useTableStore } from "../../../store/useTableStore";
 import { Select } from "@ui";
 import { sortByType, sortOptions } from "@utils";
-import { useState } from "react";
+import { useTableStore } from "@table/store/useTableStore";
 
 export default function SortPopup() {
   const columnsById = useTableStore((s) => s.columnsById);
+  const sort = useTableStore((s) => s.sort);
 
-  const [sort, setSort] = useState({
-    columnId: null,
-    operator: "none",
-  });
+  const [draft, setDraft] = useState(sort);
 
   const { updateSort, applySort, clearSort, closePopup } =
     useTableStore.getState();
@@ -27,17 +25,17 @@ export default function SortPopup() {
             options={Object.values(columnsById)}
             getLabel={(o) => o.label}
             getKey={(o) => o.id}
-            value={sort.columnId}
-            onChange={(o) => setSort({ columnId: o.id, operator: "none" })}
+            value={draft.columnId}
+            onChange={(o) => setDraft({ columnId: o.id, operator: "none" })}
           />
           {/* Sort type */}
           <Select
             label="Sort Order"
-            options={sortByType[columnsById[sort?.columnId]?.type] ?? ["none"]}
+            options={sortByType[columnsById[draft?.columnId]?.type] ?? ["none"]}
             getLabel={(o) => sortOptions[o]}
-            value={sort.operator}
+            value={draft.operator}
             onChange={(o) =>
-              setSort((p) => ({ columnId: p.columnId, operator: o }))
+              setDraft((p) => ({ columnId: p.columnId, operator: o }))
             }
           />
         </Popup.Body>
@@ -45,11 +43,11 @@ export default function SortPopup() {
         <Popup.Footer
           text={["Clear", "Apply"]}
           onCancel={() => {
-            setSort({ columnId: null, operator: "none" });
+            setDraft({ columnId: null, operator: "none" });
             clearSort();
           }}
           onApply={() => {
-            updateSort(sort.columnId, sort.operator);
+            updateSort(draft.columnId, draft.operator);
             applySort();
           }}
         />

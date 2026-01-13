@@ -1,4 +1,4 @@
-import { useTableStore } from "../../store/useTableStore";
+import { useTableStore } from "@table/store/useTableStore";
 
 export const CellSelect = ({
   rowId,
