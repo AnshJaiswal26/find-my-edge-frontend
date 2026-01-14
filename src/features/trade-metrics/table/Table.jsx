@@ -5,6 +5,7 @@ import { Toolbar } from "./ui/Toolbar/Toolbar";
 import { TableHeader } from "./ui/Header/TableHeader";
 import VirtualizedRow from "./ui/Row/VirtualizedRows";
 import Popups from "./ui/Popups";
+import { Loader } from "@layout";
 
 export function Table() {
   const tableRef = useRef(null);
@@ -12,9 +13,15 @@ export function Table() {
   const { initDemoData, addTrade, openPopup, deleteColumn } =
     useTableStore.getState();
 
+  const isDataLoading = useTableStore((s) => s.isDataLoading);
+
   useEffect(() => {
-    initDemoData();
+    const fetchData = async () => initDemoData();
+
+    fetchData();
   }, []);
+
+  if (isDataLoading) return <Loader />;
 
   return (
     <div className="flex flex-col flex-1 gap-4 relative">

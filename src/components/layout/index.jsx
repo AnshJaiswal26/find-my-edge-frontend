@@ -395,7 +395,7 @@ export const ChartPopup = ({
 
 export function Loader() {
   return (
-    <div className="flex w-[100vw] h-[100vh] items-center justify-center">
+    <div className="flex h-[80vh] items-center justify-center">
       <Loader2 size={60} className="animate-spin" color="var(--text)" />
     </div>
   );

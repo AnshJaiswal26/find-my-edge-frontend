@@ -1,3 +1,3 @@
 export { tradeData } from "./tradeData";
 export { pageRoute } from "./routes";
-export { defaultCharts } from "./defaultChartsConfigs";
+export { DEFAULT_CHARTS } from "./defaultChartsConfigs";

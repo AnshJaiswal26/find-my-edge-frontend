@@ -1,4 +1,4 @@
-import { customTooltip } from "../../components/charts/CustomApexChart/configs/customTooltip";
+import { customTooltip } from "../../components/charts/apex/tooltip/customTooltip";
 
 export const getMiniBarChartConfig = ({ customTooltipCallback, barColors }) => {
   const options = {

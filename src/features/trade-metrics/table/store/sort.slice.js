@@ -20,7 +20,7 @@ export const createSortSlice = (set, get) => ({
   },
 
   clearSort() {
-    const { buildGroups, groupBy, sort, closePopup } = get();
+    const { buildGroups, groupBy, closePopup } = get();
     set((s) => {
       s.sort.columnId = null;
       s.sort.operator = "none";

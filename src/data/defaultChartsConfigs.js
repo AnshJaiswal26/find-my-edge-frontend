@@ -1,7 +1,8 @@
 import { tradeData } from "./tradeData";
 
 // --- default layouts ---
-const defaultCartesianLayout = {
+
+const DEFAULT_CARTESIAN_LAYOUT = {
   title: "",
 
   chartWidth: 100,
@@ -39,8 +40,8 @@ const defaultCartesianLayout = {
   legendAlignment: "center",
 };
 
-const defaultBarChartLayout = {
-  ...defaultCartesianLayout,
+const DEFAULT_BAR_CHART_LAYOUT = {
+  ...DEFAULT_CARTESIAN_LAYOUT,
   // bar
   horizontal: false,
   stacked: false,
@@ -48,8 +49,8 @@ const defaultBarChartLayout = {
   barRadius: 1,
 };
 
-const defaultLineChartLayout = {
-  ...defaultCartesianLayout,
+const DEFAULT_LINE_CHART_LAYOUT = {
+  ...DEFAULT_CARTESIAN_LAYOUT,
   // line
   curve: "smooth", // straight, smooth, stepline
   strokeWidth: 2,
@@ -65,7 +66,7 @@ const defaultLineChartLayout = {
   areaOpacityTo: 0.05,
 };
 
-const defaultGroupedChartLayout = {
+const DEFAULT_GROUPED_CHART_LAYOUT = {
   title: "",
   chartWidth: 100,
 
@@ -91,8 +92,8 @@ const defaultGroupedChartLayout = {
   legendAlignment: "center",
 };
 
-const defaultRadialBarChartLayout = {
-  ...defaultGroupedChartLayout,
+const DEFAULT_RADIAL_BAR_CHART_LAYOUT = {
+  ...DEFAULT_GROUPED_CHART_LAYOUT,
 
   // Radial specifics
   hollowSize: 50,
@@ -103,8 +104,8 @@ const defaultRadialBarChartLayout = {
   strokeLineCap: "round",
 };
 
-const defaultPieChartLayout = {
-  ...defaultGroupedChartLayout,
+const DEFAULT_PIE_CHART_LAYOUT = {
+  ...DEFAULT_GROUPED_CHART_LAYOUT,
 
   // Pie/Donut specifics
   donutSize: 70,
@@ -114,7 +115,7 @@ const defaultPieChartLayout = {
   dataLabels: false,
 };
 
-const defaultRadarChartLayout = {
+const DEFAULT_RADAR_CHART_LAYOUT = {
   title: "",
   chartWidth: 100,
 
@@ -142,7 +143,7 @@ const defaultRadarChartLayout = {
   legendAlignment: "center",
 };
 
-const defaultPolarAreaChartLayout = {
+const DEFAULT_POLARAREA_CHART_LAYOUT = {
   title: "",
   chartWidth: 100,
 
@@ -168,7 +169,7 @@ const defaultPolarAreaChartLayout = {
   legendAlignment: "center",
 };
 
-export const defaultCharts = {
+export const DEFAULT_CHARTS = {
   bar: {
     "apex-bar-chart-1": {
       data: tradeData,
@@ -179,7 +180,7 @@ export const defaultCharts = {
         category: "series",
       },
       layout: {
-        ...defaultBarChartLayout,
+        ...DEFAULT_BAR_CHART_LAYOUT,
         xTitleText: "Trades",
         yTitleText: "Risk/Reward",
         yLabelPrefix: "1:",
@@ -229,7 +230,7 @@ export const defaultCharts = {
         category: "series",
       },
       layout: {
-        ...defaultBarChartLayout,
+        ...DEFAULT_BAR_CHART_LAYOUT,
         xTitleText: "Days",
         yTitleText: "Rate",
         yLabelPrefix: "",
@@ -270,11 +271,11 @@ export const defaultCharts = {
       meta: {
         id: "apex-line-chart-1",
         type: "line",
-        xaxisMetric: "Date",
+        xaxisMetric: "Entry Time",
         category: "series",
       },
       layout: {
-        ...defaultLineChartLayout,
+        ...DEFAULT_LINE_CHART_LAYOUT,
         xTitleText: "Date",
         yTitleText: "Pnl",
         yLabelPrefix: "₹",
@@ -308,7 +309,7 @@ export const defaultCharts = {
         category: "series",
       },
       layout: {
-        ...defaultLineChartLayout,
+        ...DEFAULT_LINE_CHART_LAYOUT,
         title: "Capital Growth",
       },
       seriesConfig: [
@@ -331,7 +332,7 @@ export const defaultCharts = {
         category: "series",
       },
       layout: {
-        ...defaultLineChartLayout,
+        ...DEFAULT_LINE_CHART_LAYOUT,
         title: "Pnl Growth",
       },
       seriesConfig: [
@@ -376,7 +377,7 @@ export const defaultCharts = {
         type: "radialBar",
         category: "group",
       },
-      layout: { ...defaultRadialBarChartLayout, title: "Radial Progress" },
+      layout: { ...DEFAULT_RADIAL_BAR_CHART_LAYOUT, title: "Radial Progress" },
       seriesConfig: [
         {
           key: "Wins",
@@ -415,7 +416,7 @@ export const defaultCharts = {
         type: "donut",
         category: "group",
       },
-      layout: { ...defaultPieChartLayout, title: "Pie Progress" },
+      layout: { ...DEFAULT_PIE_CHART_LAYOUT, title: "Pie Progress" },
       seriesConfig: [
         {
           key: "Wins",
@@ -444,7 +445,7 @@ export const defaultCharts = {
         type: "radar",
         category: "group",
       },
-      layout: { ...defaultRadarChartLayout, title: "Radar Progress" },
+      layout: { ...DEFAULT_RADAR_CHART_LAYOUT, title: "Radar Progress" },
       seriesConfig: [
         {
           key: "Reward",
@@ -488,7 +489,7 @@ export const defaultCharts = {
       },
 
       layout: {
-        ...defaultPolarAreaChartLayout,
+        ...DEFAULT_POLARAREA_CHART_LAYOUT,
         title: "Market Polar Strength",
       },
 

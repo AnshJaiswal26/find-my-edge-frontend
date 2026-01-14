@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Input } from "@ui";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
-import { useNumericColumns } from "@table/ui/hooks";
+import { useNumericColumns } from "@table/hooks";
 import { buildAST, tokenize, toPostfix } from "@table/engine/ast";
 
 import { Section } from "@layout";

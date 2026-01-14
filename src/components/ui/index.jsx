@@ -6,7 +6,7 @@ export { default as Sidebar } from "./Sidebar";
 export { default as TabSelector } from "./TabSelector";
 export { default as ValidationTooltip } from "./ValidationTooltip";
 export { default as StatCard } from "./StatCard";
-export { default as ChartFilterPopup } from "../charts/CustomApexChart/Popups/FilterPopup";
+export { default as ChartFilterPopup } from "../charts/apex/ui/Popups/FilterPopup";
 export { default as ColorPicker } from "./ColorPicker";
 export { default as Input } from "./Input";
 export { default as Select } from "./Select";

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useChartStore } from "@stores";
 import { ChartPopups, CustomApexChart } from "@charts";
 
@@ -7,7 +7,7 @@ import "gridstack/dist/gridstack.min.css";
 import "gridstack/dist/gridstack.min.css";
 import { Button } from "@ui";
 import StatCards from "./components/StatsGrid";
-import { Container } from "@layout";
+import { Container, Loader } from "@layout";
 
 const getColumnCount = () => {
   const w = window.innerWidth;
@@ -15,6 +15,31 @@ const getColumnCount = () => {
   if (w < 768) return 12;
   if (w < 1024) return 20;
   return 30;
+};
+
+export const useAsyncTask = (fn) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const run = useCallback(
+    async (...args) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await fn(...args);
+        return result;
+      } catch (err) {
+        setError(err);
+        throw err; // important: lets caller handle it too
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fn]
+  );
+
+  return { run, loading, error };
 };
 
 export default function Dashboard() {

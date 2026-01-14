@@ -4,21 +4,24 @@
     "baseUrl": "src",
     "paths": {
       "@icons/*": ["assets/icons/*"],
-      "@charts": ["components/charts"],
       "@ui": ["components/ui"],
       "@layout": ["components/layout"],
+
+      "@charts/*": ["components/charts/*"],
       "@table/*": ["features/trade-metrics/table/*"],
+
       "@stores": ["stores"],
+
       "@features/*": ["features/*"],
+
       "@data": ["data"],
+
       "@utils": ["utils"],
       "@lib": ["lib"],
-      "@hooks": ["hooks"],
-      "@Profiler": ["RenderLogger"]
 
-      // no use
-      // "@RM/*": ["pages/RiskManagement/*"],
-      // "@Dashboard/*": ["pages/Dashboard/*"]
+      "@hooks": ["hooks"],
+
+      "@Profiler": ["RenderLogger"]
     }
   },
   "include": ["src"],

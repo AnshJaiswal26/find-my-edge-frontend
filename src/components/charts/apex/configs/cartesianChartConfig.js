@@ -1,5 +1,5 @@
 import { useChartStore } from "@stores";
-import { customTooltip } from "./customTooltip";
+import { customTooltip } from "../tooltip/customTooltip";
 
 export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
   const config = chart.layout;

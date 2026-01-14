@@ -76,12 +76,20 @@ export const columnsById = {
     display: { format: "NUMBER" },
   }),
 
-  sl: createColumn({
-    id: "sl",
-    label: "SL",
-    type: "number",
+  targetAndSl: createColumn({
+    id: "targetAndSl",
+    label: "Traget/SL",
+    type: "number computed",
     editable: true,
+    dependencies: ["entry", "exit"],
     display: { format: "NUMBER", decimals: 2 },
+    expression: {
+      type: "binary",
+      op: "-",
+      left: { type: "column", columnId: "exit" },
+      right: { type: "column", columnId: "entry" },
+    },
+    formula: "Exit - Entry",
   }),
 
   pnl: createColumn({

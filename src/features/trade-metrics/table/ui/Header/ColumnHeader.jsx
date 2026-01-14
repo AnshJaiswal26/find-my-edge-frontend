@@ -26,6 +26,8 @@ export function ColumnHeader({ colId, index, tableRef }) {
     (s) => !s.groupBy && s.columnsById[colId].mode === "grouped"
   );
 
+  const isSticky = useTableStore((s) => s.groupBy?.key === column.id);
+
   if (isNotGrouped) return null;
 
   const {
@@ -102,7 +104,7 @@ export function ColumnHeader({ colId, index, tableRef }) {
     <div
       ref={headerRef}
       data-col-header
-      className="group relative select-none overflow-hidden"
+      className="group relative select-none overflow-hidden overflow-ellipsis text-nowrap"
       style={{ width }}
       onClick={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -123,7 +125,9 @@ export function ColumnHeader({ colId, index, tableRef }) {
         className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-(--cyan)"
       />
 
-      <div className="flex items-center px-2 py-1 border-r border-(--border) justify-between">
+      <div
+        className={`flex items-center px-2 py-1 border-r border-(--border) justify-between`}
+      >
         {column.label} {!editable && <LockKeyholeIcon size={12} />}
       </div>
     </div>

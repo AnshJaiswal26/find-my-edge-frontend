@@ -17,26 +17,34 @@ export const createCoreSlice = (set, get) => ({
   /*                              DATA ACTIONS                              */
   /* ---------------------------------------------------------------------- */
 
-  initDemoData() {
+  async initDemoData() {
     set({ isDataLoading: true });
+
+    const res = await fetch("http://localhost:8080/api/trades");
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch trades");
+    }
+
+    const trades = await res.json();
+
     const state = get();
 
     const rowOrder = [];
     const rowsById = {};
 
     Array.from({ length: 1 }).forEach(() => {
-      tradeData.forEach((t) => {
+      trades.forEach((t) => {
         const trade = createRow(state.columnsById);
 
-        trade.cells.date.value = parseInputValue(t.Date, "date");
-        trade.cells.entryTime.value = parseInputValue(t["Entry Time"], "time");
-        trade.cells.exitTime.value = parseInputValue(t["Exit Time"], "time");
-        trade.cells.duration.value = parseInputValue(t.Duration, "duration");
-        trade.cells.symbol.value = parseInputValue(t.Symbol, "text");
-        trade.cells.entry.value = parseInputValue(t.Entry, "number");
-        trade.cells.exit.value = parseInputValue(t.Exit, "number");
-        trade.cells.qty.value = parseInputValue(t.Qty, "number");
-        trade.cells.sl.value = parseInputValue(t.SL, "number");
+        trade.cells.date.value = parseInputValue(t.date, "date");
+        trade.cells.entryTime.value = parseInputValue(t.entryTime, "time");
+        trade.cells.exitTime.value = parseInputValue(t.exitTime, "time");
+        trade.cells.duration.value = parseInputValue(t.duration, "duration");
+        trade.cells.symbol.value = parseInputValue(t.symbol, "text");
+        trade.cells.entry.value = parseInputValue(t.entry, "number");
+        trade.cells.exit.value = parseInputValue(t.exit, "number");
+        trade.cells.qty.value = parseInputValue(t.qty, "number");
 
         rowOrder.push(trade.id);
         rowsById[trade.id] = trade;

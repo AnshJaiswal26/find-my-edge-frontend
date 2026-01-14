@@ -7,10 +7,6 @@ export const Row = memo(function Row({ rowId, index, groupId }) {
 
   const updateCell = useTableStore((s) => s.updateCell);
 
-  const onCommit = (value) => {
-    updateCell(rowId, colId, value, groupId);
-  };
-
   if (!rowId) return null;
 
   return (
@@ -33,7 +29,14 @@ export const Row = memo(function Row({ rowId, index, groupId }) {
       {/* CELLS */}
       <div className="flex">
         {columnOrder.map((colId) => (
-          <Cell key={colId} rowId={rowId} colId={colId} onCommit={onCommit} />
+          <Cell
+            key={colId}
+            rowId={rowId}
+            colId={colId}
+            onCommit={(value) => {
+              updateCell(rowId, colId, value, groupId);
+            }}
+          />
         ))}
       </div>
     </div>
