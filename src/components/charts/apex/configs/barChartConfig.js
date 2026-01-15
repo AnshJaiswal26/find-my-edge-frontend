@@ -1,12 +1,19 @@
 import { cartesianChartConfig } from "./cartesianChartConfig";
 
-export const getBarChartConfig = ({ chart, chartId, tooltipCallback }) => {
+export const getBarChartConfig = ({
+  chart,
+  chartId,
+  order,
+  seriesById,
+  tooltipCallback,
+}) => {
   const config = chart.layout;
-  const series = chart.series.filtered;
 
   const base = cartesianChartConfig({
     chart,
     chartId,
+    order,
+    seriesById,
     tooltipCallback,
   });
 
@@ -19,7 +26,7 @@ export const getBarChartConfig = ({ chart, chartId, tooltipCallback }) => {
       stackType: config.stacked100 ? "100%" : "normal",
       toolbar: {
         ...base.chart.toolbar,
-        tools: { ...base.chart.toolbar.tools, selection: series.length > 1 },
+        tools: { ...base.chart.toolbar.tools, selection: order.length > 1 },
       },
     },
 

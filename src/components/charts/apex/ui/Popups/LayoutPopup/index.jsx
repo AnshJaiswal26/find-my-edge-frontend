@@ -6,7 +6,7 @@ import RadarLayoutPopup from "./radar/RadarLayoutPopup";
 import { Popup } from "@layout";
 import styles from "./LayoutPopup.module.css";
 import PolarAreaLayoutPopup from "./polarArea/PolarAreaLayoutPopup";
-import { useChartStore } from "@stores";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
 function PopupContent(props) {
   switch (props.type) {
@@ -27,33 +27,23 @@ function PopupContent(props) {
   }
 }
 
-export default function ChartLayoutPopup({ chartId, type, updateChart }) {
-  const chart = useChartStore.getState()[chartId];
+export default function ChartLayoutPopup({ chartId }) {
+  const {
+    closePopup,
+    updateLayout,
+    [chartId]: chart,
+  } = useChartStore.getState();
+
+  const type = chart.meta.type;
 
   const [layoutDraft, setLayoutDraft] = useState({ ...chart.layout });
   const [seriesDraft, setSeriesDraft] = useState([...chart.seriesConfig]);
-
-  const handleClose = () => {
-    updateChart(chartId, (_, s) => {
-      s.activeChart.activePopup = null;
-    });
-    document.body.style.overflow = "";
-  };
-
-  const handleApply = () => {
-    updateChart(chartId, (chart, s) => {
-      s.activeChart.activePopup = null;
-      chart.layout = layoutDraft;
-      chart.seriesConfig = seriesDraft;
-    });
-    document.body.style.overflow = "";
-  };
 
   return (
     <Popup open={true}>
       <Popup.Container>
         {/* Header */}
-        <Popup.Header title="Layout" onClose={handleClose} />
+        <Popup.Header title="Layout" onClose={closePopup} />
 
         {/* Body */}
         <Popup.Body>
@@ -72,8 +62,8 @@ export default function ChartLayoutPopup({ chartId, type, updateChart }) {
         {/* Footer */}
         <Popup.Footer
           text={["Cancel", "Apply"]}
-          onCancel={handleClose}
-          onApply={handleApply}
+          onCancel={closePopup}
+          onApply={() => updateLayout(chartId, layoutDraft, seriesDraft)}
         />
       </Popup.Container>
     </Popup>

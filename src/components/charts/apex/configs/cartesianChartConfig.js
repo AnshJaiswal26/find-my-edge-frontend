@@ -1,9 +1,14 @@
-import { useChartStore } from "@stores";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 import { customTooltip } from "../tooltip/customTooltip";
 
-export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
+export const cartesianChartConfig = ({
+  chart,
+  chartId,
+  order,
+  seriesById,
+  tooltipCallback,
+}) => {
   const config = chart.layout;
-  const series = chart.series.filtered;
 
   const style = { fontSize: "0.75rem" };
 
@@ -12,7 +17,7 @@ export const cartesianChartConfig = ({ chart, chartId, tooltipCallback }) => {
 
   const formatterX = (v) => {
     return `${isPrefix ? v : ""}${config.xLabelPrefix}${
-      v === 0 ? "" : series[v - 1]?.[chart.meta.xaxisMetric] || v
+      v === 0 ? "" : seriesById[order[v - 1]]?.[chart.meta.xaxisMetric] || v
     }${config.xLabelSuffix}${isSuffix ? v : ""}`;
   };
 

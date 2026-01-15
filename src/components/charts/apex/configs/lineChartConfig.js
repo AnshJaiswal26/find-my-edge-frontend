@@ -1,8 +1,13 @@
 import { cartesianChartConfig } from "./cartesianChartConfig";
 
-export const getLineChartConfig = ({ chart, chartId, tooltipCallback }) => {
+export const getLineChartConfig = ({
+  chart,
+  chartId,
+  order,
+  seriesById,
+  tooltipCallback,
+}) => {
   const config = chart.layout;
-  const series = chart.series.filtered;
   const index = chart.runtime.selectedLegendIndex;
   const seriesConfig =
     index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
@@ -10,6 +15,8 @@ export const getLineChartConfig = ({ chart, chartId, tooltipCallback }) => {
   const base = cartesianChartConfig({
     chart,
     chartId,
+    order,
+    seriesById,
     tooltipCallback,
   });
 
@@ -21,7 +28,7 @@ export const getLineChartConfig = ({ chart, chartId, tooltipCallback }) => {
       stacked: false,
       toolbar: {
         ...base.chart.toolbar,
-        tools: { ...base.chart.toolbar.tools, selection: series.length > 1 },
+        tools: { ...base.chart.toolbar.tools, selection: order.length > 1 },
       },
     },
     stroke: { curve: config.curve || "smooth", width: config.strokeWidth || 2 },

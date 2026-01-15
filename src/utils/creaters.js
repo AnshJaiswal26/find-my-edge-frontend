@@ -9,9 +9,18 @@ const getChartStructure = (acc, [chartId, chart]) => {
       default: [...chart.data],
     },
 
+    sort: {
+      columnId: null,
+      operator: "none",
+    },
+
+    filteredOrder: [],
+    sortedOrder: [],
+
     // --- current state of chart ---
     layout: { ...chart.layout },
     seriesConfig: [...chart.seriesConfig],
+    xSeriesConfig: chart.xSeriesConfig,
 
     // --- instant changed states of chart
     runtime: {
@@ -20,14 +29,7 @@ const getChartStructure = (acc, [chartId, chart]) => {
 
     // --- applied filters ---
     ...(chart.meta.category !== "group" && {
-      filters: {
-        selectedSeries: chart.seriesConfig[0].key,
-        selectedFilter: "none",
-        selectedSort: "none",
-        value: "",
-        from: "",
-        to: "",
-      },
+      filters: [],
     }),
   };
   return acc;

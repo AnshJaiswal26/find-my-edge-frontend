@@ -1,12 +1,16 @@
 import { Popup } from "@layout";
-import { useTableStore } from "@table/store/useTableStore";
-import { filterOptions, filterByType } from "@utils";
+import { filterOptions } from "@utils";
 import { Button, Input, Select } from "@ui";
 import { Trash2 } from "lucide-react";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
-export default function FilterPopup() {
-  const filters = useTableStore((s) => s.filters);
-  const columnsById = useTableStore((s) => s.columnsById);
+export default function FilterPopup({ chartId }) {
+  const filters = useChartStore((s) => s[chartId].filters);
+
+  const ySeriesConfig = useChartStore((s) => s[chartId].seriesConfig);
+  const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);
+
+  const seriesConfig = [...ySeriesConfig, xSeriesConfig];
 
   const {
     addFilter,
@@ -15,7 +19,7 @@ export default function FilterPopup() {
     clearFilters,
     closePopup,
     applyFilters,
-  } = useTableStore.getState();
+  } = useChartStore.getState();
 
   return (
     <Popup open>
@@ -30,12 +34,9 @@ export default function FilterPopup() {
           )}
 
           {filters.map((f, index) => {
-            const column = columnsById[f.columnId];
-            const ops = filterByType[column.type];
-
             return (
               <div
-                key={f.id}
+                key={index}
                 className="
                   relative
                   rounded
@@ -52,13 +53,13 @@ export default function FilterPopup() {
                 <div className="flex flex-col gap-3">
                   <Select
                     label={"Column Name: "}
-                    options={Object.values(columnsById)}
-                    getLabel={(o) => o.label}
-                    getKey={(o) => o.id}
-                    value={f.columnId}
+                    options={seriesConfig}
+                    getLabel={(o) => o.name}
+                    getKey={(o) => o.key}
+                    value={f.key}
                     onChange={(o) =>
-                      updateFilter(f.id, {
-                        columnId: o.id,
+                      updateFilter(chartId, index, {
+                        key: o.key,
                         operator: "none",
                         value: "",
                         value2: "",
@@ -68,10 +69,12 @@ export default function FilterPopup() {
 
                   <Select
                     label={"Filter: "}
-                    options={ops}
+                    options={Object.keys(filterOptions)}
                     getLabel={(o) => filterOptions[o]}
                     value={f.operator}
-                    onChange={(o) => updateFilter(f.id, { operator: o })}
+                    onChange={(o) =>
+                      updateFilter(chartId, index, { operator: o })
+                    }
                   />
 
                   {/* Value(s) */}
@@ -82,7 +85,9 @@ export default function FilterPopup() {
                         vertical
                         value={f.value}
                         onChange={(e) =>
-                          updateFilter(f.id, { value: e.target.value })
+                          updateFilter(chartId, index, {
+                            value: e.target.value,
+                          })
                         }
                       />
                       <Input
@@ -90,7 +95,9 @@ export default function FilterPopup() {
                         vertical
                         value={f.value2}
                         onChange={(e) =>
-                          updateFilter(f.id, { value2: e.target.value })
+                          updateFilter(chartId, index, {
+                            value2: e.target.value,
+                          })
                         }
                       />
                     </div>
@@ -100,12 +107,12 @@ export default function FilterPopup() {
                       vertical
                       value={f.value}
                       onChange={(e) =>
-                        updateFilter(f.id, { value: e.target.value })
+                        updateFilter(chartId, index, { value: e.target.value })
                       }
                     />
                   )}
 
-                  <Button.Icon onClick={() => removeFilter(f.id)}>
+                  <Button.Icon onClick={() => removeFilter(chartId, index)}>
                     <Trash2 size={16} />
                   </Button.Icon>
                 </div>
@@ -117,7 +124,7 @@ export default function FilterPopup() {
           <div>
             <button
               className="text-sm text-(--info) cursor-pointer hover:underline"
-              onClick={addFilter}
+              onClick={() => addFilter(chartId)}
             >
               + Add rule
             </button>
@@ -126,8 +133,8 @@ export default function FilterPopup() {
 
         <Popup.Footer
           text={["Clear", "Apply"]}
-          onCancel={clearFilters}
-          onApply={applyFilters}
+          onCancel={() => clearFilters(chartId)}
+          onApply={() => applyFilters(chartId)}
         />
       </Popup.Container>
     </Popup>

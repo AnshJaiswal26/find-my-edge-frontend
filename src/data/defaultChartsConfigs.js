@@ -2,6 +2,161 @@ import { tradeData } from "./tradeData";
 
 // --- default layouts ---
 
+const charts = {
+  "apex-bar-chart-1": {
+    meta: {
+      id: "apex-bar-chart-1",
+      type: "bar",
+      category: "series",
+    },
+
+    filteredSeries: [
+      { rr: 2, pnl: 1000, date: "2025-08-05" },
+      { rr: -1, pnl: 500, date: "2025-08-08" },
+      { rr: 3, pnl: 1500, date: "2025-08-05" },
+      { rr: 1, pnl: 500, date: "2025-08-08" },
+    ], // filtered series by condition
+    sortedSeries: [], // sorted series in order
+    selectedSeries: [], // series slice by selection tool
+    groupedSeries: [
+      {
+        groupKey: "2025-08-12",
+        series: [
+          { rr: -1, pnl: 500, date: "2025-08-08" },
+          { rr: 1, pnl: 500, date: "2025-08-08" },
+        ],
+      },
+
+      // other group
+      {
+        groupKey: " Not 2025-08-12",
+        series: [
+          { rr: 2, pnl: 1000, date: "2025-08-05" },
+          { rr: 3, pnl: 1500, date: "2025-08-05" },
+        ],
+      },
+    ], // series grouped by x axis
+
+    groupBy: {
+      key: "date", // x series id like 'date'
+      type: "date", // number | text | date | time
+      mode: "value", // value | condition
+      operation: "none", //  greaterThan, lessThan.... for condition based grouping
+      group1Name: "", // group 1 label
+      group2Name: "", // group 1 label
+      value: "2025-08-05", // value for conditions or value mode
+      valueTo: "", // value for conditions like isBetween | isNotBetween
+    },
+
+    sort: {
+      key: "rr",
+      operator: "none",
+    },
+
+    filters: [
+      {
+        key: "rr",
+        operator: "none",
+        value: "",
+        value2: "",
+      },
+    ],
+
+    layout: {
+      title: "",
+
+      chartWidth: 100,
+
+      // bar
+      horizontal: false,
+      stacked: false,
+      stacked100: false,
+      barRadius: 1,
+
+      // general
+      tooltip: true,
+      dataLabels: false,
+      selection: false,
+
+      // grid
+      xGrid: false,
+      yGrid: true,
+
+      // xaxis
+      xTooltip: true,
+      xLabels: false,
+      xLabelsColor: "var(--text-charts-muted)",
+      xTitleText: "Date",
+      xTitleColor: "var(--text-charts-muted)",
+      xDisplay: { format: "YYYY-MM-DD", decimals: 0 },
+
+      //yaxis
+      yLabels: true,
+      yLabelsColor: "var(--text-charts-muted)",
+      yTitleText: "Risk-Reward",
+      yTitleColor: "var(--text-charts-muted)",
+      yDisplay: { format: "RATIO", decimals: 2 },
+
+      legend: true,
+      legendPosition: "top",
+      legendAlignment: "center",
+    },
+
+    xSeriesConfig: { key: "date" },
+    ySeriesConfig: [
+      {
+        key: "rr",
+        label: "Risk/Reward",
+        type: "number", // number | time | date  (all are numeric just for formating i have taken time (number -> hh:mm:ss A etc..), date (number -> YYYY-MM-DD etc..))
+        colors: [
+          {
+            operator: "greaterThan",
+            value: 0.6,
+            value2: 0,
+            color: "var(--success)",
+          },
+          {
+            operator: "isBetween",
+            value: 0,
+            value2: 0.6,
+            color: "var(--warning)",
+          },
+          {
+            operator: "lessThan",
+            value: 0,
+            value2: 0,
+            color: "var(--error)",
+          },
+        ],
+      },
+      {
+        key: "pnl",
+        label: "Pnl",
+        colors: [
+          {
+            operator: "greaterThan",
+            value: 60,
+            value2: 0,
+            color: "var(--success)",
+          },
+          {
+            operator: "isBetween",
+            value: 0,
+            value2: 60,
+            color: "var(--warning)",
+          },
+          {
+            operator: "lessThan",
+            value: 0,
+            value2: 0,
+            color: "var(--error)",
+          },
+        ],
+      },
+    ],
+  },
+};
+
 const DEFAULT_CARTESIAN_LAYOUT = {
   title: "",
 
@@ -186,6 +341,8 @@ export const DEFAULT_CHARTS = {
         yLabelPrefix: "1:",
         title: "P&L Booked on Risk/Reward",
       },
+
+      xSeriesConfig: { key: "Date", name: "Date" },
       seriesConfig: [
         {
           key: "Risk/Reward",
@@ -229,6 +386,7 @@ export const DEFAULT_CHARTS = {
         xaxisMetric: "day",
         category: "series",
       },
+
       layout: {
         ...DEFAULT_BAR_CHART_LAYOUT,
         xTitleText: "Days",
@@ -237,6 +395,8 @@ export const DEFAULT_CHARTS = {
         yLabelSuffix: "%",
         title: "Win and Lose Rate Over Time",
       },
+      xSeriesConfig: { key: "day", name: "day" },
+
       seriesConfig: [
         {
           key: "Win Rate",
@@ -281,6 +441,8 @@ export const DEFAULT_CHARTS = {
         yLabelPrefix: "₹",
         title: "P&L Over Time",
       },
+      xSeriesConfig: { key: "Entry Time", name: "Entry Time" },
+
       seriesConfig: [
         {
           key: "Pnl",
@@ -305,13 +467,15 @@ export const DEFAULT_CHARTS = {
       meta: {
         id: "apex-line-chart-2",
         type: "line",
-        xaxisMetric: "Date",
+        xaxisMetric: "Trade",
         category: "series",
       },
       layout: {
         ...DEFAULT_LINE_CHART_LAYOUT,
         title: "Capital Growth",
       },
+      xSeriesConfig: { key: "Trade", name: "Trade" },
+
       seriesConfig: [
         {
           key: "Capital",
@@ -335,6 +499,9 @@ export const DEFAULT_CHARTS = {
         ...DEFAULT_LINE_CHART_LAYOUT,
         title: "Pnl Growth",
       },
+
+      xSeriesConfig: { key: "Date", name: "Date" },
+
       seriesConfig: [
         {
           key: "Profit",

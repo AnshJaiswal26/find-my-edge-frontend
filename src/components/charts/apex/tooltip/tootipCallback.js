@@ -1,4 +1,4 @@
-import { useChartStore } from "@stores";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
 const getLegendIndex = (runtime, fallback) =>
   runtime.selectedLegendIndex !== null ? runtime.selectedLegendIndex : fallback;
@@ -19,29 +19,29 @@ export const tooltipCallback = (
   type,
   chartId
 ) => {
-  const chart = useChartStore.getState()[chartId];
-  const { series, meta, seriesConfig, layout, runtime } = chart;
+  const {
+    [chartId]: chart,
+    seriesById,
+    seriesOrder,
+  } = useChartStore.getState();
+
+  const {
+    series,
+    meta,
+    seriesConfig,
+    layout,
+    runtime,
+    sortedOrder,
+    filteredOrder,
+  } = chart;
+
+  const order = sortedOrder.length
+    ? sortedOrder
+    : filteredOrder.length
+    ? filteredOrder
+    : seriesOrder;
 
   switch (type) {
-    /* ---------------- BAR ---------------- */
-    case "bar": {
-      return {
-        title: series.filtered?.[index]?.[meta.xaxisMetric],
-        dataArray: seriesValue.map((value, i) => {
-          const legendIndex = getLegendIndex(runtime, i);
-          const config = seriesConfig[legendIndex];
-
-          const rule = resolveColorRule(config.colors, value);
-
-          return {
-            value: formatValue(layout.yLabelPrefix, value, layout.yLabelSuffix),
-            label: rule.tooltipLabel,
-            color: rule.color,
-          };
-        }),
-      };
-    }
-
     /* ---------------- RADIAL / DONUT ---------------- */
     case "radialBar":
     case "donut": {
@@ -105,18 +105,23 @@ export const tooltipCallback = (
       };
     }
 
-    /* ---------------- LINE / AREA (DEFAULT) ---------------- */
+    /* ---------------- BAR / LINE / AREA (DEFAULT) ---------------- */
     default: {
       return {
-        title: series.filtered?.[index]?.[meta.xaxisMetric],
+        title: seriesById?.[order[index]]?.[meta.xaxisMetric],
         dataArray: seriesValue.map((value, i) => {
           const legendIndex = getLegendIndex(runtime, i);
           const config = seriesConfig[legendIndex];
 
+          const { color, tooltipLabel } =
+            type === "line"
+              ? { tooltipLabel: config.tooltipLabel, color: config.color }
+              : resolveColorRule(config.colors, value);
+
           return {
             value: formatValue(layout.yLabelPrefix, value, layout.yLabelSuffix),
-            label: config.tooltipLabel,
-            color: config.color,
+            label: tooltipLabel,
+            color,
           };
         }),
       };

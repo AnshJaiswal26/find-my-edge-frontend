@@ -1,5 +1,5 @@
 import { Legend } from "@layout";
-import { useChartStore } from "@stores";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 import styles from "./CustomApexChart.module.css";
 
 export function ChartLegend({

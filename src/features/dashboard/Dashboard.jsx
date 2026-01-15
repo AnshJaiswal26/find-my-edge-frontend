@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useChartStore } from "@stores";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 import { ChartPopups, CustomApexChart } from "@charts";
 
 import { GridStack } from "gridstack";
@@ -156,6 +156,10 @@ function ChartDashboard() {
       grid.current = null;
       window.removeEventListener("resize", updateColumns);
     };
+  }, []);
+
+  useEffect(() => {
+    useChartStore.getState().initDemoData();
   }, []);
 
   return (

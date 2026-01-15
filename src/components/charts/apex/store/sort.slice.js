@@ -5,48 +5,50 @@ export const createSortSlice = (set, get) => ({
   /*                SORT ACTIONS                     */
   /* ----------------------------------------------- */
 
-  updateSort(chartId, seriesKey, operator) {
+  updateSort(chartId, key, operator) {
     set((s) => {
-      const chart = s[chartId];
-      if (!chart) return;
-
-      chart.sort.seriesKey = seriesKey;
-      chart.sort.operator = operator;
+      s[chartId].sort.key = key;
+      s[chartId].sort.operator = operator;
     });
   },
 
   clearSort(chartId) {
     set((s) => {
-      const chart = s[chartId];
-      if (!chart) return;
-
-      chart.sort.seriesKey = null;
-      chart.sort.operator = "none";
-      chart.series.filtered = chart.series.default;
+      s[chartId].sort.key = null;
+      s[chartId].sort.operator = "none";
+      s[chartId].sortedOrder = [];
     });
+
+    get().closePopup();
   },
 
   applySort(chartId) {
-    const chart = get()[chartId];
-    if (!chart) return;
+    const { [chartId]: chart, seriesById, closePopup } = get();
 
-    const { seriesKey, operator } = chart.sort;
+    const sort = chart.sort;
 
-    if (!seriesKey || operator === "none") {
+    if (!sort.key || sort.operator === "none") {
       set((s) => {
-        s[chartId].series.filtered = chart.series.default;
+        s[chartId].sortedOrder = [];
       });
+      closePopup();
       return;
     }
 
-    const sortFn = sortOperationMap[operator];
+    const fn = sortOperationMap[sort.operator];
 
     set((s) => {
-      const target = [...s[chartId].series.filtered];
+      const order = s[chartId].filteredOrder.length
+        ? s[chartId].filteredOrder
+        : s.seriesOrder;
 
-      s[chartId].series.filtered = target.sort(
-        (a, b) => sortFn?.(a[seriesKey], b[seriesKey]) ?? 0
-      );
+      s[chartId].sortedOrder = [...order].sort((a, b) => {
+        const va = seriesById[a][sort.key];
+        const vb = seriesById[b][sort.key];
+        return fn?.(va, vb) ?? 0;
+      });
     });
+
+    closePopup();
   },
 });

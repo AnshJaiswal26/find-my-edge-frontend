@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { Filter } from "lucide-react";
 import { Button } from "@ui";
 import { ChartPopup } from "@layout";
-import { useChartStore } from "@stores";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 import { filterOptions, sortOptions } from "@utils";
 import ExpandableSection from "./ExpandableSection";
 import styles from "./FilterPopup.module.css";

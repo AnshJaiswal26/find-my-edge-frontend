@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { Popup } from "@layout";
 import { Select } from "@ui";
-import { sortByType, sortOptions } from "@utils";
-import { useTableStore } from "@table/store/useTableStore";
+import { sortOptions } from "@utils";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
-export default function SortPopup() {
-  const columnsById = useTableStore((s) => s.columnsById);
-  const sort = useTableStore((s) => s.sort);
+export default function SortPopup({ chartId }) {
+  const sort = useChartStore((s) => s[chartId].sort);
+
+  const ySeriesConfig = useChartStore((s) => s[chartId].seriesConfig);
+  const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);
 
   const [draft, setDraft] = useState(sort);
 
-  const { updateSort, applySort, clearSort, closePopup } =
-    useTableStore.getState();
+  const seriesConfig = [...ySeriesConfig, xSeriesConfig];
+
+  const { applySort, updateSort, clearSort, closePopup } =
+    useChartStore.getState();
 
   return (
     <Popup open>
@@ -22,33 +26,31 @@ export default function SortPopup() {
           {/* Column */}
           <Select
             label="Column"
-            options={Object.values(columnsById)}
-            getLabel={(o) => o.label}
-            getKey={(o) => o.id}
-            value={draft.columnId}
-            onChange={(o) => setDraft({ columnId: o.id, operator: "none" })}
+            options={seriesConfig}
+            getLabel={(o) => o.name}
+            getKey={(o) => o.key}
+            value={draft.key}
+            onChange={(o) => setDraft({ key: o.key, operator: "none" })}
           />
           {/* Sort type */}
           <Select
             label="Sort Order"
-            options={sortByType[columnsById[draft?.columnId]?.type] ?? ["none"]}
+            options={Object.keys(sortOptions)}
             getLabel={(o) => sortOptions[o]}
             value={draft.operator}
-            onChange={(o) =>
-              setDraft((p) => ({ columnId: p.columnId, operator: o }))
-            }
+            onChange={(o) => setDraft((p) => ({ ...p, operator: o }))}
           />
         </Popup.Body>
 
         <Popup.Footer
           text={["Clear", "Apply"]}
           onCancel={() => {
-            setDraft({ columnId: null, operator: "none" });
-            clearSort();
+            setDraft({ key: null, operator: "none" });
+            clearSort(chartId);
           }}
           onApply={() => {
-            updateSort(draft.columnId, draft.operator);
-            applySort();
+            updateSort(chartId, draft.key, draft.operator);
+            applySort(chartId);
           }}
         />
       </Popup.Container>

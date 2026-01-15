@@ -1,6 +1,6 @@
 import { Button } from "@ui";
 import { Section } from "@layout";
-import { useChartStore } from "@stores";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
 import {
   GeneralSection,

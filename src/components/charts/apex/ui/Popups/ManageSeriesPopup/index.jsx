@@ -4,7 +4,7 @@ import { tradeData } from "@data";
 import { useState } from "react";
 import { Button } from "@ui";
 import { Plus, Trash2 } from "lucide-react";
-import { useChartStore } from "@stores";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
 const seriesCfgGenerator = {
   bar: (key) => ({
@@ -69,10 +69,12 @@ function MetricsSection({
   );
 }
 
-export default function ManageSeriesPopup({ chartId, type, updateChart }) {
+export default function ManageSeriesPopup({ chartId, updateChart }) {
   const [selected, setSelected] = useState([]);
 
-  const chart = useChartStore.getState()[chartId];
+  const { closePopup, [chartId]: chart } = useChartStore.getState();
+  const type = chart.meta.type;
+
   const [seriesDraft, setSeriesDraft] = useState([...chart.seriesConfig]);
 
   const currentKeys = seriesDraft.map((s) => s.key);
@@ -81,30 +83,22 @@ export default function ManageSeriesPopup({ chartId, type, updateChart }) {
     (k) => !currentKeys.includes(k) && !selected.includes(k)
   );
 
-  const handleCancel = () => {
-    updateChart(chartId, (chart, s) => {
-      s.activeChart.activePopup = null;
-    });
-    document.body.style.overflow = "";
-  };
-
   const handleApply = () => {
     const newSeries = selected.map((k) => seriesCfgGenerator[type](k));
 
     const finalSeries = [...seriesDraft, ...newSeries];
 
     updateChart(chartId, (chart, s) => {
-      s.activeChart.activePopup = null;
       chart.seriesConfig = finalSeries;
     });
 
-    document.body.style.overflow = "";
+    closePopup();
   };
 
   return (
     <Popup open>
       <Popup.Container>
-        <Popup.Header title="Manage Series" onClose={handleCancel} />
+        <Popup.Header title="Manage Series" onClose={closePopup} />
 
         <Popup.Body>
           <div className={styles.contentWrapper}>
@@ -154,7 +148,7 @@ export default function ManageSeriesPopup({ chartId, type, updateChart }) {
 
         <Popup.Footer
           text={["Cancel", "Apply"]}
-          onCancel={handleCancel}
+          onCancel={closePopup}
           onApply={handleApply}
         />
       </Popup.Container>

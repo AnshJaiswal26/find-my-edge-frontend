@@ -7,49 +7,49 @@ import {
   ZoomIn,
   ZoomOut,
   Settings2,
+  ArrowDownUp,
+  Filter,
 } from "lucide-react";
 import { Button } from "@ui";
-import { FilterPopup } from "../Popups";
-import { useChartStore } from "@stores";
-import {
-  handleZoomIn,
-  handleZoomOut,
-  handleDownloadCSV,
-  handleDownloadPNG,
-} from "./handlers";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
-export default function Toolbar({ chartId, type }) {
-  const updateChart = useChartStore((s) => s.updateChart);
+export default function Toolbar({ chartId }) {
+  const {
+    openPopup,
+    zoomInChart,
+    zoomOutChart,
+    resetSeries,
+    downloadPNG,
+    downloadCSV,
+    deleteChart,
+    [chartId]: chart,
+  } = useChartStore.getState();
 
-  const chartMeta = useChartStore.getState()[chartId].meta;
-
-  const isGroupType = chartMeta.category === "group";
+  const isGroupType = chart.meta.category === "group";
 
   const IconCmpt = useMemo(
     () => [
       {
+        icon: Filter,
+        title: "Filter",
+        onClick: () => openPopup(chartId, "filter"),
+      },
+
+      {
+        icon: ArrowDownUp,
+        title: "Sort",
+        onClick: () => openPopup(chartId, "sort"),
+      },
+
+      {
         icon: Settings2,
         title: "Layout",
-        onClick: () => {
-          updateChart((s) => {
-            s.activeChart.id = chartId;
-            s.activeChart.type = type;
-            s.activeChart.activePopup = "Layout";
-          });
-          document.body.style.overflow = "hidden";
-        },
+        onClick: () => openPopup(chartId, "layout"),
       },
       {
         icon: PlusCircle,
         title: "Manage Series",
-        onClick: () => {
-          updateChart((s) => {
-            s.activeChart.id = chartId;
-            s.activeChart.type = type;
-            s.activeChart.activePopup = "ManageSeries";
-          });
-          document.body.style.overflow = "hidden";
-        },
+        onClick: () => openPopup(chartId, "manage-series"),
       },
       ...(isGroupType
         ? []
@@ -57,39 +57,31 @@ export default function Toolbar({ chartId, type }) {
             {
               icon: ZoomIn,
               title: "Zoom In",
-              onClick: () => handleZoomIn(updateChart, chartId),
+              onClick: () => zoomInChart(chartId),
             },
             {
               icon: ZoomOut,
               title: "Zoom Out",
-              onClick: () => handleZoomOut(updateChart, chartId),
+              onClick: () => zoomOutChart(chartId),
             },
             {
               icon: RefreshCcw,
               title: "Reset Series",
-              onClick: () =>
-                updateChart(chartId, (chart) => {
-                  chart.series.filtered = chart.series.default;
-                }),
+              onClick: () => resetSeries(chartId),
             },
           ]),
       {
         icon: Download,
         title: "Download",
         onClick: () => {
-          handleDownloadCSV(chartId);
-          handleDownloadPNG(chartId);
+          downloadCSV(chartId);
+          downloadPNG(chartId);
         },
       },
       {
         icon: Trash2,
         title: "Remove Chart",
-        onClick: () => {
-          updateChart((s) => {
-            delete s[chartId];
-            s.order = s.order.filter(({ id }) => id !== chartId);
-          });
-        },
+        onClick: () => deleteChart(chartId),
       },
     ],
     []
@@ -97,13 +89,13 @@ export default function Toolbar({ chartId, type }) {
 
   return (
     <div className="apexcharts-custom-toolbar">
-      {!isGroupType && <FilterPopup chartId={chartId} />}
+      {/* {!isGroupType && <FilterPopup chartId={chartId} />} */}
 
       {IconCmpt.map((item, index) => (
         <Button.Icon
           key={index}
           tooltip={{ text: item.title, position: "left" }}
-          onClick={() => (item?.onClick ? item.onClick() : {})}
+          onClick={() => item?.onClick?.()}
         >
           <item.icon size={16} className="text-inherit" />
         </Button.Icon>
