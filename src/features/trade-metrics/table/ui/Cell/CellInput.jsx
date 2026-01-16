@@ -1,4 +1,4 @@
-import { parseInputValue } from "@table/engine/execute";
+import { parseInputValue } from "@utils";
 import { useTableStore } from "@table/store/useTableStore";
 
 function normalizeValue(type, raw) {

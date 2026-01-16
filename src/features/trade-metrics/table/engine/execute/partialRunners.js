@@ -1,11 +1,13 @@
 import { computePartialCumulative } from "./computePartialCumulative";
 import { computePartialGrouped } from "./computePartialGrouped";
-import { evaluateExpression } from "./evaluateExpression";
+import { evaluateExpression } from "@lib/expression";
 
 export const PARTIAL_RUNNERS = {
   row: ({ rowsById, rowId, column }) => {
     const row = rowsById[rowId];
-    const value = evaluateExpression(column.expression, row, {});
+    const value = evaluateExpression(column.expression, {
+      getValue: (key) => row.cells[key]?.value ?? null,
+    });
     row.cells[column.id].value = value;
   },
 

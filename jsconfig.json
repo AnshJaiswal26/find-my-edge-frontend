@@ -17,7 +17,7 @@
       "@data": ["data"],
 
       "@utils": ["utils"],
-      "@lib": ["lib"],
+      "@lib/*": ["lib/*"],
 
       "@hooks": ["hooks"],
 

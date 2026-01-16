@@ -1,37 +1,37 @@
-import Toolbar from "@charts/apex/ui/Toolbar";
-import useChartCfgGenerator from "@charts/apex/hooks/useChartCfgGenerator";
 import styles from "./CustomApexChart.module.css";
 import { ChartLegend } from "./ChartLegend";
 import { ChartViewport } from "./ChartViewport";
+import { useState } from "react";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
 export function ChartWithConfig({ chartId, type }) {
-  const { options, layout, seriesConfig, computedSeries } =
-    useChartCfgGenerator({ chartId, type });
+  const layout = useChartStore((s) => s[chartId].layout);
+  const seriesConfig = useChartStore((s) => s[chartId].seriesConfig);
+
+  const [selectedSeriesKeys, setSelectedSeriesKeys] = useState(null);
 
   return (
-    <div className={styles.chartWrapper}>
-      <div
-        className={`${styles.legendChartWrapper} ${
-          styles[layout.legendPosition]
-        }`}
-      >
-        <ChartLegend
-          type={type}
-          chartId={chartId}
-          legend={layout.legend}
-          legendAlignment={layout.legendAlignment}
-          seriesConfig={seriesConfig}
-        />
+    <div
+      className={`${styles.legendChartWrapper} ${
+        styles[layout.legendPosition]
+      }`}
+    >
+      <ChartLegend
+        type={type}
+        show={layout.legend}
+        alignment={layout.legendAlignment}
+        seriesConfig={seriesConfig}
+        selectedSeriesKeys={selectedSeriesKeys}
+        setSelectedSeriesKeys={setSelectedSeriesKeys}
+      />
 
-        <ChartViewport
-          type={type}
-          options={options}
-          series={computedSeries}
-          layout={layout}
-        />
-      </div>
-
-      <Toolbar type={type} chartId={chartId} />
+      <ChartViewport
+        type={type}
+        chartId={chartId}
+        layout={layout}
+        seriesConfig={seriesConfig}
+        selectedSeriesKeys={selectedSeriesKeys}
+      />
     </div>
   );
 }

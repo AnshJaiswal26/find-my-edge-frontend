@@ -1,4 +1,4 @@
-import { evaluateExpression } from "./evaluateExpression";
+import { evaluateExpression } from "@lib/expression";
 
 export function computePartialCumulative(
   rowsById,
@@ -22,7 +22,8 @@ export function computePartialCumulative(
   for (let i = startIndex; i < rowOrder.length; i++) {
     const row = rowsById[rowOrder[i]];
 
-    const value = evaluateExpression(column.expression, row, {
+    const value = evaluateExpression(column.expression, {
+      getValue: (key) => row.cells[key]?.value ?? null,
       prevValue,
       prevRow,
     });

@@ -1,4 +1,4 @@
-export function fnPREV(fn, row, ctx) {
+export function fnPREV(fn, ctx) {
   const arg = fn.args[0];
 
   // PREV(column)
@@ -14,12 +14,12 @@ export function fnPREV(fn, row, ctx) {
   return ctx.prevValue ?? null;
 }
 
-export function fnSELF(fn, row, ctx) {
+export function fnSELF(fn, ctx) {
   return ctx.prevValue ?? null;
 }
 
-export function fnCUM(fn, row, ctx) {
-  const value = ctx.evaluate(fn.args[0], row, ctx);
+export function fnCUM(fn, ctx) {
+  const value = ctx.evaluate(fn.args[0], ctx);
 
   if (ctx.prevValue === null || ctx.prevValue === undefined)
     return value ?? null;
@@ -27,13 +27,13 @@ export function fnCUM(fn, row, ctx) {
   return value !== null ? ctx.prevValue + value : null;
 }
 
-export function fnRESET(fn, row, ctx) {
+export function fnRESET(fn, ctx) {
   const [valueExpr, condExpr] = fn.args;
 
-  const value = ctx.evaluate(condExpr, row, ctx);
+  const value = ctx.evaluate(condExpr, ctx);
 
   if (value) {
-    return ctx.evaluate(valueExpr, row, ctx);
+    return ctx.evaluate(valueExpr, ctx);
   }
 
   return ctx.prevValue ?? null;

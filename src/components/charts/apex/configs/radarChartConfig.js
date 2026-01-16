@@ -1,8 +1,13 @@
 import { customTooltip, parseColor, shadeColor } from "@utils";
 
-export const getRadarChartConfig = ({ chartId, chart, tooltipCallback }) => {
+export const getRadarChartConfig = ({
+  chartId,
+  chart,
+  tooltipCallback,
+  selectedLegendIndex,
+}) => {
   const config = chart.layout;
-  const index = chart.runtime.selectedLegendIndex;
+  const index = selectedLegendIndex;
   const seriesConfig =
     index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
 

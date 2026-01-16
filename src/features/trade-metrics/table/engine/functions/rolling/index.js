@@ -1,7 +1,47 @@
-export function fnAVG_N(fn, row, ctx) {
+// export const AVG_REDUCER = {
+//   init() {
+//     return { sum: 0, count: 0 };
+//   },
+
+//   step(state, value) {
+//     state.sum += value;
+//     state.count++;
+//     return state;
+//   },
+
+//   result(state) {
+//     return state.count ? state.sum / state.count : null;
+//   },
+// };
+
+// export function fnAVG_N(fn, ctx) {
+//   const [expr, nExpr] = fn.args;
+//   const n = Math.floor(ctx.evaluate(nExpr, ctx) ?? 0);
+//   if (n <= 0) return null;
+
+//   let state = AVG_REDUCER.init();
+//   let seen = 0;
+
+//   for (let i = ctx.rowIndex; i >= 0 && seen < n; i--) {
+//     const value = ctx.evaluate(expr, ctx.rows[i], {
+//       ...ctx,
+//       rowIndex: i,
+//       prevRow: ctx.rows[i - 1],
+//     });
+
+//     if (value == null) continue;
+
+//     state = AVG_REDUCER.step(state, value);
+//     seen++;
+//   }
+
+//   return AVG_REDUCER.result(state);
+// }
+
+export function fnAVG_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 0) return null;
@@ -10,8 +50,9 @@ export function fnAVG_N(fn, row, ctx) {
   let count = 0;
 
   for (let i = ctx.rowIndex; i >= 0 && count < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
@@ -25,10 +66,10 @@ export function fnAVG_N(fn, row, ctx) {
   return count ? sum / count : null;
 }
 
-export function fnSUM_N(fn, row, ctx) {
+export function fnSUM_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 0) return null;
@@ -37,8 +78,9 @@ export function fnSUM_N(fn, row, ctx) {
   let count = 0;
 
   for (let i = ctx.rowIndex; i >= 0 && count < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
@@ -52,10 +94,10 @@ export function fnSUM_N(fn, row, ctx) {
   return sum;
 }
 
-export function fnMAX_N(fn, row, ctx) {
+export function fnMAX_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 0) return null;
@@ -64,8 +106,9 @@ export function fnMAX_N(fn, row, ctx) {
   let count = 0;
 
   for (let i = ctx.rowIndex; i >= 0 && count < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
@@ -79,10 +122,10 @@ export function fnMAX_N(fn, row, ctx) {
   return max;
 }
 
-export function fnMIN_N(fn, row, ctx) {
+export function fnMIN_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 0) return null;
@@ -91,8 +134,9 @@ export function fnMIN_N(fn, row, ctx) {
   let count = 0;
 
   for (let i = ctx.rowIndex; i >= 0 && count < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
@@ -106,10 +150,10 @@ export function fnMIN_N(fn, row, ctx) {
   return min;
 }
 
-export function fnCOUNT_N(fn, row, ctx) {
+export function fnCOUNT_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 0) return null;
@@ -118,8 +162,9 @@ export function fnCOUNT_N(fn, row, ctx) {
   let seen = 0;
 
   for (let i = ctx.rowIndex; i >= 0 && seen < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
@@ -134,10 +179,10 @@ export function fnCOUNT_N(fn, row, ctx) {
 }
 
 // TIER 2 — HIGH-VALUE TRADING METRICS
-export function fnWIN_RATE_N(fn, row, ctx) {
+export function fnWIN_RATE_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 0) return null;
@@ -146,8 +191,9 @@ export function fnWIN_RATE_N(fn, row, ctx) {
   let total = 0;
 
   for (let i = ctx.rowIndex; i >= 0 && total < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
@@ -161,10 +207,10 @@ export function fnWIN_RATE_N(fn, row, ctx) {
   return total ? wins / total : null;
 }
 
-export function fnAVG_WIN_N(fn, row, ctx) {
+export function fnAVG_WIN_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 0) return null;
@@ -174,8 +220,9 @@ export function fnAVG_WIN_N(fn, row, ctx) {
   let seen = 0;
 
   for (let i = ctx.rowIndex; i >= 0 && seen < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
@@ -192,10 +239,10 @@ export function fnAVG_WIN_N(fn, row, ctx) {
   return count ? sum / count : null;
 }
 
-export function fnAVG_LOSS_N(fn, row, ctx) {
+export function fnAVG_LOSS_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 0) return null;
@@ -205,8 +252,9 @@ export function fnAVG_LOSS_N(fn, row, ctx) {
   let seen = 0;
 
   for (let i = ctx.rowIndex; i >= 0 && seen < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });
@@ -223,10 +271,10 @@ export function fnAVG_LOSS_N(fn, row, ctx) {
   return count ? sum / count : null;
 }
 
-export function fnSTDDEV_N(fn, row, ctx) {
+export function fnSTDDEV_N(fn, ctx) {
   const [expr, nExpr] = fn.args;
 
-  const nRes = ctx.evaluate(nExpr, row, ctx);
+  const nRes = ctx.evaluate(nExpr, ctx);
 
   const n = Math.floor(nRes ?? 0);
   if (n <= 1) return null;
@@ -234,8 +282,9 @@ export function fnSTDDEV_N(fn, row, ctx) {
   const values = [];
 
   for (let i = ctx.rowIndex; i >= 0 && values.length < n; i--) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });

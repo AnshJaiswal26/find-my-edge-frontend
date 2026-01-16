@@ -1,10 +1,11 @@
-export function fnTOTAL(fn, row, ctx) {
+export function fnTOTAL(fn, ctx) {
   const expr = fn.args[0];
   let total = 0;
 
   for (let i = 0; i <= ctx.rowIndex; i++) {
-    const value = ctx.evaluate(expr, ctx.rows[i], {
+    const value = ctx.evaluate(expr, {
       ...ctx,
+      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
       rowIndex: i,
       prevRow: ctx.rows[i - 1],
     });

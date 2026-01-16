@@ -1,1 +1,0 @@
-export { evaluateColorRules } from "./evaluateColorRules";

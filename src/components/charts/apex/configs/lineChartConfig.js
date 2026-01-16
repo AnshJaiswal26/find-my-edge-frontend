@@ -6,11 +6,13 @@ export const getLineChartConfig = ({
   order,
   seriesById,
   tooltipCallback,
+  selectedSeriesKeys,
 }) => {
   const config = chart.layout;
-  const index = chart.runtime.selectedLegendIndex;
-  const seriesConfig =
-    index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
+
+  const seriesConfig = selectedSeriesKeys
+    ? chart.seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+    : chart.seriesConfig;
 
   const base = cartesianChartConfig({
     chart,

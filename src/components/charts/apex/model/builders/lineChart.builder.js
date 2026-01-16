@@ -1,0 +1,42 @@
+import { DEFAULT_LAYOUTS } from "../defaults";
+
+export function buildLineChart({ x, y, layout = {}, category = "series" }) {
+  return {
+    meta: {
+      id: crypto.randomUUID(),
+      type: "line",
+      xaxisMetric: x,
+      category,
+    },
+
+    layout: {
+      ...DEFAULT_LAYOUTS.line,
+      ...layout,
+    },
+
+    sort: {
+      key: null,
+      operator: "none",
+    },
+
+    filters: [],
+
+    filteredOrder: [],
+    sortedOrder: [],
+
+    xSeriesConfig: {
+      key: x,
+      name: x,
+    },
+
+    seriesConfig: y.map((s) => ({
+      key: s.key,
+      name: s.name ?? s.key,
+      tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
+
+      color: s.color,
+      markerColor: s.markerColor ?? s.color,
+      areaColor: s.areaColor ?? s.color,
+    })),
+  };
+}

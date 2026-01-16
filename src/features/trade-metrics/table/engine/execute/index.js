@@ -9,9 +9,3 @@ export { computePartialCumulative } from "./computePartialCumulative";
 export { computePartialGrouped } from "./computePartialGrouped";
 
 export { PARTIAL_RUNNERS } from "./partialRunners";
-
-export {
-  evaluateExpression,
-  parseInputValue,
-  formatForInput,
-} from "./evaluateExpression";

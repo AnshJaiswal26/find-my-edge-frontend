@@ -3,7 +3,7 @@ import { Input } from "@ui";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
 import { useNumericColumns } from "@table/hooks";
-import { buildAST, tokenize, toPostfix } from "@table/engine/ast";
+import { buildAST, tokenize, toPostfix } from "@lib/expression";
 
 import { Section } from "@layout";
 import { formatExpression } from "./formatExpression";

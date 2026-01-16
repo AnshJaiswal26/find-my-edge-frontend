@@ -4,10 +4,11 @@ export const getRadialBarChartConfig = ({
   chartId,
   chart,
   tooltipCallback,
+  selectedLegendIndex,
 }) => {
   const config = chart.layout;
 
-  const index = chart.runtime.selectedLegendIndex;
+  const index = selectedLegendIndex;
   const seriesConfig =
     index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
 

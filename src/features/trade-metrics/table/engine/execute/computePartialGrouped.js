@@ -1,4 +1,4 @@
-import { evaluateExpression } from "./evaluateExpression";
+import { evaluateExpression } from "@lib/expression";
 
 export function computePartialGrouped(rowsById, group, startIndex, column) {
   const startValue = column.initialValue ?? 0;
@@ -19,7 +19,8 @@ export function computePartialGrouped(rowsById, group, startIndex, column) {
   for (let i = startIndex; i < rowIds.length; i++) {
     const row = rowsById[rowIds[i]];
 
-    const value = evaluateExpression(column.expression, row, {
+    const value = evaluateExpression(column.expression, {
+      getValue: (key) => row.cells[key]?.value ?? null,
       evaluate: evaluateExpression,
       prevValue,
       prevRow,

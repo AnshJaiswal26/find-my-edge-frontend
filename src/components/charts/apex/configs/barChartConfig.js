@@ -5,6 +5,7 @@ export const getBarChartConfig = ({
   chartId,
   order,
   seriesById,
+  selectedSeriesKeys,
   tooltipCallback,
 }) => {
   const config = chart.layout;
@@ -14,6 +15,7 @@ export const getBarChartConfig = ({
     chartId,
     order,
     seriesById,
+    selectedSeriesKeys,
     tooltipCallback,
   });
 

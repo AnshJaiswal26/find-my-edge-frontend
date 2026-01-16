@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
-import { ChartPopups, CustomApexChart } from "@charts";
+import { ChartPopups, CustomApexChart } from "@charts/index";
 
 import { GridStack } from "gridstack";
 import "gridstack/dist/gridstack.min.css";
@@ -87,68 +87,57 @@ function ChartDashboard() {
   const isResponsiveChange = useRef(false);
 
   const order = useChartStore((s) => s.order);
+
   const savedLayout = useChartStore((s) => s.chartGridLayout);
 
+  console.log(order);
+
   useEffect(() => {
-    if (!grid.current) {
-      grid.current = GridStack.init(
-        {
-          column: getColumnCount(),
-          float: false,
-          resizable: { handles: "" },
-          draggable: { handle: ".chart-toolbar" },
-        },
-        gridRef.current
-      );
+    if (grid.current) return;
 
-      // 🔥 Resize on drag
-      grid.current.on("resizestop", (_, el) => {
-        const chartId = el.getAttribute("gs-id");
-        if (chartId) {
-          window.dispatchEvent(
-            new CustomEvent("chart-resize", { detail: { chartId } })
-          );
-        }
+    grid.current = GridStack.init(
+      {
+        column: getColumnCount(),
+        float: false,
+        resizable: { handles: "" },
+        draggable: { handle: ".chart-toolbar" },
+      },
+      gridRef.current
+    );
+
+    grid.current.on("resizestop", (_, el) => {
+      const chartId = el.getAttribute("gs-id");
+      if (chartId) {
+        window.dispatchEvent(
+          new CustomEvent("chart-resize", { detail: { chartId } })
+        );
+      }
+    });
+
+    grid.current.on("change", () => {
+      if (isResponsiveChange.current) return;
+
+      const safeLayout = grid.current
+        .save()
+        .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+
+      useChartStore.getState().updateChart((s) => {
+        s.chartGridLayout = safeLayout;
       });
-
-      // 💾 Save layout
-      grid.current.on("change", () => {
-        if (isResponsiveChange.current) return;
-
-        const safeLayout = grid.current
-          .save()
-          .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
-
-        useChartStore.getState().updateChart((s) => {
-          s.chartGridLayout = safeLayout;
-        });
-      });
-
-      // ✅ FORCE RESIZE AFTER INITIAL LAYOUT
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          window.dispatchEvent(new Event("resize"));
-        });
-      });
-    }
+    });
 
     const updateColumns = () => {
       if (!grid.current) return;
 
       isResponsiveChange.current = true;
-
-      const cols = getColumnCount();
-      grid.current.column(cols, "move");
+      grid.current.column(getColumnCount(), "move");
 
       requestAnimationFrame(() => {
         isResponsiveChange.current = false;
       });
     };
 
-    // initial
     updateColumns();
-
-    // on resize
     window.addEventListener("resize", updateColumns);
 
     return () => {
@@ -159,7 +148,23 @@ function ChartDashboard() {
   }, []);
 
   useEffect(() => {
+    if (!grid.current || order.length === 0) return;
+
+    requestAnimationFrame(() => {
+      grid.current.batchUpdate();
+
+      document.querySelectorAll(".grid-stack-item").forEach((el) => {
+        // 🔥 this is the key
+        if (!el.gridstackNode) {
+          grid.current.makeWidget(el);
+        }
+      });
+    });
+  }, [order]);
+
+  useEffect(() => {
     useChartStore.getState().initDemoData();
+    useChartStore.getState().loadInitialCharts();
   }, []);
 
   return (

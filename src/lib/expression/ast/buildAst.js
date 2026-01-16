@@ -1,4 +1,4 @@
-import { FUNCTION_REGISTRY } from "../functions/registry";
+import { FUNCTION_REGISTRY } from "@table/engine/functions/registry";
 
 export const FUNCTION_ARITY = Object.fromEntries(
   Object.entries(FUNCTION_REGISTRY).map(([name, def]) => [name, def.arity])
@@ -45,11 +45,11 @@ export function buildAST(postfix, labelToId) {
 
     /* ---------- IDENTIFIER ---------- */
     if (t.type === "identifier") {
-      const colId = labelToId[t.value.toLowerCase()];
-      if (!colId) return null;
+      const id = labelToId[t.value.toLowerCase()];
+      if (!id) return null;
 
-      stack.push({ type: "column", columnId: colId });
-      dependency.push(colId);
+      stack.push({ type: "key", key: id });
+      dependency.push(id);
       continue;
     }
 

@@ -1,7 +1,6 @@
 import { useChartStore } from "@charts/apex/store/useChartStore";
 
-const getLegendIndex = (runtime, fallback) =>
-  runtime.selectedLegendIndex !== null ? runtime.selectedLegendIndex : fallback;
+const getLegendIndex = (index, fallback) => (index !== null ? index : fallback);
 
 const formatValue = (prefix = "", value, suffix = "") =>
   `${prefix}${value}${suffix}`;
@@ -16,8 +15,8 @@ export const tooltipCallback = (
   seriesValue,
   index,
   seriesIndex,
-  type,
-  chartId
+  chartId,
+  selectedSeriesKeys
 ) => {
   const {
     [chartId]: chart,
@@ -25,15 +24,8 @@ export const tooltipCallback = (
     seriesOrder,
   } = useChartStore.getState();
 
-  const {
-    series,
-    meta,
-    seriesConfig,
-    layout,
-    runtime,
-    sortedOrder,
-    filteredOrder,
-  } = chart;
+  const { series, meta, seriesConfig, layout, sortedOrder, filteredOrder } =
+    chart;
 
   const order = sortedOrder.length
     ? sortedOrder
@@ -41,11 +33,11 @@ export const tooltipCallback = (
     ? filteredOrder
     : seriesOrder;
 
-  switch (type) {
+  switch (meta.type) {
     /* ---------------- RADIAL / DONUT ---------------- */
     case "radialBar":
     case "donut": {
-      const legendIndex = getLegendIndex(runtime, seriesIndex);
+      const legendIndex = getLegendIndex(selectedSeriesKeys, seriesIndex);
       const config = seriesConfig[legendIndex];
 
       return {
@@ -65,7 +57,7 @@ export const tooltipCallback = (
 
     /* ---------------- RADAR ---------------- */
     case "radar": {
-      const legendIndex = getLegendIndex(runtime, seriesIndex);
+      const legendIndex = getLegendIndex(selectedSeriesKeys, seriesIndex);
       const config = seriesConfig[legendIndex];
 
       return {
@@ -86,7 +78,7 @@ export const tooltipCallback = (
 
     /* ---------------- POLAR AREA ---------------- */
     case "polarArea": {
-      const legendIndex = getLegendIndex(runtime, seriesIndex);
+      const legendIndex = getLegendIndex(selectedSeriesKeys, seriesIndex);
       const config = seriesConfig[legendIndex];
 
       return {
@@ -110,13 +102,14 @@ export const tooltipCallback = (
       return {
         title: seriesById?.[order[index]]?.[meta.xaxisMetric],
         dataArray: seriesValue.map((value, i) => {
-          const legendIndex = getLegendIndex(runtime, i);
-          const config = seriesConfig[legendIndex];
+          const config = selectedSeriesKeys
+            ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+            : seriesConfig;
 
           const { color, tooltipLabel } =
-            type === "line"
-              ? { tooltipLabel: config.tooltipLabel, color: config.color }
-              : resolveColorRule(config.colors, value);
+            meta.type === "line"
+              ? { tooltipLabel: config[i].tooltipLabel, color: config[i].color }
+              : resolveColorRule(config[i].colors, value);
 
           return {
             value: formatValue(layout.yLabelPrefix, value, layout.yLabelSuffix),

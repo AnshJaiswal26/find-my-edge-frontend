@@ -1,10 +1,12 @@
 import { memo, useMemo, useState } from "react";
-import { useTableStore } from "@table/store/useTableStore";
-import { explainFormulaFromColumn } from "./cellUtils";
-import { evaluateColorRules, formatValue } from "@table/utils";
+
+import { evaluateColorRules, formatForInput } from "@utils";
 import { tooltipApi } from "@ui";
-import { formatForInput } from "@table/engine/execute";
+
+import { useTableStore } from "@table/store/useTableStore";
+import { formatValue } from "@table/utils";
 import { isColumnEditable } from "@table/dependency";
+import { explainFormulaFromColumn } from "./cellUtils";
 
 const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
   if (!type.includes("computed")) return;

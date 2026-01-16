@@ -1,4 +1,4 @@
-import { evaluateExpression } from "./evaluateExpression";
+import { evaluateExpression } from "@lib/expression";
 
 export function computeCumulative(rowsById, rowOrder, column) {
   let prevValue = column.initialValue ?? 0;
@@ -8,7 +8,8 @@ export function computeCumulative(rowsById, rowOrder, column) {
   const rows = rowOrder.map((id) => rowsById[id]);
 
   rows.forEach((row, rowIndex) => {
-    const value = evaluateExpression(column.expression, row, {
+    const value = evaluateExpression(column.expression, {
+      getValue: (key) => row.cells[key]?.value ?? null,
       prevValue,
       prevRow,
       rows,

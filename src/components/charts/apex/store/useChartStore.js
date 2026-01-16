@@ -15,18 +15,18 @@ export const useChartStore = create(
     chartGridLayout: null,
     activeChart: { id: "", type: "", activePopup: null },
 
-    ...generateCharts(DEFAULT_CHARTS),
+    // ...generateCharts(DEFAULT_CHARTS),
 
     order: [
-      { id: "apex-radial-bar-chart-1", type: "radialBar", category: "group" },
-      { id: "apex-pie-chart-1", type: "donut", category: "group" },
-      { id: "apex-radar-chart-1", type: "radar", category: "group" },
-      { id: "apex-polarArea-chart-1", type: "polarArea", category: "group" },
-      { id: "apex-line-chart-3", type: "line", category: "series" },
-      { id: "apex-bar-chart-1", type: "bar", category: "series" },
-      // { id: "apex-bar-chart-2", type: "bar", category: "series" },
-      { id: "apex-line-chart-1", type: "line", category: "series" },
-      { id: "apex-line-chart-2", type: "line", category: "series" },
+      // { id: "apex-radial-bar-chart-1", type: "radialBar", category: "group" },
+      // { id: "apex-pie-chart-1", type: "donut", category: "group" },
+      // { id: "apex-radar-chart-1", type: "radar", category: "group" },
+      // { id: "apex-polarArea-chart-1", type: "polarArea", category: "group" },
+      // { id: "apex-line-chart-3", type: "line", category: "series" },
+      // { id: "apex-bar-chart-1", type: "bar", category: "series" },
+      // // { id: "apex-bar-chart-2", type: "bar", category: "series" },
+      // { id: "apex-line-chart-1", type: "line", category: "series" },
+      // { id: "apex-line-chart-2", type: "line", category: "series" },
     ],
 
     ...createCoreSlice(set, get),

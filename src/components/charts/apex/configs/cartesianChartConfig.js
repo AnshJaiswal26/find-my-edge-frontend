@@ -6,6 +6,7 @@ export const cartesianChartConfig = ({
   chartId,
   order,
   seriesById,
+  selectedSeriesKeys,
   tooltipCallback,
 }) => {
   const config = chart.layout;

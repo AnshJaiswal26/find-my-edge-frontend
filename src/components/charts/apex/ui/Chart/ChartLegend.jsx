@@ -1,35 +1,45 @@
 import { Legend } from "@layout";
-import { useChartStore } from "@charts/apex/store/useChartStore";
 import styles from "./CustomApexChart.module.css";
 
-export function ChartLegend({
-  chartId,
-  type,
-  legend,
-  legendAlignment,
-  seriesConfig,
-}) {
-  const selectedLegendIndex = useChartStore(
-    (s) => s[chartId].runtime.selectedLegendIndex
-  );
-  const updateChart = useChartStore((s) => s.updateChart);
+function toggleSeriesKey(key, selected, cfg) {
+  if (!selected) return cfg.filter((c) => c.key !== key).map((c) => c.key);
 
-  if (!legend) return null;
+  if (selected.includes(key)) {
+    const next = selected.filter((k) => k !== key);
+    return next.length ? next : null;
+  }
+
+  return [...selected, key];
+}
+
+export function ChartLegend({
+  type,
+  show,
+  alignment,
+  seriesConfig,
+  selectedSeriesKeys,
+  setSelectedSeriesKeys,
+}) {
+  if (!show) return null;
 
   return (
-    <div className={`${styles.legendWrapper} ${styles[legendAlignment]}`}>
+    <div className={`${styles.legendWrapper} ${styles[alignment]}`}>
       {seriesConfig.map((s, i) => (
         <Legend
           key={i}
           color={type === "bar" ? s.colors.map((r) => r.color) : s.color}
           label={s.name ?? s.label}
-          selected={selectedLegendIndex !== null && selectedLegendIndex !== i}
-          onClick={() =>
-            updateChart(chartId, (chart) => {
-              chart.runtime.selectedLegendIndex =
-                chart.runtime.selectedLegendIndex === i ? null : i;
-            })
-          }
+          selected={selectedSeriesKeys && !selectedSeriesKeys.includes(s.key)}
+          onClick={() => {
+            if (seriesConfig.length === 1) return;
+
+            const series = toggleSeriesKey(
+              s.key,
+              selectedSeriesKeys,
+              seriesConfig
+            );
+            setSelectedSeriesKeys(series);
+          }}
         />
       ))}
     </div>

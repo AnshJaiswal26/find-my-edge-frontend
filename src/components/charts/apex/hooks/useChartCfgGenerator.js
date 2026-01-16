@@ -76,23 +76,24 @@ const seriesGenerator = {
   },
 };
 
-export default function useChartCfgGenerator({ chartId, type }) {
-  const layout = useChartStore((s) => s[chartId].layout);
-  const seriesConfig = useChartStore((s) => s[chartId].seriesConfig);
+export default function useChartCfgGenerator({
+  chartId,
+  layout,
+  seriesConfig,
+  selectedSeries,
+}) {
+  const type = useChartStore((s) => s[chartId].meta.type);
 
   const seriesById = useChartStore((s) => s.seriesById);
 
-  const filteredSeries = useChartStore((s) => s[chartId].series.filtered);
+  // const filteredSeries = useChartStore((s) => s[chartId].series.filtered);
+
   const filteredOrder = useChartStore((s) =>
     s[chartId].sortedOrder.length !== 0
       ? s[chartId].sortedOrder
       : s[chartId].filteredOrder.length !== 0
       ? s[chartId].filteredOrder
       : s.seriesOrder
-  );
-
-  const selectedLegendIndex = useChartStore(
-    (s) => s[chartId].runtime.selectedLegendIndex
   );
 
   const { options, computedSeries } = useMemo(
@@ -102,27 +103,30 @@ export default function useChartCfgGenerator({ chartId, type }) {
         chartId,
         order: filteredOrder,
         seriesById,
-        tooltipCallback: (seriesValue, index, seriesIndex) =>
-          tooltipCallback(seriesValue, index, seriesIndex, type, chartId),
+        selectedSeries,
+        tooltipCallback: (sv, i, si) =>
+          tooltipCallback(sv, i, si, chartId, selectedSeries),
       }),
       computedSeries: seriesGenerator[type]({
         seriesConfig,
         filteredOrder,
         seriesById,
         layout,
-        series: filteredSeries,
+        // series: filteredSeries,
         selectedLegendIndex,
       }),
     }),
     [
       seriesConfig,
       layout,
-      filteredSeries,
+      // filteredSeries,
       selectedLegendIndex,
       seriesById,
       filteredOrder,
     ]
   );
+
+  console.log(options, computedSeries);
 
   useEffect(() => {
     const listener = (e) => {
@@ -138,13 +142,17 @@ export default function useChartCfgGenerator({ chartId, type }) {
     if (type === "radialBar" || type === "donut") {
       ApexCharts.exec(chartId, "updateSeries", computedSeries, true);
     }
-  }, [seriesConfig, layout, filteredSeries, selectedLegendIndex]);
+  }, [
+    seriesConfig,
+    layout,
+    //  filteredSeries,
+    selectedLegendIndex,
+  ]);
 
   return {
     options,
     computedSeries,
-    seriesConfig,
-    layout,
     selectedLegendIndex,
+    type,
   };
 }

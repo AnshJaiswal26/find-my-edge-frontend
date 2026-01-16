@@ -1,4 +1,4 @@
-import { evaluateExpression } from "./evaluateExpression";
+import { evaluateExpression } from "@lib/expression";
 
 export function computeGrouped(rowsById, groups, column) {
   if (!groups || !groups.length) return;
@@ -11,7 +11,8 @@ export function computeGrouped(rowsById, groups, column) {
     for (const rowId of group.rowIds) {
       const row = rowsById[rowId];
 
-      const value = evaluateExpression(column.expression, row, {
+      const value = evaluateExpression(column.expression, {
+        getValue: (key) => row.cells[key]?.value ?? null,
         evaluate: evaluateExpression,
         prevValue,
         prevRow,
