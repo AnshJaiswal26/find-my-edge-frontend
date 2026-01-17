@@ -92,8 +92,8 @@ export default function useChartCfgGenerator({
     s[chartId].sortedOrder.length !== 0
       ? s[chartId].sortedOrder
       : s[chartId].filteredOrder.length !== 0
-      ? s[chartId].filteredOrder
-      : s.seriesOrder
+        ? s[chartId].filteredOrder
+        : s.seriesOrder,
   );
 
   const { options, computedSeries } = useMemo(
@@ -123,7 +123,7 @@ export default function useChartCfgGenerator({
       selectedLegendIndex,
       seriesById,
       filteredOrder,
-    ]
+    ],
   );
 
   console.log(options, computedSeries);

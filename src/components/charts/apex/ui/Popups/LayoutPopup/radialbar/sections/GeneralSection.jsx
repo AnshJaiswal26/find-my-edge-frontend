@@ -34,6 +34,21 @@ export default function RadialGeneralSection({ layoutDraft, setLayoutDraft }) {
       />
 
       <Input
+        label="Start Angle"
+        type="range"
+        value={layoutDraft.startAngle}
+        min={-360}
+        max={0}
+        step={90}
+        onCommit={(v) => {
+          setLayoutDraft((p) => ({
+            ...p,
+            startAngle: Number(v),
+          }));
+        }}
+      />
+
+      <Input
         label="End Angle"
         type="range"
         value={layoutDraft.endAngle}

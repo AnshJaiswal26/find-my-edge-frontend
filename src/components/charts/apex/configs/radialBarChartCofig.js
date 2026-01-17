@@ -4,13 +4,13 @@ export const getRadialBarChartConfig = ({
   chartId,
   chart,
   tooltipCallback,
-  selectedLegendIndex,
+  selectedSeriesKeys,
 }) => {
   const config = chart.layout;
 
-  const index = selectedLegendIndex;
-  const seriesConfig =
-    index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
+  const seriesConfig = selectedSeriesKeys
+    ? chart.seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+    : chart.seriesConfig;
 
   return {
     chart: {
@@ -28,7 +28,7 @@ export const getRadialBarChartConfig = ({
       gradient: {
         shadeIntensity: 0.7,
         gradientToColors: seriesConfig.map((s) =>
-          shadeColor(parseColor(s.color), 20)
+          shadeColor(parseColor(s.color), 20),
         ),
         inverseColors: true,
         opacityFrom: 1,
@@ -46,7 +46,7 @@ export const getRadialBarChartConfig = ({
     },
     plotOptions: {
       radialBar: {
-        startAngle: 0,
+        startAngle: config.startAngle ?? 0,
         endAngle: config.endAngle ?? 360,
         hollow: { size: `${config.hollowSize}%` ?? "50%" },
         track: {

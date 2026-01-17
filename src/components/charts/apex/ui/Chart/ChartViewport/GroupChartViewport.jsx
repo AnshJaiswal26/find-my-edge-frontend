@@ -1,5 +1,10 @@
+import { useApexEffects, useGroupChartConfig } from "@charts/apex/hooks";
+import ReactApexChart from "react-apexcharts";
+
 export function GroupChartViewport(props) {
   const { options, series } = useGroupChartConfig(props);
+
+  useApexEffects({ ...props, series });
 
   return (
     <ReactApexChart

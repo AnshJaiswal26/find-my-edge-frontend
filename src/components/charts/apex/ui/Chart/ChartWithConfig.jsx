@@ -4,7 +4,7 @@ import { ChartViewport } from "./ChartViewport";
 import { useState } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 
-export function ChartWithConfig({ chartId, type }) {
+export function ChartWithConfig({ chartId, type, category }) {
   const layout = useChartStore((s) => s[chartId].layout);
   const seriesConfig = useChartStore((s) => s[chartId].seriesConfig);
 
@@ -27,6 +27,7 @@ export function ChartWithConfig({ chartId, type }) {
 
       <ChartViewport
         type={type}
+        category={category}
         chartId={chartId}
         layout={layout}
         seriesConfig={seriesConfig}

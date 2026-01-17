@@ -1,16 +1,11 @@
 import ApexCharts from "apexcharts";
+import { useEffect } from "react";
 
-export default function useApexEffects({
-  chartId,
-  series,
-  seriesConfig,
-  layout,
-  selectedLegendIndex,
-}) {
+export default function useApexEffects(props) {
   useEffect(() => {
     const listener = (e) => {
-      if (e.detail?.chartId === chartId) {
-        ApexCharts.exec(chartId, "resize");
+      if (e.detail?.chartId === props.chartId) {
+        ApexCharts.exec(props.chartId, "resize");
       }
     };
     window.addEventListener("chart-resize", listener);
@@ -18,8 +13,8 @@ export default function useApexEffects({
   }, []);
 
   useEffect(() => {
-    if (type === "radialBar" || type === "donut") {
-      ApexCharts.exec(chartId, "updateSeries", series, true);
+    if (props.type === "radialBar" || props.type === "donut") {
+      ApexCharts.exec(props.chartId, "updateSeries", props.series, true);
     }
-  }, [seriesConfig, layout, selectedLegendIndex]);
+  }, [props.seriesConfig, props.layout, props.selectedSeriesKeys]);
 }

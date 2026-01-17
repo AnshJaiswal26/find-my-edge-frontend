@@ -37,84 +37,146 @@ export const createCoreSlice = (set, get) => ({
   },
 
   loadInitialCharts() {
-    if (get().order.length > 0) return;
+    const { order, seriesById, seriesOrder } = get();
+    if (order.length > 0) return;
 
-    const bar = createChart("bar", {
-      layout: {
-        xTitleText: "Trades",
-        yTitleText: "Risk/Reward",
-        yLabelPrefix: "1:",
-        title: "P&L Booked on Risk/Reward",
+    const seriesConfig = [
+      {
+        key: "Wins",
+        name: "Wins",
+        tooltipLabel: "Wins",
+        color: "var(--info)",
       },
-      x: "Date",
-      y: [
-        {
-          key: "Risk/Reward",
-          name: "Risk/Reward",
-          colors: [
-            {
-              from: 0.61,
-              to: Number.MAX_SAFE_INTEGER,
-              color: "var(--success)",
-              tooltipLabel: "Reward Taken",
-            },
-            {
-              from: 0,
-              to: 0.6,
-              color: "var(--warning)",
-              tooltipLabel: "Breakeven",
-            },
-            {
-              from: Number.MIN_SAFE_INTEGER,
-              to: -0.01,
-              color: "var(--error)",
-              tooltipLabel: "Risk Taken",
-            },
-          ],
-        },
-      ],
-    });
+      {
+        key: "Loses",
+        name: "Loses",
+        tooltipLabel: "Loses",
+        color: "var(--warning)",
+      },
+    ];
 
-    const line = createChart("line", {
-      layout: {
-        xTitleText: "Date",
-        yTitleText: "Pnl",
-        yLabelPrefix: "₹",
-        title: "P&L Over Time",
-      },
-      x: "Entry Time",
-      y: [
-        {
-          key: "Pnl",
-          name: "Pnl",
-          tooltipLabel: "Pnl",
-          color: "var(--cyan)",
-          markerColor: "var(--cyan)",
-          areaColor: "var(--cyan)",
+    const map = {
+      bar: createChart("bar", {
+        layout: {
+          xTitleText: "Trades",
+          yTitleText: "Risk/Reward",
+          yLabelPrefix: "1:",
+          title: "P&L Booked on Risk/Reward",
         },
-        {
-          key: "Cummulative Pnl",
-          name: "Cummulative Pnl",
-          tooltipLabel: "Cummulative Pnl",
-          color: "var(--warning)",
-          markerColor: "var(--warning)",
-          areaColor: "var(--warning)",
+        x: "Date",
+        y: [
+          {
+            key: "Risk/Reward",
+            name: "Risk/Reward",
+            colors: [
+              {
+                from: 0.61,
+                to: Number.MAX_SAFE_INTEGER,
+                color: "var(--success)",
+                tooltipLabel: "Reward Taken",
+              },
+              {
+                from: 0,
+                to: 0.6,
+                color: "var(--warning)",
+                tooltipLabel: "Breakeven",
+              },
+              {
+                from: Number.MIN_SAFE_INTEGER,
+                to: -0.01,
+                color: "var(--error)",
+                tooltipLabel: "Risk Taken",
+              },
+            ],
+          },
+        ],
+      }),
+
+      line: createChart("line", {
+        layout: {
+          xTitleText: "Date",
+          yTitleText: "Pnl",
+          yLabelPrefix: "₹",
+          title: "P&L Over Time",
         },
-      ],
-    });
+        x: "Entry Time",
+        y: [
+          {
+            key: "Pnl",
+            name: "Pnl",
+            tooltipLabel: "Pnl",
+            color: "var(--cyan)",
+            markerColor: "var(--cyan)",
+            areaColor: "var(--cyan)",
+          },
+          {
+            key: "Cummulative Pnl",
+            name: "Cummulative Pnl",
+            tooltipLabel: "Cummulative Pnl",
+            color: "var(--warning)",
+            markerColor: "var(--warning)",
+            areaColor: "var(--warning)",
+          },
+        ],
+      }),
+
+      donut: createChart("donut", {
+        seriesConfig,
+        series: seriesConfig.map((s) => {
+          if (s.key === "Wins") {
+            return (
+              (seriesOrder.reduce((acc, id) => {
+                acc = seriesById[id].Pnl > 0 ? acc + 1 : acc;
+                return acc;
+              }, 0) /
+                seriesOrder.length) *
+              100
+            );
+          }
+          return (
+            (seriesOrder.reduce((acc, id) => {
+              acc = seriesById[id].Pnl < 0 ? acc + 1 : acc;
+              return acc;
+            }, 0) /
+              seriesOrder.length) *
+            100
+          );
+        }),
+      }),
+
+      radialBar: createChart("radialBar", {
+        seriesConfig,
+        series: seriesConfig.map((s) => {
+          if (s.key === "Wins") {
+            return (
+              (seriesOrder.reduce((acc, id) => {
+                acc = seriesById[id].Pnl > 0 ? acc + 1 : acc;
+                return acc;
+              }, 0) /
+                seriesOrder.length) *
+              100
+            );
+          }
+          return (
+            (seriesOrder.reduce((acc, id) => {
+              acc = seriesById[id].Pnl < 0 ? acc + 1 : acc;
+              return acc;
+            }, 0) /
+              seriesOrder.length) *
+            100
+          );
+        }),
+      }),
+    };
 
     set((s) => {
-      s[bar.meta.id] = bar;
-      s[line.meta.id] = line;
-      s.order.push({
-        id: bar.meta.id,
-        category: bar.meta.category,
-        type: bar.meta.type,
-      });
-      s.order.push({
-        id: line.meta.id,
-        category: line.meta.category,
-        type: line.meta.type,
+      ["bar", "line", "donut", "radialBar"].map((ch) => {
+        s[map[ch].meta.id] = map[ch];
+        s.order.push({
+          id: map[ch].meta.id,
+          category: map[ch].meta.category,
+          type: map[ch].meta.type,
+        });
       });
     });
   },

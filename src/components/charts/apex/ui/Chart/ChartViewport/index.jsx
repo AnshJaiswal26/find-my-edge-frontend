@@ -1,5 +1,18 @@
 import styles from "../CustomApexChart.module.css";
+import { AxisSeriesChartViewport } from "./AxisSeriesChartViewport";
+import { GroupChartViewport } from "./GroupChartViewport";
 import { SeriesChartViewport } from "./SeriesChartViewport";
+
+const ViewPort = ({ props }) => {
+  switch (props.category) {
+    case "group":
+      return <GroupChartViewport {...props} />;
+    case "axis-series":
+      return <AxisSeriesChartViewport {...props} />;
+    default:
+      return <SeriesChartViewport {...props} />;
+  }
+};
 
 export function ChartViewport(props) {
   const { chartWidth } = props.layout;
@@ -15,7 +28,7 @@ export function ChartViewport(props) {
       className={styles.chartZoomWrapper}
     >
       <div className="h-full" style={{ width: `${chartWidth}%` }}>
-        <SeriesChartViewport {...props} />
+        <ViewPort props={props} />
       </div>
     </div>
   );

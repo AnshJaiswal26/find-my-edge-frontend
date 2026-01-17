@@ -36,7 +36,7 @@ export const useAsyncTask = (fn) => {
         setLoading(false);
       }
     },
-    [fn]
+    [fn],
   );
 
   return { run, loading, error };
@@ -102,14 +102,14 @@ function ChartDashboard() {
         resizable: { handles: "" },
         draggable: { handle: ".chart-toolbar" },
       },
-      gridRef.current
+      gridRef.current,
     );
 
     grid.current.on("resizestop", (_, el) => {
       const chartId = el.getAttribute("gs-id");
       if (chartId) {
         window.dispatchEvent(
-          new CustomEvent("chart-resize", { detail: { chartId } })
+          new CustomEvent("chart-resize", { detail: { chartId } }),
         );
       }
     });
@@ -165,6 +165,8 @@ function ChartDashboard() {
   useEffect(() => {
     useChartStore.getState().initDemoData();
     useChartStore.getState().loadInitialCharts();
+
+    window.dispatchEvent(new Event("resize"));
   }, []);
 
   return (
@@ -187,7 +189,7 @@ function ChartDashboard() {
           >
             <div className="grid-stack-item-content rounded-[8px] shadow-xl">
               <div className="h-full relative">
-                <CustomApexChart chartId={id} type={type} />
+                <CustomApexChart chartId={id} type={type} category={category} />
               </div>
             </div>
           </div>

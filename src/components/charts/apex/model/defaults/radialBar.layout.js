@@ -8,6 +8,7 @@ export const RADIAL_BAR_CHART_LAYOUT = {
   gradientType: "gradient",
   trackBackground: "var(--hover)",
   strokeWidth: 50,
+  startAngle: 0,
   endAngle: 360,
   strokeLineCap: "round",
 };

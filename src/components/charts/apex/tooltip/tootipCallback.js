@@ -16,7 +16,7 @@ export const tooltipCallback = (
   index,
   seriesIndex,
   chartId,
-  selectedSeriesKeys
+  selectedSeriesKeys,
 ) => {
   const {
     [chartId]: chart,
@@ -27,26 +27,23 @@ export const tooltipCallback = (
   const { series, meta, seriesConfig, layout, sortedOrder, filteredOrder } =
     chart;
 
-  const order = sortedOrder.length
-    ? sortedOrder
-    : filteredOrder.length
-    ? filteredOrder
-    : seriesOrder;
-
   switch (meta.type) {
     /* ---------------- RADIAL / DONUT ---------------- */
     case "radialBar":
     case "donut": {
-      const legendIndex = getLegendIndex(selectedSeriesKeys, seriesIndex);
-      const config = seriesConfig[legendIndex];
+      const config = selectedSeriesKeys
+        ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))[
+            seriesIndex
+          ]
+        : seriesConfig[seriesIndex];
 
       return {
         dataArray: [
           {
             value: formatValue(
               layout.valuePrefix,
-              series.filtered[legendIndex],
-              layout.valueSuffix
+              series[seriesIndex],
+              layout.valueSuffix,
             ),
             label: config.tooltipLabel,
             color: config.color,
@@ -67,7 +64,7 @@ export const tooltipCallback = (
             value: formatValue(
               config.prefix,
               series.filtered[index][config.key],
-              config.suffix
+              config.suffix,
             ),
             label: config.tooltipLabel,
             color: config.color,
@@ -88,7 +85,7 @@ export const tooltipCallback = (
             value: formatValue(
               config.prefix,
               series.filtered[legendIndex][config.key],
-              config.suffix
+              config.suffix,
             ),
             label: config.tooltipLabel,
             color: config.color,
@@ -99,6 +96,12 @@ export const tooltipCallback = (
 
     /* ---------------- BAR / LINE / AREA (DEFAULT) ---------------- */
     default: {
+      const order = sortedOrder.length
+        ? sortedOrder
+        : filteredOrder.length
+          ? filteredOrder
+          : seriesOrder;
+
       return {
         title: seriesById?.[order[index]]?.[meta.xaxisMetric],
         dataArray: seriesValue.map((value, i) => {

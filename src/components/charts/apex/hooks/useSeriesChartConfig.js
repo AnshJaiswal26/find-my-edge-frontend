@@ -36,8 +36,8 @@ export default function useSeriesChartConfig({
     s[chartId].sortedOrder.length !== 0
       ? s[chartId].sortedOrder
       : s[chartId].filteredOrder.length !== 0
-      ? s[chartId].filteredOrder
-      : s.seriesOrder
+        ? s[chartId].filteredOrder
+        : s.seriesOrder,
   );
 
   const { options, computedSeries } = useMemo(
@@ -57,10 +57,9 @@ export default function useSeriesChartConfig({
           : seriesConfig,
         filteredOrder,
         seriesById,
-        layout,
       }),
     }),
-    [seriesConfig, layout, selectedSeriesKeys, seriesById, filteredOrder]
+    [seriesConfig, layout, selectedSeriesKeys, seriesById, filteredOrder],
   );
 
   return { options, series: computedSeries, type };

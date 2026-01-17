@@ -4,13 +4,13 @@ export const getPieChartConfig = ({
   chartId,
   chart,
   tooltipCallback,
-  selectedLegendIndex,
+  selectedSeriesKeys,
 }) => {
   const config = chart.layout;
 
-  const index = selectedLegendIndex;
-  const seriesConfig =
-    index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
+  const seriesConfig = selectedSeriesKeys
+    ? chart.seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+    : chart.seriesConfig;
 
   return {
     chart: {
@@ -45,7 +45,7 @@ export const getPieChartConfig = ({
       gradient: {
         shadeIntensity: 0.7,
         gradientToColors: seriesConfig.map((s) =>
-          shadeColor(parseColor(s.color), 20)
+          shadeColor(parseColor(s.color), 20),
         ),
         inverseColors: false,
         opacityFrom: 1,

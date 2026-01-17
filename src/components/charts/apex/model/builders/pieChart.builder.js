@@ -1,9 +1,10 @@
 import { DEFAULT_LAYOUTS } from "../defaults";
 
-export function buildPieChart({ series, layout = {} }) {
+export function buildDonutChart({ seriesConfig, series, layout = {} }) {
   return {
     meta: {
       id: crypto.randomUUID(),
+      type: "donut",
       category: "group",
     },
 
@@ -12,7 +13,9 @@ export function buildPieChart({ series, layout = {} }) {
       ...layout,
     },
 
-    seriesConfig: series.map((s) => ({
+    series: series ?? [],
+
+    seriesConfig: seriesConfig.map((s) => ({
       key: s.key,
       name: s.name ?? s.key,
       tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
