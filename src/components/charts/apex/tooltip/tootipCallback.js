@@ -16,33 +16,38 @@ export const tooltipCallback = (
   index,
   seriesIndex,
   chartId,
+  order,
   selectedSeriesKeys,
 ) => {
-  const {
-    [chartId]: chart,
-    seriesById,
-    seriesOrder,
-  } = useChartStore.getState();
+  const { [chartId]: chart, seriesById } = useChartStore.getState();
 
-  const { series, meta, seriesConfig, layout, sortedOrder, filteredOrder } =
-    chart;
+  const { series, meta, seriesConfig, layout } = chart;
 
   switch (meta.type) {
     /* ---------------- RADIAL / DONUT ---------------- */
     case "radialBar":
     case "donut": {
-      const config = selectedSeriesKeys
-        ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))[
-            seriesIndex
-          ]
-        : seriesConfig[seriesIndex];
+      // 1️⃣ decide active series key
+      const activeKey =
+        selectedSeriesKeys?.length === 1
+          ? selectedSeriesKeys[0]
+          : seriesConfig[seriesIndex]?.key;
+
+      // 2️⃣ find config
+      const config = seriesConfig.find((s) => s.key === activeKey);
+
+      // 3️⃣ find value index
+      const valueIndex = seriesConfig.findIndex((s) => s.key === activeKey);
+
+      // safety guard
+      if (!config || valueIndex === -1) return null;
 
       return {
         dataArray: [
           {
             value: formatValue(
               layout.valuePrefix,
-              series[seriesIndex],
+              series[valueIndex],
               layout.valueSuffix,
             ),
             label: config.tooltipLabel,
@@ -96,12 +101,6 @@ export const tooltipCallback = (
 
     /* ---------------- BAR / LINE / AREA (DEFAULT) ---------------- */
     default: {
-      const order = sortedOrder.length
-        ? sortedOrder
-        : filteredOrder.length
-          ? filteredOrder
-          : seriesOrder;
-
       return {
         title: seriesById?.[order[index]]?.[meta.xaxisMetric],
         dataArray: seriesValue.map((value, i) => {

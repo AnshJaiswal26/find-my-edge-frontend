@@ -51,7 +51,7 @@ export default function useGroupChartConfig({
         seriesById,
         selectedSeriesKeys,
         tooltipCallback: (sv, i, si) =>
-          tooltipCallback(sv, i, si, chartId, selectedSeriesKeys),
+          tooltipCallback(sv, i, si, chartId, seriesOrder, selectedSeriesKeys),
       }),
       computedSeries: seriesGenerator[type]({
         seriesConfig: selectedSeriesKeys

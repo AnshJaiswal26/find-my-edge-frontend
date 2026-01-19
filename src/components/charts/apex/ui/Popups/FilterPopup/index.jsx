@@ -13,7 +13,8 @@ export default function FilterPopup({ chartId }) {
   const ref = useRef();
 
   const updateChart = useChartStore((s) => s.updateChart);
-  const filters = useChartStore((s) => s[chartId].filters);
+  // const filters = useChartStore((s) => s[chartId].filters);
+  const [filters, setFilters] = useState([]);
 
   const { selectedSort, selectedFilter, value, from, to, selectedSeries } =
     filters;
@@ -41,7 +42,7 @@ export default function FilterPopup({ chartId }) {
         label: (k) => filterOptions[k],
       },
     ],
-    [selectedSort, selectedFilter]
+    [selectedSort, selectedFilter],
   );
 
   return (

@@ -3,23 +3,35 @@ import { filterOptions } from "@utils";
 import { Button, Input, Select } from "@ui";
 import { Trash2 } from "lucide-react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
+import { useState } from "react";
 
 export default function FilterPopup({ chartId }) {
-  const filters = useChartStore((s) => s[chartId].filters);
+  const appliedfilters = useChartStore((s) => s[chartId].filters);
+  const [filters, setFilters] = useState([...appliedfilters]);
 
   const ySeriesConfig = useChartStore((s) => s[chartId].seriesConfig);
   const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);
 
   const seriesConfig = [...ySeriesConfig, xSeriesConfig];
 
-  const {
-    addFilter,
-    updateFilter,
-    removeFilter,
-    clearFilters,
-    closePopup,
-    applyFilters,
-  } = useChartStore.getState();
+  const { clearFilters, closePopup, applyFilters } = useChartStore.getState();
+
+  const addFilter = () => {
+    setFilters((f) => [
+      ...f,
+      { key: "", operator: "none", value: "", value2: "" },
+    ]);
+  };
+
+  const updateFilter = (index, patch) => {
+    setFilters((f) =>
+      f.map((item, i) => (i === index ? { ...item, ...patch } : item)),
+    );
+  };
+
+  const removeFilter = (index) => {
+    setFilters((f) => f.filter((_, i) => i !== index));
+  };
 
   return (
     <Popup open>
@@ -58,7 +70,7 @@ export default function FilterPopup({ chartId }) {
                     getKey={(o) => o.key}
                     value={f.key}
                     onChange={(o) =>
-                      updateFilter(chartId, index, {
+                      updateFilter(index, {
                         key: o.key,
                         operator: "none",
                         value: "",
@@ -72,9 +84,7 @@ export default function FilterPopup({ chartId }) {
                     options={Object.keys(filterOptions)}
                     getLabel={(o) => filterOptions[o]}
                     value={f.operator}
-                    onChange={(o) =>
-                      updateFilter(chartId, index, { operator: o })
-                    }
+                    onChange={(o) => updateFilter(index, { operator: o })}
                   />
 
                   {/* Value(s) */}
@@ -85,7 +95,7 @@ export default function FilterPopup({ chartId }) {
                         vertical
                         value={f.value}
                         onChange={(e) =>
-                          updateFilter(chartId, index, {
+                          updateFilter(index, {
                             value: e.target.value,
                           })
                         }
@@ -95,7 +105,7 @@ export default function FilterPopup({ chartId }) {
                         vertical
                         value={f.value2}
                         onChange={(e) =>
-                          updateFilter(chartId, index, {
+                          updateFilter(index, {
                             value2: e.target.value,
                           })
                         }
@@ -107,12 +117,12 @@ export default function FilterPopup({ chartId }) {
                       vertical
                       value={f.value}
                       onChange={(e) =>
-                        updateFilter(chartId, index, { value: e.target.value })
+                        updateFilter(index, { value: e.target.value })
                       }
                     />
                   )}
 
-                  <Button.Icon onClick={() => removeFilter(chartId, index)}>
+                  <Button.Icon onClick={() => removeFilter(index)}>
                     <Trash2 size={16} />
                   </Button.Icon>
                 </div>
@@ -124,7 +134,7 @@ export default function FilterPopup({ chartId }) {
           <div>
             <button
               className="text-sm text-(--info) cursor-pointer hover:underline"
-              onClick={() => addFilter(chartId)}
+              onClick={addFilter}
             >
               + Add rule
             </button>
@@ -134,7 +144,7 @@ export default function FilterPopup({ chartId }) {
         <Popup.Footer
           text={["Clear", "Apply"]}
           onCancel={() => clearFilters(chartId)}
-          onApply={() => applyFilters(chartId)}
+          onApply={() => applyFilters(chartId, filters)}
         />
       </Popup.Container>
     </Popup>

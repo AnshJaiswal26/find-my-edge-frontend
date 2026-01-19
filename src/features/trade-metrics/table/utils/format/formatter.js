@@ -26,7 +26,7 @@ export function formatValue(value, type, display) {
       let num = Number(value);
       if (typeof num !== "number" || !Number.isFinite(num)) num = 0;
 
-      const formatter = numberFormatters[format] || numberFormatters["number"];
+      const formatter = numberFormatters[format] || numberFormatters.NUMBER;
       return formatter(num, decimals);
     }
 

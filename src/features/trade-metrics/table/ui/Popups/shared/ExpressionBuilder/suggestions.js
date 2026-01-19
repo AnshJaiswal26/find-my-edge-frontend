@@ -12,8 +12,13 @@ export function getColumnSuggestions(q, numericColumns) {
     }));
 }
 
-export function getFunctionSuggestions(q) {
+export function getFunctionSuggestions(q, mode) {
   return Object.entries(FUNCTION_REGISTRY)
+    .filter(([_, value]) =>
+      mode === "row"
+        ? value.type === "base" || value.type === "condition"
+        : value.type !== "base",
+    )
     .filter(([name]) => name.toLowerCase().includes(q))
     .map(([name, value]) => ({
       type: "function",

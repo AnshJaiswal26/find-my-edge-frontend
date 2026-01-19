@@ -25,13 +25,14 @@ export const cartesianChartConfig = ({
   const formatterY = (v) => `${config.yLabelPrefix}${v}${config.yLabelSuffix}`;
 
   const axisX = {
-    categories: [],
     tooltip: { enabled: !config.horizontal && config.xTooltip },
+    tickPlacement: "on",
     labels: {
       show: config.xLabels,
       formatter: formatterX,
       style: { fontSize: style.fontSize, colors: config.xLabelsColor },
     },
+    axisTicks: order.length,
     title: {
       text: config.xTitleText,
       style: { fontSize: style.fontSize, color: config.xTitleColor },
@@ -129,13 +130,15 @@ export const cartesianChartConfig = ({
               Math.max(startIndex, dataPointIndex),
             ];
 
-            const filteredSeries = [...chart.series.filtered];
-            const sliced = filteredSeries.slice(from, to + 1);
-            const updatedSeries = sliced.length < 1 ? filteredSeries : sliced;
+            state.updateSelection(chartId, from, to + 1);
 
-            state.updateChart(chartId, (chart) => {
-              chart.series.filtered = updatedSeries;
-            });
+            // const filteredSeries = [...chart.series.filtered];
+            // const sliced = filteredSeries.slice(from, to + 1);
+            // const updatedSeries = sliced.length < 1 ? filteredSeries : sliced;
+
+            // state.updateChart(chartId, (chart) => {
+            //   chart.series.filtered = updatedSeries;
+            // });
 
             // ✅ Clean up DOM data
             delete selection.dataset.startIndex;

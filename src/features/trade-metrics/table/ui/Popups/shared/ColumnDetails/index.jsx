@@ -5,6 +5,7 @@ import { ColorRulesSection } from "./ColorRulesSection";
 import { Section } from "@layout";
 import { COLUMN_TYPES } from "@table/model";
 import { useTableStore } from "@table/store/useTableStore";
+import { DEFAULTS_FORMATS } from "@table/utils";
 
 export default function ColumnDetails({ column, draft, onDraftChange }) {
   if (!column) return null;
@@ -22,7 +23,7 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
           onDraftChange((p) => ({
             ...p,
             type: v,
-            display: { format: "", decimals: 2 },
+            display: { format: DEFAULTS_FORMATS[v], decimals: 2 },
           }))
         }
       />
@@ -51,6 +52,7 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
       {draft.type.includes("computed") && (
         <ExpressionBuilder
           value={draft.formula}
+          mode={draft.mode}
           onCommit={(v, exp, dependencies) => {
             onDraftChange((p) => ({
               ...p,

@@ -21,8 +21,10 @@ export function buildLineChart({ x, y, layout = {}, category = "series" }) {
 
     filters: [],
 
-    filteredOrder: [],
-    sortedOrder: [],
+    selection: {
+      from: null,
+      to: null,
+    },
 
     xSeriesConfig: {
       key: x,

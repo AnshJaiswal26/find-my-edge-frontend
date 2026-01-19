@@ -1,31 +1,53 @@
 import { fnCUM, fnPREV, fnSELF, fnRESET } from "./column";
+
+export function fnIF(fn, ctx) {
+  const [condExpr, trueExpr, falseExpr] = fn.args;
+
+  const condition = ctx.evaluate(condExpr, ctx);
+
+  return condition ? ctx.evaluate(trueExpr, ctx) : ctx.evaluate(falseExpr, ctx);
+}
+
+/* base reducers */
 import {
-  fnSUM_N,
-  fnAVG_N,
-  fnCOUNT_N,
-  fnMAX_N,
-  fnMIN_N,
-  fnAVG_WIN_N,
-  fnAVG_LOSS_N,
-  fnWIN_RATE_N,
-  fnSTDDEV_N,
-} from "./rolling";
+  SUM,
+  AVG,
+  MIN,
+  MAX,
+  COALESCE,
+  ABS,
+  ROUND,
+  CLAMP,
+  MAX_LOSE_STREAK_N,
+  MAX_WIN_STREAK_N,
+  IF,
+} from "@lib/analytics/reducers";
+
+/* window reducers */
 import {
-  fnIF,
-  fnABS,
-  fnAVG,
-  fnCLAMP,
-  fnCOALESCE,
-  fnMAX,
-  fnMIN,
-  fnROUND,
-  fnSUM,
-} from "./row";
+  SUM_N,
+  AVG_N,
+  COUNT_N,
+  MAX_N,
+  MIN_N,
+  AVG_WIN_N,
+  AVG_LOSS_N,
+  WIN_RATE_N,
+  STDDEV_N,
+} from "@lib/analytics/reducers";
+
+export const FUNCTION_TYPE = {
+  COLUMN: "column",
+  BASE: "base",
+  WINDOW: "window",
+  CONDITION: "condition",
+};
 
 export const FUNCTION_REGISTRY = {
   /* ---------- COLUMN / STATE ---------- */
   PREV: {
     exec: fnPREV,
+    type: FUNCTION_TYPE.COLUMN,
     arity: 1,
     signature: "PREV(expr)",
     description: "Value from previous row",
@@ -33,6 +55,7 @@ export const FUNCTION_REGISTRY = {
 
   SELF: {
     exec: fnSELF,
+    type: FUNCTION_TYPE.COLUMN,
     arity: 0,
     signature: "SELF()",
     description: "Previous computed value",
@@ -40,6 +63,7 @@ export const FUNCTION_REGISTRY = {
 
   CUM: {
     exec: fnCUM,
+    type: FUNCTION_TYPE.COLUMN,
     arity: 1,
     signature: "CUM(expr)",
     description: "Cumulative value",
@@ -47,13 +71,15 @@ export const FUNCTION_REGISTRY = {
 
   RESET: {
     exec: fnRESET,
+    type: FUNCTION_TYPE.COLUMN,
     arity: 2,
     signature: "RESET(expr, cond)",
     description: "Reset cumulative when condition is true",
   },
 
-  /* ---------- ROW FUNCTIONS ---------- */
+  /* ---------- BASE / ROW ---------- */
   IF: {
+    type: FUNCTION_TYPE.CONDITION,
     exec: fnIF,
     arity: 3,
     signature: "IF(cond, yes, no)",
@@ -61,122 +87,155 @@ export const FUNCTION_REGISTRY = {
   },
 
   ABS: {
-    exec: fnABS,
+    type: FUNCTION_TYPE.BASE,
+    reducer: ABS,
     arity: 1,
     signature: "ABS(expr)",
     description: "Absolute value",
   },
 
   ROUND: {
-    exec: fnROUND,
+    type: FUNCTION_TYPE.BASE,
+    reducer: ROUND,
     arity: 2,
     signature: "ROUND(expr, digits)",
     description: "Round to N decimal places",
   },
 
   CLAMP: {
-    exec: fnCLAMP,
+    type: FUNCTION_TYPE.BASE,
+    reducer: CLAMP,
     arity: 3,
     signature: "CLAMP(expr, min, max)",
     description: "Clamp value to range",
   },
 
   COALESCE: {
-    exec: fnCOALESCE,
+    type: FUNCTION_TYPE.BASE,
+    reducer: COALESCE,
     arity: -1,
     signature: "COALESCE(a, b, ...)",
     description: "First non-null value",
   },
 
   SUM: {
-    exec: fnSUM,
+    type: FUNCTION_TYPE.BASE,
+    reducer: SUM,
     arity: 2,
-    signature: "SUM(a, b, ....)",
+    signature: "SUM(a, b, ...)",
     description: "Row sum",
   },
 
   AVG: {
-    exec: fnAVG,
+    type: FUNCTION_TYPE.BASE,
+    reducer: AVG,
     arity: 2,
-    signature: "AVG(expr)",
-    description: "Row avg",
+    signature: "AVG(a, b, ...)",
+    description: "Row average",
   },
 
   MAX: {
-    exec: fnMAX,
+    type: FUNCTION_TYPE.BASE,
+    reducer: MAX,
     arity: 1,
-    signature: "MAX(expr)",
+    signature: "MAX(a, b, ...)",
     description: "Maximum value",
   },
 
   MIN: {
-    exec: fnMIN,
+    type: FUNCTION_TYPE.BASE,
+    reducer: MIN,
     arity: 1,
-    signature: "MIN(expr)",
+    signature: "MIN(a, b, ...)",
     description: "Minimum value",
   },
 
-  /* ---------- ROLLING / WINDOW ---------- */
+  /* ---------- WINDOW / ROLLING ---------- */
   SUM_N: {
-    exec: fnSUM_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: SUM_N,
     arity: 2,
     signature: "SUM_N(expr, n)",
     description: "Rolling sum over N rows",
   },
 
   AVG_N: {
-    exec: fnAVG_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: AVG_N,
     arity: 2,
     signature: "AVG_N(expr, n)",
     description: "Rolling average over N rows",
   },
 
   COUNT_N: {
-    exec: fnCOUNT_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: COUNT_N,
     arity: 2,
     signature: "COUNT_N(expr, n)",
     description: "Rolling count over N rows",
   },
 
   MAX_N: {
-    exec: fnMAX_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: MAX_N,
     arity: 2,
     signature: "MAX_N(expr, n)",
     description: "Rolling max over N rows",
   },
 
   MIN_N: {
-    exec: fnMIN_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: MIN_N,
     arity: 2,
     signature: "MIN_N(expr, n)",
     description: "Rolling min over N rows",
   },
 
   AVG_WIN_N: {
-    exec: fnAVG_WIN_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: AVG_WIN_N,
     arity: 2,
     signature: "AVG_WIN_N(expr, n)",
     description: "Rolling average of winning values",
   },
 
   AVG_LOSS_N: {
-    exec: fnAVG_LOSS_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: AVG_LOSS_N,
     arity: 2,
     signature: "AVG_LOSS_N(expr, n)",
     description: "Rolling average of losing values",
   },
 
   WIN_RATE_N: {
-    exec: fnWIN_RATE_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: WIN_RATE_N,
     arity: 2,
     signature: "WIN_RATE_N(expr, n)",
     description: "Rolling win rate",
   },
 
   STDDEV_N: {
-    exec: fnSTDDEV_N,
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: STDDEV_N,
     arity: 2,
     signature: "STDDEV_N(expr, n)",
     description: "Rolling standard deviation",
+  },
+
+  MAX_LOSE_STREAK_N: {
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: MAX_LOSE_STREAK_N,
+    arity: 2,
+    signature: "MAX_LOSE_STREAK_N(expr, n)",
+    description: "Maximum consecutive losing streak over last N rows",
+  },
+
+  MAX_WIN_STREAK_N: {
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: MAX_WIN_STREAK_N,
+    arity: 2,
+    signature: "MAX_WIN_STREAK_N(expr, n)",
+    description: "Maximum consecutive winning streak over last N rows",
   },
 };

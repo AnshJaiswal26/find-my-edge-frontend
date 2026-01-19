@@ -1,4 +1,11 @@
 import { FUNCTION_REGISTRY } from "@table/engine/functions/registry";
+import { runBackwardWindowReducer } from "@table/engine/functions/rolling";
+import { runBaseReducer } from "@table/engine/functions/row";
+
+const runReducers = {
+  base: runBaseReducer,
+  window: runBackwardWindowReducer,
+};
 
 /* -------------------------------------------------- */
 /* MAIN EVALUATOR                                     */
@@ -61,9 +68,11 @@ export function evaluateExpression(expr, ctx = {}) {
 
     case "function": {
       const entry = FUNCTION_REGISTRY[expr.name.toUpperCase()];
-      if (!entry?.exec) return null;
+      if (!entry?.exec && !entry?.reducer) return null;
 
-      return entry.exec(expr, ctx);
+      return entry?.reducer
+        ? runReducers[entry.type](entry.reducer, expr, ctx)
+        : entry.exec(expr, ctx);
     }
 
     default:

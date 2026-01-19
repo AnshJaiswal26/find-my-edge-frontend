@@ -1,5 +1,3 @@
-import { filterOperationMap } from "@utils";
-
 export const createFilterSlice = (set, get) => ({
   updateFilter(chartId, index, patch) {
     set((s) => {
@@ -25,30 +23,16 @@ export const createFilterSlice = (set, get) => ({
   },
 
   clearFilters(chartId) {
-    const { resetSeries, closePopup } = get();
-
     set((s) => {
       s[chartId].filters = [];
     });
-    resetSeries(chartId);
-    closePopup();
+    get().closePopup();
   },
 
-  applyFilters(chartId) {
-    const { [chartId]: chart, closePopup } = get();
-    const filters = chart.filters;
-
-    if (!filters.length) return;
-
+  applyFilters(chartId, filters) {
     set((s) => {
-      s[chartId].filteredOrder = s.seriesOrder.filter((id) => {
-        return s[chartId].filters.some((f) => {
-          const fn = filterOperationMap[f.operator];
-          return fn?.(s.seriesById[id][f.key], f.value, f.value2);
-        });
-      });
+      s[chartId].filters = filters;
     });
-
-    closePopup();
+    get().closePopup();
   },
 });

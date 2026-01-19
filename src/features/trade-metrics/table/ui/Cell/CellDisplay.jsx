@@ -41,12 +41,12 @@ export const CellDisplay = memo(function CellDisplay({
 
   const color = useMemo(
     () => evaluateColorRules(cell.value, colorRules),
-    [cell.value, colorRules]
+    [cell.value, colorRules],
   );
 
   const displayValue = useMemo(
     () => formatValue(cell.value, type, display),
-    [cell.value, type, display]
+    [cell.value, type, display, colId],
   );
 
   return (

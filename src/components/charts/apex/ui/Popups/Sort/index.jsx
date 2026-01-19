@@ -49,8 +49,7 @@ export default function SortPopup({ chartId }) {
             clearSort(chartId);
           }}
           onApply={() => {
-            updateSort(chartId, draft.key, draft.operator);
-            applySort(chartId);
+            applySort(chartId, draft.key, draft.operator);
           }}
         />
       </Popup.Container>

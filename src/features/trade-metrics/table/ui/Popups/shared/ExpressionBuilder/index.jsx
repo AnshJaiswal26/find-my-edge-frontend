@@ -9,7 +9,7 @@ import { Section } from "@layout";
 import { formatExpression } from "./formatExpression";
 import { getColumnSuggestions, getFunctionSuggestions } from "./suggestions";
 
-export function ExpressionBuilder({ value, onCommit, onChange }) {
+export function ExpressionBuilder({ value, mode, onCommit, onChange }) {
   const { numericColumns, labelToId } = useNumericColumns();
 
   const [cursor, setCursor] = useState(0);
@@ -23,10 +23,10 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
 
     const q = m[0].toLowerCase();
     return [
-      ...getFunctionSuggestions(q),
+      ...getFunctionSuggestions(q, mode),
       ...getColumnSuggestions(q, numericColumns),
     ];
-  }, [expr, cursor, numericColumns]);
+  }, [expr, cursor, numericColumns, mode]);
 
   const parseResult = useMemo(() => {
     if (!expr.trim()) return null;
@@ -61,7 +61,7 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
       setCursor(before.length + insert.length);
       setOpen(false);
     },
-    [expr, cursor]
+    [expr, cursor],
   );
 
   const onKeyDown = useCallback(
@@ -84,7 +84,7 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
         setHighlight(0);
       }
     },
-    [suggestions, highlight, applySuggestion]
+    [suggestions, highlight, applySuggestion],
   );
 
   const handleChange = useCallback(
@@ -95,7 +95,7 @@ export function ExpressionBuilder({ value, onCommit, onChange }) {
       setOpen(true);
       onChange?.(exp, ast, dependency);
     },
-    [ast, dependency, onChange]
+    [ast, dependency, onChange],
   );
 
   const handleBlur = useCallback(() => {

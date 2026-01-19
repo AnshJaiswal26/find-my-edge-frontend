@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
 import { tooltipCallback } from "../tooltip/tootipCallback";
+import { filterOperationMap, sortOperationMap } from "@utils";
 
 const seriesGenerator = {
   bar: ({ seriesConfig, seriesById, filteredOrder }) => {
@@ -30,36 +31,71 @@ export default function useSeriesChartConfig({
   selectedSeriesKeys,
 }) {
   const type = useChartStore((s) => s[chartId].meta.type);
+
+  const seriesOrder = useChartStore((s) => s.seriesOrder);
   const seriesById = useChartStore((s) => s.seriesById);
 
-  const filteredOrder = useChartStore((s) =>
-    s[chartId].sortedOrder.length !== 0
-      ? s[chartId].sortedOrder
-      : s[chartId].filteredOrder.length !== 0
-        ? s[chartId].filteredOrder
-        : s.seriesOrder,
-  );
+  const filters = useChartStore((s) => s[chartId].filters);
+  const sort = useChartStore((s) => s[chartId].sort);
+  const selection = useChartStore((s) => s[chartId].selection);
+
+  const finalOrder = useMemo(() => {
+    let order = seriesOrder;
+
+    /* 1️⃣ SELECTION */
+    if (selection.from !== null && selection.to !== null) {
+      order = order.slice(selection.from, selection.to);
+    }
+
+    /* 2️⃣ FILTER */
+    if (filters.length) {
+      order = order.filter((id) =>
+        filters.some((f) => {
+          const fn = filterOperationMap[f.operator];
+          return fn?.(seriesById[id][f.key], f.value, f.value2);
+        }),
+      );
+    }
+
+    /* 3️⃣ SORT */
+    if (sort.key && sort.operator !== "none") {
+      const fn = sortOperationMap[sort.operator];
+      order = [...order].sort((a, b) => {
+        return fn?.(seriesById[a][sort.key], seriesById[b][sort.key]) ?? 0;
+      });
+    }
+
+    return order;
+  }, [
+    seriesOrder,
+    seriesById,
+    filters,
+    sort.key,
+    sort.operator,
+    selection.from,
+    selection.to,
+  ]);
 
   const { options, computedSeries } = useMemo(
     () => ({
       options: configGenerator?.[type]({
         chart: useChartStore.getState()[chartId],
         chartId,
-        order: filteredOrder,
+        order: finalOrder,
         seriesById,
         selectedSeriesKeys,
         tooltipCallback: (sv, i, si) =>
-          tooltipCallback(sv, i, si, chartId, selectedSeriesKeys),
+          tooltipCallback(sv, i, si, chartId, finalOrder, selectedSeriesKeys),
       }),
       computedSeries: seriesGenerator[type]({
         seriesConfig: selectedSeriesKeys
           ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
           : seriesConfig,
-        filteredOrder,
+        filteredOrder: finalOrder,
         seriesById,
       }),
     }),
-    [seriesConfig, layout, selectedSeriesKeys, seriesById, filteredOrder],
+    [seriesConfig, layout, selectedSeriesKeys, seriesById, finalOrder],
   );
 
   return { options, series: computedSeries, type };

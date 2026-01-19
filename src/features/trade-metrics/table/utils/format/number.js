@@ -1,5 +1,7 @@
 export const NUMBER_FORMATS = [
   { key: "NUMBER", label: "123.45" },
+  { key: "NUMBER_SIGNED", label: "+123.45 / -98.7" },
+
   { key: "INTEGER", label: "123" },
 
   { key: "CURRENCY", label: "₹1,250" },
@@ -32,6 +34,9 @@ function formatCurrency(v, d = 0) {
 
 export const numberFormatters = {
   NUMBER: (v, d = 2) => formatNumber(v, d),
+
+  NUMBER_SIGNED: (v, d = 2) =>
+    `${v >= 0 ? "+" : "-"}${formatNumber(Math.abs(v), d)}`,
 
   INTEGER: (v) =>
     new Intl.NumberFormat("en-IN", {

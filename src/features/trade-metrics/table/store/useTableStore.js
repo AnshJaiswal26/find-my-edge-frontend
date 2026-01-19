@@ -33,5 +33,5 @@ export const useTableStore = create(
     ...createCoreSlice(set, get),
 
     ...createComputeSlice(set, get),
-  }))
+  })),
 );

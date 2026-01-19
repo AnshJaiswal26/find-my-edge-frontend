@@ -10,7 +10,7 @@ export default function AddColumnPopup() {
   const [draft, setDraft] = useState(
     createColumn({
       id: "id",
-    })
+    }),
   );
 
   const save = () => {
