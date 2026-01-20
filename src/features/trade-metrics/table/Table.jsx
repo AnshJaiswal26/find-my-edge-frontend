@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useTableStore } from "./store/useTableStore";
 
 import { Toolbar } from "./ui/Toolbar/Toolbar";
@@ -10,16 +10,9 @@ import { Loader } from "@layout";
 export function Table() {
   const tableRef = useRef(null);
 
-  const { initDemoData, addTrade, openPopup, deleteColumn } =
-    useTableStore.getState();
+  const { addTrade, openPopup, deleteColumn } = useTableStore.getState();
 
   const isDataLoading = useTableStore((s) => s.isDataLoading);
-
-  useEffect(() => {
-    const fetchData = async () => initDemoData();
-
-    fetchData();
-  }, []);
 
   if (isDataLoading) return <Loader />;
 

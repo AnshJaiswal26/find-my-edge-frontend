@@ -1,3 +1,4 @@
+import { useTradeStore } from "@stores";
 import { collectAffectedColumns } from "../dependency";
 import { computeColumn, PARTIAL_RUNNERS } from "../engine/execute";
 import { getRowIndex } from "../utils";
@@ -18,7 +19,7 @@ export const createComputeSlice = (set, get) => ({
       s.rowsById[rowId].cells[colId].value = value;
     });
 
-    if (["number", "time", "date"].includes(column.type)) {
+    if (state.affectedMap?.[column.id]) {
       state.recompute({
         reason: "cell",
         rowId,

@@ -1,4 +1,4 @@
-import { generateCharts } from "@utils";
+import { generateCharts, parseInputValue } from "@utils";
 import { DEFAULT_CHARTS } from "@data";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
@@ -9,6 +9,7 @@ import { createLayoutSlice } from "./layout.slice";
 import { createSeriesSlice } from "./series.slice";
 import { createCoreSlice } from "./core.slice";
 import { createPopupSlice } from "./popup.slice";
+import { useTradeStore } from "@stores";
 
 export const useChartStore = create(
   immer((set, get) => ({
@@ -37,6 +38,41 @@ export const useChartStore = create(
     ...createLayoutSlice(set, get),
     ...createSeriesSlice(set, get),
 
+    hydrateFromTrades() {
+      const { tradesById, tradeOrder } = useTradeStore.getState();
+
+      if (!tradeOrder.length) return;
+
+      const seriesOrder = [];
+      const seriesById = {};
+
+      tradeOrder.forEach((tradeId) => {
+        const trade = tradesById[tradeId];
+
+        seriesOrder.push(tradeId);
+
+        seriesById[tradeId] = {
+          id: tradeId,
+          date: parseInputValue(trade.date, "date"),
+          entryTime: parseInputValue(trade.entryTime, "time"),
+          exitTime: parseInputValue(trade.exitTime, "time"),
+          duration: parseInputValue(trade.duration, "duration"),
+          symbol: parseInputValue(trade.symbol, "text"),
+          entry: parseInputValue(trade.entry, "number"),
+          exit: parseInputValue(trade.exit, "number"),
+          qty: parseInputValue(trade.qty, "number"),
+          riskReward: trade.riskReward,
+          capital: trade.capital,
+          profit: trade.profit,
+          loss: trade.loss,
+          pnl: trade.pnl,
+          cumulativePnl: trade.cumulativePnl,
+        };
+      });
+
+      set({ seriesById, seriesOrder });
+    },
+
     updateChart: (chartId, callback) => {
       set((s) => {
         if (typeof chartId === "function") {
@@ -44,5 +80,5 @@ export const useChartStore = create(
         } else callback(s[chartId], s);
       });
     },
-  }))
+  })),
 );

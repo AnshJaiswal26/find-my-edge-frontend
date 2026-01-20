@@ -17,12 +17,13 @@ export default function GroupByPopup() {
           key: null,
           type: null,
           mode: "value",
+          granularity: "bucket",
           operation: "none",
           group1Name: "",
           group2Name: "",
           value: "",
           valueTo: "",
-        }
+        },
   );
 
   const column = columnsById[draft.key];
@@ -53,14 +54,48 @@ export default function GroupByPopup() {
             }
           />
 
-          {/* Group mode */}
           {draft.key && (
             <Select
               label="Group mode"
-              options={["value", "condition"]}
-              getLabel={(o) => (o === "value" ? "By value" : "By condition")}
+              options={
+                column.type === "date" || column.type === "time"
+                  ? ["bucket", "condition"]
+                  : ["value", "condition"]
+              }
+              getLabel={(o) =>
+                o === "value"
+                  ? "By value"
+                  : o === "condition"
+                    ? "By condition"
+                    : "By date"
+              }
               value={draft.mode}
-              onChange={(mode) => setDraft((p) => ({ ...p, mode }))}
+              onChange={(mode) =>
+                setDraft((p) => ({
+                  ...p,
+                  mode,
+                  operation: "none",
+                  value: "",
+                  valueTo: "",
+                }))
+              }
+            />
+          )}
+
+          {draft.mode === "bucket" && (
+            <Select
+              label="Bucket"
+              options={["day", "month", "year"]}
+              getLabel={(o) =>
+                o === "day" ? "Day" : o === "month" ? "Month" : "Year"
+              }
+              value={draft.granularity}
+              onChange={(granularity) =>
+                setDraft((p) => ({
+                  ...p,
+                  granularity,
+                }))
+              }
             />
           )}
 

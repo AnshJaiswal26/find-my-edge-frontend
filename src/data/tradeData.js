@@ -21,7 +21,7 @@ function pad2(n) {
 
 function formatTimeWithSeconds(date) {
   return `${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(
-    date.getSeconds()
+    date.getSeconds(),
   )}`;
 }
 
@@ -34,7 +34,7 @@ function getRandomTradingDuration() {
 
   // random entry time (ms precision)
   const entry = new Date(
-    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    start.getTime() + Math.random() * (end.getTime() - start.getTime()),
   );
 
   // duration between 5 and 60 minutes, with seconds precision
@@ -102,25 +102,25 @@ export const tradeData = Array.from({ length: days }).map((_, i) => {
   }
 
   return {
-    "Trade Id": tradeId,
-    Date: date,
-    "Entry Time": entryTime,
-    "Exit Time": exitTime,
-    Duration: durationSeconds,
-    Symbol: randomSymbol(num),
-    Entry: entry,
-    Exit: exit,
-    Qty: qty,
-    SL: exit - entry,
-    Pnl: pnl,
-    "Cummulative Pnl": cumulativePnl,
-    Profit: pnl > 0 ? pnl : 0,
-    Loss: pnl < 0 ? pnl : 0,
-    Risk: risk,
-    Charges: charges,
-    Trade: trade,
-    "Risk/Reward": rr,
-    Capital: capital,
+    tradeId: tradeId,
+    date,
+    entryTime: entryTime,
+    exitTime: exitTime,
+    duration: durationSeconds,
+    symbol: randomSymbol(num),
+    entry,
+    exit,
+    qty,
+    sl: exit - entry,
+    pnl,
+    cumulativePnl: cumulativePnl,
+    profit: pnl > 0 ? pnl : 0,
+    loss: pnl < 0 ? pnl : 0,
+    risk,
+    charges,
+    trade,
+    riskReward: rr,
+    capital,
   };
 });
 

@@ -5,7 +5,6 @@ export function buildBarChart({ x, y, layout = {}, category = "series" }) {
     meta: {
       id: crypto.randomUUID(),
       type: "bar",
-      xaxisMetric: x,
       category,
     },
 
@@ -27,8 +26,8 @@ export function buildBarChart({ x, y, layout = {}, category = "series" }) {
     },
 
     xSeriesConfig: {
-      key: x,
-      name: x,
+      key: x.key ?? "",
+      name: x.name ?? "",
     },
 
     seriesConfig: y.map((s) => ({

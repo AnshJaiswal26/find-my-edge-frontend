@@ -1,40 +1,8 @@
-import { tradeData } from "@data";
 import { createChart } from "../model/factory";
 
 export const createCoreSlice = (set, get) => ({
   seriesById: {},
   seriesOrder: [],
-
-  initDemoData() {
-    if (get().seriesOrder.length > 0) return;
-
-    const seriesOrder = [];
-    const seriesById = {};
-
-    Array.from({ length: 1 }).forEach(() => {
-      tradeData.forEach((t) => {
-        const id = crypto.randomUUID();
-
-        // const trade = {
-        //   date: t.Date,
-        //   entryTime: t["Entry Time"],
-        //   exitTime: t["Exit Time"],
-        //   duration: t.Duration,
-        //   symbol: t.Symbol,
-        //   entry: t.Entry,
-        //   exit: t.Exit,
-        //   qty: t.Qty,
-        // };
-
-        t.id = id;
-
-        seriesOrder.push(id);
-        seriesById[id] = t;
-      });
-    });
-
-    set({ seriesById, seriesOrder });
-  },
 
   loadInitialCharts() {
     const { order, seriesById, seriesOrder } = get();
@@ -63,10 +31,10 @@ export const createCoreSlice = (set, get) => ({
           yLabelPrefix: "1:",
           title: "P&L Booked on Risk/Reward",
         },
-        x: "Date",
+        x: { key: "date", name: "Date" },
         y: [
           {
-            key: "Risk/Reward",
+            key: "riskReward",
             name: "Risk/Reward",
             colors: [
               {
@@ -99,10 +67,10 @@ export const createCoreSlice = (set, get) => ({
           yLabelPrefix: "₹",
           title: "P&L Over Time",
         },
-        x: "Entry Time",
+        x: { key: "entryTime", name: "Entry Time" },
         y: [
           {
-            key: "Pnl",
+            key: "pnl",
             name: "Pnl",
             tooltipLabel: "Pnl",
             color: "var(--cyan)",
@@ -110,7 +78,7 @@ export const createCoreSlice = (set, get) => ({
             areaColor: "var(--cyan)",
           },
           {
-            key: "Cummulative Pnl",
+            key: "cumulativePnl",
             name: "Cummulative Pnl",
             tooltipLabel: "Cummulative Pnl",
             color: "var(--warning)",
@@ -126,7 +94,7 @@ export const createCoreSlice = (set, get) => ({
           if (s.key === "Wins") {
             return (
               (seriesOrder.reduce((acc, id) => {
-                acc = seriesById[id].Pnl > 0 ? acc + 1 : acc;
+                acc = seriesById[id].pnl > 0 ? acc + 1 : acc;
                 return acc;
               }, 0) /
                 seriesOrder.length) *
@@ -135,7 +103,7 @@ export const createCoreSlice = (set, get) => ({
           }
           return (
             (seriesOrder.reduce((acc, id) => {
-              acc = seriesById[id].Pnl < 0 ? acc + 1 : acc;
+              acc = seriesById[id].pnl < 0 ? acc + 1 : acc;
               return acc;
             }, 0) /
               seriesOrder.length) *
@@ -150,7 +118,7 @@ export const createCoreSlice = (set, get) => ({
           if (s.key === "Wins") {
             return (
               (seriesOrder.reduce((acc, id) => {
-                acc = seriesById[id].Pnl > 0 ? acc + 1 : acc;
+                acc = seriesById[id].pnl > 0 ? acc + 1 : acc;
                 return acc;
               }, 0) /
                 seriesOrder.length) *
@@ -159,7 +127,7 @@ export const createCoreSlice = (set, get) => ({
           }
           return (
             (seriesOrder.reduce((acc, id) => {
-              acc = seriesById[id].Pnl < 0 ? acc + 1 : acc;
+              acc = seriesById[id].pnl < 0 ? acc + 1 : acc;
               return acc;
             }, 0) /
               seriesOrder.length) *
@@ -168,6 +136,8 @@ export const createCoreSlice = (set, get) => ({
         }),
       }),
     };
+
+    console.log(map.donut);
 
     set((s) => {
       ["bar", "line", "donut", "radialBar"].map((ch) => {

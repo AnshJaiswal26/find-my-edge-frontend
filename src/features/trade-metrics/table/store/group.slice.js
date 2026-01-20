@@ -52,6 +52,7 @@ export const createGroupSlice = (set, get) => ({
       groupBy,
       filteredRowOrder,
       rowsById,
+      columnsById,
       recompute,
     } = get();
 
@@ -65,11 +66,12 @@ export const createGroupSlice = (set, get) => ({
     const effectiveRowOrder = sortedRowOrder.length
       ? sortedRowOrder
       : filteredRowOrder.length
-      ? filteredRowOrder
-      : rowOrder;
+        ? filteredRowOrder
+        : rowOrder;
 
     const getGroupName = createGetGroupKey({
       rowsById,
+      columnsById,
       groupBy: groupConfig,
     });
 

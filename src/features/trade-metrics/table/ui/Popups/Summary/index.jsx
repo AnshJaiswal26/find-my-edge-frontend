@@ -3,7 +3,7 @@ import { useTableStore } from "@table/store/useTableStore";
 import { MetricStatsRow } from "./MetricStatsRow";
 import { KpiGrid } from "./KpiGrid";
 import { MetricTableHeader } from "./MetricTableHeader";
-import { formatValue } from "@table/utils";
+import { formatValue } from "@utils";
 
 function Divider() {
   return <div className="h-px bg-(--border)" />;
@@ -22,7 +22,7 @@ function computeSummary(state) {
   const rows = rowOrder.map((id) => rowsById[id]);
 
   const numericColumns = Object.values(columnsById).filter(
-    (c) => c.type === "number" || c.type.includes("computed")
+    (c) => c.type === "number" || c.type.includes("computed"),
   );
 
   const stats = {};

@@ -1,14 +1,11 @@
-import { columnsById } from "../data";
 import { createCell, createRow } from "../model";
 import { buildAffectedMap } from "../dependency";
-import { parseInputValue } from "@utils";
-import { tradeData } from "@data";
 
 export const createCoreSlice = (set, get) => ({
   rowsById: {},
   rowOrder: [],
 
-  columnsById: { ...columnsById },
+  columnsById: {},
   columnOrder: [],
   columnWidths: {},
   affectedMap: {},
@@ -16,52 +13,6 @@ export const createCoreSlice = (set, get) => ({
   /* ----------------------------------------------- */
   /*                  DATA ACTIONS                   */
   /* ----------------------------------------------- */
-
-  async initDemoData() {
-    set({ isDataLoading: true });
-
-    // const res = await fetch("http://localhost:8080/api/trades");
-
-    // if (!res.ok) {
-    //   throw new Error("Failed to fetch trades");
-    // }
-
-    // const trades = await res.json();
-
-    const state = get();
-
-    const rowOrder = [];
-    const rowsById = {};
-
-    Array.from({ length: 1 }).forEach(() => {
-      tradeData.forEach((t) => {
-        const trade = createRow(state.columnsById);
-
-        trade.cells.date.value = parseInputValue(t.Date, "date");
-        trade.cells.entryTime.value = parseInputValue(t["Entry Time"], "time");
-        trade.cells.exitTime.value = parseInputValue(t["Exit Time"], "time");
-        trade.cells.duration.value = parseInputValue(t.Duration, "duration");
-        trade.cells.symbol.value = parseInputValue(t.Symbol, "text");
-        trade.cells.entry.value = parseInputValue(t.Entry, "number");
-        trade.cells.exit.value = parseInputValue(t.Exit, "number");
-        trade.cells.qty.value = parseInputValue(t.Qty, "number");
-
-        rowOrder.push(trade.id);
-        rowsById[trade.id] = trade;
-      });
-    });
-
-    set({
-      rowsById,
-      rowOrder,
-      columnOrder: Object.keys(state.columnsById),
-      affectedMap: buildAffectedMap(state.columnsById),
-    });
-
-    state.recompute({ reason: "all" });
-
-    set({ isDataLoading: false });
-  },
 
   /* ------------------------------------------------- */
   /*                ROW ACTIONS                        */
@@ -123,6 +74,7 @@ export const createCoreSlice = (set, get) => ({
 
   updateColumn(activeColId, draft) {
     const state = get();
+    console.log(draft);
     set((s) => {
       Object.assign(s.columnsById[activeColId], draft);
       s.affectedMap = buildAffectedMap(s.columnsById);

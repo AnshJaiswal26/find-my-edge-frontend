@@ -1,14 +1,11 @@
 import { createCell } from "./createCell";
 
-export function createRow(columnsById) {
+export function createRow(columnsById, id) {
   const cells = {};
 
   Object.values(columnsById).forEach((column) => {
     cells[column.id] = createCell(column);
   });
 
-  return {
-    id: crypto.randomUUID(),
-    cells,
-  };
+  return { id, cells };
 }

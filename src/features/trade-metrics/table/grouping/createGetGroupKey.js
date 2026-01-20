@@ -1,6 +1,7 @@
 import { filterOperationMap, filterOptions } from "@utils";
+import { getDateBucket } from "./getDateBucket";
 
-export function createGetGroupKey({ rowsById, groupBy }) {
+export function createGetGroupKey({ rowsById, columnsById, groupBy }) {
   if (!groupBy) {
     return () => ({
       groupId: "__UNGROUPED__",
@@ -8,20 +9,45 @@ export function createGetGroupKey({ rowsById, groupBy }) {
     });
   }
 
-  const { key, mode, operation, value, valueTo, group1Name, group2Name } =
-    groupBy;
+  const {
+    key,
+    mode,
+    granularity,
+    operation,
+    value,
+    valueTo,
+    group1Name,
+    group2Name,
+  } = groupBy;
+
+  const display = columnsById[key].display;
 
   /* ================= VALUE-BASED GROUPING ================= */
   if (mode === "value") {
     return (rowId) => {
       const v = rowsById[rowId]?.cells[key]?.value;
-
       const groupId = v == null || v === "" ? "__EMPTY__" : String(v);
 
       return {
         groupId,
         label: groupId,
       };
+    };
+  }
+
+  /* ================= BUCKET-BASED (DATE) GROUPING ================= */
+  if (mode === "bucket") {
+    return (rowId) => {
+      const v = rowsById[rowId]?.cells[key]?.value;
+
+      if (v == null) {
+        return {
+          groupId: "__EMPTY__",
+          label: "Empty",
+        };
+      }
+
+      return getDateBucket(v, granularity);
     };
   }
 

@@ -22,7 +22,9 @@ export default function ColumnSettingsPopup() {
 
   const isValid = () => {
     if (!draft.label.trim()) return false;
-    if (!draft.type.includes("computed") && !draft.expression) return false;
+
+    if (draft.type.includes("computed") && !draft.expression) return false;
+
     if (draft.type === "select") {
       if (
         !draft.options ||
@@ -34,15 +36,12 @@ export default function ColumnSettingsPopup() {
     return true;
   };
 
-  const validation = isValid();
-
   /* ---------------- apply ---------------- */
 
   function applyChanges() {
     console.log("Applying changes:", draft);
-    if (!validation) return;
+    if (!isValid()) return;
     updateColumn(activeColId, draft);
-    closePopup();
   }
 
   return (

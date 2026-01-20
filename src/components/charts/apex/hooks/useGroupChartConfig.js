@@ -2,27 +2,27 @@ import { useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
 import { tooltipCallback } from "../tooltip/tootipCallback";
+import { WIN_RATE_N } from "@lib/analytics/reducers";
 
 const getSeries = ({ seriesConfig, seriesById, seriesOrder }) => {
   const series = seriesConfig.map((s) => {
     if (s.key === "Wins") {
-      return (
-        (seriesOrder.reduce((acc, id) => {
-          acc = seriesById[id].Pnl > 0 ? acc + 1 : acc;
-          return acc;
-        }, 0) /
-          seriesOrder.length) *
-        100
-      );
+      const state = WIN_RATE_N.init(seriesOrder.length);
+
+      seriesOrder.forEach((id) => {
+        WIN_RATE_N.step(state, seriesById[id].pnl);
+      });
+
+      return WIN_RATE_N.result(state) * 100;
     }
-    return (
-      (seriesOrder.reduce((acc, id) => {
-        acc = seriesById[id].Pnl < 0 ? acc + 1 : acc;
-        return acc;
-      }, 0) /
-        seriesOrder.length) *
-      100
-    );
+
+    const state = WIN_RATE_N.init(seriesOrder.length);
+
+    seriesOrder.forEach((id) => {
+      WIN_RATE_N.step(state, seriesById[id].pnl);
+    });
+
+    return 100 - WIN_RATE_N.result(state) * 100;
   });
   return series;
 };

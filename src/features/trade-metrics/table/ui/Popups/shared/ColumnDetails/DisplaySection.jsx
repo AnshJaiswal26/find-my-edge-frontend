@@ -5,7 +5,7 @@ import {
   NUMBER_FORMATS,
   TIME_FORMATS,
   DEFAULTS_FORMATS,
-} from "@table/utils";
+} from "@utils";
 
 const numberFomart = NUMBER_FORMATS.map(({ key }) => key);
 const timeFormat = TIME_FORMATS.map(({ key }) => key);

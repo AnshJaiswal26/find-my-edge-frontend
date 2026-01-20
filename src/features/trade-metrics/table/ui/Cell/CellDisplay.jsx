@@ -4,7 +4,7 @@ import { evaluateColorRules, formatForInput } from "@utils";
 import { tooltipApi } from "@ui";
 
 import { useTableStore } from "@table/store/useTableStore";
-import { formatValue } from "@table/utils";
+import { formatValue } from "@utils";
 import { isColumnEditable } from "@table/dependency";
 import { explainFormulaFromColumn } from "./cellUtils";
 

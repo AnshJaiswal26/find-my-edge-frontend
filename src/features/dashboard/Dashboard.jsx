@@ -163,9 +163,6 @@ function ChartDashboard() {
   }, [order]);
 
   useEffect(() => {
-    useChartStore.getState().initDemoData();
-    useChartStore.getState().loadInitialCharts();
-
     window.dispatchEvent(new Event("resize"));
   }, []);
 

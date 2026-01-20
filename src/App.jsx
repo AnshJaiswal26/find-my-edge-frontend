@@ -2,26 +2,28 @@ import React, { Suspense, lazy, useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { pageRoute } from "@data";
 import { Loader, PageContainer } from "@layout";
-import { useUIStore } from "@stores";
+import { useTradeStore, useUIStore } from "@stores";
+import { useTableStore } from "@table/store/useTableStore";
+import { useChartStore } from "@charts/apex/store/useChartStore";
 
 // Lazy import each page
 const Dashboard = lazy(() => import("./features/dashboard/Dashboard"));
-const TradeMetrics = lazy(() =>
-  import("./features/trade-metrics/TradeMetrics")
+const TradeMetrics = lazy(
+  () => import("./features/trade-metrics/TradeMetrics"),
 );
-const SheetIntegration = lazy(() =>
-  import("./features/sheet-integration/SheetIntegration")
+const SheetIntegration = lazy(
+  () => import("./features/sheet-integration/SheetIntegration"),
 );
 
 const YearlyCalendar = lazy(() => import("./features/calander/YearlyCalendar"));
-const CapturedStrategies = lazy(() =>
-  import("./features/captured-strategies/CapturedStrategies")
+const CapturedStrategies = lazy(
+  () => import("./features/captured-strategies/CapturedStrategies"),
 );
 const SetupRules = lazy(() => import("./features/setups-rules/SetupRules"));
 const Settings = lazy(() => import("./features/settings/Settings"));
 const Mistakes = lazy(() => import("./features/mistakes/Mistakes"));
-const RiskManagement = lazy(() =>
-  import("./features/risk-management/RiskManagement")
+const RiskManagement = lazy(
+  () => import("./features/risk-management/RiskManagement"),
 );
 
 function Layout() {
@@ -43,6 +45,12 @@ const withSuspense = (Component) => {
 function App() {
   useEffect(() => {
     const { setSelect, setColorPicker } = useUIStore.getState();
+
+    useTradeStore.getState().fetchTrades();
+    useTableStore.getState().hydrateSchema();
+    useTableStore.getState().hydrateRows();
+    useChartStore.getState().hydrateFromTrades();
+    useChartStore.getState().loadInitialCharts();
 
     const close = () => {
       setSelect(null);

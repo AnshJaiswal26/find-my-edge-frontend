@@ -5,7 +5,7 @@ import { ColorRulesSection } from "./ColorRulesSection";
 import { Section } from "@layout";
 import { COLUMN_TYPES } from "@table/model";
 import { useTableStore } from "@table/store/useTableStore";
-import { DEFAULTS_FORMATS } from "@table/utils";
+import { DEFAULTS_FORMATS } from "@utils";
 
 export default function ColumnDetails({ column, draft, onDraftChange }) {
   if (!column) return null;
@@ -51,6 +51,7 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
       {/* Computed */}
       {draft.type.includes("computed") && (
         <ExpressionBuilder
+          key={column.id}
           value={draft.formula}
           mode={draft.mode}
           onCommit={(v, exp, dependencies) => {

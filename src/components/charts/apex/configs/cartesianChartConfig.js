@@ -10,15 +10,16 @@ export const cartesianChartConfig = ({
   tooltipCallback,
 }) => {
   const config = chart.layout;
+  const xKey = chart.xSeriesConfig.key;
 
   const style = { fontSize: "0.75rem" };
 
-  const isPrefix = config.xLabelPrefixIndexing && chart.meta.xaxisMetric !== "";
-  const isSuffix = config.xLabelSuffixIndexing && chart.meta.xaxisMetric !== "";
+  const isPrefix = config.xLabelPrefixIndexing && xKey !== "";
+  const isSuffix = config.xLabelSuffixIndexing && xKey !== "";
 
   const formatterX = (v) => {
     return `${isPrefix ? v : ""}${config.xLabelPrefix}${
-      v === 0 ? "" : seriesById[order[v - 1]]?.[chart.meta.xaxisMetric] || v
+      v === 0 ? "" : seriesById[order[v - 1]]?.[xKey] || v
     }${config.xLabelSuffix}${isSuffix ? v : ""}`;
   };
 
