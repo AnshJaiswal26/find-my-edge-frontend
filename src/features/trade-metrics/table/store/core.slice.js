@@ -1,5 +1,6 @@
 import { createCell, createRow } from "../model";
 import { buildAffectedMap } from "../dependency";
+import { useTradeStore } from "@stores";
 
 export const createCoreSlice = (set, get) => ({
   rowsById: {},
@@ -18,12 +19,25 @@ export const createCoreSlice = (set, get) => ({
   /*                ROW ACTIONS                        */
   /* ------------------------------------------------- */
 
-  addTrade() {
-    const t = createRow(get().columnsById);
+  addRow() {
+    const id = crypto.randomUUID();
+    const { row, trade } = createRow(get().columnsById, id);
+
     set((s) => {
-      s.rowsById[t.id] = t;
-      s.rowOrder.push(t.id);
+      s.rowsById[row.id] = row;
+      s.rowOrder.push(row.id);
     });
+
+    useTradeStore.getState().addTrade(trade, id);
+  },
+
+  deleteRow(id) {
+    set((s) => {
+      delete s.rowsById[id];
+      s.rowOrder = s.rowOrder.filter((x) => x !== id);
+    });
+
+    useTradeStore.getState().deleteTrade(id);
   },
 
   /* ------------------------------------------------- */
@@ -47,6 +61,8 @@ export const createCoreSlice = (set, get) => ({
       });
     });
 
+    useTradeStore.getState().addSchema(metric);
+
     if (metric.mode === "grouped") return;
 
     state.recompute({
@@ -69,16 +85,21 @@ export const createCoreSlice = (set, get) => ({
       delete s.columnWidths[colId];
     });
 
+    useTradeStore.getState().deleteSchema(colId);
+
     get().closePopup();
   },
 
   updateColumn(activeColId, draft) {
     const state = get();
     console.log(draft);
+
     set((s) => {
       Object.assign(s.columnsById[activeColId], draft);
       s.affectedMap = buildAffectedMap(s.columnsById);
     });
+
+    useTradeStore.getState().updateSchema(activeColId, draft);
 
     if (draft.type.includes("computed"))
       state.recompute({ reason: "column", colId: activeColId });

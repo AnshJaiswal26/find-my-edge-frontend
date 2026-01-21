@@ -1,7 +1,7 @@
-import { FUNCTION_REGISTRY } from "@table/engine/functions/registry";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 
 export const FUNCTION_ARITY = Object.fromEntries(
-  Object.entries(FUNCTION_REGISTRY).map(([name, def]) => [name, def.arity])
+  Object.entries(FUNCTION_REGISTRY).map(([name, def]) => [name, def.arity]),
 );
 
 export function buildAST(postfix, labelToId) {

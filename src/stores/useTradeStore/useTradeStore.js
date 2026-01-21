@@ -37,8 +37,7 @@ export const useTradeStore = create(
       set({ tradesById, tradeOrder, isLoading: false });
     },
 
-    addTrade(trade) {
-      const id = crypto.randomUUID();
+    addTrade(trade, id) {
       set((s) => {
         s.tradesById[id] = { id, ...trade };
         s.tradeOrder.push(id);
@@ -46,13 +45,21 @@ export const useTradeStore = create(
     },
 
     updateTrade(id, patch) {
-      set((s) => Object.assign(s.tradesById[id], patch));
+      set((s) => {
+        Object.assign(s.tradesById[id], patch);
+      });
     },
 
     deleteTrade(id) {
       set((s) => {
         delete s.tradesById[id];
         s.tradeOrder = s.tradeOrder.filter((x) => x !== id);
+      });
+    },
+
+    updateSchemaOrder(order) {
+      set((s) => {
+        s.schemaOrder = order;
       });
     },
 

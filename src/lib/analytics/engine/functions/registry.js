@@ -1,13 +1,5 @@
 import { fnCUM, fnPREV, fnSELF, fnRESET } from "./column";
 
-export function fnIF(fn, ctx) {
-  const [condExpr, trueExpr, falseExpr] = fn.args;
-
-  const condition = ctx.evaluate(condExpr, ctx);
-
-  return condition ? ctx.evaluate(trueExpr, ctx) : ctx.evaluate(falseExpr, ctx);
-}
-
 /* base reducers */
 import {
   SUM,
@@ -21,6 +13,9 @@ import {
   MAX_LOSE_STREAK_N,
   MAX_WIN_STREAK_N,
   IF,
+  VOLATILITY_N,
+  SHARPE_N,
+  EXPECTANCY_N,
 } from "@lib/analytics/reducers";
 
 /* window reducers */
@@ -34,6 +29,7 @@ import {
   AVG_LOSS_N,
   WIN_RATE_N,
   STDDEV_N,
+  MAX_DRAWDOWN_N,
 } from "@lib/analytics/reducers";
 
 export const FUNCTION_TYPE = {
@@ -42,6 +38,12 @@ export const FUNCTION_TYPE = {
   WINDOW: "window",
   CONDITION: "condition",
 };
+
+export function fnIF(fn, ctx) {
+  const [condExpr, trueExpr, falseExpr] = fn.args;
+  const expr = ctx.evaluate(condExpr, ctx) ? trueExpr : falseExpr;
+  return ctx.evaluate(expr, ctx);
+}
 
 export const FUNCTION_REGISTRY = {
   /* ---------- COLUMN / STATE ---------- */
@@ -237,5 +239,37 @@ export const FUNCTION_REGISTRY = {
     arity: 2,
     signature: "MAX_WIN_STREAK_N(expr, n)",
     description: "Maximum consecutive winning streak over last N rows",
+  },
+
+  MAX_DRAWDOWN_N: {
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: MAX_DRAWDOWN_N,
+    arity: 2,
+    signature: "MAX_DRAWDOWN_N(expr, n)",
+    description: "Maximum drawdown over last N rows",
+  },
+
+  VOLATILITY_N: {
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: VOLATILITY_N,
+    arity: 2,
+    signature: "VOLATILITY_N(expr, n)",
+    description: "Standard deviation of returns over last N rows",
+  },
+
+  SHARPE_N: {
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: SHARPE_N,
+    arity: 2,
+    signature: "SHARPE_N(expr, n)",
+    description: "Sharpe ratio over last N rows (risk-free = 0)",
+  },
+
+  EXPECTANCY_N: {
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: EXPECTANCY_N,
+    arity: 2,
+    signature: "EXPECTANCY_N(expr, n)",
+    description: "Trade expectancy (win rate × avg win − loss rate × avg loss)",
   },
 };

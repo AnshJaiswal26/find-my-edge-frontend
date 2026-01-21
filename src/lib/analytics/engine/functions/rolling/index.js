@@ -3,15 +3,19 @@ export function runBackwardWindowReducer(reducer, fn, ctx) {
 
   const n = Math.floor(ctx.evaluate(nExpr, ctx) ?? 0);
   const state = reducer.init(n);
-
   if (!state) return null;
 
-  for (let i = ctx.rowIndex; i >= 0; i--) {
+  for (let i = ctx.tradeIndex; i >= 0; i--) {
+    const trade = ctx.getTradeAt(i);
+    if (!trade) break;
+
+    // ❗ IMPORTANT: evaluate expr WITHOUT prevValue
     const value = ctx.evaluate(expr, {
       ...ctx,
-      getValue: (key) => ctx.rows[i].cells?.[key]?.value ?? null,
-      rowIndex: i,
-      prevRow: ctx.rows[i - 1],
+      evaluate: ctx.evaluate,
+      tradeIndex: i,
+      prevTrade: ctx.getPrevTradeAt(i),
+      getValue: (key) => ctx.getValueFromTrade(trade, key),
     });
 
     const cont = reducer.step(state, value);

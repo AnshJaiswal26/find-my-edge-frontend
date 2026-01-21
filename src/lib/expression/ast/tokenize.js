@@ -1,4 +1,4 @@
-import { FUNCTION_REGISTRY } from "@table/engine/functions/registry";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 
 const OPS = "+-*/()";
 const FUNCTIONS = new Set(Object.keys(FUNCTION_REGISTRY));

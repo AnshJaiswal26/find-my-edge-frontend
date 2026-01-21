@@ -10,7 +10,7 @@ import { Loader } from "@layout";
 export function Table() {
   const tableRef = useRef(null);
 
-  const { addTrade, openPopup, deleteColumn } = useTableStore.getState();
+  const { addRow, openPopup, deleteColumn } = useTableStore.getState();
 
   const isDataLoading = useTableStore((s) => s.isDataLoading);
 
@@ -22,7 +22,7 @@ export function Table() {
 
       {/* TOOLBAR */}
       <Toolbar
-        onAddTrade={addTrade}
+        onAddTrade={addRow}
         onAddColumn={() => openPopup("add-column")}
         onFilter={() => openPopup("filter")}
         onSort={() => openPopup("sort")}

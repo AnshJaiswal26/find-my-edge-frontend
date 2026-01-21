@@ -56,7 +56,7 @@ export const useTableStore = create(
 
       tradeOrder.forEach((tradeId) => {
         const trade = tradesById[tradeId];
-        const row = createRow(schemasById, tradeId);
+        const { row } = createRow(schemasById, tradeId);
 
         row.cells.date.value = parseInputValue(trade.date, "date");
         row.cells.entryTime.value = parseInputValue(trade.entryTime, "time");

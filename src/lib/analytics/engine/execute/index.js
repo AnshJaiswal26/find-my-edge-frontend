@@ -1,4 +1,4 @@
-export { computeColumn } from "./computeColumn";
+export { computeSchema } from "./computeSchema";
 
 export { computeRow } from "./computeRow";
 

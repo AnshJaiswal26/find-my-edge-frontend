@@ -1,12 +1,24 @@
 import { useTradeStore } from "@stores";
 import { collectAffectedColumns } from "../dependency";
-import { computeColumn, PARTIAL_RUNNERS } from "../engine/execute";
-import { getRowIndex } from "../utils";
+import { computeSchema, PARTIAL_RUNNERS } from "@lib/analytics/engine/execute";
+
+export function findGroupForRow(groups, tradeId) {
+  if (!groups || !tradeId) return null;
+
+  for (const group of groups) {
+    const ids = group.rowIds;
+    for (let i = 0; i < ids.length; i++) {
+      if (ids[i] === tradeId) return group.groupId;
+    }
+  }
+
+  return null;
+}
 
 export const createComputeSlice = (set, get) => ({
-  /* ------------------------------------------------------------- */
-  /*                    CELL AND RECOMPUTE ACTIONS                 */
-  /* ------------------------------------------------------------- */
+  /* ------------------------------------------------------- */
+  /*              CELL AND RECOMPUTE ACTIONS                 */
+  /* ------------------------------------------------------- */
 
   updateCell(rowId, colId, value, groupId) {
     const state = get();
@@ -17,6 +29,10 @@ export const createComputeSlice = (set, get) => ({
 
     set((s) => {
       s.rowsById[rowId].cells[colId].value = value;
+    });
+
+    useTradeStore.getState().updateTrade(rowId, {
+      [colId]: value,
     });
 
     if (state.affectedMap?.[column.id]) {
@@ -31,24 +47,49 @@ export const createComputeSlice = (set, get) => ({
 
   recompute(payload) {
     set((state) => {
-      const { rowsById, rowOrder, columnsById, affectedMap, groupBy, groups } =
-        state;
+      const {
+        rowsById: tradesById,
+        rowOrder: tradeOrder,
+        columnsById,
+        affectedMap,
+        groupBy,
+        groups,
+      } = state;
+
+      const getValue = (trade, key) => trade.cells[key]?.value ?? null;
+      const setValue = (trade, schema, value) => {
+        trade.cells[schema.id].value = value;
+      };
 
       /* ================= FULL RECOMPUTE ================= */
       if (!payload || payload.reason === "all") {
-        Object.values(columnsById).forEach((column) => {
-          computeColumn(rowsById, rowOrder, column, groups);
+        Object.values(columnsById).forEach((schema) => {
+          computeSchema({
+            tradesById,
+            tradeOrder,
+            schema,
+            groups,
+            getValue,
+            setValue: (trade, value) => setValue(trade, schema, value),
+          });
         });
         return;
       }
 
       /* ================= GROUPED CHANGE ================= */
-      if (payload?.reason === "grouped") {
+      if (payload.reason === "grouped") {
         if (!groupBy || !groups) return;
 
-        Object.values(columnsById).forEach((column) => {
-          if (column.type.includes("computed") && column.mode === "grouped") {
-            computeColumn(rowsById, rowOrder, column, groups);
+        Object.values(columnsById).forEach((schema) => {
+          if (schema.type.includes("computed") && schema.mode === "grouped") {
+            computeSchema({
+              tradesById,
+              tradeOrder,
+              schema,
+              groups,
+              getValue,
+              setValue: (trade, value) => setValue(trade, schema, value),
+            });
           }
         });
 
@@ -57,46 +98,52 @@ export const createComputeSlice = (set, get) => ({
 
       /* ================= CELL CHANGE ================= */
       if (payload.reason === "cell" && payload.rowId && payload.colId) {
-        const rowIndex = getRowIndex(rowOrder, payload.rowId);
+        const changedIndex = tradeOrder.indexOf(payload.rowId);
+        if (changedIndex === -1) return;
 
         const chain = collectAffectedColumns(payload.colId, affectedMap);
 
-        chain.forEach((colId) => {
-          const column = columnsById[colId];
-          if (!column || !column.type.includes("computed")) return;
+        chain.forEach((schemaId) => {
+          const schema = columnsById[schemaId];
+          if (!schema || !schema.type.includes("computed")) return;
 
-          // grouped column in flat view
-          if (!groupBy && column.mode === "grouped") return;
+          // grouped schema but not in grouped view
+          if (!groupBy && schema.mode === "grouped") return;
 
-          // GROUPED PARTIAL
-          if (column.mode === "grouped" && groupBy) {
+          /* -------- GROUPED PARTIAL -------- */
+          if (schema.mode === "grouped" && groupBy) {
             const groupId =
               payload.groupId ?? findGroupForRow(groups, payload.rowId);
 
             if (!groupId) return;
 
             const group = groups.find((g) => g.groupId === groupId);
-            const groupIndex = group.rowIds.indexOf(payload.rowId);
+            if (!group) return;
 
+            const groupIndex = group.rowIds.indexOf(payload.rowId);
             if (groupIndex === -1) return;
 
             PARTIAL_RUNNERS.grouped({
-              rowsById,
-              group,
-              groupIndex,
-              column,
+              tradesById,
+              tradeIds: group.rowIds,
+              startIndex: groupIndex,
+              schema,
+              getValue,
+              setValue: (trade, value) => setValue(trade, schema, value),
             });
 
             return;
           }
 
-          // ROW / CUMULATIVE
-          PARTIAL_RUNNERS[column.mode]({
-            rowsById,
-            rowOrder,
-            rowIndex,
-            rowId: payload.rowId,
-            column,
+          /* -------- ROW / CUMULATIVE PARTIAL -------- */
+          PARTIAL_RUNNERS[schema.mode]({
+            tradesById,
+            tradeOrder,
+            tradeId: payload.rowId,
+            startIndex: changedIndex,
+            schema,
+            getValue,
+            setValue: (trade, value) => setValue(trade, schema, value),
           });
         });
 
@@ -105,10 +152,17 @@ export const createComputeSlice = (set, get) => ({
 
       /* ================= COLUMN CHANGE ================= */
       if (payload.reason === "column" && payload.colId) {
-        const column = columnsById[payload.colId];
-        if (!column) return;
+        const schema = columnsById[payload.colId];
+        if (!schema) return;
 
-        computeColumn(rowsById, rowOrder, column, groups);
+        computeSchema({
+          tradesById,
+          tradeOrder,
+          schema,
+          groups,
+          getValue,
+          setValue: (trade, value) => setValue(trade, schema, value),
+        });
       }
     });
   },

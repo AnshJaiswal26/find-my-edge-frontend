@@ -1,4 +1,4 @@
-import { FUNCTION_REGISTRY } from "@table/engine/functions/registry";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 import { highlightMatch } from "./highlightMatch";
 
 export function getColumnSuggestions(q, numericColumns) {

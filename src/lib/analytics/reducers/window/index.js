@@ -9,3 +9,7 @@ export { AVG_LOSS_N } from "./avg_loss_n";
 export { STDDEV_N } from "./stddev_n";
 export { MAX_LOSE_STREAK_N } from "./max_lose_streak_n";
 export { MAX_WIN_STREAK_N } from "./max_win_streak_n";
+export { MAX_DRAWDOWN_N } from "./max_drawdown_n";
+export { VOLATILITY_N } from "./volatility_n";
+export { SHARPE_N } from "./sharpe_n";
+export { EXPECTANCY_N } from "./expectancy_n";

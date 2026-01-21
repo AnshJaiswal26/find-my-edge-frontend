@@ -1,13 +1,13 @@
 export function fnPREV(fn, ctx) {
   const arg = fn.args[0];
 
-  // PREV(column)
-  if (arg.type === "column") {
-    if (!ctx.prevRow) return null;
+  // PREV(key)
+  if (arg.type === "key") {
+    if (!ctx.prevTrade) return null;
 
-    const cell = ctx.prevRow.cells[arg.columnId];
-
-    return cell?.value ?? null;
+    return ctx.getValueFromTrade
+      ? ctx.getValueFromTrade(ctx.prevTrade, arg.columnId)
+      : null;
   }
 
   // PREV(expr)
@@ -21,8 +21,9 @@ export function fnSELF(fn, ctx) {
 export function fnCUM(fn, ctx) {
   const value = ctx.evaluate(fn.args[0], ctx);
 
-  if (ctx.prevValue === null || ctx.prevValue === undefined)
+  if (ctx.prevValue === null || ctx.prevValue === undefined) {
     return value ?? null;
+  }
 
   return value !== null ? ctx.prevValue + value : null;
 }
@@ -30,9 +31,9 @@ export function fnCUM(fn, ctx) {
 export function fnRESET(fn, ctx) {
   const [valueExpr, condExpr] = fn.args;
 
-  const value = ctx.evaluate(condExpr, ctx);
+  const shouldReset = ctx.evaluate(condExpr, ctx);
 
-  if (value) {
+  if (shouldReset) {
     return ctx.evaluate(valueExpr, ctx);
   }
 

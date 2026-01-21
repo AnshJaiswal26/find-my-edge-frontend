@@ -1,3 +1,4 @@
+import { useTradeStore } from "@stores";
 import { moveItem } from "../interaction";
 
 export const createDragSlice = (set, get) => ({
@@ -47,7 +48,9 @@ export const createDragSlice = (set, get) => ({
           typeof toIndex === "number" &&
           fromIndex !== toIndex
         ) {
-          s.columnOrder = moveItem(s.columnOrder, fromIndex, toIndex);
+          const newOrder = moveItem(s.columnOrder, fromIndex, toIndex);
+          s.columnOrder = newOrder;
+          useTradeStore.getState().updateSchemaOrder(newOrder);
         }
       }
 

@@ -1,5 +1,3 @@
-import { generateCharts, parseInputValue } from "@utils";
-import { DEFAULT_CHARTS } from "@data";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { createFilterSlice } from "./filter.slice";
@@ -10,6 +8,7 @@ import { createSeriesSlice } from "./series.slice";
 import { createCoreSlice } from "./core.slice";
 import { createPopupSlice } from "./popup.slice";
 import { useTradeStore } from "@stores";
+import { parseInputValue } from "@utils";
 
 export const useChartStore = create(
   immer((set, get) => ({

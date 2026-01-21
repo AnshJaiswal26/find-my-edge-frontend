@@ -21,7 +21,7 @@ export const tooltipCallback = (
 ) => {
   const { [chartId]: chart, seriesById } = useChartStore.getState();
 
-  const { series, meta, seriesConfig, layout } = chart;
+  const { series, meta, xSeriesConfig, seriesConfig, layout } = chart;
 
   switch (meta.type) {
     /* ---------------- RADIAL / DONUT ---------------- */
@@ -102,7 +102,7 @@ export const tooltipCallback = (
     /* ---------------- BAR / LINE / AREA (DEFAULT) ---------------- */
     default: {
       return {
-        title: seriesById?.[order[index]]?.[meta.xaxisMetric],
+        title: seriesById?.[order[index]]?.[xSeriesConfig.key],
         dataArray: seriesValue.map((value, i) => {
           const config = selectedSeriesKeys
             ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
