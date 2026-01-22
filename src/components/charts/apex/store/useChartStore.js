@@ -8,7 +8,7 @@ import { createSeriesSlice } from "./series.slice";
 import { createCoreSlice } from "./core.slice";
 import { createPopupSlice } from "./popup.slice";
 import { useTradeStore } from "@stores";
-import { parseInputValue } from "@utils";
+import { computeSchema } from "@lib/analytics/engine/execute";
 
 export const useChartStore = create(
   immer((set, get) => ({
@@ -37,39 +37,44 @@ export const useChartStore = create(
     ...createLayoutSlice(set, get),
     ...createSeriesSlice(set, get),
 
+    recompute() {
+      set((state) => {
+        const { seriesById, seriesOrder, schemasById } = state;
+        Object.values(schemasById).forEach((schema) => {
+          computeSchema({
+            tradesById: seriesById,
+            tradeOrder: seriesOrder,
+            schema,
+            getValue: (trade, key) => trade[key],
+            setValue: (trade, value) => {
+              trade[schema.id] = value;
+            },
+          });
+        });
+      });
+
+      get().loadInitialCharts();
+    },
+
+    hydrateSchema() {
+      const { schemasById, schemaOrder } = useTradeStore.getState();
+      set({ schemasById: { ...schemasById }, schemaOrder: [...schemaOrder] });
+    },
+
     hydrateFromTrades() {
+      const { hydrateSchema, recompute } = get();
+      hydrateSchema();
+
       const { tradesById, tradeOrder } = useTradeStore.getState();
 
       if (!tradeOrder.length) return;
 
-      const seriesOrder = [];
-      const seriesById = {};
-
-      tradeOrder.forEach((tradeId) => {
-        const trade = tradesById[tradeId];
-
-        seriesOrder.push(tradeId);
-
-        seriesById[tradeId] = {
-          id: tradeId,
-          date: parseInputValue(trade.date, "date"),
-          entryTime: parseInputValue(trade.entryTime, "time"),
-          exitTime: parseInputValue(trade.exitTime, "time"),
-          duration: parseInputValue(trade.duration, "duration"),
-          symbol: parseInputValue(trade.symbol, "text"),
-          entry: parseInputValue(trade.entry, "number"),
-          exit: parseInputValue(trade.exit, "number"),
-          qty: parseInputValue(trade.qty, "number"),
-          riskReward: trade.riskReward,
-          capital: trade.capital,
-          profit: trade.profit,
-          loss: trade.loss,
-          pnl: trade.pnl,
-          cumulativePnl: trade.cumulativePnl,
-        };
-      });
+      const seriesOrder = [...tradeOrder];
+      const seriesById = { ...tradesById };
 
       set({ seriesById, seriesOrder });
+
+      recompute();
     },
 
     updateChart: (chartId, callback) => {

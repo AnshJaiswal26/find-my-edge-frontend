@@ -6,7 +6,13 @@ export function KpiGrid({ summary }) {
       <SummaryCard
         label="Total P&L"
         value={summary.totalPnl}
-        accent={summary.totalPnl >= 0 ? "success" : "danger"}
+        accent={
+          +parseFloat(summary.totalPnl.replace(/(INR|Rs\.?|₹|,)/g, "")).toFixed(
+            2,
+          ) >= 0
+            ? "success"
+            : "danger"
+        }
       />
       <SummaryCard
         label="Win Rate"

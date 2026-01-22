@@ -1,6 +1,6 @@
 import { Section } from "@layout";
 import { Input } from "@ui";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 export default function SelectOptionsEditor({ options, onChange }) {
   function updateOption(index, value) {

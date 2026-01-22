@@ -48,8 +48,12 @@ export const useTableStore = create(
       });
     },
 
-    hydrateRows() {
-      const { tradesById, tradeOrder, schemasById } = useTradeStore.getState();
+    hydrateFromTrades() {
+      const { hydrateSchema, recompute } = get();
+      hydrateSchema();
+
+      const { tradesById, tradeOrder, schemasById, schemaOrder } =
+        useTradeStore.getState();
 
       const rowsById = {};
       const rowOrder = [];
@@ -58,14 +62,9 @@ export const useTableStore = create(
         const trade = tradesById[tradeId];
         const { row } = createRow(schemasById, tradeId);
 
-        row.cells.date.value = parseInputValue(trade.date, "date");
-        row.cells.entryTime.value = parseInputValue(trade.entryTime, "time");
-        row.cells.exitTime.value = parseInputValue(trade.exitTime, "time");
-        row.cells.duration.value = parseInputValue(trade.duration, "duration");
-        row.cells.symbol.value = parseInputValue(trade.symbol, "text");
-        row.cells.entry.value = parseInputValue(trade.entry, "number");
-        row.cells.exit.value = parseInputValue(trade.exit, "number");
-        row.cells.qty.value = parseInputValue(trade.qty, "number");
+        schemaOrder.forEach((schemaId) => {
+          row.cells[schemaId].value = trade[schemaId];
+        });
 
         rowsById[row.id] = row;
         rowOrder.push(row.id);
@@ -73,7 +72,7 @@ export const useTableStore = create(
 
       set({ rowsById, rowOrder });
 
-      get().recompute({ reason: "all" });
+      recompute({ reason: "all" });
     },
   })),
 );

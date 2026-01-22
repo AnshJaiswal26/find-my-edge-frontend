@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
-import { tooltipCallback } from "../tooltip/tootipCallback";
 import { filterOperationMap, sortOperationMap } from "@utils";
+import { seriesTooltipCallback } from "../tooltip/series.tooltip";
 
 const seriesGenerator = {
   bar: ({ seriesConfig, seriesById, filteredOrder }) => {
@@ -84,8 +84,15 @@ export default function useSeriesChartConfig({
         order: finalOrder,
         seriesById,
         selectedSeriesKeys,
-        tooltipCallback: (sv, i, si) =>
-          tooltipCallback(sv, i, si, chartId, finalOrder, selectedSeriesKeys),
+        tooltipCallback: (seriesValue, index, seriesIndex) =>
+          seriesTooltipCallback({
+            seriesValue,
+            index,
+            seriesIndex,
+            chartId,
+            getTitle: (i, key) => seriesById?.[finalOrder[i]]?.[key],
+            selectedSeriesKeys,
+          }),
       }),
       computedSeries: seriesGenerator[type]({
         seriesConfig: selectedSeriesKeys

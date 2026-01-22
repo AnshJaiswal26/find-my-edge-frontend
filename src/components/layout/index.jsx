@@ -8,11 +8,11 @@ export const PageContainer = ({
   sidebar = true,
 }) => {
   return (
-    <div>
+    <div className="w-full h-[100vh] overflow-auto">
       {sidebar && <Sidebar />}
       <Tooltip />
       <div
-        className={`flex flex-col justify-center items-center font-(--font-faimily-base) w-full h-full box-border ${className}`}
+        className={`flex flex-col justify-center items-center font-(--font-faimily-base) w-full h-fit box-border ${className}`}
       >
         <Toast />
 
@@ -178,8 +178,8 @@ export const Badge = ({ value, label, formatter, className = "" }) => {
     v > 0
       ? "bg-(--success-soft) text-(--success) border border-(--success)"
       : v === 0
-      ? "bg-(--warning) text-(--warning) border border-(--warning)"
-      : "bg-(--error-soft) text-(--error) border border-(--error)";
+        ? "bg-(--warning) text-(--warning) border border-(--warning)"
+        : "bg-(--error-soft) text-(--error) border border-(--error)";
 
   return (
     <div className="flex gap-1.5 items-center">

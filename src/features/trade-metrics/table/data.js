@@ -117,8 +117,8 @@ export const columnsById = {
     formula: "(Exit - Entry) * Qty",
   }),
 
-  rr: createColumn({
-    id: "rr",
+  riskReward: createColumn({
+    id: "riskReward",
     label: "Risk-Reward",
     type: "number computed",
     editable: false,
@@ -137,14 +137,14 @@ export const columnsById = {
     formula: "Pnl / 500",
   }),
 
-  emotion: createColumn({
-    id: "emotion",
-    label: "Emotion",
-    type: "select",
-    editable: true,
-    options: ["Calm", "Fear", "Greed"],
-    display: { format: "badge" },
-  }),
+  // emotion: createColumn({
+  //   id: "emotion",
+  //   label: "Emotion",
+  //   type: "select",
+  //   editable: true,
+  //   options: ["Calm", "Fear", "Greed"],
+  //   display: { format: "badge" },
+  // }),
 };
 
 export const columnOrder = [

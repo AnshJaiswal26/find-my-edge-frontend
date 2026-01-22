@@ -3,9 +3,11 @@ export function parseInputValue(raw, valueType) {
 
   switch (valueType) {
     case "number":
+    case "number computed":
       return +raw;
 
-    case "date": {
+    case "date":
+    case "date computed": {
       // YYYY-MM-DD → days since epoch
       const ms = Date.parse(raw + "T00:00:00Z");
       return Math.floor(ms / 86400000);
@@ -21,7 +23,7 @@ export function parseInputValue(raw, valueType) {
       return Date.parse(raw);
     }
 
-    case "duration":
+    case "time computed":
       return +raw; // seconds or minutes (your choice)
 
     case "boolean":

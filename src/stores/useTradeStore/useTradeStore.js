@@ -1,5 +1,6 @@
 import { tradeData } from "@data";
 import { columnsById } from "@table/data";
+import { parseInputValue } from "@utils";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -13,6 +14,8 @@ export const useTradeStore = create(
     schemaOrder: Object.keys(columnsById),
 
     async fetchTrades() {
+      const { schemasById, schemaOrder } = get();
+
       set({ isLoading: true });
 
       // const res = await fetch("http://localhost:8080/api/trades");
@@ -23,14 +26,21 @@ export const useTradeStore = create(
 
       // const trades = await res.json();
 
-      const trades = tradeData; // demo
-
       const tradesById = {};
       const tradeOrder = [];
 
-      trades.forEach((t) => {
+      tradeData.forEach((t) => {
         const id = crypto.randomUUID();
-        tradesById[id] = { id, ...t };
+        const trade = {};
+
+        schemaOrder.forEach((schemaId) => {
+          const schema = schemasById[schemaId];
+
+          if (!schema.type.includes("computed"))
+            trade[schema.id] = parseInputValue(t[schema.id], schema.type);
+        });
+
+        tradesById[id] = { id, ...trade };
         tradeOrder.push(id);
       });
 

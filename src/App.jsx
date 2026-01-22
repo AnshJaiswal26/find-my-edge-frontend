@@ -47,10 +47,8 @@ function App() {
     const { setSelect, setColorPicker } = useUIStore.getState();
 
     useTradeStore.getState().fetchTrades();
-    useTableStore.getState().hydrateSchema();
-    useTableStore.getState().hydrateRows();
+    useTableStore.getState().hydrateFromTrades();
     useChartStore.getState().hydrateFromTrades();
-    useChartStore.getState().loadInitialCharts();
 
     const close = () => {
       setSelect(null);

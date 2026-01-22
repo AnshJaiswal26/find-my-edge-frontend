@@ -4,6 +4,7 @@ import { MetricStatsRow } from "./MetricStatsRow";
 import { KpiGrid } from "./KpiGrid";
 import { MetricTableHeader } from "./MetricTableHeader";
 import { formatValue } from "@utils";
+import { useNumericColumns } from "@table/hooks";
 
 function Divider() {
   return <div className="h-px bg-(--border)" />;
@@ -17,13 +18,9 @@ function SectionTitle({ children }) {
   );
 }
 
-function computeSummary(state) {
-  const { rowsById, rowOrder, columnsById } = state;
+function computeSummary(state, numericColumns) {
+  const { rowsById, rowOrder } = state;
   const rows = rowOrder.map((id) => rowsById[id]);
-
-  const numericColumns = Object.values(columnsById).filter(
-    (c) => c.type === "number" || c.type.includes("computed"),
-  );
 
   const stats = {};
   numericColumns.forEach((col) => {
@@ -66,14 +63,18 @@ function computeSummary(state) {
       id: col.id,
       label: col.label,
       format: col.display?.format,
-      sum: formatValue(s.sum, col),
-      avg: s.count ? formatValue(s.sum / s.count, col) : "0",
-      min: s.count ? formatValue(s.min, col) : "0",
-      max: s.count ? formatValue(s.max, col) : "0",
+      sum: formatValue(s.sum, col.type, col.display),
+      avg: s.count ? formatValue(s.sum / s.count, col.type, col.display) : "0",
+      min: s.count ? formatValue(s.min, col.type, col.display) : "0",
+      max: s.count ? formatValue(s.max, col.type, col.display) : "0",
     };
   });
 
-  const totalPnl = stats?.pnl?.sum ?? 0;
+  const totalPnl =
+    formatValue(stats?.pnl?.sum, "number", {
+      format: "CURRENCY_SIGNED",
+      decimals: 2,
+    }) ?? 0;
 
   const insights = [];
   if (winRate > 60) insights.push("Strong win rate this period");
@@ -94,7 +95,9 @@ function computeSummary(state) {
 export default function SummaryPopup() {
   const closePopup = useTableStore((s) => s.closePopup);
 
-  const summary = computeSummary(useTableStore.getState());
+  const { numericColumns } = useNumericColumns();
+
+  const summary = computeSummary(useTableStore.getState(), numericColumns);
 
   return (
     <Popup open>

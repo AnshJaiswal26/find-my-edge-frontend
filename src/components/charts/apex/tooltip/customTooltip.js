@@ -9,13 +9,13 @@ export const customTooltip = (callback) => {
         `<div class="tooltip-content-row">
            ${
              indicator
-               ? ` <span class="tooltip-indicator" style="background:${color}"></span>`
+               ? `<span class="tooltip-indicator" style="background:${color}"></span>`
                : ""
            }
             <span class="tooltip-text">${label}
               <strong style="color:${color}">${value}</strong>
             </span>
-          </div>`
+        </div>`
     );
 
     return `

@@ -3,6 +3,8 @@ import { createChart } from "../model/factory";
 export const createCoreSlice = (set, get) => ({
   seriesById: {},
   seriesOrder: [],
+  schemasById: {},
+  schemaOrder: [],
 
   loadInitialCharts() {
     const { order, seriesById, seriesOrder } = get();
@@ -77,14 +79,14 @@ export const createCoreSlice = (set, get) => ({
             markerColor: "var(--cyan)",
             areaColor: "var(--cyan)",
           },
-          {
-            key: "cumulativePnl",
-            name: "Cummulative Pnl",
-            tooltipLabel: "Cummulative Pnl",
-            color: "var(--warning)",
-            markerColor: "var(--warning)",
-            areaColor: "var(--warning)",
-          },
+          // {
+          //   key: "cumulativePnl",
+          //   name: "Cummulative Pnl",
+          //   tooltipLabel: "Cummulative Pnl",
+          //   color: "var(--warning)",
+          //   markerColor: "var(--warning)",
+          //   areaColor: "var(--warning)",
+          // },
         ],
       }),
 

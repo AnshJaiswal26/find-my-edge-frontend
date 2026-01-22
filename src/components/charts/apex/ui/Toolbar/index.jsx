@@ -1,7 +1,5 @@
-import { useMemo } from "react";
 import {
   Download,
-  PlusCircle,
   RefreshCcw,
   Trash2,
   ZoomIn,
@@ -13,89 +11,73 @@ import {
 import { Button } from "@ui";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 
+const seriesChartActions = [
+  {
+    icon: Filter,
+    title: "Filter",
+    onClick: (chartId) => useChartStore.getState().openPopup(chartId, "filter"),
+  },
+
+  {
+    icon: ArrowDownUp,
+    title: "Sort",
+    onClick: (chartId) => useChartStore.getState().openPopup(chartId, "sort"),
+  },
+  {
+    icon: ZoomIn,
+    title: "Zoom In",
+    onClick: (chartId) => useChartStore.getState().zoomInChart(chartId),
+  },
+  {
+    icon: ZoomOut,
+    title: "Zoom Out",
+    onClick: (chartId) => useChartStore.getState().zoomOutChart(chartId),
+  },
+  {
+    icon: RefreshCcw,
+    title: "Reset Series",
+    onClick: (chartId) => useChartStore.getState().resetSeries(chartId),
+  },
+];
+
+const commonActions = [
+  {
+    icon: Settings2,
+    title: "Layout",
+    onClick: (chartId) => useChartStore.getState().openPopup(chartId, "layout"),
+  },
+  {
+    icon: Download,
+    title: "Download",
+    onClick: (chartId) => {
+      const state = useChartStore.getState();
+      state.downloadCSV(chartId);
+      state.downloadPNG(chartId);
+    },
+  },
+  {
+    icon: Trash2,
+    title: "Remove Chart",
+    onClick: (chartId) => deleteChart(chartId),
+  },
+];
+
 export default function Toolbar({ chartId }) {
-  const {
-    openPopup,
-    zoomInChart,
-    zoomOutChart,
-    resetSeries,
-    downloadPNG,
-    downloadCSV,
-    deleteChart,
-    [chartId]: chart,
-  } = useChartStore.getState();
+  const chart = useChartStore.getState()[chartId];
 
   const isGroupType = chart.meta.category === "group";
 
-  const IconCmpt = useMemo(
-    () => [
-      {
-        icon: Filter,
-        title: "Filter",
-        onClick: () => openPopup(chartId, "filter"),
-      },
-
-      {
-        icon: ArrowDownUp,
-        title: "Sort",
-        onClick: () => openPopup(chartId, "sort"),
-      },
-
-      {
-        icon: Settings2,
-        title: "Layout",
-        onClick: () => openPopup(chartId, "layout"),
-      },
-      {
-        icon: PlusCircle,
-        title: "Manage Series",
-        onClick: () => openPopup(chartId, "manage-series"),
-      },
-      ...(isGroupType
-        ? []
-        : [
-            {
-              icon: ZoomIn,
-              title: "Zoom In",
-              onClick: () => zoomInChart(chartId),
-            },
-            {
-              icon: ZoomOut,
-              title: "Zoom Out",
-              onClick: () => zoomOutChart(chartId),
-            },
-            {
-              icon: RefreshCcw,
-              title: "Reset Series",
-              onClick: () => resetSeries(chartId),
-            },
-          ]),
-      {
-        icon: Download,
-        title: "Download",
-        onClick: () => {
-          downloadCSV(chartId);
-          downloadPNG(chartId);
-        },
-      },
-      {
-        icon: Trash2,
-        title: "Remove Chart",
-        onClick: () => deleteChart(chartId),
-      },
-    ],
-    []
-  );
+  const iconButtonsBar = isGroupType
+    ? commonActions
+    : [...seriesChartActions, ...commonActions];
 
   return (
     <div className="apexcharts-custom-toolbar">
-      {/* {!isGroupType && <FilterPopup chartId={chartId} />} */}
-
-      {IconCmpt.map((item, index) => (
+      {iconButtonsBar.map((item, index) => (
         <Button.Icon
           key={index}
           tooltip={{ text: item.title, position: "left" }}
-          onClick={() => item?.onClick?.()}
+          onClick={() => item?.onClick?.(chartId)}
         >
           <item.icon size={16} className="text-inherit" />
         </Button.Icon>

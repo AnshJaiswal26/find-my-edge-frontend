@@ -3,6 +3,7 @@ import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
 import { tooltipCallback } from "../tooltip/tootipCallback";
 import { WIN_RATE_N } from "@lib/analytics/reducers";
+import { groupedChartTooltipCallback } from "../tooltip/group.tooltip";
 
 const getSeries = ({ seriesConfig, seriesById, seriesOrder }) => {
   const series = seriesConfig.map((s) => {
@@ -50,8 +51,14 @@ export default function useGroupChartConfig({
         chartId,
         seriesById,
         selectedSeriesKeys,
-        tooltipCallback: (sv, i, si) =>
-          tooltipCallback(sv, i, si, chartId, seriesOrder, selectedSeriesKeys),
+        tooltipCallback: (seriesValue, index, seriesIndex) =>
+          groupedChartTooltipCallback({
+            seriesValue,
+            index,
+            seriesIndex,
+            chartId,
+            selectedSeriesKeys,
+          }),
       }),
       computedSeries: seriesGenerator[type]({
         seriesConfig: selectedSeriesKeys

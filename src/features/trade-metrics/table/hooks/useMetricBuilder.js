@@ -10,7 +10,7 @@ export function useNumericColumns() {
         c.type === "number" ||
         c.type.includes("computed") ||
         c.type === "date" ||
-        c.type === "time"
+        c.type === "time",
     );
   }, [columnsById]);
 
