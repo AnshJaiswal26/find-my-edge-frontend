@@ -17,6 +17,7 @@ export function buildRadialBarChart({ seriesConfig, series, layout = {} }) {
     seriesConfig: seriesConfig.map((s) => ({
       key: s.key,
       name: s.name ?? s.key,
+      type: s.type ?? "number",
       tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
       color: s.color,
     })),

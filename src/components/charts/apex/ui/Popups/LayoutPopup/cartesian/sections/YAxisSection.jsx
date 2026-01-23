@@ -1,11 +1,12 @@
-import { ColorPicker, Input, Button } from "@ui";
+import { ColorPicker, Input, Button, Select } from "@ui";
 import { Section } from "@layout";
-import { parseColor } from "@utils";
+import { DEFAULT_FORMATS, FORMATS, parseColor } from "@utils";
 
 export default function YAxisSection({
   layoutDraft,
   setLayoutDraft,
   isHorizontal,
+  chart,
 }) {
   return (
     <Section title={isHorizontal ? "X-Axis" : "Y-Axis"}>
@@ -32,7 +33,37 @@ export default function YAxisSection({
           onChange={(v) => setLayoutDraft((p) => ({ ...p, yLabels: v }))}
         />
 
-        <Input
+        <Select
+          label="Format"
+          value={
+            layoutDraft.yFormat || DEFAULT_FORMATS[chart.ySeriesConfig[0].type]
+          }
+          options={FORMATS[chart.ySeriesConfig[0].type]}
+          onChange={(v) =>
+            setLayoutDraft((p) => ({
+              ...p,
+              yFormat: v,
+            }))
+          }
+        />
+
+        {chart.ySeriesConfig[0].type === "number" && (
+          <Input
+            label="Decimals"
+            type="range"
+            min={0}
+            max={5}
+            value={layoutDraft.yDecimals}
+            onChange={(e) =>
+              setLayoutDraft((p) => ({
+                ...p,
+                yDecimals: Number(e.target.value),
+              }))
+            }
+          />
+        )}
+
+        {/* <Input
           label="Prefix"
           type="text"
           value={layoutDraft.yLabelPrefix}
@@ -46,7 +77,7 @@ export default function YAxisSection({
           value={layoutDraft.yLabelSuffix}
           placeholder="Enter Suffix"
           onCommit={(v) => setLayoutDraft((p) => ({ ...p, yLabelSuffix: v }))}
-        />
+        /> */}
       </Section>
 
       {/* Title */}

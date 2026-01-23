@@ -10,7 +10,7 @@ export function TableHeader({ tableRef }) {
         w-max
         sticky top-0 left-0
         flex border-b border-(--border)
-        bg-(--surface-disabled) z-3
+        bg-(--surface-muted) z-3
       "
     >
       {/* SN HEADER */}
@@ -18,7 +18,7 @@ export function TableHeader({ tableRef }) {
         className="sticky top-0 left-0
           w-12 shrink-0
           border-r border-(--border)
-          bg-(--surface-disabled) z-3
+          bg-(--surface-muted) z-3
         "
       />
 

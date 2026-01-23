@@ -5,7 +5,7 @@ import { ColorRulesSection } from "./ColorRulesSection";
 import { Section } from "@layout";
 import { COLUMN_TYPES } from "@table/model";
 import { useTableStore } from "@table/store/useTableStore";
-import { DEFAULTS_FORMATS } from "@utils";
+import { DEFAULT_FORMATS } from "@utils";
 
 export default function ColumnDetails({ column, draft, onDraftChange }) {
   if (!column) return null;
@@ -23,7 +23,7 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
           onDraftChange((p) => ({
             ...p,
             type: v,
-            display: { format: DEFAULTS_FORMATS[v], decimals: 2 },
+            display: { format: DEFAULT_FORMATS[v], decimals: 2 },
           }))
         }
       />

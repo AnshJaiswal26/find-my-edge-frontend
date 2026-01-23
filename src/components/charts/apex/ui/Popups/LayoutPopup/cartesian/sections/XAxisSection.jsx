@@ -1,11 +1,13 @@
 import { Section } from "@layout";
-import { ColorPicker, Input, Button } from "@ui";
-import { parseColor } from "@utils";
+import { ColorPicker, Input, Button, Select } from "@ui";
+import { DEFAULT_FORMATS, FORMATS, parseColor } from "@utils";
 
 export default function XAxisSection({
   layoutDraft,
   setLayoutDraft,
   isHorizontal,
+  type,
+  chart,
 }) {
   return (
     <Section title={isHorizontal ? "Y-Axis" : "X-Axis"}>
@@ -32,43 +34,35 @@ export default function XAxisSection({
           onChange={(v) => setLayoutDraft((p) => ({ ...p, xLabels: v }))}
         />
 
-        <Button.Toggle
-          label="Prefix Indexing"
-          value={layoutDraft.xLabelPrefixIndexing}
+        <Select
+          label="Format"
+          value={
+            layoutDraft.xFormat || DEFAULT_FORMATS[chart.xSeriesConfig.type]
+          }
+          options={FORMATS[chart.xSeriesConfig.type]}
           onChange={(v) =>
             setLayoutDraft((p) => ({
               ...p,
-              xLabelPrefixIndexing: v,
+              xFormat: v,
             }))
           }
         />
 
-        <Button.Toggle
-          label="Suffix Indexing"
-          value={layoutDraft.xLabelSuffixIndexing}
-          onChange={(v) =>
-            setLayoutDraft((p) => ({
-              ...p,
-              xLabelSuffixIndexing: v,
-            }))
-          }
-        />
-
-        <Input
-          label="Prefix"
-          type="text"
-          value={layoutDraft.xLabelPrefix}
-          placeholder="Enter Prefix"
-          onCommit={(v) => setLayoutDraft((p) => ({ ...p, xLabelPrefix: v }))}
-        />
-
-        <Input
-          label="Suffix"
-          type="text"
-          value={layoutDraft.xLabelSuffix}
-          placeholder="Enter Suffix"
-          onCommit={(v) => setLayoutDraft((p) => ({ ...p, xLabelSuffix: v }))}
-        />
+        {chart.xSeriesConfig.type === "number" && (
+          <Input
+            label="Decimals"
+            type="range"
+            min={0}
+            max={5}
+            value={layoutDraft.xDecimals}
+            onChange={(e) =>
+              setLayoutDraft((p) => ({
+                ...p,
+                xDecimals: Number(e.target.value),
+              }))
+            }
+          />
+        )}
       </Section>
 
       {/* Title */}

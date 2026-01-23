@@ -1,6 +1,5 @@
 import { Button } from "@ui";
 import { Section } from "@layout";
-import { useChartStore } from "@charts/apex/store/useChartStore";
 
 import {
   GeneralSection,
@@ -12,10 +11,8 @@ import {
 import LegendSection from "../common sections/LegendSection";
 
 export default function CartesianLayoutPopup(props) {
-  const { chartId, type, layoutDraft, setLayoutDraft } = props;
+  const { type, layoutDraft, setLayoutDraft, chart } = props;
 
-  const state = useChartStore.getState();
-  const chart = state[chartId];
   const isHorizontal = chart.layout.horizontal;
 
   return (

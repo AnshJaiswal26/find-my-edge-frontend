@@ -11,7 +11,7 @@ function getColumnRects(tableEl) {
     (el, index) => {
       const r = el.getBoundingClientRect();
       return { index, left: r.left, right: r.right };
-    }
+    },
   );
 }
 
@@ -23,7 +23,7 @@ export function ColumnHeader({ colId, index, tableRef }) {
   const editable = useTableStore((s) => isColumnEditable(colId, s));
 
   const isNotGrouped = useTableStore(
-    (s) => !s.groupBy && s.columnsById[colId].mode === "grouped"
+    (s) => !s.groupBy && s.columnsById[colId].mode === "grouped",
   );
 
   const isSticky = useTableStore((s) => s.groupBy?.key === column.id);
@@ -126,7 +126,7 @@ export function ColumnHeader({ colId, index, tableRef }) {
       />
 
       <div
-        className={`flex items-center px-2 py-1 border-r border-(--border) justify-between`}
+        className={`flex font-bold items-center px-2 py-1 border-r border-(--border) justify-between`}
       >
         {column.label} {!editable && <LockKeyholeIcon size={12} />}
       </div>

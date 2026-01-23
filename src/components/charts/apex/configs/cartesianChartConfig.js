@@ -1,5 +1,6 @@
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { customTooltip } from "../tooltip/customTooltip";
+import { formatValue } from "@utils";
 
 export const cartesianChartConfig = ({
   chart,
@@ -14,23 +15,20 @@ export const cartesianChartConfig = ({
 
   const style = { fontSize: "0.75rem" };
 
-  const isPrefix = config.xLabelPrefixIndexing && xKey !== "";
-  const isSuffix = config.xLabelSuffixIndexing && xKey !== "";
-
-  const formatterX = (v) => {
-    return `${isPrefix ? v : ""}${config.xLabelPrefix}${
-      v === 0 ? "" : seriesById[order[v - 1]]?.[xKey] || v
-    }${config.xLabelSuffix}${isSuffix ? v : ""}`;
-  };
-
-  const formatterY = (v) => `${config.yLabelPrefix}${v}${config.yLabelSuffix}`;
-
   const axisX = {
     tooltip: { enabled: !config.horizontal && config.xTooltip },
     tickPlacement: "on",
     labels: {
       show: config.xLabels,
-      formatter: formatterX,
+      formatter: (v) =>
+        formatValue(
+          seriesById[order[v - 1]]?.[xKey],
+          chart.xSeriesConfig.type,
+          {
+            format: config.xFormat,
+            decimals: config.xDecimals,
+          },
+        ),
       style: { fontSize: style.fontSize, colors: config.xLabelsColor },
     },
     axisTicks: order.length,
@@ -47,7 +45,11 @@ export const cartesianChartConfig = ({
       show: config.yLabels,
       offsetY: 4,
       offsetX: -6,
-      formatter: formatterY,
+      formatter: (v) =>
+        formatValue(v, chart.ySeriesConfig[0].type, {
+          format: config.yFormat,
+          decimals: config.yDecimals,
+        }),
       style: { fontSize: style.fontSize, colors: config.yLabelsColor },
     },
     title: {
@@ -132,14 +134,6 @@ export const cartesianChartConfig = ({
             ];
 
             state.updateSelection(chartId, from, to + 1);
-
-            // const filteredSeries = [...chart.series.filtered];
-            // const sliced = filteredSeries.slice(from, to + 1);
-            // const updatedSeries = sliced.length < 1 ? filteredSeries : sliced;
-
-            // state.updateChart(chartId, (chart) => {
-            //   chart.series.filtered = updatedSeries;
-            // });
 
             // ✅ Clean up DOM data
             delete selection.dataset.startIndex;

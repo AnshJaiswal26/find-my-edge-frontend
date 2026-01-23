@@ -1,4 +1,14 @@
-import { customTooltip, parseColor, shadeColor } from "@utils";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
+import { customTooltip, formatValue, parseColor, shadeColor } from "@utils";
+
+const applyReducer = (reducerName, values) => {
+  const reducer = FUNCTION_REGISTRY[reducerName].reducer;
+  const state = reducer.init(values.length);
+  for (let i = 0; i < values.length; i++) {
+    reducer.step(state, values[i]);
+  }
+  return reducer.result(state);
+};
 
 export const getRadialBarChartConfig = ({
   chartId,
@@ -58,22 +68,21 @@ export const getRadialBarChartConfig = ({
           value: {
             show: config.value ?? true,
             formatter: (val) =>
-              config.valuePrefix +
-              Number(parseFloat(val).toFixed(2)) +
-              config.valueSuffix,
+              formatValue(val, seriesConfig[0].type, {
+                format: config.format,
+                decimals: config.decimals,
+              }),
           },
           total: {
             show: config.total ?? true,
             label: config.totalLabel ?? "Total",
             formatter: (w) => {
-              return (
-                config.totalPrefix +
-                w.config.series.reduce((acc, v) => {
-                  acc += v;
-                  return acc;
-                }, 0) +
-                config.totalSuffix
-              );
+              const vals = w.config.series;
+              const result = applyReducer(config.reducer ?? "SUM_N", vals);
+              return formatValue(result, seriesConfig[0].type, {
+                format: config.format,
+                decimals: config.decimals,
+              });
             },
           },
         },

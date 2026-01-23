@@ -11,13 +11,13 @@ export const GROUPED_CHART_LAYOUT = {
   name: true,
 
   value: true,
-  valuePrefix: "",
-  valueSuffix: "%",
+
+  format: "",
+  decimals: 2,
 
   total: true,
-  totalLabel: "Avg",
-  totalPrefix: "",
-  totalSuffix: "%",
+  totalLabel: "SUM",
+  reducer: "SUM_N",
 
   legend: true,
   legendPosition: "bottom",

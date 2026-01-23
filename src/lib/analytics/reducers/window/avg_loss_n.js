@@ -10,7 +10,7 @@ export const AVG_LOSS_N = {
     state.seen++;
 
     if (value < 0) {
-      state.sum += Math.abs(value);
+      state.sum += value;
       state.count++;
     }
 

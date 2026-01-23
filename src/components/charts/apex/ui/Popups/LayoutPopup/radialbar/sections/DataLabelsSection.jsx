@@ -1,9 +1,37 @@
 import { Section } from "@layout";
-import { Button, Input } from "@ui";
+import { Button, Input, Select } from "@ui";
+import { DEFAULT_FORMATS, FORMATS } from "@utils";
 
-export default function DataLabelSection({ layoutDraft, setLayoutDraft }) {
+export default function DataLabelSection({
+  layoutDraft,
+  seriesDraft,
+  setLayoutDraft,
+}) {
   return (
     <Section title="Data Labels">
+      <Select
+        label="Format"
+        value={layoutDraft.format || DEFAULT_FORMATS[seriesDraft[0].type]}
+        options={FORMATS[seriesDraft[0].type]}
+        onChange={(v) => setLayoutDraft((p) => ({ ...p, format: v }))}
+      />
+
+      {seriesDraft[0].type === "number" && (
+        <Input
+          label="Decimals"
+          type="range"
+          min={0}
+          max={5}
+          value={layoutDraft.decimals}
+          onChange={(e) =>
+            setLayoutDraft((p) => ({
+              ...p,
+              decimals: Number(e.target.value),
+            }))
+          }
+        />
+      )}
+
       {/* Name */}
       <Section>
         <Button.Toggle
@@ -20,20 +48,6 @@ export default function DataLabelSection({ layoutDraft, setLayoutDraft }) {
           value={layoutDraft.value}
           onChange={(v) => setLayoutDraft((p) => ({ ...p, value: v }))}
         />
-
-        <Input
-          label="Prefix"
-          value={layoutDraft.valuePrefix}
-          placeholder="Enter Prefix"
-          onCommit={(v) => setLayoutDraft((p) => ({ ...p, valuePrefix: v }))}
-        />
-
-        <Input
-          label="Suffix"
-          value={layoutDraft.valueSuffix}
-          placeholder="Enter Suffix"
-          onCommit={(v) => setLayoutDraft((p) => ({ ...p, valueSuffix: v }))}
-        />
       </Section>
 
       {/* Total */}
@@ -49,20 +63,6 @@ export default function DataLabelSection({ layoutDraft, setLayoutDraft }) {
           value={layoutDraft.totalLabel}
           placeholder="Enter Label"
           onCommit={(v) => setLayoutDraft((p) => ({ ...p, totalLabel: v }))}
-        />
-
-        <Input
-          label="Prefix"
-          value={layoutDraft.totalPrefix}
-          placeholder="Enter Prefix"
-          onCommit={(v) => setLayoutDraft((p) => ({ ...p, totalPrefix: v }))}
-        />
-
-        <Input
-          label="Suffix"
-          value={layoutDraft.totalSuffix}
-          placeholder="Enter Suffix"
-          onCommit={(v) => setLayoutDraft((p) => ({ ...p, totalSuffix: v }))}
         />
       </Section>
     </Section>

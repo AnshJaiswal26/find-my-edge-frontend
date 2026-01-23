@@ -1,24 +1,6 @@
 import { Section } from "@layout";
 import { Input, Select } from "@ui";
-import {
-  DATE_FORMATS,
-  NUMBER_FORMATS,
-  TIME_FORMATS,
-  DEFAULTS_FORMATS,
-} from "@utils";
-
-const numberFomart = NUMBER_FORMATS.map(({ key }) => key);
-const timeFormat = TIME_FORMATS.map(({ key }) => key);
-const dateFormat = DATE_FORMATS.map(({ key }) => key);
-
-const formats = {
-  number: numberFomart,
-  "number computed": numberFomart,
-  time: timeFormat,
-  date: dateFormat,
-  "time computed": [timeFormat[0], timeFormat[1]],
-  "date computed": dateFormat,
-};
+import { DEFAULT_FORMATS, FORMATS } from "@utils";
 
 export function DisplaySection({ display, onChange, type }) {
   if (type === "text" || type === "select") return null;
@@ -27,10 +9,8 @@ export function DisplaySection({ display, onChange, type }) {
     <Section title={"Display"}>
       <Select
         label="Format"
-        value={display.format || DEFAULTS_FORMATS[type]}
-        options={formats[type]}
-        getLabel={(f) => f}
-        getKey={(f) => f}
+        value={display.format || DEFAULT_FORMATS[type]}
+        options={FORMATS[type]}
         onChange={(f) =>
           onChange((p) => ({
             ...p,

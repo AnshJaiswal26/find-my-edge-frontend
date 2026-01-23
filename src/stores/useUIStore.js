@@ -14,6 +14,7 @@ export const useUIStore = create((set) => ({
   isSidebarOpen: false,
   username: "Ansh Jaiswal",
   selectedAvatar: "Icons/avtar/user.png",
+  pageName: "Dashboard",
   activeSelect: null,
   activeColorPicker: false,
   toasts: [],
@@ -24,6 +25,10 @@ export const useUIStore = create((set) => ({
     rect: null,
     content: null,
     placement: null,
+  },
+
+  setPageName(pageName) {
+    set({ pageName });
   },
 
   showTooltip: ({ rect, color, placement, content }) => {
@@ -92,7 +97,7 @@ export const useUIStore = create((set) => ({
             toasts: s.toasts.filter((t) => t.id !== id),
           }));
         },
-        type === "ERROR" || type === "INFO" ? duration : 1500
+        type === "ERROR" || type === "INFO" ? duration : 1500,
       );
 
       return { toasts: [newToast, ...state.toasts] };

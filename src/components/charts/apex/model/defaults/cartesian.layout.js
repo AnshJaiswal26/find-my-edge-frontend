@@ -18,18 +18,16 @@ export const CARTESIAN_LAYOUT = {
   xLabelsColor: "var(--text-charts-muted)",
   xTitleText: "Trades",
   xTitleColor: "var(--text-charts-muted)",
-  xLabelPrefix: "",
-  xLabelSuffix: "",
-  xLabelPrefixIndexing: false,
-  xLabelSuffixIndexing: false,
+  xFormat: "",
+  xDecimals: 2,
 
   //yaxis
   yLabels: true,
   yLabelsColor: "var(--text-charts-muted)",
   yTitleText: "",
   yTitleColor: "var(--text-charts-muted)",
-  yLabelPrefix: "",
-  yLabelSuffix: "",
+  yFormat: "",
+  yDecimals: 2,
 
   legend: true,
   legendPosition: "top",

@@ -9,7 +9,7 @@ export default function FilterPopup({ chartId }) {
   const appliedfilters = useChartStore((s) => s[chartId].filters);
   const [filters, setFilters] = useState([...appliedfilters]);
 
-  const ySeriesConfig = useChartStore((s) => s[chartId].seriesConfig);
+  const ySeriesConfig = useChartStore((s) => s[chartId].ySeriesConfig);
   const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);
 
   const seriesConfig = [...ySeriesConfig, xSeriesConfig];

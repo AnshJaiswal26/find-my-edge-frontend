@@ -11,6 +11,6 @@ export const WIN_RATE_N = {
   },
 
   result(state) {
-    return state.seen ? state.wins / state.seen : null;
+    return state.seen ? (state.wins / state.seen) * 100 : null;
   },
 };

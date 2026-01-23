@@ -1,8 +1,8 @@
-import { formatDate } from "./date";
-import { numberFormatters } from "./number";
-import { formatTime } from "./time";
+import { DATE_FORMAT_KEYS, formatDate } from "./date";
+import { NUMBER_FORMAT_KEYS, numberFormatters } from "./number";
+import { formatTime, TIME_FORMAT_KEYS } from "./time";
 
-export const DEFAULTS_FORMATS = {
+export const DEFAULT_FORMATS = {
   number: "NUMBER",
   text: "",
   select: "",
@@ -11,6 +11,15 @@ export const DEFAULTS_FORMATS = {
   "number computed": "NUMBER",
   "time computed": "HH:mm:ss",
   "date computed": "YYYY-MM-DD",
+};
+
+export const FORMATS = {
+  number: NUMBER_FORMAT_KEYS,
+  "number computed": NUMBER_FORMAT_KEYS,
+  time: TIME_FORMAT_KEYS,
+  date: DATE_FORMAT_KEYS,
+  "time computed": [TIME_FORMAT_KEYS[0], TIME_FORMAT_KEYS[1]],
+  "date computed": DATE_FORMAT_KEYS,
 };
 
 export function formatValue(value, type, display) {

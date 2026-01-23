@@ -37,7 +37,9 @@ export default function ChartLayoutPopup({ chartId }) {
   const type = chart.meta.type;
 
   const [layoutDraft, setLayoutDraft] = useState({ ...chart.layout });
-  const [seriesDraft, setSeriesDraft] = useState([...chart.seriesConfig]);
+  const [seriesDraft, setSeriesDraft] = useState([
+    ...(chart?.ySeriesConfig ?? chart.seriesConfig),
+  ]);
 
   return (
     <Popup open={true}>
@@ -50,6 +52,7 @@ export default function ChartLayoutPopup({ chartId }) {
           <div className={styles.contentWrapper}>
             <PopupContent
               chartId={chartId}
+              chart={chart}
               type={type}
               layoutDraft={layoutDraft}
               seriesDraft={seriesDraft}

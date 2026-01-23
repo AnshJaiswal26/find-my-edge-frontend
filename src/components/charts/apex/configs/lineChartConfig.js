@@ -11,8 +11,8 @@ export const getLineChartConfig = ({
   const config = chart.layout;
 
   const seriesConfig = selectedSeriesKeys
-    ? chart.seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-    : chart.seriesConfig;
+    ? chart.ySeriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+    : chart.ySeriesConfig;
 
   const base = cartesianChartConfig({
     chart,

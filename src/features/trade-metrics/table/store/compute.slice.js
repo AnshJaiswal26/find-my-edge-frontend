@@ -1,6 +1,6 @@
 import { useTradeStore } from "@stores";
 import { collectAffectedColumns } from "../dependency";
-import { computeSchema, PARTIAL_RUNNERS } from "@lib/analytics/engine/execute";
+import { computeOverSequence } from "@lib/analytics/engine/execute";
 
 export function findGroupForRow(groups, tradeId) {
   if (!groups || !tradeId) return null;
@@ -31,10 +31,6 @@ export const createComputeSlice = (set, get) => ({
       s.rowsById[rowId].cells[colId].value = value;
     });
 
-    useTradeStore.getState().updateTrade(rowId, {
-      [colId]: value,
-    });
-
     if (state.affectedMap?.[column.id]) {
       state.recompute({
         reason: "cell",
@@ -43,6 +39,10 @@ export const createComputeSlice = (set, get) => ({
         groupId,
       });
     }
+
+    useTradeStore.getState().updateTrade(rowId, {
+      [colId]: value,
+    });
   },
 
   recompute(payload) {
@@ -61,107 +61,130 @@ export const createComputeSlice = (set, get) => ({
         trade.cells[schema.id].value = value;
       };
 
-      /* ================= FULL RECOMPUTE ================= */
+      /* =====================================
+       * FULL RECOMPUTE
+       * ===================================== */
       if (!payload || payload.reason === "all") {
         Object.values(columnsById).forEach((schema) => {
-          computeSchema({
+          if (!schema.type.includes("computed")) return;
+
+          if (schema.mode === "grouped" && groups) {
+            groups.forEach((group) => {
+              computeOverSequence({
+                tradesById,
+                sequenceIds: group.rowIds,
+                schema,
+                getValue,
+                setValue,
+                usePrev: true,
+              });
+            });
+            return;
+          }
+
+          computeOverSequence({
             tradesById,
-            tradeOrder,
+            sequenceIds: tradeOrder,
             schema,
-            groups,
             getValue,
-            setValue: (trade, value) => setValue(trade, schema, value),
+            setValue,
+            usePrev: schema.mode !== "row",
           });
         });
         return;
       }
 
-      /* ================= GROUPED CHANGE ================= */
-      if (payload.reason === "grouped") {
-        if (!groupBy || !groups) return;
+      /* =====================================
+       * CELL CHANGE (PARTIAL)
+       * ===================================== */
+      if (payload.reason === "cell") {
+        const { rowId, colId } = payload;
 
-        Object.values(columnsById).forEach((schema) => {
-          if (schema.type.includes("computed") && schema.mode === "grouped") {
-            computeSchema({
-              tradesById,
-              tradeOrder,
-              schema,
-              groups,
-              getValue,
-              setValue: (trade, value) => setValue(trade, schema, value),
-            });
-          }
-        });
-
-        return;
-      }
-
-      /* ================= CELL CHANGE ================= */
-      if (payload.reason === "cell" && payload.rowId && payload.colId) {
-        const changedIndex = tradeOrder.indexOf(payload.rowId);
+        const changedIndex = tradeOrder.indexOf(rowId);
         if (changedIndex === -1) return;
 
-        const chain = collectAffectedColumns(payload.colId, affectedMap);
+        const affectedSchemas = collectAffectedColumns(colId, affectedMap);
 
-        chain.forEach((schemaId) => {
+        affectedSchemas.forEach((schemaId) => {
           const schema = columnsById[schemaId];
           if (!schema || !schema.type.includes("computed")) return;
 
-          // grouped schema but not in grouped view
-          if (!groupBy && schema.mode === "grouped") return;
-
-          /* -------- GROUPED PARTIAL -------- */
-          if (schema.mode === "grouped" && groupBy) {
-            const groupId =
-              payload.groupId ?? findGroupForRow(groups, payload.rowId);
-
-            if (!groupId) return;
-
-            const group = groups.find((g) => g.groupId === groupId);
+          // ---------- GROUPED ----------
+          if (schema.mode === "grouped" && groupBy && groups) {
+            const group = groups.find((g) => g.rowIds.includes(rowId));
             if (!group) return;
 
-            const groupIndex = group.rowIds.indexOf(payload.rowId);
-            if (groupIndex === -1) return;
+            const groupIndex = group.rowIds.indexOf(rowId);
 
-            PARTIAL_RUNNERS.grouped({
+            computeOverSequence({
               tradesById,
-              tradeIds: group.rowIds,
-              startIndex: groupIndex,
+              sequenceIds: group.rowIds,
               schema,
               getValue,
-              setValue: (trade, value) => setValue(trade, schema, value),
+              setValue,
+              startIndex: groupIndex,
+              usePrev: true,
             });
 
             return;
           }
 
-          /* -------- ROW / CUMULATIVE PARTIAL -------- */
-          PARTIAL_RUNNERS[schema.mode]({
+          // ---------- ROW ----------
+          if (schema.mode === "row") {
+            computeOverSequence({
+              tradesById,
+              sequenceIds: [rowId], // ✅ single-trade sequence
+              schema,
+              getValue,
+              setValue,
+              usePrev: false,
+            });
+            return;
+          }
+
+          // ---------- CUMULATIVE ----------
+          computeOverSequence({
             tradesById,
-            tradeOrder,
-            tradeId: payload.rowId,
-            startIndex: changedIndex,
+            sequenceIds: tradeOrder,
             schema,
             getValue,
-            setValue: (trade, value) => setValue(trade, schema, value),
+            setValue,
+            startIndex: changedIndex,
+            usePrev: true,
           });
         });
 
         return;
       }
 
-      /* ================= COLUMN CHANGE ================= */
+      /* =====================================
+       * COLUMN CHANGE
+       * ===================================== */
       if (payload.reason === "column" && payload.colId) {
         const schema = columnsById[payload.colId];
-        if (!schema) return;
+        if (!schema || !schema.type.includes("computed")) return;
 
-        computeSchema({
+        if (schema.mode === "grouped" && groups) {
+          groups.forEach((group) => {
+            computeOverSequence({
+              tradesById,
+              sequenceIds: group.rowIds,
+              schema,
+              getValue,
+              setValue,
+              usePrev: true,
+            });
+          });
+          return;
+        }
+
+        computeOverSequence({
           tradesById,
-          tradeOrder,
+          sequenceIds: tradeOrder,
           schema,
-          groups,
           getValue,
-          setValue: (trade, value) => setValue(trade, schema, value),
+          setValue,
+          usePrev: schema.mode !== "row",
         });
       }
     });

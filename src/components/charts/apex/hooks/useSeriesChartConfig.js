@@ -27,13 +27,12 @@ const seriesGenerator = {
 export default function useSeriesChartConfig({
   chartId,
   layout,
+  seriesOrder,
+  seriesById,
   seriesConfig,
   selectedSeriesKeys,
 }) {
   const type = useChartStore((s) => s[chartId].meta.type);
-
-  const seriesOrder = useChartStore((s) => s.seriesOrder);
-  const seriesById = useChartStore((s) => s.seriesById);
 
   const filters = useChartStore((s) => s[chartId].filters);
   const sort = useChartStore((s) => s[chartId].sort);
@@ -42,12 +41,12 @@ export default function useSeriesChartConfig({
   const finalOrder = useMemo(() => {
     let order = seriesOrder;
 
-    /* 1️⃣ SELECTION */
+    /* SELECTION */
     if (selection.from !== null && selection.to !== null) {
       order = order.slice(selection.from, selection.to);
     }
 
-    /* 2️⃣ FILTER */
+    /* FILTER */
     if (filters.length) {
       order = order.filter((id) =>
         filters.some((f) => {
@@ -57,7 +56,7 @@ export default function useSeriesChartConfig({
       );
     }
 
-    /* 3️⃣ SORT */
+    /* SORT */
     if (sort.key && sort.operator !== "none") {
       const fn = sortOperationMap[sort.operator];
       order = [...order].sort((a, b) => {

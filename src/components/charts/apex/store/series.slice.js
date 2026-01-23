@@ -35,8 +35,6 @@ export const createSeriesSlice = (set, get) => ({
       s[chartId].sort = [];
       s[chartId].selection.from = null;
       s[chartId].selection.to = null;
-
-      // s[chartId].selectionOrder = [];
     });
   },
 });

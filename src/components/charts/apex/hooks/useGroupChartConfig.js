@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
-import { tooltipCallback } from "../tooltip/tootipCallback";
 import { WIN_RATE_N } from "@lib/analytics/reducers";
-import { groupedChartTooltipCallback } from "../tooltip/group.tooltip";
+import { groupedTooltipCallback } from "../tooltip/group.tooltip";
 
 const getSeries = ({ seriesConfig, seriesById, seriesOrder }) => {
   const series = seriesConfig.map((s) => {
@@ -14,7 +13,7 @@ const getSeries = ({ seriesConfig, seriesById, seriesOrder }) => {
         WIN_RATE_N.step(state, seriesById[id].pnl);
       });
 
-      return WIN_RATE_N.result(state) * 100;
+      return WIN_RATE_N.result(state);
     }
 
     const state = WIN_RATE_N.init(seriesOrder.length);
@@ -23,7 +22,7 @@ const getSeries = ({ seriesConfig, seriesById, seriesOrder }) => {
       WIN_RATE_N.step(state, seriesById[id].pnl);
     });
 
-    return 100 - WIN_RATE_N.result(state) * 100;
+    return 100 - WIN_RATE_N.result(state);
   });
   return series;
 };
@@ -37,12 +36,11 @@ export default function useGroupChartConfig({
   chartId,
   layout,
   seriesConfig,
+  seriesOrder,
+  seriesById,
   selectedSeriesKeys,
 }) {
   const type = useChartStore((s) => s[chartId].meta.type);
-
-  const seriesById = useChartStore((s) => s.seriesById);
-  const seriesOrder = useChartStore((s) => s.seriesOrder);
 
   const { options, computedSeries } = useMemo(
     () => ({
@@ -52,7 +50,7 @@ export default function useGroupChartConfig({
         seriesById,
         selectedSeriesKeys,
         tooltipCallback: (seriesValue, index, seriesIndex) =>
-          groupedChartTooltipCallback({
+          groupedTooltipCallback({
             seriesValue,
             index,
             seriesIndex,

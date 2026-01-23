@@ -7,15 +7,14 @@ import { useChartStore } from "@charts/apex/store/useChartStore";
 export default function SortPopup({ chartId }) {
   const sort = useChartStore((s) => s[chartId].sort);
 
-  const ySeriesConfig = useChartStore((s) => s[chartId].seriesConfig);
+  const ySeriesConfig = useChartStore((s) => s[chartId].ySeriesConfig);
   const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);
 
   const [draft, setDraft] = useState(sort);
 
   const seriesConfig = [...ySeriesConfig, xSeriesConfig];
 
-  const { applySort, updateSort, clearSort, closePopup } =
-    useChartStore.getState();
+  const { applySort, clearSort, closePopup } = useChartStore.getState();
 
   return (
     <Popup open>

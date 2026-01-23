@@ -1,167 +1,154 @@
 import React from "react";
 import { StatCard } from "@ui";
+import { useDashboardStore } from "../store";
 
 export const TRADE_STATS = [
-  // 🟢 Performance
+  // 🟢 Performance (NUMBER)
   {
     title: "Net PnL",
-    value: "+₹42,380",
-    delta: "+12.4%",
-    variant: "success",
+    key: "net_pnl",
+    type: "number",
+    aggregate: "SUM_N",
+    format: "CURRENCY_SIGNED",
+    value: 42380,
   },
   {
     title: "Gross Profit",
-    value: "₹91,240",
-    percent: 78,
-    minLabel: "Loss",
-    maxLabel: "Profit",
-    variant: "success",
+    key: "gross_profit",
+    type: "number",
+    aggregate: "SUM_N",
+    format: "CURRENCY",
+    value: 91240,
   },
   {
     title: "Gross Loss",
-    value: "-₹48,860",
-    percent: 42,
-    minLabel: "0",
-    maxLabel: "Max",
-    variant: "danger",
+    key: "gross_loss",
+    type: "number",
+    aggregate: "SUM_N",
+    format: "CURRENCY_SIGNED",
+    value: -48860,
   },
   {
     title: "Avg Trade PnL",
-    value: "+₹420",
-    percent: 64,
-    variant: "success",
+    key: "avg_trade_pnl",
+    type: "number",
+    aggregate: "AVG_N",
+    format: "CURRENCY_SIGNED",
+    value: 420,
   },
-  // {
-  //   key: "expectancy",
-  //   title: "Expectancy",
-  //   value: "+0.38R",
-  //   percent: 61,
-  //   variant: "neutral",
-  // },
 
-  // 🔵 Accuracy & Edge
+  // 🔵 Accuracy & Edge (NUMBER)
   {
     title: "Loss Rate",
-    value: "38%",
-    percent: 38,
-    variant: "danger",
+    key: "loss_rate",
+    type: "number",
+    aggregate: "RATE",
+    format: "PERCENT",
+    value: 38,
   },
   {
     title: "Risk–Reward",
+    key: "risk_reward",
+    type: "number",
+    aggregate: "RATIO",
+    format: "RATIO",
     value: "1 : 2.1",
-    percent: 70,
-    variant: "neutral",
   },
-  // {
-  //   key: "edge",
-  //   title: "Edge",
-  //   value: "8.6%",
-  //   percent: 68,
-  //   variant: "success",
-  // },
 
-  // 🟠 Risk & Drawdown
-
-  // {
-  //   key: "avgDD",
-  //   title: "Avg Drawdown",
-  //   value: "-2.1%",
-  //   percent: 45,
-  //   variant: "risk",
-  // },
+  // 🟠 Risk (NUMBER)
   {
     title: "Recovery Factor",
-    value: "3.1",
-    percent: 72,
-    variant: "success",
+    key: "recovery_factor",
+    type: "number",
+    aggregate: "FACTOR",
+    format: "NUMBER",
+    value: 3.1,
   },
   {
     title: "Risk / Trade",
-    value: "0.65%",
-    percent: 65,
-    variant: "risk",
+    key: "risk_per_trade",
+    type: "number",
+    aggregate: "AVG_N",
+    format: "PERCENT",
+    value: 0.65,
   },
   {
     title: "Market Exposure",
-    value: "48%",
-    percent: 48,
-    variant: "neutral",
+    key: "market_exposure",
+    type: "number",
+    aggregate: "AVG_N",
+    format: "PERCENT",
+    value: 48,
   },
 
-  // 🟣 Consistency & Behavior
-  // {
-  //   key: "maxWinStreak",
-  //   title: "Max Win Streak",
-  //   value: "7 trades",
-  //   percent: 70,
-  //   variant: "success",
-  // },
+  // 🟣 Behavior
   {
     title: "Max Loss Streak",
-    value: "3 trades",
-    percent: 30,
-    variant: "danger",
+    key: "max_loss_streak",
+    type: "number",
+    aggregate: "MAX_N",
+    format: "INTEGER",
+    value: 3,
   },
   {
     title: "Trade Frequency",
-    value: "4.2 / day",
-    percent: 60,
-    variant: "neutral",
+    key: "trade_frequency",
+    type: "number",
+    aggregate: "AVG_N",
+    format: "NUMBER",
+    value: 4.2,
   },
+
+  // ⏱ TIME
   {
     title: "Avg Holding Time",
-    value: "18 min",
-    percent: 55,
-    variant: "neutral",
+    key: "avg_holding_time",
+    type: "time",
+    aggregate: "AVG_N",
+    format: "mm:ss",
+    value: "18:00",
   },
-  // {
-  //   key: "volatility",
-  //   title: "Return Volatility",
-  //   value: "1.9%",
-  //   percent: 58,
-  //   variant: "risk",
-  // },
+
+  // 🧠 Advanced (NUMBER)
   {
     title: "Win Rate",
-    value: "62%",
-    percent: 62,
+    key: "win_rate",
+    type: "number",
+    aggregate: "RATE",
+    format: "PERCENT",
+    value: 62,
     baseline: 50,
     trend: [30, 40, 45, 55, 60, 62],
-    variant: "success",
   },
   {
     title: "Max Drawdown",
-    value: "-8.2%",
-    percent: 82,
+    key: "max_drawdown",
+    type: "number",
+    aggregate: "MAX_DRAWDOWN_N",
+    format: "PERCENT_SIGNED",
+    value: -8.2,
     baseline: 70,
     trend: [20, 25, 40, 55, 70, 82],
-    variant: "danger",
   },
   {
     title: "Profit Factor",
-    value: "1.84",
-    percent: 61,
+    key: "profit_factor",
+    type: "number",
+    aggregate: "RATIO",
+    format: "RATIO_X",
+    value: 1.84,
     baseline: 50,
     trend: [40, 45, 50, 58, 61],
-    variant: "neutral",
   },
 ];
 
 function StatCards() {
+  const stats = useDashboardStore((s) => s.stats);
+  console.log(stats);
   return (
-    // <div className={styles.statCardGrid}>
-    //   {statCards.map((card, i) => (
-    //     <StatCard
-    //       key={i}
-    //       iconSrc={card.src}
-    //       title={card.title}
-    //       value={card.value}
-    //     />
-    //   ))}
-    // </div>
     <div className="my-5 grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
-      {TRADE_STATS.map((stat, index) => (
-        <StatCard key={index} {...stat} />
+      {stats.map((stat, index) => (
+        <StatCard key={index} stat={stat} />
       ))}
     </div>
   );

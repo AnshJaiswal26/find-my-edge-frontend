@@ -6,6 +6,8 @@ export function buildBarChart({ x, y, layout = {}, category = "series" }) {
       id: crypto.randomUUID(),
       type: "bar",
       category,
+      xSeriesType: "",
+      ySeriesType: "",
     },
 
     layout: {
@@ -28,11 +30,13 @@ export function buildBarChart({ x, y, layout = {}, category = "series" }) {
     xSeriesConfig: {
       key: x.key ?? "",
       name: x.name ?? "",
+      type: x.type ?? "number",
     },
 
-    seriesConfig: y.map((s) => ({
+    ySeriesConfig: y.map((s) => ({
       key: s.key,
       name: s.name ?? s.key,
+      type: s.type ?? "number",
       colors: s.colors ?? [],
     })),
   };

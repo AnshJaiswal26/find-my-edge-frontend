@@ -6,6 +6,8 @@ export const TIME_FORMATS = [
   { key: "mm:ss", label: "05:32" },
 ];
 
+export const TIME_FORMAT_KEYS = TIME_FORMATS.map(({ key }) => key);
+
 export function formatTime(value, format) {
   if (typeof value !== "number") return "—";
 

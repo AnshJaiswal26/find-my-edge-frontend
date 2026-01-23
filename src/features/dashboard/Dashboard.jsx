@@ -8,6 +8,8 @@ import "gridstack/dist/gridstack.min.css";
 import { Button } from "@ui";
 import StatCards from "./components/StatsGrid";
 import { Container, Loader } from "@layout";
+import { useDashboardStore } from "./store";
+import { AddWidget } from "./ui/Popups";
 
 const getColumnCount = () => {
   const w = window.innerWidth;
@@ -46,6 +48,7 @@ export default function Dashboard() {
   return (
     <>
       <ChartPopups />
+      <AddWidget />
 
       <Container className="rounded-[4px]">
         <div className="flex-box items-center">
@@ -62,7 +65,12 @@ export default function Dashboard() {
                 analytics, profit and loss tracking, and risk-reward analysis.
               </p>
             </div>
-            <Button text="Add Charts and Stats" />
+            <Button
+              text="Add Charts and Stats"
+              onClick={() => {
+                useDashboardStore.getState().openPopup("widget");
+              }}
+            />
           </div>
         </div>
       </Container>
@@ -86,11 +94,12 @@ function ChartDashboard() {
   const grid = useRef(null);
   const isResponsiveChange = useRef(false);
 
-  const order = useChartStore((s) => s.order);
+  const order = useDashboardStore((s) => s.order);
 
   const savedLayout = useChartStore((s) => s.chartGridLayout);
 
-  console.log(order);
+  const seriesOrder = useDashboardStore((s) => s.seriesOrder);
+  const seriesById = useDashboardStore((s) => s.seriesById);
 
   useEffect(() => {
     if (grid.current) return;
@@ -164,6 +173,7 @@ function ChartDashboard() {
 
   useEffect(() => {
     window.dispatchEvent(new Event("resize"));
+    useDashboardStore.getState().hydrateFromTrades();
   }, []);
 
   return (
@@ -186,7 +196,13 @@ function ChartDashboard() {
           >
             <div className="grid-stack-item-content rounded-[8px] shadow-xl">
               <div className="h-full relative">
-                <CustomApexChart chartId={id} type={type} category={category} />
+                <CustomApexChart
+                  chartId={id}
+                  type={type}
+                  category={category}
+                  seriesOrder={seriesOrder}
+                  seriesById={seriesById}
+                />
               </div>
             </div>
           </div>

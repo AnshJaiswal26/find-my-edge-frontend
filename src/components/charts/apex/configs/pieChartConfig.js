@@ -1,4 +1,14 @@
-import { customTooltip, parseColor, shadeColor } from "@utils";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
+import { customTooltip, formatValue, parseColor, shadeColor } from "@utils";
+
+const applyReducer = (reducerName, values) => {
+  const reducer = FUNCTION_REGISTRY[reducerName].reducer;
+  const state = reducer.init(values.length);
+  for (let i = 0; i < values.length; i++) {
+    reducer.step(state, values[i]);
+  }
+  return reducer.result(state);
+};
 
 export const getPieChartConfig = ({
   chartId,
@@ -24,9 +34,11 @@ export const getPieChartConfig = ({
 
     dataLabels: {
       enabled: config.dataLabels,
-      formatter: (val, opts) => {
-        return config.valuePrefix + val + config.valueSuffix;
-      },
+      formatter: (val) =>
+        formatValue(val, seriesConfig[0].type, {
+          format: config.format,
+          decimals: config.decimals,
+        }),
     },
 
     tooltip: {
@@ -72,20 +84,21 @@ export const getPieChartConfig = ({
             value: {
               show: config.value ?? true,
               formatter: (val) =>
-                config.valuePrefix +
-                Number(parseFloat(val).toFixed(2)) +
-                config.valueSuffix,
+                formatValue(val, seriesConfig[0].type, {
+                  format: config.format,
+                  decimals: config.decimals,
+                }),
             },
             total: {
               show: config.total ?? true,
               label: config.totalLabel ?? "Total",
               formatter: (w) => {
                 const vals = w.config.series;
-                return (
-                  config.totalPrefix +
-                  (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2) +
-                  config.totalSuffix
-                );
+                const result = applyReducer(config.reducer ?? "SUM_N", vals);
+                return formatValue(result, seriesConfig[0].type, {
+                  format: config.format,
+                  decimals: config.decimals,
+                });
               },
             },
           },

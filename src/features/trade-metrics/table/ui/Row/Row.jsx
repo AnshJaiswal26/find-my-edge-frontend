@@ -20,8 +20,8 @@ export const Row = memo(function Row({ rowId, index, groupId }) {
             flex items-center justify-center
             border-r border-(--border)
             cursor-grab active:cursor-grabbing
-            bg-(--surface-disabled)
-            group z-2`}
+            bg-(--surface-muted)
+            group z-2 font-bold`}
       >
         {index + 1}
       </div>

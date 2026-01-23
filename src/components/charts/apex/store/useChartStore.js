@@ -7,8 +7,6 @@ import { createLayoutSlice } from "./layout.slice";
 import { createSeriesSlice } from "./series.slice";
 import { createCoreSlice } from "./core.slice";
 import { createPopupSlice } from "./popup.slice";
-import { useTradeStore } from "@stores";
-import { computeSchema } from "@lib/analytics/engine/execute";
 
 export const useChartStore = create(
   immer((set, get) => ({
@@ -36,46 +34,6 @@ export const useChartStore = create(
     ...createGroupSlice(set, get),
     ...createLayoutSlice(set, get),
     ...createSeriesSlice(set, get),
-
-    recompute() {
-      set((state) => {
-        const { seriesById, seriesOrder, schemasById } = state;
-        Object.values(schemasById).forEach((schema) => {
-          computeSchema({
-            tradesById: seriesById,
-            tradeOrder: seriesOrder,
-            schema,
-            getValue: (trade, key) => trade[key],
-            setValue: (trade, value) => {
-              trade[schema.id] = value;
-            },
-          });
-        });
-      });
-
-      get().loadInitialCharts();
-    },
-
-    hydrateSchema() {
-      const { schemasById, schemaOrder } = useTradeStore.getState();
-      set({ schemasById: { ...schemasById }, schemaOrder: [...schemaOrder] });
-    },
-
-    hydrateFromTrades() {
-      const { hydrateSchema, recompute } = get();
-      hydrateSchema();
-
-      const { tradesById, tradeOrder } = useTradeStore.getState();
-
-      if (!tradeOrder.length) return;
-
-      const seriesOrder = [...tradeOrder];
-      const seriesById = { ...tradesById };
-
-      set({ seriesById, seriesOrder });
-
-      recompute();
-    },
 
     updateChart: (chartId, callback) => {
       set((s) => {

@@ -4,7 +4,7 @@ import { pageRoute } from "@data";
 import { Loader, PageContainer } from "@layout";
 import { useTradeStore, useUIStore } from "@stores";
 import { useTableStore } from "@table/store/useTableStore";
-import { useChartStore } from "@charts/apex/store/useChartStore";
+import { useDashboardStore } from "@features/dashboard/store";
 
 // Lazy import each page
 const Dashboard = lazy(() => import("./features/dashboard/Dashboard"));
@@ -33,14 +33,11 @@ function Layout() {
     </PageContainer>
   );
 }
-
-const withSuspense = (Component) => {
-  return (
-    <Suspense fallback={<Loader />}>
-      <Component />
-    </Suspense>
-  );
-};
+const suspense = (Component) => (
+  <Suspense fallback={<Loader />}>
+    <Component />
+  </Suspense>
+);
 
 function App() {
   useEffect(() => {
@@ -48,7 +45,8 @@ function App() {
 
     useTradeStore.getState().fetchTrades();
     useTableStore.getState().hydrateFromTrades();
-    useChartStore.getState().hydrateFromTrades();
+    useDashboardStore.getState().hydrateFromTrades();
+    useDashboardStore.getState().recomputeAll();
 
     const close = () => {
       setSelect(null);
@@ -101,21 +99,27 @@ function App() {
     <Suspense fallback={<Loader />}>
       <Routes>
         <Route element={<Layout />}>
-          <Route path={pageRoute.dashboard} element={<Dashboard />} />
-          <Route path={pageRoute.tradeMetrics} element={<TradeMetrics />} />
+          <Route path={pageRoute.dashboard} element={suspense(Dashboard)} />
+          <Route
+            path={pageRoute.tradeMetrics}
+            element={suspense(TradeMetrics)}
+          />
           <Route
             path={pageRoute.sheetIntegration}
-            element={<SheetIntegration />}
+            element={suspense(SheetIntegration)}
           />
-          <Route path={pageRoute.calendar} element={<YearlyCalendar />} />
-          <Route path={pageRoute.setupRules} element={<SetupRules />} />
+          <Route path={pageRoute.calendar} element={suspense(YearlyCalendar)} />
+          <Route path={pageRoute.setupRules} element={suspense(SetupRules)} />
           <Route
             path={pageRoute.capturedStrategies}
-            element={<CapturedStrategies />}
+            element={suspense(CapturedStrategies)}
           />
-          <Route path={pageRoute.settings} element={<Settings />} />
-          <Route path={pageRoute.mistakes} element={<Mistakes />} />
-          <Route path={pageRoute.riskManagement} element={<RiskManagement />} />
+          <Route path={pageRoute.settings} element={suspense(Settings)} />
+          <Route path={pageRoute.mistakes} element={suspense(Mistakes)} />
+          <Route
+            path={pageRoute.riskManagement}
+            element={suspense(RiskManagement)}
+          />
         </Route>
       </Routes>
     </Suspense>

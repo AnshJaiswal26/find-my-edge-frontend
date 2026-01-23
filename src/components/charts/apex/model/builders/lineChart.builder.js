@@ -28,11 +28,14 @@ export function buildLineChart({ x, y, layout = {}, category = "series" }) {
     xSeriesConfig: {
       key: x.key ?? "",
       name: x.name ?? "",
+      type: x.type ?? "number",
     },
 
-    seriesConfig: y.map((s) => ({
+    ySeriesConfig: y.map((s) => ({
       key: s.key,
       name: s.name ?? s.key,
+      type: s.type ?? "number",
+
       tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
 
       color: s.color,

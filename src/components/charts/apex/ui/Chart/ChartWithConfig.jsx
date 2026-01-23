@@ -4,9 +4,17 @@ import { ChartViewport } from "./ChartViewport";
 import { useState } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 
-export function ChartWithConfig({ chartId, type, category }) {
+export function ChartWithConfig({
+  chartId,
+  type,
+  category,
+  seriesById,
+  seriesOrder,
+}) {
   const layout = useChartStore((s) => s[chartId].layout);
-  const seriesConfig = useChartStore((s) => s[chartId].seriesConfig);
+  const seriesConfig = useChartStore(
+    (s) => s[chartId].ySeriesConfig ?? s[chartId].seriesConfig,
+  );
 
   const [selectedSeriesKeys, setSelectedSeriesKeys] = useState(null);
 
@@ -31,6 +39,8 @@ export function ChartWithConfig({ chartId, type, category }) {
         chartId={chartId}
         layout={layout}
         seriesConfig={seriesConfig}
+        seriesById={seriesById}
+        seriesOrder={seriesOrder}
         selectedSeriesKeys={selectedSeriesKeys}
       />
     </div>

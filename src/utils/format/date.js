@@ -10,6 +10,8 @@ export const DATE_FORMATS = [
   { key: "MMM YYYY", label: "Apr 2025" },
 ];
 
+export const DATE_FORMAT_KEYS = DATE_FORMATS.map(({ key }) => key);
+
 export function formatDate(value, format) {
   if (typeof value !== "number") return "—";
 

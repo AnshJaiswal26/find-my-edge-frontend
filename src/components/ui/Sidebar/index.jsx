@@ -31,6 +31,7 @@ export default function Sidebar() {
   const location = useLocation();
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const removeToast = useUIStore((s) => s.removeToast);
+  const setPageName = useUIStore((s) => s.setPageName);
 
   return (
     <>
@@ -84,7 +85,10 @@ export default function Sidebar() {
               <button
                 key={index}
                 onClick={() => {
-                  item.route && navigate(item.route);
+                  if (item.route) {
+                    navigate(item.route);
+                    setPageName(item.label);
+                  }
                   removeToast("reset");
                   toggleSidebar();
                 }}
@@ -92,11 +96,10 @@ export default function Sidebar() {
                   w-full
                   flex items-center gap-2
                   text-[0.85rem] font-light
-                  px-2.5 py-[0.41rem]
+                  px-2.5 py-[0.45rem]
                   rounded
-                  border border-white 
-                  dark:border-(--border-muted) 
                   transition-colors duration-100
+                  text-(--text-muted)
                   ${
                     isActive
                       ? "bg-(--cyan) border-(--cyan) text-white pointer-events-none"

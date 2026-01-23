@@ -6,10 +6,16 @@ import { useUIStore } from "@stores";
 import { NavbarToggle } from "./NavbarToggle";
 import { ThemeToggle } from "./ThemeToggle";
 
+const PageName = () => {
+  const page = useUIStore((s) => s.pageName);
+  return <div className="font-bold text-xl">{page}</div>;
+};
+
 const EditorLeftActions = () => {
   return (
     <div className="flex items-center gap-4">
       <NavbarToggle />
+      <PageName />
 
       <div
         className="

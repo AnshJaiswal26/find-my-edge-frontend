@@ -1,31 +1,26 @@
 import { evaluateExpression } from "@lib/expression";
 
-export function computeCumulative({
+export function computeOverSequence({
   tradesById,
-  sequenceIds, // 🔑 tradeOrder OR group.tradeIds
+  sequenceIds,
   schema,
   getValue,
   setValue,
   startIndex = 0,
+  usePrev = false,
 }) {
-  let prevValue;
-  let prevTrade;
+  if (!schema.expression) return;
 
-  /* ----------------------------
-   * Seed previous state
-   * ---------------------------- */
-  if (startIndex === 0) {
-    prevValue = schema.initialValue ?? 0;
-    prevTrade = null;
-  } else {
-    const prevTradeId = sequenceIds[startIndex - 1];
-    prevTrade = tradesById[prevTradeId];
-    prevValue = getValue(prevTrade, schema.id) ?? schema.initialValue ?? 0;
+  let prevValue = schema.initialValue ?? 0;
+  let prevTrade = null;
+
+  // seed previous state only if needed
+  if (usePrev && startIndex > 0) {
+    const prevId = sequenceIds[startIndex - 1];
+    prevTrade = tradesById[prevId];
+    prevValue = getValue(prevTrade, schema.id) ?? prevValue;
   }
 
-  /* ----------------------------
-   * Shared engine context
-   * ---------------------------- */
   const ctxBase = {
     evaluate: evaluateExpression,
 
@@ -45,24 +40,22 @@ export function computeCumulative({
     getValueFromTrade: getValue,
   };
 
-  /* ----------------------------
-   * Forward recompute
-   * ---------------------------- */
   for (let i = startIndex; i < sequenceIds.length; i++) {
     const trade = tradesById[sequenceIds[i]];
 
     const value = evaluateExpression(schema.expression, {
       ...ctxBase,
-
       tradeIndex: i,
-      prevValue,
-      prevTrade,
-
+      prevValue: usePrev ? prevValue : undefined,
+      prevTrade: usePrev ? prevTrade : undefined,
       getValue: (key) => getValue(trade, key),
     });
 
-    setValue(trade, value);
-    prevValue = value;
-    prevTrade = trade;
+    setValue(trade, schema, value);
+
+    if (usePrev) {
+      prevValue = value;
+      prevTrade = trade;
+    }
   }
 }

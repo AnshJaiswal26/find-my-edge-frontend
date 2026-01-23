@@ -82,6 +82,6 @@ export const createGroupSlice = (set, get) => ({
 
     set({ groups });
 
-    recompute({ reason: "grouped" });
+    recompute({ reason: "all" });
   },
 });

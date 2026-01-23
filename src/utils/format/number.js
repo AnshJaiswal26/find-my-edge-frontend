@@ -16,6 +16,8 @@ export const NUMBER_FORMATS = [
   { key: "COMPACT", label: "1.2L / 120K" },
 ];
 
+export const NUMBER_FORMAT_KEYS = NUMBER_FORMATS.map(({ key }) => key);
+
 function formatNumber(v, d = 2) {
   return new Intl.NumberFormat("en-IN", {
     minimumFractionDigits: d,

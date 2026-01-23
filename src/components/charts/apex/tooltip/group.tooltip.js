@@ -1,9 +1,7 @@
+import { formatValue } from "@utils";
 import { useChartStore } from "../store/useChartStore";
 
-const formatValue = (prefix = "", value, suffix = "") =>
-  `${prefix}${value}${suffix}`;
-
-export const groupedChartTooltipCallback = ({
+export const groupedTooltipCallback = ({
   seriesIndex,
   chartId,
   selectedSeriesKeys,
@@ -30,11 +28,10 @@ export const groupedChartTooltipCallback = ({
   return {
     dataArray: [
       {
-        value: formatValue(
-          layout.valuePrefix,
-          series[valueIndex],
-          layout.valueSuffix,
-        ),
+        value: formatValue(series[valueIndex], config.type, {
+          format: layout.format,
+          decimals: layout.decimals,
+        }),
         label: config.tooltipLabel,
         color: config.color,
       },
