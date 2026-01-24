@@ -1,7 +1,11 @@
 import { useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
-import { filterOperationMap, sortOperationMap } from "@utils";
+import {
+  evaluateColorRules,
+  filterOperationMap,
+  sortOperationMap,
+} from "@utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
 
 const seriesGenerator = {
@@ -9,9 +13,7 @@ const seriesGenerator = {
     return seriesConfig.map((s) => ({
       name: s.name,
       data: filteredOrder.map((id) => seriesById[id]?.[s.key]),
-      color: ({ value }) =>
-        s.colors.filter((r) => value >= r.from && value <= r.to)[0]?.color ||
-        "var(--info)",
+      color: ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
     }));
   },
 
@@ -101,7 +103,14 @@ export default function useSeriesChartConfig({
         seriesById,
       }),
     }),
-    [seriesConfig, layout, selectedSeriesKeys, seriesById, finalOrder],
+    [
+      seriesConfig,
+      layout,
+      layout?.area,
+      selectedSeriesKeys,
+      seriesById,
+      finalOrder,
+    ],
   );
 
   return { options, series: computedSeries, type };

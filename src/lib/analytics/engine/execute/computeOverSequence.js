@@ -46,8 +46,7 @@ export function computeOverSequence({
     const value = evaluateExpression(schema.expression, {
       ...ctxBase,
       tradeIndex: i,
-      prevValue: usePrev ? prevValue : undefined,
-      prevTrade: usePrev ? prevTrade : undefined,
+      ...(usePrev && { prevTrade, prevValue }),
       getValue: (key) => getValue(trade, key),
     });
 

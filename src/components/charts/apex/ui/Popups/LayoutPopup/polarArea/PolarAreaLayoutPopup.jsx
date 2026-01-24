@@ -1,8 +1,9 @@
-import GeneralSection from "./sections/GeneralSection";
-import PolarSection from "./sections/PolarSection";
-import LegendSection from "../common sections/LegendSection";
 import { Button } from "@ui";
 import { Section } from "@layout";
+
+import GeneralSection from "./sections/GeneralSection";
+import PolarSection from "./sections/PolarSection";
+import LegendSection from "../shared/LegendSection";
 
 export default function PolarAreaLayoutPopup(props) {
   const { layoutDraft, setLayoutDraft } = props;

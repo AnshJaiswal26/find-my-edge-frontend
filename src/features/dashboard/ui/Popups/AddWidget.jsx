@@ -17,8 +17,8 @@ function AddStatForm({}) {
     key: options[0].id,
     title: "",
     aggregate: "",
-    format: "NUMBER",
-    type: "number",
+    format: options[0].display?.format ?? "NUMBER",
+    type: options[0].type ?? "number",
   });
 
   const submit = () => {
@@ -52,7 +52,14 @@ function AddStatForm({}) {
             value={stat.key}
             getLabel={(s) => s.label}
             getKey={(s) => s.id}
-            onChange={(o) => setStat((s) => ({ ...s, key: o.id }))}
+            onChange={(o) =>
+              setStat((s) => ({
+                ...s,
+                key: o.id,
+                type: o.type,
+                format: o.display?.format ?? "NUMBER",
+              }))
+            }
           />
 
           <Select
@@ -61,7 +68,12 @@ function AddStatForm({}) {
             options={Object.keys(FUNCTION_REGISTRY)
               .filter((k) => k.includes("_N"))
               .map((k) => k.replace("_N", ""))}
-            onChange={(o) => setStat((s) => ({ ...s, aggregate: `${o}_N` }))}
+            onChange={(o) =>
+              setStat((s) => ({
+                ...s,
+                aggregate: `${o}_N`,
+              }))
+            }
           />
 
           <Select

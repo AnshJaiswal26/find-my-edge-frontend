@@ -96,7 +96,8 @@ export const getPieChartConfig = ({
                 const vals = w.config.series;
                 const result = applyReducer(config.reducer ?? "SUM_N", vals);
                 return formatValue(result, seriesConfig[0].type, {
-                  format: config.format,
+                  format:
+                    config.reducer !== "COUNT_N" ? config.format : "NUMBER",
                   decimals: config.decimals,
                 });
               },

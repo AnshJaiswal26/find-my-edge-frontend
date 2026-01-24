@@ -1,6 +1,5 @@
 import { Section } from "@layout";
 import { ColorPicker, Input } from "@ui";
-import { parseColor } from "@utils";
 
 export default function PolarSection({
   layoutDraft,
@@ -40,7 +39,7 @@ export default function PolarSection({
 
       <ColorPicker
         label="Ring Border"
-        value={parseColor(layoutDraft.ringBorderColor)}
+        value={layoutDraft.ringBorderColor}
         resetColor="var(--border)"
         onCommit={(c) =>
           setLayoutDraft((p) => ({
@@ -115,7 +114,7 @@ function PolarSeries({ seriesDraft, setSeriesDraft }) {
 
       <ColorPicker
         label="Color"
-        value={parseColor(series.color)}
+        value={series.color}
         onCommit={(c) =>
           setSeriesDraft((prev) => {
             const next = [...prev];

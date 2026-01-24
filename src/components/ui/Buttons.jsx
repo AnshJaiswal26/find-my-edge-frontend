@@ -53,6 +53,7 @@ export const Button = ({
 
 Button.Toggle = ({
   label,
+  hint,
   value,
   onChange,
   onCommit,
@@ -81,9 +82,17 @@ Button.Toggle = ({
 
   return (
     <div
-      className={`flex items-center gap-2 justify-between text-sm ${classNames?.wrapper}`}
+      className={`
+        flex items-center justify-between gap-4 text-sm
+        ${classNames?.wrapper || ""}
+      `}
     >
-      {label && <span>{label}</span>}
+      {(label || hint) && (
+        <div>
+          {label && <div className="text-sm">{label}</div>}
+          {hint && <div className="text-xs text-(--text-disabled)">{hint}</div>}
+        </div>
+      )}
 
       <div
         role="switch"
@@ -95,7 +104,7 @@ Button.Toggle = ({
           rounded-full
           flex items-center
           transition-colors
-          ${classNames?.track}
+          ${classNames?.track || ""}
           ${active ? "bg-(--info)" : "bg-(--hover)"}
         `}
         {...props}
@@ -107,7 +116,7 @@ Button.Toggle = ({
             rounded-full
             transition-transform
             border
-            ${classNames?.thumb}
+            ${classNames?.thumb || ""}
             ${
               active
                 ? "translate-x-full border-(--info)"

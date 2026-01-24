@@ -1,6 +1,5 @@
 import { Section } from "@layout";
 import { ColorPicker, Input } from "@ui";
-import { parseColor } from "@utils";
 
 export default function PolygonSection({
   layoutDraft,
@@ -42,13 +41,13 @@ export default function PolygonSection({
       <div className="flex gap-3">
         <ColorPicker
           label="Stroke"
-          value={parseColor(layoutDraft.polygonStroke)}
+          value={layoutDraft.polygonStroke}
           onCommit={(c) => setLayoutDraft((p) => ({ ...p, polygonStroke: c }))}
         />
 
         <ColorPicker
           label="Fill"
-          value={parseColor(layoutDraft.polygonFill)}
+          value={layoutDraft.polygonFill}
           onCommit={(c) => setLayoutDraft((p) => ({ ...p, polygonFill: c }))}
         />
       </div>
@@ -88,7 +87,7 @@ function RadarSeries({ seriesDraft, setSeriesDraft }) {
 
       <ColorPicker
         label="Color"
-        value={parseColor(series.color)}
+        value={series.color}
         onCommit={(c) =>
           setSeriesDraft((prev) => {
             const next = [...prev];

@@ -112,7 +112,7 @@ export function hslToRgb(h, s, l) {
 
 export function parseHsl(color) {
   const m = color.match(
-    /hsla?\(\s*([\d.]+)(?:deg)?[\s,]+([\d.]+)%[\s,]+([\d.]+)%\s*(?:[\/,]\s*([\d.]+))?\s*\)/
+    /hsla?\(\s*([\d.]+)(?:deg)?[\s,]+([\d.]+)%[\s,]+([\d.]+)%\s*(?:[\/,]\s*([\d.]+))?\s*\)/,
   );
 
   if (!m) return null;
@@ -173,7 +173,7 @@ export function evaluateColorRules(value, rules = []) {
     if (!fn) continue;
 
     if (fn(value, rule.value, rule?.value2)) {
-      return rule.color;
+      return rule;
     }
   }
 

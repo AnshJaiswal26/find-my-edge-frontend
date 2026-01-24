@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 export const FORMAT_VARIANTS = {
+  // ---------- MONEY ----------
   CURRENCY: {
     variant: "success",
     icon: Coins,
@@ -20,6 +21,7 @@ export const FORMAT_VARIANTS = {
     icon: Coins,
   },
 
+  // ---------- PERCENT ----------
   PERCENT: {
     variant: "risk",
     icon: Percent,
@@ -29,23 +31,7 @@ export const FORMAT_VARIANTS = {
     icon: Percent,
   },
 
-  NUMBER: {
-    variant: "neutral",
-    icon: Hash,
-  },
-  NUMBER_SIGNED: {
-    variant: "neutral",
-    icon: Hash,
-  },
-  INTEGER: {
-    variant: "neutral",
-    icon: Hash,
-  },
-  COMPACT: {
-    variant: "neutral",
-    icon: BarChart3,
-  },
-
+  // ---------- RATIOS ----------
   RATIO: {
     variant: "risk",
     icon: Scale,
@@ -55,21 +41,48 @@ export const FORMAT_VARIANTS = {
     icon: Scale,
   },
 
-  // DATE formats (grouped)
+  // ---------- COUNTS / MAGNITUDES ----------
+  NUMBER: {
+    variant: "neutral",
+    icon: BarChart3, // 📊 better than Hash
+  },
+  NUMBER_SIGNED: {
+    variant: "neutral",
+    icon: BarChart3,
+  },
+  INTEGER: {
+    variant: "neutral",
+    icon: BarChart3,
+  },
+  COMPACT: {
+    variant: "neutral",
+    icon: BarChart3,
+  },
+
+  // ---------- TIME ----------
+  TIME: {
+    variant: "neutral",
+    icon: Clock,
+  },
+
+  // ---------- DATE ----------
   DATE: {
     variant: "neutral",
     icon: Calendar,
   },
-
-  // TIME formats
-  "HH:mm:ss": {
-    variant: "neutral",
-    icon: Clock,
-  },
 };
 
 function resolveFormatGroup(format, type) {
+  console.log(format, type);
   if (!format) return "NUMBER";
+
+  if (type.includes("date")) {
+    return "DATE";
+  }
+
+  if (type.includes("time")) {
+    return "TIME";
+  }
 
   if (FORMATS[type].some((f) => f === format)) {
     return format;

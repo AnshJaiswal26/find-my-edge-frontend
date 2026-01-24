@@ -80,7 +80,7 @@ export const columnsById = {
     id: "targetAndSl",
     label: "Traget/SL",
     type: "number computed",
-    editable: true,
+    editable: false,
     dependencies: ["entry", "exit"],
     display: { format: "NUMBER", decimals: 2 },
     expression: {

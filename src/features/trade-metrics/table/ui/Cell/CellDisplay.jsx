@@ -40,7 +40,7 @@ export const CellDisplay = memo(function CellDisplay({
   const [selected, setSelected] = useState(false);
 
   const color = useMemo(
-    () => evaluateColorRules(cell.value, colorRules),
+    () => evaluateColorRules(cell.value, colorRules)?.color,
     [cell.value, colorRules],
   );
 

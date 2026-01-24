@@ -10,7 +10,7 @@ export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
 
   return (
     <div
-      className="flex border-y border-(--border) bg-(--surface-disabled) cursor-pointer"
+      className="flex border-y border-(--border) bg-(--surface-muted) cursor-pointer"
       onClick={() => toggleGroup(groupId)}
     >
       {/* ✅ STICKY HANDLE */}
@@ -20,7 +20,7 @@ export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
           w-12 shrink-0
           flex items-center justify-center
           border-r border-(--border)
-          bg-(--surface-disabled)
+          bg-(--surface-muted)
         "
       >
         <ChevronRight

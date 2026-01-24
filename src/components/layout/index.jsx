@@ -81,7 +81,7 @@ export const Section = ({ title, children, subSection = false, className }) => {
           subSection
             ? "border-0 border-t border-(--border) rounded-none px-2 py-3"
             : ""
-        }
+        } ${className}
       `}
     >
       {title && (
@@ -401,14 +401,14 @@ export function Loader() {
   );
 }
 
-export const Divider = ({ vertical = false }) => {
+export const Divider = ({ vertical = false, className }) => {
   return (
     <div
-      className={
+      className={`${
         vertical
           ? "self-stretch border-l border-(--border)"
           : "w-full border-t border-(--border)"
-      }
+      } ${className}`}
     />
   );
 };

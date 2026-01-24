@@ -1,91 +1,107 @@
-import { Section } from "@layout";
+import { Divider, Section } from "@layout";
 import { ColorPicker, Input, Button, Select } from "@ui";
-import { DEFAULT_FORMATS, FORMATS, parseColor } from "@utils";
+import { DEFAULT_FORMATS, FORMATS } from "@utils";
 
 export default function XAxisSection({
   layoutDraft,
   setLayoutDraft,
   isHorizontal,
-  type,
   chart,
 }) {
+  const axisLabel = isHorizontal ? "Y-Axis" : "X-Axis";
+  const seriesType = chart.xSeriesConfig.type;
+
   return (
-    <Section title={isHorizontal ? "Y-Axis" : "X-Axis"}>
-      {!isHorizontal && (
-        <Button.Toggle
-          label="Tooltip"
-          value={layoutDraft.xTooltip}
-          onChange={(v) => setLayoutDraft((p) => ({ ...p, xTooltip: v }))}
-        />
-      )}
+    <Section title={axisLabel}>
+      <div className="space-y-4">
+        {/* ---------- Tooltip ---------- */}
+        {!isHorizontal && (
+          <Button.Toggle
+            label="Tooltip"
+            hint="Show values on hover"
+            value={layoutDraft.xTooltip}
+            onChange={(v) => setLayoutDraft((p) => ({ ...p, xTooltip: v }))}
+          />
+        )}
 
-      {/* Labels */}
-      <Section title="Labels">
-        <ColorPicker
-          label="Color"
-          value={parseColor(layoutDraft.xLabelsColor)}
-          disabled={!layoutDraft.xLabels}
-          onCommit={(c) => setLayoutDraft((p) => ({ ...p, xLabelsColor: c }))}
-        />
+        <Divider />
 
-        <Button.Toggle
-          label="Show"
-          value={layoutDraft.xLabels}
-          onChange={(v) => setLayoutDraft((p) => ({ ...p, xLabels: v }))}
-        />
+        {/* ---------- Labels ---------- */}
+        <div className="space-y-4">
+          <Button.Toggle
+            label="Show Labels"
+            hint="Display axis labels"
+            value={layoutDraft.xLabels}
+            onChange={(v) => setLayoutDraft((p) => ({ ...p, xLabels: v }))}
+          />
 
-        <Select
-          label="Format"
-          value={
-            layoutDraft.xFormat || DEFAULT_FORMATS[chart.xSeriesConfig.type]
-          }
-          options={FORMATS[chart.xSeriesConfig.type]}
-          onChange={(v) =>
-            setLayoutDraft((p) => ({
-              ...p,
-              xFormat: v,
-            }))
-          }
-        />
-
-        {chart.xSeriesConfig.type === "number" && (
-          <Input
-            label="Decimals"
-            type="range"
-            min={0}
-            max={5}
-            value={layoutDraft.xDecimals}
-            onChange={(e) =>
+          <ColorPicker
+            label="Label Color"
+            value={layoutDraft.xLabelsColor}
+            disabled={!layoutDraft.xLabels}
+            onCommit={(c) =>
               setLayoutDraft((p) => ({
                 ...p,
-                xDecimals: Number(e.target.value),
+                xLabelsColor: c,
               }))
             }
           />
-        )}
-      </Section>
 
-      {/* Title */}
-      <Section title="Title">
-        <span className="font-light text-[var(--text-charts)] text-[0.85rem]">
-          Leave blank to hide the title.
-        </span>
+          <Select
+            vertical
+            label="Format"
+            value={layoutDraft.xFormat || DEFAULT_FORMATS[seriesType]}
+            options={FORMATS[seriesType]}
+            onChange={(v) => setLayoutDraft((p) => ({ ...p, xFormat: v }))}
+          />
 
-        <Input
-          label="Text"
-          type="text"
-          value={layoutDraft.xTitleText}
-          placeholder="X-axis title"
-          onCommit={(v) => setLayoutDraft((p) => ({ ...p, xTitleText: v }))}
-        />
+          {seriesType === "number" && (
+            <Input
+              label="Decimals"
+              type="range"
+              min={0}
+              max={5}
+              value={layoutDraft.xDecimals}
+              onCommit={(v) =>
+                setLayoutDraft((p) => ({
+                  ...p,
+                  xDecimals: Number(v),
+                }))
+              }
+            />
+          )}
+        </div>
 
-        <ColorPicker
-          label="Color"
-          value={parseColor(layoutDraft.xTitleColor)}
-          disabled={!layoutDraft.xTitleText}
-          onCommit={(c) => setLayoutDraft((p) => ({ ...p, xTitleColor: c }))}
-        />
-      </Section>
+        <Divider />
+
+        {/* ---------- Title ---------- */}
+        <div className="space-y-4">
+          <Input
+            vertical
+            label="Title"
+            placeholder={`${axisLabel} title`}
+            value={layoutDraft.xTitleText}
+            onCommit={(v) =>
+              setLayoutDraft((p) => ({
+                ...p,
+                xTitleText: v,
+              }))
+            }
+          />
+
+          <ColorPicker
+            label="Title Color"
+            value={layoutDraft.xTitleColor}
+            disabled={!layoutDraft.xTitleText}
+            onCommit={(c) =>
+              setLayoutDraft((p) => ({
+                ...p,
+                xTitleColor: c,
+              }))
+            }
+          />
+        </div>
+      </div>
     </Section>
   );
 }

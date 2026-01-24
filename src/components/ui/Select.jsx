@@ -13,6 +13,7 @@ export default function Select({
   classNames = {},
   getLabel = (v) => v,
   getKey = (v) => v,
+  vertical,
 }) {
   const selectId = useId();
   const listId = `${selectId}-list`;
@@ -61,7 +62,7 @@ export default function Select({
 
   const selectedItem = useMemo(
     () => options.find((o) => getKey(o) === val) ?? null,
-    [val]
+    [val],
   );
 
   return (
@@ -76,7 +77,7 @@ export default function Select({
 
       <div
         className={`relative flex flex-1 justify-start sm:justify-end ${
-          !label ? "justify-start!" : ""
+          !label || vertical ? "justify-start!" : ""
         }`}
       >
         <button
@@ -161,7 +162,7 @@ export default function Select({
                 </button>
               ))}
             </div>,
-            document.body
+            document.body,
           )}
       </div>
     </div>

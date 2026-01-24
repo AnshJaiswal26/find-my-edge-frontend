@@ -1,48 +1,95 @@
-import { Button } from "@ui";
-import { Section } from "@layout";
+import { useMemo, useState } from "react";
 
 import {
   GeneralSection,
   XAxisSection,
   YAxisSection,
-  BarSettingsSection,
-  LineSettingsSection,
+  GridSection,
 } from "./sections";
-import LegendSection from "../common sections/LegendSection";
+import { BarSection, BarSeriesSection } from "./sections/bar";
+import { LineSection, LineSeriesSection } from "./sections/line";
+import LegendSection from "../shared/LegendSection";
 
 export default function CartesianLayoutPopup(props) {
-  const { type, layoutDraft, setLayoutDraft, chart } = props;
-
+  const { type, chart } = props;
   const isHorizontal = chart.layout.horizontal;
 
+  const [active, setActive] = useState("general");
+
+  const sectionMap = useMemo(() => {
+    return {
+      general: GeneralSection,
+      grid: GridSection,
+
+      ...(type === "bar" && {
+        bar: BarSection,
+        series: BarSeriesSection,
+      }),
+
+      ...(type === "line" && {
+        line: LineSection,
+        series: LineSeriesSection,
+      }),
+
+      xAxis: XAxisSection,
+      yAxis: YAxisSection,
+      legend: LegendSection,
+    };
+  }, [type]);
+
+  const ActiveSection = sectionMap[active];
+
   return (
-    <>
-      <GeneralSection {...props} />
-      <Section title="Grid">
+    <div className="flex h-full">
+      {/* LEFT NAV */}
+      <div className="w-30 border-r border-(--border-muted) space-y-1">
         {[
-          { title: "X Grid", key: "xGrid" },
-          { title: "Y Grid", key: "yGrid" },
-        ].map(({ title, key }, i) => (
-          <Button.Toggle
-            key={i}
-            label={title}
-            value={layoutDraft[key]}
-            onCommit={(v) => setLayoutDraft((p) => ({ ...p, [key]: v }))}
-          />
+          ["general", "General"],
+          ["grid", "Grid"],
+          ...(type === "bar"
+            ? [
+                ["bar", "Bar"],
+                ["series", "Series"],
+              ]
+            : []),
+          ...(type === "line"
+            ? [
+                ["line", "Line"],
+                ["series", "Series"],
+              ]
+            : []),
+          ["xAxis", "X Axis"],
+          ["yAxis", "Y Axis"],
+          ["legend", "Legend"],
+        ].map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setActive(id)}
+            className={`
+              w-full text-left px-3 py-2 text-sm
+              transition
+              ${
+                active === id
+                  ? "bg-(--hover) text-(--text)"
+                  : "text-(--text-muted) hover:bg-(--surface-muted)"
+              }
+            `}
+          >
+            {label}
+          </button>
         ))}
-      </Section>
+      </div>
 
-      {type === "line" ? (
-        <LineSettingsSection {...props} />
-      ) : type === "bar" ? (
-        <BarSettingsSection {...props} />
-      ) : null}
-
-      <XAxisSection {...props} isHorizontal={isHorizontal} />
-
-      <YAxisSection {...props} isHorizontal={isHorizontal} />
-
-      <LegendSection {...props} />
-    </>
+      {/* RIGHT CONTENT */}
+      <div className="flex-1 p-3 overflow-y-auto">
+        {ActiveSection ? (
+          <ActiveSection {...props} isHorizontal={isHorizontal} />
+        ) : (
+          <div className="text-(--text-muted) text-sm">
+            No settings available.
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

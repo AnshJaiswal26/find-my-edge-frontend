@@ -175,7 +175,7 @@ export default function ColorPicker({
               />
             </div>
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );

@@ -1,11 +1,5 @@
-import { formatValue } from "@utils";
+import { evaluateColorRules, formatValue } from "@utils";
 import { useChartStore } from "../store/useChartStore";
-
-const resolveColorRule = (rules, value) =>
-  rules?.find((r) => r.from <= value && value <= r.to) ?? {
-    color: "var(--info)",
-    tooltipLabel: "",
-  };
 
 export const seriesTooltipCallback = ({
   seriesValue,
@@ -28,17 +22,17 @@ export const seriesTooltipCallback = ({
         ? ySeriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
         : ySeriesConfig;
 
-      const { color, tooltipLabel } =
+      const { color, label } =
         meta.type === "line"
-          ? { tooltipLabel: config[i].tooltipLabel, color: config[i].color }
-          : resolveColorRule(config[i].colors, value);
+          ? { color: config[i].color, label: config[i].label }
+          : evaluateColorRules(value, config[i].colorRules);
 
       return {
         value: formatValue(value, config[0].type, {
           format: layout.yFormat,
           decimals: layout.yDecimals,
         }),
-        label: tooltipLabel,
+        label,
         color,
       };
     }),

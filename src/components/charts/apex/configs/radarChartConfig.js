@@ -1,4 +1,4 @@
-import { customTooltip, parseColor, shadeColor } from "@utils";
+import { customTooltip } from "@utils";
 
 export const getRadarChartConfig = ({
   chartId,

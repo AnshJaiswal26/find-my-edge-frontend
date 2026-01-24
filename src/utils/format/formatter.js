@@ -4,8 +4,8 @@ import { formatTime, TIME_FORMAT_KEYS } from "./time";
 
 export const DEFAULT_FORMATS = {
   number: "NUMBER",
-  text: "",
-  select: "",
+  text: "NUMBER",
+  select: "NUMBER",
   time: "hh:mm:ss A",
   date: "YYYY-MM-DD",
   "number computed": "NUMBER",
@@ -15,6 +15,7 @@ export const DEFAULT_FORMATS = {
 
 export const FORMATS = {
   number: NUMBER_FORMAT_KEYS,
+  text: NUMBER_FORMAT_KEYS,
   "number computed": NUMBER_FORMAT_KEYS,
   time: TIME_FORMAT_KEYS,
   date: DATE_FORMAT_KEYS,

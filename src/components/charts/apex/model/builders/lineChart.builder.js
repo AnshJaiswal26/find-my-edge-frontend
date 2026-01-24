@@ -36,7 +36,7 @@ export function buildLineChart({ x, y, layout = {}, category = "series" }) {
       name: s.name ?? s.key,
       type: s.type ?? "number",
 
-      tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
+      label: s.label ?? s.name ?? s.key,
 
       color: s.color,
       markerColor: s.markerColor ?? s.color,

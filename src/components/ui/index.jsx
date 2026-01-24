@@ -12,3 +12,4 @@ export { default as Select } from "./Select";
 export { default as Toast } from "./Toast";
 export { default as SelectOptionsEditor } from "./SelectOptionsEditor";
 export { default as Tooltip, tooltipApi } from "./Tooltip";
+export { default as ColorRules } from "./ColorRules";

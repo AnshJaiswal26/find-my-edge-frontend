@@ -5,6 +5,7 @@ export default function RadialGeneralSection({ layoutDraft, setLayoutDraft }) {
   return (
     <Section title="General">
       <Input
+        vertical
         label="Title"
         type="text"
         value={layoutDraft.title}

@@ -1,7 +1,6 @@
 import { ExpressionBuilder } from "../ExpressionBuilder";
-import { Input, Select, SelectOptionsEditor } from "@ui";
+import { ColorRules, Input, Select, SelectOptionsEditor } from "@ui";
 import { DisplaySection } from "./DisplaySection";
-import { ColorRulesSection } from "./ColorRulesSection";
 import { Section } from "@layout";
 import { COLUMN_TYPES } from "@table/model";
 import { useTableStore } from "@table/store/useTableStore";
@@ -81,7 +80,7 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
       />
 
       {/* Color rules */}
-      <ColorRulesSection
+      <ColorRules
         type={draft.type}
         rules={draft.colorRules}
         onChange={onDraftChange}

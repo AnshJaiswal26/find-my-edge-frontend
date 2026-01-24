@@ -10,8 +10,8 @@ export default function VirtualizedRow({ scrollRef }) {
     s.sortedRowOrder.length
       ? s.sortedRowOrder
       : s.filteredRowOrder.length
-      ? s.filteredRowOrder
-      : s.rowOrder
+        ? s.filteredRowOrder
+        : s.rowOrder,
   );
 
   const groupBy = useTableStore((s) => s.groupBy);

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { Popup } from "@layout";
+
 import CartesianLayoutPopup from "./cartesian/CartesianLayoutPopup";
 import RadialLayoutPopup from "./radialbar/RadialLayoutPoup";
 import PieLayoutPopup from "./pie/PieLayoutPopup";
 import RadarLayoutPopup from "./radar/RadarLayoutPopup";
-import { Popup } from "@layout";
-import styles from "./LayoutPopup.module.css";
 import PolarAreaLayoutPopup from "./polarArea/PolarAreaLayoutPopup";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 
@@ -41,25 +41,35 @@ export default function ChartLayoutPopup({ chartId }) {
     ...(chart?.ySeriesConfig ?? chart.seriesConfig),
   ]);
 
+  const updateSeries = useCallback(
+    (index, patch) => {
+      setSeriesDraft((prev) => {
+        const next = [...prev];
+        next[index] = { ...next[index], ...patch };
+        return next;
+      });
+    },
+    [setSeriesDraft],
+  );
+
   return (
     <Popup open={true}>
-      <Popup.Container>
+      <Popup.Container className="max-w-130!">
         {/* Header */}
         <Popup.Header title="Layout" onClose={closePopup} />
 
         {/* Body */}
         <Popup.Body>
-          <div className={styles.contentWrapper}>
-            <PopupContent
-              chartId={chartId}
-              chart={chart}
-              type={type}
-              layoutDraft={layoutDraft}
-              seriesDraft={seriesDraft}
-              setLayoutDraft={setLayoutDraft}
-              setSeriesDraft={setSeriesDraft}
-            />
-          </div>
+          <PopupContent
+            chartId={chartId}
+            chart={chart}
+            type={type}
+            layoutDraft={layoutDraft}
+            seriesDraft={seriesDraft}
+            setLayoutDraft={setLayoutDraft}
+            setSeriesDraft={setSeriesDraft}
+            updateSeries={updateSeries}
+          />
         </Popup.Body>
 
         {/* Footer */}

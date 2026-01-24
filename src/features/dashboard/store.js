@@ -110,15 +110,6 @@ export const useDashboardStore = create(
         const { seriesById, seriesOrder, schemasById } = state;
 
         Object.values(schemasById).forEach((schema) => {
-          // computeSchema({
-          //   tradesById: seriesById,
-          //   tradeOrder: seriesOrder,
-          //   schema,
-          //   getValue: (trade, key) => trade[key],
-          //   setValue: (trade, value) => {
-          //     trade[schema.id] = value;
-          //   },
-          // });
           computeOverSequence({
             tradesById: seriesById,
             sequenceIds: seriesOrder,
@@ -205,24 +196,27 @@ export const useDashboardStore = create(
               key: "riskReward",
               name: "Risk/Reward",
               type: "number",
-              colors: [
+              colorRules: [
                 {
-                  from: 0.61,
-                  to: Number.MAX_SAFE_INTEGER,
+                  operator: "greaterThan",
+                  value: 0.6,
+                  value2: 0,
                   color: "var(--success)",
-                  tooltipLabel: "Reward Taken",
+                  label: "Reward Taken",
                 },
                 {
-                  from: 0,
-                  to: 0.6,
+                  operator: "greaterThan",
+                  value: 0,
+                  value2: 0,
                   color: "var(--warning)",
-                  tooltipLabel: "Breakeven",
+                  label: "Breakeven",
                 },
                 {
-                  from: Number.MIN_SAFE_INTEGER,
-                  to: -0.01,
+                  operator: "lessThan",
+                  value: 0,
+                  value2: 0,
                   color: "var(--error)",
-                  tooltipLabel: "Risk Taken",
+                  label: "Risk Taken",
                 },
               ],
             },
@@ -244,7 +238,7 @@ export const useDashboardStore = create(
               key: "pnl",
               name: "Pnl",
               type: "number",
-              tooltipLabel: "Pnl",
+              label: "Pnl",
               color: "var(--cyan)",
               markerColor: "var(--cyan)",
               areaColor: "var(--cyan)",
@@ -326,17 +320,14 @@ export const useDashboardStore = create(
     addStats(stats) {
       set((s) => {
         stats.forEach((stat) => {
-          console.log(stat);
           const reducer = FUNCTION_REGISTRY[stat.aggregate].reducer;
           const state = reducer.init(s.seriesOrder.length);
 
           s.seriesOrder.forEach((id) => {
-            console.log(s.seriesById[id][stat.key]);
             reducer.step(state, s.seriesById[id][stat.key]);
           });
 
-          stat.value = reducer.result(state);
-          s.stats.push(stat);
+          s.stats.push({ ...stat, value: reducer.result(state) });
         });
       });
       get().closePopup();

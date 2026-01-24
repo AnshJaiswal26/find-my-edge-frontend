@@ -22,7 +22,8 @@ const generateSeries = (cfg, order, idMap, legendIndexes) => {
   return activeCfg.map((c) => ({
     name: c.label,
     data: order.map((id) => idMap[id][c.key]),
-    color: ({ value }) => evaluateColorRules(value, c.colors),
+    color: ({ value }) =>
+      evaluateColorRules(value, c.colors)?.color ?? "var(--info)",
   }));
 };
 
@@ -62,7 +63,7 @@ export const useChartSeries = (legendIndexes) => {
     ySeriesConfig,
     sortedOrder,
     seriesById,
-    legendIndexes
+    legendIndexes,
   );
 
   const xSeries = sortedOrder.map((id) => seriesById[id][xSeriesConfig.key]);

@@ -2,7 +2,11 @@ export const createLayoutSlice = (set, get) => ({
   updateLayout(chartId, layoutDraft, seriesDraft) {
     set((s) => {
       Object.assign(s[chartId].layout, layoutDraft);
-      s[chartId].seriesConfig = seriesDraft;
+      if (s[chartId].ySeriesConfig) {
+        s[chartId].ySeriesConfig = seriesDraft;
+      } else {
+        s[chartId].seriesConfig = seriesDraft;
+      }
     });
 
     get().closePopup();

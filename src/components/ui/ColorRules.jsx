@@ -1,4 +1,4 @@
-import { Section } from "@layout";
+import { Divider, Section } from "@layout";
 import { Select, Input, ColorPicker } from "@ui";
 import { filterByType, filterOptions } from "@utils";
 import { Trash2 } from "lucide-react";
@@ -8,28 +8,33 @@ function updateRule(index, patch, onChange) {
     const next = [...p.colorRules];
     next[index] = { ...next[index], ...patch };
     return { ...p, colorRules: next };
-  });
+  }, patch);
 }
 
-export function ColorRulesSection({ rules, onChange, type }) {
+export default function ColorRules({
+  rules,
+  onChange,
+  type,
+  label = false,
+  section = true,
+}) {
   if (!rules) return null;
   return (
-    <Section title="Conditional Colors">
+    <Section
+      title="Conditional Colors"
+      className={section ? "" : "p-0! border-0!"}
+    >
       {rules.map((r, i) => (
-        <div
-          key={i}
-          className={`space-y-2 ${
-            i !== 0 ? "pt-3 border-t" : ""
-          } border-(--border)`}
-        >
+        <div key={i} className="space-y-2">
           <Select
             value={r.operator}
             options={filterByType[type]}
             getLabel={(v) => filterOptions[v]}
             onChange={(op) => updateRule(i, { operator: op }, onChange)}
           />
+          <div className="flex flex-wrap gap-2">
+            {i !== 0 && <Divider className="my-3" />}
 
-          <div className="flex gap-2">
             <Input
               value={r.value}
               placeholder={`Enter Value ${
@@ -41,18 +46,14 @@ export function ColorRulesSection({ rules, onChange, type }) {
                 type === "select"
                   ? "text"
                   : type.includes("computed")
-                  ? "number"
-                  : type
+                    ? "number"
+                    : type
               }
               onChange={(e) =>
                 updateRule(i, { value: e.target.value }, onChange)
               }
             />
-            <ColorPicker
-              reset={false}
-              value={r.color}
-              onCommit={(c) => updateRule(i, { color: c }, onChange)}
-            />
+
             {(r.operator === "isBetween" || r.operator === "isNotBetween") && (
               <Input
                 value={r.value2}
@@ -63,6 +64,23 @@ export function ColorRulesSection({ rules, onChange, type }) {
                 }
               />
             )}
+
+            {label && (
+              <Input
+                vertical
+                placeholder={"Enter Label"}
+                value={r.label}
+                onChange={(e) =>
+                  updateRule(i, { label: e.target.value }, onChange)
+                }
+              />
+            )}
+
+            <ColorPicker
+              reset={false}
+              value={r.color}
+              onCommit={(c) => updateRule(i, { color: c }, onChange)}
+            />
 
             <button
               onClick={() =>
@@ -87,7 +105,7 @@ export function ColorRulesSection({ rules, onChange, type }) {
               ...p,
               colorRules: [
                 ...p.colorRules,
-                { operator: ">", value: 0, color: "#22c55e" },
+                { operator: ">", value: 0, color: "#fff" },
               ],
             }))
           }
