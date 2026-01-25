@@ -19,6 +19,8 @@ export const useUIStore = create((set) => ({
   activeColorPicker: false,
   toasts: [],
 
+  recentColors: [],
+
   tooltip: {
     color: null,
     visible: false,
@@ -83,6 +85,27 @@ export const useUIStore = create((set) => ({
       activeColorPicker:
         s.activeColorPicker?.id === payload?.id ? null : payload,
     })),
+
+  addRecentColor: (color) =>
+    set((state) => {
+      const now = Date.now();
+      const list = [...state.recentColors];
+      const idx = list.findIndex((c) => c.color === color);
+
+      if (idx !== -1) {
+        list[idx] = {
+          ...list[idx],
+          count: list[idx].count + 1,
+          lastUsed: now,
+        };
+      } else {
+        list.push({ color, count: 1, lastUsed: now });
+      }
+
+      list.sort((a, b) => b.count - a.count || b.lastUsed - a.lastUsed);
+
+      return { recentColors: list.slice(0, 10) };
+    }),
 
   showToast: (type = "INFO", message, duration = 5000) => {
     const id = Date.now() + Math.random();

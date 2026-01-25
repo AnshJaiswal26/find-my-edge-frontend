@@ -1,4 +1,4 @@
-import { filterOperationMap } from "@utils";
+import { FILTER_OPERATION_MAP } from "@utils";
 
 export const createFilterSlice = (set, get) => ({
   filters: [],
@@ -55,7 +55,7 @@ export const createFilterSlice = (set, get) => ({
         s.filteredRowOrder = s.rowOrder.filter((rowId) => {
           const row = s.rowsById[rowId];
           return s.filters.some((f) => {
-            const fn = filterOperationMap[f.operator];
+            const fn = FILTER_OPERATION_MAP[f.operator];
             return fn?.(row.cells[f.columnId]?.value, f.value, f.value2);
           });
         });

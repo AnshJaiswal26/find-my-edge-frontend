@@ -1,5 +1,5 @@
 import { Popup } from "@layout";
-import { filterOptions } from "@utils";
+import { FILTER_OPTIONS } from "@utils";
 import { Button, Input, Select } from "@ui";
 import { Trash2 } from "lucide-react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
@@ -81,8 +81,8 @@ export default function FilterPopup({ chartId }) {
 
                   <Select
                     label={"Filter: "}
-                    options={Object.keys(filterOptions)}
-                    getLabel={(o) => filterOptions[o]}
+                    options={Object.keys(FILTER_OPTIONS)}
+                    getLabel={(o) => FILTER_OPTIONS[o]}
                     value={f.operator}
                     onChange={(o) => updateFilter(index, { operator: o })}
                   />

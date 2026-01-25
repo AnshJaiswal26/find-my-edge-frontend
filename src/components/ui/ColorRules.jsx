@@ -1,6 +1,6 @@
 import { Divider, Section } from "@layout";
 import { Select, Input, ColorPicker } from "@ui";
-import { filterByType, filterOptions } from "@utils";
+import { FILTER_TYPE, FILTER_OPTIONS } from "@utils";
 import { Trash2 } from "lucide-react";
 
 function updateRule(index, patch, onChange) {
@@ -28,8 +28,8 @@ export default function ColorRules({
         <div key={i} className="space-y-2">
           <Select
             value={r.operator}
-            options={filterByType[type]}
-            getLabel={(v) => filterOptions[v]}
+            options={FILTER_TYPE[type]}
+            getLabel={(v) => FILTER_OPTIONS[v]}
             onChange={(op) => updateRule(i, { operator: op }, onChange)}
           />
           <div className="flex flex-wrap gap-2">

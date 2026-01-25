@@ -1,5 +1,7 @@
-import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 import { highlightMatch } from "./highlightMatch";
+import { BASE_FUNCTIONS } from "@lib/analytics/engine/functions/base/registry";
+import { CONDITION_FUNCTIONS } from "@lib/analytics/engine/functions/condition/registry";
+import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
 
 export function getColumnSuggestions(q, numericColumns) {
   return numericColumns
@@ -13,12 +15,9 @@ export function getColumnSuggestions(q, numericColumns) {
 }
 
 export function getFunctionSuggestions(q, mode) {
-  return Object.entries(FUNCTION_REGISTRY)
-    .filter(([_, value]) =>
-      mode === "row"
-        ? value.type === "base" || value.type === "condition"
-        : value.type !== "base",
-    )
+  const functions = mode === "row" ? BASE_FUNCTIONS : WINDOW_FUNCTIONS;
+
+  return Object.entries({ ...functions, ...CONDITION_FUNCTIONS })
     .filter(([name]) => name.toLowerCase().includes(q))
     .map(([name, value]) => ({
       type: "function",

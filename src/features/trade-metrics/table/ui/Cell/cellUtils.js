@@ -1,4 +1,5 @@
 import { useTableStore } from "@table/store/useTableStore";
+import { formatValue } from "@utils";
 
 function isSafeIdentifier(label) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(label);
@@ -30,12 +31,22 @@ export function explainFormulaFromColumn(colId, rowId) {
     if (isSafeIdentifier(label)) {
       // replace whole-word identifiers only
       const re = new RegExp(`\\b${label}\\b`, "g");
-      expanded = expanded.replace(re, String(value));
+      expanded = expanded.replace(
+        re,
+        formatValue(value, depColumn.type, depColumn.display),
+      );
     } else {
       // replace [Label Name]
-      expanded = expanded.replaceAll(`[${label}]`, String(value));
+      expanded = expanded.replaceAll(
+        `[${label}]`,
+        formatValue(value, depColumn.type, depColumn.display),
+      );
     }
   });
 
-  return { formula: column.formula, expanded };
+  return {
+    formula: column.formula,
+    expanded,
+    result: formatValue(row.cells[colId]?.value, column.type, column.display),
+  };
 }

@@ -3,7 +3,7 @@ import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
 import {
   evaluateColorRules,
-  filterOperationMap,
+  FILTER_OPERATION_MAP,
   sortOperationMap,
 } from "@utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
@@ -52,7 +52,7 @@ export default function useSeriesChartConfig({
     if (filters.length) {
       order = order.filter((id) =>
         filters.some((f) => {
-          const fn = filterOperationMap[f.operator];
+          const fn = FILTER_OPERATION_MAP[f.operator];
           return fn?.(seriesById[id][f.key], f.value, f.value2);
         }),
       );

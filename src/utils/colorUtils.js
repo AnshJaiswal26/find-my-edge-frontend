@@ -1,4 +1,4 @@
-import { filterOperationMap } from "./filters";
+import { FILTER_OPERATION_MAP } from "./filters";
 
 export function parseColor(color) {
   if (!color) return "#000000";
@@ -169,7 +169,7 @@ export function evaluateColorRules(value, rules = []) {
   });
 
   for (const rule of sorted) {
-    const fn = filterOperationMap[rule.operator];
+    const fn = FILTER_OPERATION_MAP[rule.operator];
     if (!fn) continue;
 
     if (fn(value, rule.value, rule?.value2)) {

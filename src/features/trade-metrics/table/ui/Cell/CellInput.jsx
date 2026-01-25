@@ -1,13 +1,6 @@
 import { parseInputValue } from "@utils";
 import { useTableStore } from "@table/store/useTableStore";
 
-function normalizeValue(type, raw) {
-  if (type === "number" || type.includes("computed")) {
-    return raw === "" ? null : Number(raw);
-  }
-  return parseInputValue(raw, type);
-}
-
 export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
   const type = useTableStore((s) => s.columnsById[colId].type);
 
@@ -24,7 +17,7 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
       value={draft ?? ""}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={() => {
-        const normalized = normalizeValue(type, draft);
+        const normalized = parseInputValue(draft, type);
         onCommit(normalized);
         setEditing(false);
       }}

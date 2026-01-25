@@ -1,6 +1,6 @@
 import { Popup } from "@layout";
 import { useTableStore } from "@table/store/useTableStore";
-import { filterOptions, filterByType } from "@utils";
+import { FILTER_OPTIONS, FILTER_TYPE } from "@utils";
 import { Button, Input, Select } from "@ui";
 import { Trash2 } from "lucide-react";
 
@@ -31,7 +31,7 @@ export default function FilterPopup() {
 
           {filters.map((f, index) => {
             const column = columnsById[f.columnId];
-            const ops = filterByType[column.type];
+            const ops = FILTER_TYPE[column.type];
 
             return (
               <div
@@ -69,7 +69,7 @@ export default function FilterPopup() {
                   <Select
                     label={"Filter: "}
                     options={ops}
-                    getLabel={(o) => filterOptions[o]}
+                    getLabel={(o) => FILTER_OPTIONS[o]}
                     value={f.operator}
                     onChange={(o) => updateFilter(f.id, { operator: o })}
                   />

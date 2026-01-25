@@ -15,7 +15,7 @@ const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
 
   tooltipApi.show({
     rect: e.target.getBoundingClientRect(),
-    content: `= ${explanation.formula}\n= ${explanation.expanded}\n= ${cell.value}`,
+    content: `= ${explanation.formula}\n= ${explanation.expanded}\n= ${explanation.result}`,
     color,
     slide: -30,
     placement: "top",

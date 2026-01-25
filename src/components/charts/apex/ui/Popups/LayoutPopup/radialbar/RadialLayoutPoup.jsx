@@ -14,7 +14,7 @@ export default function RadialLayoutPopup(props) {
     return {
       general: GeneralSection,
       track: TrackSection,
-      bar: RadialBarSection,
+      radialbar: RadialBarSection,
       series: RadialBarSeriesSection,
       centerLabels: CenterLabelSection,
       legend: LegendSection,
@@ -30,7 +30,7 @@ export default function RadialLayoutPopup(props) {
         {[
           ["general", "General"],
           ["track", "Track"],
-          ["bar", "Bar"],
+          ["radialbar", "Radial Bar"],
           ["series", "Series"],
           ["centerLabels", "Center Labels"],
           ["legend", "Legend"],

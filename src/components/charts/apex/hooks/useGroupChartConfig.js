@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
-import { WIN_RATE_N } from "@lib/analytics/reducers";
+import { WIN_RATE_N } from "@lib/analytics/engine/functions";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
 
 const getSeries = ({ seriesConfig, seriesById, seriesOrder }) => {

@@ -13,7 +13,8 @@ export function parseInputValue(raw, valueType) {
       return Math.floor(ms / 86400000);
     }
 
-    case "time": {
+    case "time":
+    case "time computed": {
       // HH:mm[:ss] → seconds since midnight
       const [h, m, s = 0] = raw.split(":").map(Number);
       return h * 3600 + m * 60 + s;
@@ -23,11 +24,11 @@ export function parseInputValue(raw, valueType) {
       return Date.parse(raw);
     }
 
-    case "time computed":
-      return +raw; // seconds or minutes (your choice)
-
-    case "boolean":
-      return raw === "true" || raw === true;
+    case "time computed": {
+      // HH:mm[:ss] → total seconds (NO LIMIT)
+      const [h = 0, m = 0, s = 0] = raw.split(":").map(Number);
+      return h * 3600 + m * 60 + s;
+    }
 
     default:
       return raw;
@@ -42,13 +43,15 @@ export function formatForInput(value, valueType) {
   if (value == null || value === "" || Number.isNaN(value)) return "";
 
   switch (valueType) {
-    case "date": {
+    case "date":
+    case "date computed": {
       // days → YYYY-MM-DD
       const ms = value * 86400000;
       return new Date(ms).toISOString().slice(0, 10);
     }
 
-    case "time": {
+    case "time":
+    case "time computed": {
       // seconds → HH:mm:ss
       const h = Math.floor(value / 3600);
       const m = Math.floor((value % 3600) / 60);
@@ -57,6 +60,7 @@ export function formatForInput(value, valueType) {
     }
 
     case "number":
+    case "number computed":
       return String(value);
 
     default:

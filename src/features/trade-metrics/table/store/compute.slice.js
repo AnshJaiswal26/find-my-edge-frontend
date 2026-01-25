@@ -49,106 +49,109 @@ export const createComputeSlice = (set, get) => ({
     set((state) => {
       const {
         rowsById: tradesById,
-        rowOrder: tradeOrder,
+        rowOrder,
         columnsById,
         affectedMap,
         groupBy,
         groups,
       } = state;
 
+      /* ================================
+       * Helpers
+       * ================================ */
       const getValue = (trade, key) => trade.cells[key]?.value ?? null;
       const setValue = (trade, schema, value) => {
         trade.cells[schema.id].value = value;
       };
 
-      /* =====================================
+      const compute = ({ sequenceIds, schema, startIndex, usePrev }) => {
+        computeOverSequence({
+          tradesById,
+          sequenceIds,
+          schema,
+          getValue,
+          setValue,
+          startIndex,
+          usePrev,
+        });
+      };
+
+      const isComputed = (schema) => schema && schema.type.includes("computed");
+
+      /* ================================
        * FULL RECOMPUTE
-       * ===================================== */
+       * ================================ */
       if (!payload || payload.reason === "all") {
         Object.values(columnsById).forEach((schema) => {
-          if (!schema.type.includes("computed")) return;
+          if (!isComputed(schema)) return;
 
+          // Grouped
           if (schema.mode === "grouped" && groups) {
-            groups.forEach((group) => {
-              computeOverSequence({
-                tradesById,
-                sequenceIds: group.rowIds,
+            groups.forEach((group) =>
+              compute({
                 schema,
-                getValue,
-                setValue,
+                sequenceIds: group.rowIds,
                 usePrev: true,
-              });
-            });
+              }),
+            );
             return;
           }
 
-          computeOverSequence({
-            tradesById,
-            sequenceIds: tradeOrder,
+          // Normal / cumulative
+          compute({
             schema,
-            getValue,
-            setValue,
+            sequenceIds: rowOrder,
             usePrev: schema.mode !== "row",
           });
         });
+
         return;
       }
 
-      /* =====================================
+      /* ================================
        * CELL CHANGE (PARTIAL)
-       * ===================================== */
+       * ================================ */
       if (payload.reason === "cell") {
         const { rowId, colId } = payload;
-
-        const changedIndex = tradeOrder.indexOf(rowId);
-        if (changedIndex === -1) return;
 
         const affectedSchemas = collectAffectedColumns(colId, affectedMap);
 
         affectedSchemas.forEach((schemaId) => {
           const schema = columnsById[schemaId];
-          if (!schema || !schema.type.includes("computed")) return;
+          if (!isComputed(schema)) return;
 
-          // ---------- GROUPED ----------
+          // Grouped
           if (schema.mode === "grouped" && groupBy && groups) {
             const group = groups.find((g) => g.rowIds.includes(rowId));
             if (!group) return;
 
-            const groupIndex = group.rowIds.indexOf(rowId);
-
-            computeOverSequence({
-              tradesById,
-              sequenceIds: group.rowIds,
+            compute({
               schema,
-              getValue,
-              setValue,
-              startIndex: groupIndex,
+              sequenceIds: group.rowIds,
+              startIndex: group.rowIds.indexOf(rowId),
               usePrev: true,
             });
 
             return;
           }
 
-          // ---------- ROW ----------
+          // Row-only
           if (schema.mode === "row") {
-            computeOverSequence({
-              tradesById,
-              sequenceIds: [rowId], // ✅ single-trade sequence
+            compute({
               schema,
-              getValue,
-              setValue,
+              sequenceIds: [rowId],
               usePrev: false,
             });
             return;
           }
 
-          // ---------- CUMULATIVE ----------
-          computeOverSequence({
-            tradesById,
-            sequenceIds: tradeOrder,
+          const changedIndex = rowOrder.indexOf(rowId);
+          if (changedIndex === -1) return;
+
+          // Cumulative
+          compute({
             schema,
-            getValue,
-            setValue,
+            sequenceIds: rowOrder,
             startIndex: changedIndex,
             usePrev: true,
           });
@@ -157,33 +160,29 @@ export const createComputeSlice = (set, get) => ({
         return;
       }
 
-      /* =====================================
+      /* ================================
        * COLUMN CHANGE
-       * ===================================== */
+       * ================================ */
       if (payload.reason === "column" && payload.colId) {
         const schema = columnsById[payload.colId];
-        if (!schema || !schema.type.includes("computed")) return;
+        if (!isComputed(schema)) return;
 
+        // Grouped
         if (schema.mode === "grouped" && groups) {
-          groups.forEach((group) => {
-            computeOverSequence({
-              tradesById,
-              sequenceIds: group.rowIds,
+          groups.forEach((group) =>
+            compute({
               schema,
-              getValue,
-              setValue,
+              sequenceIds: group.rowIds,
               usePrev: true,
-            });
-          });
+            }),
+          );
           return;
         }
 
-        computeOverSequence({
-          tradesById,
-          sequenceIds: tradeOrder,
+        // Normal
+        compute({
           schema,
-          getValue,
-          setValue,
+          sequenceIds: rowOrder,
           usePrev: schema.mode !== "row",
         });
       }

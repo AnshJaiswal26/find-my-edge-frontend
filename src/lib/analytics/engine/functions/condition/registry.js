@@ -1,0 +1,12 @@
+import { FUNCTION_TYPE } from "../type";
+import { fnIF } from "./if";
+
+export const CONDITION_FUNCTIONS = {
+  IF: {
+    type: FUNCTION_TYPE.CONDITION,
+    exec: fnIF,
+    arity: 3,
+    signature: "IF(cond, yes, no)",
+    description: "Conditional expression",
+  },
+};

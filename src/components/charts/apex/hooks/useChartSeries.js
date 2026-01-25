@@ -31,7 +31,7 @@ const applyFilters = (filters, order, idMap) => {
   return order.filter((id) => {
     const series = idMap[id];
     return filters.some((f) => {
-      const fn = filterOperationMap[f.operator];
+      const fn = FILTER_OPERATION_MAP[f.operator];
       return fn?.(series[f.id], f.value, f.value2);
     });
   });

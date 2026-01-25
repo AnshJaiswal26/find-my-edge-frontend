@@ -38,6 +38,7 @@
   box-sizing: border-box;
   justify-content: space-between;
   flex-wrap: wrap;
+  font-weight: bold;
 }
 
 .legendWrapper {

@@ -44,6 +44,8 @@ export function ExpressionBuilder({ value, mode, onCommit, onChange }) {
     (item) => {
       let insert = "";
 
+      console.log(item);
+
       if (item.type === "column") {
         insert = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(item.label)
           ? item.label

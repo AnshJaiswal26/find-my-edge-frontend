@@ -1,6 +1,8 @@
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
-import { runBackwardWindowReducer } from "@lib/analytics/engine/functions/rolling";
-import { runBaseReducer } from "@lib/analytics/engine/functions/row";
+import {
+  runBackwardWindowReducer,
+  runBaseReducer,
+} from "@lib/analytics/runners";
 
 const runReducers = {
   base: runBaseReducer,

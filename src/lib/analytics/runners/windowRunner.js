@@ -9,7 +9,6 @@ export function runBackwardWindowReducer(reducer, fn, ctx) {
     const trade = ctx.getTradeAt(i);
     if (!trade) break;
 
-    // ❗ IMPORTANT: evaluate expr WITHOUT prevValue
     const value = ctx.evaluate(expr, {
       ...ctx,
       evaluate: ctx.evaluate,

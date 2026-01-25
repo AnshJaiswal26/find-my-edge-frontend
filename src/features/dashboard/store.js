@@ -2,7 +2,7 @@ import { createChart } from "@charts/apex/model/factory";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { computeOverSequence } from "@lib/analytics/engine/execute";
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
-import { useTradeStore } from "@stores";
+import { useTradeStore, useUIStore } from "@stores";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -93,7 +93,7 @@ export const useDashboardStore = create(
     schemasById: {},
     schemaOrder: [],
     order: [],
-    stats: [],
+    stats: [...stats],
 
     lastSeenVerison: 0,
 
@@ -313,11 +313,17 @@ export const useDashboardStore = create(
           });
         });
       });
-
-      get().addStats(stats);
     },
 
     addStats(stats) {
+      const { stats: storeStats } = get();
+
+      if (storeStats.length > 19) {
+        useUIStore
+          .getState()
+          .showToast("ERROR", "You cannot add more than 20 stats");
+        return;
+      }
       set((s) => {
         stats.forEach((stat) => {
           const reducer = FUNCTION_REGISTRY[stat.aggregate].reducer;

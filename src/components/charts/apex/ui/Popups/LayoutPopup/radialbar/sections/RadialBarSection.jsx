@@ -3,7 +3,7 @@ import { Select } from "@ui";
 
 export default function RadialBarSection({ layoutDraft, setLayoutDraft }) {
   return (
-    <Section title="Bar">
+    <Section title="Radial Bar">
       <div className="space-y-4">
         <Select
           vertical
