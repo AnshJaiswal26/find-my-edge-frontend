@@ -1,4 +1,4 @@
-export function parseInputValue(raw, valueType) {
+const parseInputValue = (raw, valueType) => {
   if (raw == null || raw === "") return null;
 
   switch (valueType) {
@@ -33,13 +33,13 @@ export function parseInputValue(raw, valueType) {
     default:
       return raw;
   }
-}
+};
 
-function pad2(n) {
+const pad2 = (n) => {
   return String(n).padStart(2, "0");
-}
+};
 
-export function formatForInput(value, valueType) {
+const formatForInput = (value, valueType) => {
   if (value == null || value === "" || Number.isNaN(value)) return "";
 
   switch (valueType) {
@@ -66,4 +66,6 @@ export function formatForInput(value, valueType) {
     default:
       return String(value);
   }
-}
+};
+
+export { parseInputValue, pad2, formatForInput };

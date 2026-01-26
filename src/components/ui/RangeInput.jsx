@@ -1,64 +1,49 @@
-import { formatForInput, parseInputValue } from "@utils";
-import Input from "./Input";
-
-const getHtmlInputType = (valueType) => {
-  if (valueType === "duration" || valueType === "time computed") return "text";
-  return valueType;
-};
+import Input from "./Input/Input";
 
 export default function RangeInput({
-  valueType,
+  type,
   value = {},
   showStep = false,
-  stepUnit = "raw",
   onChange,
 }) {
-  const parse = (raw) => parseInputValue(raw, valueType);
-  const format = (v) => formatForInput(v, valueType);
-
   return (
     <>
-      <Input
-        label="From"
-        type={valueType.replace(" computed", "")}
-        valueType={valueType}
-        placeholder={
-          valueType === "duration" || valueType === "time computed"
-            ? "HH:mm:ss"
-            : undefined
-        }
-        step={1}
-        value={format(value.from)}
-        onChange={(e) => onChange({ ...value, from: parse(e.target.value) })}
-      />
-
-      <Input
-        label="To"
-        type={valueType.replace(" computed", "")}
-        valueType={valueType}
-        placeholder={
-          valueType === "duration" || valueType === "time computed"
-            ? "HH:mm:ss"
-            : undefined
-        }
-        step={1}
-        value={format(value.to)}
-        onChange={(e) => onChange({ ...value, to: parse(e.target.value) })}
-      />
-
-      {showStep && (
+      <div className="flex gap-4">
         <Input
-          label="Step"
-          type="number"
-          value={value.step ?? ""}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              step: Number(e.target.value),
-            })
-          }
+          label="From"
+          vertical
+          normalize
+          placeholder="Enter from"
+          type={type}
+          value={value.from}
+          onChange={(e, parsed) => onChange({ ...value, from: parsed })}
         />
-      )}
+
+        <Input
+          label="To"
+          vertical
+          placeholder="Enter to"
+          normalize
+          type={type}
+          value={value.to}
+          onChange={(e, parsed) => onChange({ ...value, to: parsed })}
+        />
+        {showStep && (
+          <Input
+            label="Step"
+            vertical
+            placeholder="Enter Number"
+            type="number"
+            value={value.step ?? 0}
+            onChange={(e) =>
+              onChange({
+                ...value,
+                step: Number(e.target.value),
+              })
+            }
+          />
+        )}
+      </div>
     </>
   );
 }

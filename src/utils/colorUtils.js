@@ -1,6 +1,6 @@
 import { FILTER_OPERATION_MAP } from "./filters";
 
-export function parseColor(color) {
+const parseColor = (color) => {
   if (!color) return "#000000";
 
   // 1️⃣ Resolve CSS variables
@@ -35,9 +35,9 @@ export function parseColor(color) {
 
   // Already hex
   return rgb;
-}
+};
 
-export const shadeColor = (color, percent) => {
+const shadeColor = (color, percent) => {
   let num = parseInt(color.replace("#", ""), 16);
   let amt = Math.round(2.55 * percent);
   let r = (num >> 16) + amt;
@@ -53,7 +53,7 @@ export const shadeColor = (color, percent) => {
     .slice(1)}`;
 };
 
-export function rgbaToHex(rgba) {
+const rgbaToHex = (rgba) => {
   const [r, g, b, a = 1] = rgba
     .replace(/rgba?|\(|\)|\s/g, "")
     .split(",")
@@ -64,9 +64,9 @@ export function rgbaToHex(rgba) {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}${
     a < 1 ? toHex(Math.round(a * 255)) : ""
   }`;
-}
+};
 
-export function hexToRgba(hex) {
+const hexToRgba = (hex) => {
   let h = hex.replace("#", "").trim();
 
   // #RGB
@@ -92,9 +92,9 @@ export function hexToRgba(hex) {
   const a = parseInt(h.slice(6, 8), 16) / 255;
 
   return `rgba(${r}, ${g}, ${b}, ${Number(a.toFixed(3))})`;
-}
+};
 
-export function hslToRgb(h, s, l) {
+const hslToRgb = (h, s, l) => {
   s /= 100;
   l /= 100;
 
@@ -108,9 +108,9 @@ export function hslToRgb(h, s, l) {
     g: Math.round(255 * f(8)),
     b: Math.round(255 * f(4)),
   };
-}
+};
 
-export function parseHsl(color) {
+const parseHsl = (color) => {
   const m = color.match(
     /hsla?\(\s*([\d.]+)(?:deg)?[\s,]+([\d.]+)%[\s,]+([\d.]+)%\s*(?:[\/,]\s*([\d.]+))?\s*\)/,
   );
@@ -124,9 +124,9 @@ export function parseHsl(color) {
 
   const { r, g, b } = hslToRgb(h, s, l);
   return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
+};
 
-export function resolveCssColor(color) {
+const resolveCssColor = (color) => {
   if (!color) return "rgba(0,0,0,1)";
 
   /* already safe */
@@ -157,9 +157,9 @@ export function resolveCssColor(color) {
 
   /* named colors */
   return color;
-}
+};
 
-export function evaluateColorRules(value, rules = []) {
+const evaluateColorRules = (value, rules = []) => {
   const sorted = [...rules].sort((a, b) => {
     // numeric rules → higher value first
     if (a.operator === "greaterThan" && b.operator === "greaterThan") {
@@ -178,4 +178,15 @@ export function evaluateColorRules(value, rules = []) {
   }
 
   return null;
-}
+};
+
+export {
+  parseColor,
+  shadeColor,
+  rgbaToHex,
+  hexToRgba,
+  hslToRgb,
+  parseHsl,
+  resolveCssColor,
+  evaluateColorRules,
+};

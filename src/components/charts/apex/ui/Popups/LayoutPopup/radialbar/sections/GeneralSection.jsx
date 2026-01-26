@@ -8,6 +8,7 @@ export default function RadialGeneralSection({ layoutDraft, setLayoutDraft }) {
         <Input
           vertical
           label="Title"
+          classNames={{ input: "max-w-full!" }}
           type="text"
           value={layoutDraft.title}
           placeholder="Chart title"

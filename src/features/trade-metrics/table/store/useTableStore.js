@@ -10,7 +10,6 @@ import { createCoreSlice } from "./core.slice";
 import { createComputeSlice } from "./compute.slice";
 import { createGroupSlice } from "./group.slice";
 import { createRow } from "@table/model";
-import { parseInputValue } from "@utils";
 import { useTradeStore } from "@stores";
 import { buildAffectedMap } from "@table/dependency";
 

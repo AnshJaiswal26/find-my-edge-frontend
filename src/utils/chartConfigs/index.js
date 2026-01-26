@@ -1,4 +1,11 @@
-export { getRadialBarChartConfig } from "./radialBarChartConfig";
-export { getPieChartConfig } from "./pieChartConfig";
-export { customTooltip } from "../../components/charts/apex/tooltip/customTooltip";
-export { getMiniBarChartConfig } from "./miniBarChartConfig";
+import { getRadialBarChartConfig } from "./radialBarChartConfig";
+import { getPieChartConfig } from "./pieChartConfig";
+import { customTooltip } from "../../components/charts/apex/tooltip/customTooltip";
+import { getMiniBarChartConfig } from "./miniBarChartConfig";
+
+export {
+  getRadialBarChartConfig,
+  getPieChartConfig,
+  getMiniBarChartConfig,
+  customTooltip,
+};

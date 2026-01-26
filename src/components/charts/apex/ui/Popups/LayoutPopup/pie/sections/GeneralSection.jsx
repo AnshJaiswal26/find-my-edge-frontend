@@ -8,6 +8,7 @@ export default function GeneralSection({ layoutDraft, setLayoutDraft }) {
         {/* ---------- Title ---------- */}
         <Input
           vertical
+          classNames={{ input: "max-w-full!" }}
           label="Title"
           type="text"
           placeholder="Chart title"

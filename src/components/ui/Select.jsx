@@ -13,7 +13,7 @@ export default function Select({
   classNames = {},
   getLabel = (v) => v,
   getKey = (v) => v,
-  vertical,
+  vertical = false,
 }) {
   const selectId = useId();
   const listId = `${selectId}-list`;
@@ -52,10 +52,13 @@ export default function Select({
 
     setPos({
       placement: openDown ? "bottom" : "top",
-      top: openDown ? rect.bottom : undefined,
-      bottom: openDown ? undefined : viewportHeight - rect.top,
+      top: openDown ? rect.bottom + 3 : undefined,
+      bottom: openDown ? undefined : viewportHeight - rect.top + 3,
       left: rect.left,
       width: rect.width,
+      shadow: openDown
+        ? "0 10px 20px hsla(0, 0%, 0%, 0.3)"
+        : "0 -10px 20px hsla(0, 0%, 0%, 0.3)",
       maxHeight: Math.max(100, (openDown ? spaceBelow : spaceAbove) - 8),
     });
   }, [active]);
@@ -71,6 +74,7 @@ export default function Select({
         flex items-center gap-1 flex-wrap
         text-sm
         ${classNames?.wrapper}
+        ${vertical ? "flex-col items-start!" : ""}
       `}
     >
       {label && <label className="shrink-0 w-32">{label}</label>}
@@ -91,6 +95,7 @@ export default function Select({
             min-w-50 
             box-border
             text-nowrap
+            ${active ? "border-(--info)!" : ""}
             ${classNames?.button}
           `}
           onClick={(e) => {
@@ -123,7 +128,6 @@ export default function Select({
                 text-sm
                 min-w-25
                 overflow-y-auto
-                shadow-2xl
                 box-border
                 z-10000
                  ${
@@ -139,6 +143,7 @@ export default function Select({
                 left: pos.left,
                 width: pos.width,
                 maxHeight: pos.maxHeight,
+                boxShadow: pos.shadow,
               }}
             >
               {options.map((item, i) => (
@@ -150,7 +155,7 @@ export default function Select({
                     px-3 py-2
                     border-b border-(--hover)
                     last:border-b-0
-                    hover:bg-(--cyan)
+                    hover:bg-(--info)
                     hover:text-white
                   `}
                   onClick={() => {

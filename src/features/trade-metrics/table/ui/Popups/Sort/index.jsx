@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Popup } from "@layout";
 import { Select } from "@ui";
-import { sortByType, sortOptions } from "@utils";
+import { SORT_TYPE, SORT_OPTIONS } from "@utils";
 import { useTableStore } from "@table/store/useTableStore";
 
 export default function SortPopup() {
@@ -31,8 +31,8 @@ export default function SortPopup() {
           {/* Sort type */}
           <Select
             label="Sort Order"
-            options={sortByType[columnsById[draft?.columnId]?.type] ?? ["none"]}
-            getLabel={(o) => sortOptions[o]}
+            options={SORT_TYPE[columnsById[draft?.columnId]?.type] ?? ["none"]}
+            getLabel={(o) => SORT_OPTIONS[o]}
             value={draft.operator}
             onChange={(o) =>
               setDraft((p) => ({ columnId: p.columnId, operator: o }))

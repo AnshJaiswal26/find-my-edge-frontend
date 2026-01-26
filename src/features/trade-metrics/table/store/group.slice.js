@@ -1,4 +1,4 @@
-import { createGetGroupKey, groupRowsBy } from "../grouping";
+import { buildGroups, draftToSpec } from "@lib/analytics/engine/data";
 
 export const createGroupSlice = (set, get) => ({
   groupBy: null,
@@ -45,43 +45,23 @@ export const createGroupSlice = (set, get) => ({
       expandedGroups: {},
     })),
 
-  buildGroups: (config) => {
-    const {
-      rowOrder,
-      sortedRowOrder,
-      groupBy,
-      filteredRowOrder,
-      rowsById,
-      columnsById,
-      recompute,
-    } = get();
+  buildGroups: (spec) => {
+    const { rowsById, sortedRowOrder, filteredRowOrder, rowOrder } = get();
 
-    const groupConfig = config ?? groupBy;
-
-    if (!groupConfig) {
-      set({ groups: null });
-      return;
-    }
-
-    const effectiveRowOrder = sortedRowOrder.length
+    const effectiveOrder = sortedRowOrder.length
       ? sortedRowOrder
       : filteredRowOrder.length
         ? filteredRowOrder
         : rowOrder;
 
-    const getGroupName = createGetGroupKey({
-      rowsById,
-      columnsById,
-      groupBy: groupConfig,
-    });
-
-    const groups = groupRowsBy({
-      rowOrder: effectiveRowOrder,
-      getGroupName,
+    const groups = buildGroups({
+      tradeOrder: effectiveOrder,
+      tradesById: rowsById,
+      groupSpec: draftToSpec(spec),
+      getValue: (row, key) => row.cells[key]?.value ?? null,
     });
 
     set({ groups });
-
-    recompute({ reason: "all" });
+    get().recompute({ reason: "all" });
   },
 });

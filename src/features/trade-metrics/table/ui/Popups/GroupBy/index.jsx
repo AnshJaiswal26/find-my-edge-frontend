@@ -1,69 +1,10 @@
-import { useTableStore } from "@table/store/useTableStore";
-import { Popup } from "@layout";
-import { Input, Select, RangeInput } from "@ui";
-import { FILTER_TYPE, FILTER_OPTIONS } from "@utils";
 import { useState } from "react";
-
-/* =========================================================
- * Grouping schema
- * ========================================================= */
-export const GROUPING_SCHEMA = {
-  number: {
-    kinds: ["value", "bucket", "condition"],
-    buckets: ["range"],
-    input: "number",
-    operators: FILTER_TYPE.number,
-  },
-
-  "number computed": {
-    kinds: ["value", "bucket", "condition"],
-    buckets: ["range"],
-    input: "number",
-    operators: FILTER_TYPE.number,
-  },
-
-  text: {
-    kinds: ["value", "condition"],
-    input: "text",
-    operators: FILTER_TYPE.text,
-  },
-
-  select: {
-    kinds: ["value", "condition"],
-    input: "select",
-    operators: FILTER_TYPE.select,
-  },
-
-  date: {
-    kinds: ["value", "bucket", "condition"],
-    buckets: ["day", "month", "year"],
-    input: "date",
-    operators: FILTER_TYPE.date,
-  },
-
-  "date computed": {
-    kinds: ["value", "bucket", "condition"],
-    buckets: ["day", "month", "year"],
-    input: "date",
-    operators: FILTER_TYPE.date,
-  },
-
-  time: {
-    kinds: ["value", "bucket", "condition"],
-    buckets: ["hour", "range"],
-    input: "time",
-    operators: FILTER_TYPE.time,
-  },
-
-  "time computed": {
-    kinds: ["value", "bucket", "condition"],
-    buckets: ["hour", "range"],
-    input: "time computed",
-    operators: FILTER_TYPE["time computed"],
-  },
-};
-
-const isBetween = (op) => op?.includes("Between");
+import { Popup } from "@layout";
+import { Input, Select, RangeInput, Button } from "@ui";
+import { FILTER_OPTIONS, isBetween } from "@utils";
+import { GROUPING_OPTIONS, GROUPING_SCHEMA } from "@lib/analytics/config";
+import { useTableStore } from "@table/store/useTableStore";
+import { Trash2 } from "lucide-react";
 
 export default function GroupByPopup() {
   const columnsById = useTableStore((s) => s.columnsById);
@@ -72,15 +13,16 @@ export default function GroupByPopup() {
 
   const [draft, setDraft] = useState(groupBy ?? {});
 
-  const column = draft.columnId ? columnsById[draft.columnId] : null;
+  const column = draft.key ? columnsById[draft.key] : null;
 
   const schema = column ? GROUPING_SCHEMA[column.type] : null;
 
   const onColumnChange = (col) => {
     setDraft({
-      columnId: col.id,
-      columnType: col.type,
+      key: col.id,
+      schemaType: col.type,
       kind: GROUPING_SCHEMA[col.type].kinds[0],
+      ranges: [],
     });
   };
 
@@ -89,14 +31,14 @@ export default function GroupByPopup() {
       <Popup.Container>
         <Popup.Header title="Group By" onClose={closePopup} />
 
-        <Popup.Body className="flex flex-col gap-4 p-3!">
+        <Popup.Body className="flex flex-col gap-4 p-5!">
           {/* COLUMN */}
           <Select
             label="Column"
             options={Object.values(columnsById)}
             getLabel={(c) => c.label}
             getKey={(c) => c.id}
-            value={draft.columnId}
+            value={draft.key}
             onChange={onColumnChange}
           />
 
@@ -106,12 +48,12 @@ export default function GroupByPopup() {
               label="Grouping Type"
               options={schema.kinds}
               value={draft.kind}
+              getLabel={(v) => GROUPING_OPTIONS[v]}
               onChange={(kind) =>
-                setDraft({
-                  columnId: draft.columnId,
-                  columnType: draft.columnType,
+                setDraft((p) => ({
+                  ...p,
                   kind,
-                })
+                }))
               }
             />
           )}
@@ -130,6 +72,7 @@ export default function GroupByPopup() {
                 label="Bucket"
                 options={schema.buckets}
                 value={draft.bucket}
+                getLabel={(v) => GROUPING_OPTIONS[v]}
                 onChange={(bucket) =>
                   setDraft((p) => ({
                     ...p,
@@ -141,13 +84,48 @@ export default function GroupByPopup() {
 
               {/* RANGE BUCKET → N GROUPS */}
               {draft.bucket === "range" && (
-                <RangeInput
-                  valueType={schema.input}
-                  showStep
-                  stepUnit={schema.input === "time" ? "minutes" : "raw"}
-                  value={draft.range}
-                  onChange={(range) => setDraft((p) => ({ ...p, range }))}
-                />
+                <>
+                  {draft.ranges.map((range, index) => (
+                    <div className="flex items-end space-x-2" key={index}>
+                      <RangeInput
+                        key={index}
+                        type={schema.input}
+                        getLabel={(v) => GROUPING_OPTIONS[v]}
+                        stepUnit={schema.input === "time" ? "minutes" : "raw"}
+                        value={range}
+                        onChange={(range) =>
+                          setDraft((p) => {
+                            const next = [...p.ranges];
+                            next[index] = range;
+                            return { ...p, ranges: next };
+                          })
+                        }
+                      />
+                      <Button.Icon
+                        onClick={() =>
+                          setDraft((p) => ({
+                            ...p,
+                            ranges: p.ranges.filter((_, i) => i !== index),
+                          }))
+                        }
+                      >
+                        <Trash2 size={18} />
+                      </Button.Icon>
+                    </div>
+                  ))}
+                  <div>
+                    <Button.Text
+                      onClick={() =>
+                        setDraft((p) => ({
+                          ...p,
+                          ranges: [...p.ranges, { from: 0, to: 0 }],
+                        }))
+                      }
+                    >
+                      + Add range
+                    </Button.Text>
+                  </div>
+                </>
               )}
             </>
           )}
@@ -170,13 +148,12 @@ export default function GroupByPopup() {
                 }
               />
 
-              {!isBetween(draft.operator) && (
+              {!isBetween(draft.operator) ? (
                 <Input
                   label="Value"
                   type={schema.input}
                   normalize
                   value={draft.value ?? ""}
-                  step={1}
                   onChange={(e, parsed) => {
                     console.log(parsed);
                     setDraft((p) => ({
@@ -185,11 +162,9 @@ export default function GroupByPopup() {
                     }));
                   }}
                 />
-              )}
-
-              {isBetween(draft.operator) && (
+              ) : (
                 <RangeInput
-                  valueType={schema.input}
+                  type={schema.input}
                   value={{
                     from: draft.value,
                     to: draft.valueTo,
@@ -206,6 +181,7 @@ export default function GroupByPopup() {
 
               <Input
                 label="Match Group Name"
+                placeholder="Group 1 Name"
                 value={draft.labels?.match ?? ""}
                 onChange={(e) =>
                   setDraft((p) => ({
@@ -220,6 +196,7 @@ export default function GroupByPopup() {
 
               <Input
                 label="Non-Match Group Name"
+                placeholder="Group 2 Name"
                 value={draft.labels?.nonMatch ?? ""}
                 onChange={(e) =>
                   setDraft((p) => ({
@@ -239,7 +216,7 @@ export default function GroupByPopup() {
           text={["Clear", "Apply"]}
           onCancel={clearGroupBy}
           onApply={() => {
-            if (!draft.columnId || !draft.kind) return;
+            if (!draft.key || !draft.kind) return;
             setGroupBy(draft);
           }}
         />

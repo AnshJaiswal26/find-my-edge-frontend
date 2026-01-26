@@ -1,4 +1,4 @@
-export const TIME_FORMATS = [
+const TIME_FORMATS = [
   { key: "HH:mm", label: "09:30" },
   { key: "HH:mm:ss", label: "09:30:15" },
   { key: "hh:mm A", label: "09:30 AM" },
@@ -6,9 +6,9 @@ export const TIME_FORMATS = [
   { key: "mm:ss", label: "05:32" },
 ];
 
-export const TIME_FORMAT_KEYS = TIME_FORMATS.map(({ key }) => key);
+const TIME_FORMAT_KEYS = TIME_FORMATS.map(({ key }) => key);
 
-export function formatTime(value, format) {
+function formatTime(value, format) {
   if (typeof value !== "number") return "—";
 
   // seconds since midnight → h:m:s
@@ -31,3 +31,5 @@ export function formatTime(value, format) {
 
   return format.replace(/HH|hh|mm|ss|A/g, (k) => map[k]);
 }
+
+export { TIME_FORMATS, TIME_FORMAT_KEYS, formatTime };

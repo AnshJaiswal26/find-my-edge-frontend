@@ -154,3 +154,29 @@ Button.Icon = ({ className = "", tooltip, disabled, children, ...props }) => {
     </button>
   );
 };
+
+Button.Text = ({
+  children,
+  onClick,
+  className = "",
+  disabled = false,
+  type = "button",
+}) => {
+  return (
+    <button
+      type={type}
+      disabled={disabled}
+      onClick={onClick}
+      className={`
+        text-sm
+        text-(--info)
+        hover:underline
+        disabled:opacity-50
+        disabled:cursor-not-allowed
+        ${className}
+      `}
+    >
+      {children}
+    </button>
+  );
+};

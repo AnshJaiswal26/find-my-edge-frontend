@@ -1,4 +1,4 @@
-import { sortOperationMap } from "@utils";
+import { SORT_OPERATION_MAP } from "@utils";
 
 export const createSortSlice = (set, get) => ({
   sort: {
@@ -41,7 +41,7 @@ export const createSortSlice = (set, get) => ({
       return;
     }
 
-    const fn = sortOperationMap[sort.operator];
+    const fn = SORT_OPERATION_MAP[sort.operator];
 
     set((s) => {
       const order = s.filteredRowOrder.length ? s.filteredRowOrder : s.rowOrder;

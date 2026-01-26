@@ -2,19 +2,6 @@ import { useTradeStore } from "@stores";
 import { collectAffectedColumns } from "../dependency";
 import { computeOverSequence } from "@lib/analytics/engine/execute";
 
-export function findGroupForRow(groups, tradeId) {
-  if (!groups || !tradeId) return null;
-
-  for (const group of groups) {
-    const ids = group.rowIds;
-    for (let i = 0; i < ids.length; i++) {
-      if (ids[i] === tradeId) return group.groupId;
-    }
-  }
-
-  return null;
-}
-
 export const createComputeSlice = (set, get) => ({
   /* ------------------------------------------------------- */
   /*              CELL AND RECOMPUTE ACTIONS                 */
@@ -90,7 +77,7 @@ export const createComputeSlice = (set, get) => ({
             groups.forEach((group) =>
               compute({
                 schema,
-                sequenceIds: group.rowIds,
+                sequenceIds: group.tradeIds,
                 usePrev: true,
               }),
             );
@@ -122,13 +109,13 @@ export const createComputeSlice = (set, get) => ({
 
           // Grouped
           if (schema.mode === "grouped" && groupBy && groups) {
-            const group = groups.find((g) => g.rowIds.includes(rowId));
+            const group = groups.find((g) => g.tradeIds.includes(rowId));
             if (!group) return;
 
             compute({
               schema,
-              sequenceIds: group.rowIds,
-              startIndex: group.rowIds.indexOf(rowId),
+              sequenceIds: group.tradeIds,
+              startIndex: group.tradeIds.indexOf(rowId),
               usePrev: true,
             });
 
@@ -172,7 +159,7 @@ export const createComputeSlice = (set, get) => ({
           groups.forEach((group) =>
             compute({
               schema,
-              sequenceIds: group.rowIds,
+              sequenceIds: group.tradeIds,
               usePrev: true,
             }),
           );

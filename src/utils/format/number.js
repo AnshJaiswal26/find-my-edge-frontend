@@ -1,4 +1,4 @@
-export const NUMBER_FORMATS = [
+const NUMBER_FORMATS = [
   { key: "NUMBER", label: "123.45" },
   { key: "NUMBER_SIGNED", label: "+123.45 / -98.7" },
 
@@ -16,7 +16,7 @@ export const NUMBER_FORMATS = [
   { key: "COMPACT", label: "1.2L / 120K" },
 ];
 
-export const NUMBER_FORMAT_KEYS = NUMBER_FORMATS.map(({ key }) => key);
+const NUMBER_FORMAT_KEYS = NUMBER_FORMATS.map(({ key }) => key);
 
 function formatNumber(v, d = 2) {
   return new Intl.NumberFormat("en-IN", {
@@ -34,7 +34,7 @@ function formatCurrency(v, d = 0) {
   }).format(v);
 }
 
-export const numberFormatters = {
+const numberFormatters = {
   NUMBER: (v, d = 2) => formatNumber(v, d),
 
   NUMBER_SIGNED: (v, d = 2) =>
@@ -69,3 +69,5 @@ export const numberFormatters = {
     return formatNumber(v, 0);
   },
 };
+
+export { NUMBER_FORMATS, NUMBER_FORMAT_KEYS, numberFormatters };

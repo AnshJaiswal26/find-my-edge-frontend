@@ -1,6 +1,6 @@
 import { Divider, Section } from "@layout";
-import { Select, Input, ColorPicker } from "@ui";
-import { FILTER_TYPE, FILTER_OPTIONS } from "@utils";
+import { Select, Input, ColorPicker, Button, RangeInput } from "@ui";
+import { FILTER_TYPE, FILTER_OPTIONS, isBetween } from "@utils";
 import { Trash2 } from "lucide-react";
 
 function updateRule(index, patch, onChange) {
@@ -19,69 +19,65 @@ export default function ColorRules({
   section = true,
 }) {
   if (!rules) return null;
+
   return (
     <Section
       title="Conditional Colors"
       className={section ? "" : "p-0! border-0!"}
     >
       {rules.map((r, i) => (
-        <div key={i} className="space-y-2">
+        <div key={i} className="space-y-3">
+          {i !== 0 && <Divider className="my-3" />}
+
           <Select
+            label={"Condition"}
+            vertical
             value={r.operator}
             options={FILTER_TYPE[type]}
             getLabel={(v) => FILTER_OPTIONS[v]}
             onChange={(op) => updateRule(i, { operator: op }, onChange)}
           />
-          <div className="flex flex-wrap gap-2">
-            {i !== 0 && <Divider className="my-3" />}
 
-            <Input
-              value={r.value}
-              placeholder={`Enter Value ${
-                r.operator === "isBetween" || r.operator === "isNotBetween"
-                  ? "1"
-                  : ""
-              }`}
-              type={
-                type === "select"
-                  ? "text"
-                  : type.includes("computed")
-                    ? "number"
-                    : type
-              }
-              onChange={(e) =>
-                updateRule(i, { value: e.target.value }, onChange)
+          {isBetween(r.operator) ? (
+            <RangeInput
+              type={type}
+              value={{ from: r.value, to: r.value2 }}
+              onChange={({ from, to }) =>
+                updateRule(i, { value: from, value2: to }, onChange)
               }
             />
+          ) : (
+            <Input
+              label={"Value"}
+              vertical
+              value={r.value}
+              type={type}
+              normalize
+              placeholder={`Enter Value ${isBetween(r.operator) ? "1" : ""}`}
+              onChange={(e, parsed) =>
+                updateRule(i, { value: parsed }, onChange)
+              }
+            />
+          )}
 
-            {(r.operator === "isBetween" || r.operator === "isNotBetween") && (
-              <Input
-                value={r.value2}
-                placeholder="Enter Value 2"
-                type="number"
-                onChange={(e) =>
-                  updateRule(i, { value2: e.target.value }, onChange)
-                }
-              />
-            )}
+          {label && (
+            <Input
+              label={"Label"}
+              vertical
+              placeholder={"Enter Label"}
+              value={r.label}
+              onChange={(e) =>
+                updateRule(i, { label: e.target.value }, onChange)
+              }
+            />
+          )}
 
-            {label && (
-              <Input
-                vertical
-                placeholder={"Enter Label"}
-                value={r.label}
-                onChange={(e) =>
-                  updateRule(i, { label: e.target.value }, onChange)
-                }
-              />
-            )}
-
+          <div className="flex items-center space-x-6">
             <ColorPicker
               reset={false}
               value={r.color}
               onCommit={(c) => updateRule(i, { color: c }, onChange)}
             />
-
             <button
               onClick={() =>
                 onChange((p) => ({
@@ -98,20 +94,19 @@ export default function ColorRules({
       ))}
 
       <div>
-        <button
-          className="text-xs text-(--info) hover:underline"
+        <Button.Text
           onClick={() =>
             onChange((p) => ({
               ...p,
               colorRules: [
                 ...p.colorRules,
-                { operator: ">", value: 0, color: "#fff" },
+                { operator: "none", value: 0, color: "#fff" },
               ],
             }))
           }
         >
           + Add rule
-        </button>
+        </Button.Text>
       </div>
     </Section>
   );

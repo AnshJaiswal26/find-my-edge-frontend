@@ -12,7 +12,7 @@ import { RgbaStringColorPicker } from "react-colorful";
 import { RefreshCcw, ArrowLeftRight, Copy, CopyCheck } from "lucide-react";
 
 import { Button } from "./Buttons";
-import Input from "./Input";
+import Input from "./Input/Input";
 import { useUIStore } from "@stores";
 import { resolveCssColor, rgbaToHex } from "@utils";
 

@@ -1,30 +1,71 @@
-export const sortByType = {
-  text: ["sortAToZ", "sortZToA"],
-  select: ["sortAToZ", "sortZToA"],
-  number: ["sortLowToHigh", "sortHighToLow"],
-  "number computed": ["sortLowToHigh", "sortHighToLow"],
-  "time computed": ["sortOldestFirst", "sortNewestFirst"],
-  "date computed": ["sortOldestFirst", "sortNewestFirst"],
-  date: ["sortOldestFirst", "sortNewestFirst"],
-  time: ["sortOldestFirst", "sortNewestFirst"],
+const TEXT_SORTS = ["sortAToZ", "sortZToA"];
+const NUMBER_SORTS = ["sortLowToHigh", "sortHighToLow"];
+const DATE_SORTS = ["sortOldestFirst", "sortNewestFirst"];
+const TIME_SORTS = ["sortEarliestFirst", "sortLatestFirst"];
+const DURATION_SORTS = ["sortShortestFirst", "sortLongestFirst"];
+
+const SORT_TYPE = {
+  text: TEXT_SORTS,
+  select: TEXT_SORTS,
+
+  number: NUMBER_SORTS,
+  "number computed": NUMBER_SORTS,
+
+  date: DATE_SORTS,
+  "date computed": DATE_SORTS,
+
+  time: TIME_SORTS,
+  "time computed": TIME_SORTS,
+
+  duration: DURATION_SORTS,
+  "duration computed": DURATION_SORTS,
 };
 
 // Sort operations
-export const sortOperationMap = {
-  sortAToZ: (a, b) => String(a).localeCompare(String(b)), // alphabetical ascending
-  sortZToA: (a, b) => String(b).localeCompare(String(a)), // alphabetical descending
-  sortLowToHigh: (a, b) => Number(a) - Number(b), // numeric ascending
-  sortHighToLow: (a, b) => Number(b) - Number(a), // numeric descending
-  sortOldestFirst: (a, b) => new Date(a) - new Date(b), // date ascending
-  sortNewestFirst: (a, b) => new Date(b) - new Date(a), // date descending
+const SORT_OPERATION_MAP = {
+  /* TEXT */
+  sortAToZ: (a, b) => String(a).localeCompare(String(b)),
+  sortZToA: (a, b) => String(b).localeCompare(String(a)),
+
+  /* NUMBER */
+  sortLowToHigh: (a, b) => a - b,
+  sortHighToLow: (a, b) => b - a,
+
+  /* DATE (timestamps) */
+  sortOldestFirst: (a, b) => a - b,
+  sortNewestFirst: (a, b) => b - a,
+
+  /* TIME (minutes/seconds since midnight) */
+  sortEarliestFirst: (a, b) => a - b,
+  sortLatestFirst: (a, b) => b - a,
+
+  /* DURATION (seconds/minutes) */
+  sortShortestFirst: (a, b) => a - b,
+  sortLongestFirst: (a, b) => b - a,
 };
 
-export const sortOptions = {
+const SORT_OPTIONS = {
   none: "None",
-  sortAToZ: "Sort A → Z",
-  sortZToA: "Sort Z → A",
-  sortLowToHigh: "Sort Low → High",
-  sortHighToLow: "Sort High → Low",
-  sortOldestFirst: "Sort Oldest → Newest",
-  sortNewestFirst: "Sort Newest → Oldest",
+
+  /* TEXT */
+  sortAToZ: "A → Z",
+  sortZToA: "Z → A",
+
+  /* NUMBER */
+  sortLowToHigh: "Low → High",
+  sortHighToLow: "High → Low",
+
+  /* DATE */
+  sortOldestFirst: "Oldest → Newest",
+  sortNewestFirst: "Newest → Oldest",
+
+  /* TIME */
+  sortEarliestFirst: "Earliest → Latest",
+  sortLatestFirst: "Latest → Earliest",
+
+  /* DURATION */
+  sortShortestFirst: "Shortest → Longest",
+  sortLongestFirst: "Longest → Shortest",
 };
+
+export { SORT_TYPE, SORT_OPERATION_MAP, SORT_OPTIONS };

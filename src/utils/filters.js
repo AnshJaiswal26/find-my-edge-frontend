@@ -43,7 +43,7 @@ const DURATION_OPS = [
   "durationNotBetween",
 ];
 
-export const FILTER_TYPE = {
+const FILTER_TYPE = {
   text: TEXT_OPS,
   select: TEXT_OPS,
 
@@ -58,19 +58,14 @@ export const FILTER_TYPE = {
   "time computed": DURATION_OPS,
 };
 
-const normalizeDate = (d) => new Date(d).setHours(0, 0, 0, 0);
+// =============== Helpers ======================
+const isBetween = (op) => op?.includes("Between");
 
-const timeToMinutes = (t) => {
-  if (typeof t !== "string") return NaN;
-  const [h, m] = t.split(":").map(Number);
-  return h * 60 + m;
-};
-
-export const FILTER_OPERATION_MAP = {
+const FILTER_OPERATION_MAP = {
   /* ================= GENERAL ================= */
   none: () => true,
 
-  /* ================= TEXT ================= */
+  /* ================= TEXT (still string-based) ================= */
   textContains: (v, t) =>
     String(v).toLowerCase().includes(String(t).toLowerCase()),
 
@@ -86,109 +81,90 @@ export const FILTER_OPERATION_MAP = {
   textIsExactly: (v, t) => String(v).toLowerCase() === String(t).toLowerCase(),
 
   /* ================= NUMBER ================= */
-  greaterThan: (v, t) => Number(v) > Number(t),
-  greaterThanEqualTo: (v, t) => Number(v) >= Number(t),
-  lessThan: (v, t) => Number(v) < Number(t),
-  lessThanEqualTo: (v, t) => Number(v) <= Number(t),
-  isEqualTo: (v, t) => Number(v) === Number(t),
-  isNotEqualTo: (v, t) => Number(v) !== Number(t),
+  greaterThan: (v, t) => v > t,
+  greaterThanEqualTo: (v, t) => v >= t,
+  lessThan: (v, t) => v < t,
+  lessThanEqualTo: (v, t) => v <= t,
+  isEqualTo: (v, t) => v === t,
+  isNotEqualTo: (v, t) => v !== t,
 
-  isBetween: (v, t1, t2) => Number(v) >= Number(t1) && Number(v) <= Number(t2),
+  isBetween: (v, t1, t2) => v >= t1 && v <= t2,
+  isNotBetween: (v, t1, t2) => v < t1 || v > t2,
 
-  isNotBetween: (v, t1, t2) => Number(v) < Number(t1) || Number(v) > Number(t2),
+  /* ================= DATE (timestamp numbers) ================= */
+  dateIs: (v, t) => v === t,
+  dateBefore: (v, t) => v < t,
+  dateAfter: (v, t) => v > t,
+  dateBetween: (v, t1, t2) => v >= t1 && v <= t2,
+  dateNotBetween: (v, t1, t2) => v < t1 || v > t2,
 
-  /* ================= DATE ================= */
-  dateIs: (v, t) => normalizeDate(v) === normalizeDate(t),
+  /* ================= TIME (minutes/seconds as numbers) ================= */
+  timeIs: (v, t) => v === t,
+  timeBefore: (v, t) => v < t,
+  timeAfter: (v, t) => v > t,
+  timeBetween: (v, t1, t2) => v >= t1 && v <= t2,
+  timeNotBetween: (v, t1, t2) => v < t1 || v > t2,
 
-  dateBefore: (v, t) => normalizeDate(v) < normalizeDate(t),
-
-  dateAfter: (v, t) => normalizeDate(v) > normalizeDate(t),
-
-  dateBetween: (v, t1, t2) => {
-    const d = normalizeDate(v);
-    return d >= normalizeDate(t1) && d <= normalizeDate(t2);
-  },
-
-  dateNotBetween: (v, t1, t2) => {
-    const d = normalizeDate(v);
-    return d < normalizeDate(t1) || d > normalizeDate(t2);
-  },
-
-  /* ================= TIME ================= */
-  timeIs: (v, t) => timeToMinutes(v) === timeToMinutes(t),
-
-  timeBefore: (v, t) => timeToMinutes(v) < timeToMinutes(t),
-
-  timeAfter: (v, t) => timeToMinutes(v) > timeToMinutes(t),
-
-  timeBetween: (v, t1, t2) => {
-    const tv = timeToMinutes(v);
-    return tv >= timeToMinutes(t1) && tv <= timeToMinutes(t2);
-  },
-
-  timeNotBetween: (v, t1, t2) => {
-    const tv = timeToMinutes(v);
-    return tv < timeToMinutes(t1) || tv > timeToMinutes(t2);
-  },
-
-  /* ================= DURATION ================= */
-
-  durationIs: (v, t) => Number(v) === Number(t),
-
-  durationGreaterThan: (v, t) => Number(v) > Number(t),
-
-  durationGreaterThanEqualTo: (v, t) => Number(v) >= Number(t),
-
-  durationLessThan: (v, t) => Number(v) < Number(t),
-
-  durationLessThanEqualTo: (v, t) => Number(v) <= Number(t),
-
-  durationBetween: (v, t1, t2) =>
-    Number(v) >= Number(t1) && Number(v) <= Number(t2),
-
-  durationNotBetween: (v, t1, t2) =>
-    Number(v) < Number(t1) || Number(v) > Number(t2),
+  /* ================= DURATION (numbers) ================= */
+  durationIs: (v, t) => v === t,
+  durationGreaterThan: (v, t) => v > t,
+  durationGreaterThanEqualTo: (v, t) => v >= t,
+  durationLessThan: (v, t) => v < t,
+  durationLessThanEqualTo: (v, t) => v <= t,
+  durationBetween: (v, t1, t2) => v >= t1 && v <= t2,
+  durationNotBetween: (v, t1, t2) => v < t1 || v > t2,
 };
 
-export const FILTER_OPTIONS = {
+const FILTER_OPTIONS = {
   /* TEXT */
-  textContains: "Text contains",
-  textDoesNotContain: "Text does not contain",
-  textStartsWith: "Text starts with",
-  textEndsWith: "Text ends with",
-  textIsExactly: "Text is exactly",
+  textContains: "Contains",
+  textDoesNotContain: "Does not contain",
+  textStartsWith: "Starts with",
+  textEndsWith: "Ends with",
+  textIsExactly: "Is exactly",
 
-  /* NUMBER */
+  /* NUMBER (generic numeric fields) */
   greaterThan: "Greater than (>)",
   greaterThanEqualTo: "Greater than or equal to (≥)",
   lessThan: "Less than (<)",
   lessThanEqualTo: "Less than or equal to (≤)",
-  isEqualTo: "Is equal to (=)",
-  isNotEqualTo: "Is not equal to (≠)",
-  isBetween: "Is between",
-  isNotBetween: "Is not between",
+  isEqualTo: "Equal to (=)",
+  isNotEqualTo: "Not equal to (≠)",
+  isBetween: "Between",
+  isNotBetween: "Not between",
 
-  /* DATE */
-  dateIs: "Date is",
-  dateBefore: "Date is before",
-  dateAfter: "Date is after",
-  dateBetween: "Date is between",
-  dateNotBetween: "Date is not between",
+  /* DATE (timestamps but user thinks in dates) */
+  dateIs: "On",
+  dateBefore: "Before",
+  dateAfter: "After",
+  dateBetween: "Between dates",
+  dateNotBetween: "Not between dates",
 
-  /* TIME */
-  timeIs: "Time is",
-  timeBefore: "Time is before",
-  timeAfter: "Time is after",
-  timeBetween: "Time is between",
-  timeNotBetween: "Time is not between",
+  /* TIME (time of day) */
+  timeIs: "At time",
+  timeBefore: "Before time",
+  timeAfter: "After time",
+  timeBetween: "Between times",
+  timeNotBetween: "Not between times",
 
   /* ================= DURATION ================= */
+  durationIs: "Exactly",
+  durationGreaterThan: "Longer than",
+  durationGreaterThanEqualTo: "Longer than or equal to",
+  durationLessThan: "Shorter than",
+  durationLessThanEqualTo: "Shorter than or equal to",
+  durationBetween: "Between durations",
+  durationNotBetween: "Not between durations",
+};
 
-  durationIs: "Duration is",
-  durationGreaterThan: "Duration greater than",
-  durationGreaterThanEqualTo: "Duration ≥",
-  durationLessThan: "Duration less than",
-  durationLessThanEqualTo: "Duration ≤",
-  durationBetween: "Duration is between",
-  durationNotBetween: "Duration is not between",
+export {
+  TEXT_OPS,
+  NUMBER_OPS,
+  DATE_OPS,
+  TIME_OPS,
+  DURATION_OPS,
+  FILTER_TYPE,
+  isBetween,
+  FILTER_OPERATION_MAP,
+  FILTER_OPTIONS,
 };

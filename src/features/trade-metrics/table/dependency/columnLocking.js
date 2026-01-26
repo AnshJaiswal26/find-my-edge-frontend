@@ -27,7 +27,7 @@ export function getLockedColumns(state) {
 
   if (filteredRowOrder?.length) {
     for (const f of filters) {
-      activeColumns.add(f.columnId);
+      activeColumns.add(f.key);
     }
   }
 

@@ -12,7 +12,7 @@ export const createFilterSlice = (set, get) => ({
     set((s) => {
       s.filters.push({
         id: crypto.randomUUID(),
-        columnId: Object.keys(s.columnsById)[0],
+        key: Object.keys(s.columnsById)[0],
         operator: "none",
         value: "",
         value2: "",
@@ -20,16 +20,16 @@ export const createFilterSlice = (set, get) => ({
     });
   },
 
-  updateFilter(id, patch) {
+  updateFilter(index, patch) {
     set((s) => {
-      const f = s.filters.find((f) => f.id === id);
+      const f = s.filters.find((_, i) => i === index);
       if (f) Object.assign(f, patch);
     });
   },
 
-  removeFilter(id) {
+  removeFilter(index) {
     set((s) => {
-      s.filters = s.filters.filter((f) => f.id !== id);
+      s.filters = s.filters.filter((f, i) => i !== index);
     });
   },
 
@@ -56,7 +56,7 @@ export const createFilterSlice = (set, get) => ({
           const row = s.rowsById[rowId];
           return s.filters.some((f) => {
             const fn = FILTER_OPERATION_MAP[f.operator];
-            return fn?.(row.cells[f.columnId]?.value, f.value, f.value2);
+            return fn?.(row.cells[f.key]?.value, f.value, f.value2);
           });
         });
       });

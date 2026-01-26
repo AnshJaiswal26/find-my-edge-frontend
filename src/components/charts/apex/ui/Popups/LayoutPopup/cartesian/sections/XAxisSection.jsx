@@ -77,6 +77,7 @@ export default function XAxisSection({
         {/* ---------- Title ---------- */}
         <div className="space-y-4">
           <Input
+            classNames={{ input: "max-w-full!" }}
             vertical
             label="Title"
             placeholder={`${axisLabel} title`}

@@ -4,9 +4,10 @@ import { configGenerator } from "../configs";
 import {
   evaluateColorRules,
   FILTER_OPERATION_MAP,
-  sortOperationMap,
+  SORT_OPERATION_MAP,
 } from "@utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
+import { useShallow } from "zustand/react/shallow";
 
 const seriesGenerator = {
   bar: ({ seriesConfig, seriesById, filteredOrder }) => {
@@ -60,7 +61,7 @@ export default function useSeriesChartConfig({
 
     /* SORT */
     if (sort.key && sort.operator !== "none") {
-      const fn = sortOperationMap[sort.operator];
+      const fn = SORT_OPERATION_MAP[sort.operator];
       order = [...order].sort((a, b) => {
         return fn?.(seriesById[a][sort.key], seriesById[b][sort.key]) ?? 0;
       });

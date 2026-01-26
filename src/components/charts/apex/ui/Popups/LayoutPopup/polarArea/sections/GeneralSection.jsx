@@ -6,6 +6,7 @@ export default function GeneralSection({ layoutDraft, setLayoutDraft }) {
     <Section title="General">
       <Input
         label="Title"
+        classNames={{ input: "max-w-full!" }}
         type="text"
         value={layoutDraft.title}
         placeholder="Chart title"

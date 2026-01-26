@@ -1,4 +1,4 @@
-import { sortOperationMap } from "@utils";
+import { SORT_OPERATION_MAP } from "@utils";
 
 export const createSortSlice = (set, get) => ({
   /* ----------------------------------------------- */

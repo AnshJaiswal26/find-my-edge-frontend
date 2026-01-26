@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Popup } from "@layout";
 import { Select } from "@ui";
-import { sortOptions } from "@utils";
+import { SORT_OPTIONS, SORT_TYPE } from "@utils";
 import { useChartStore } from "@charts/apex/store/useChartStore";
+import { useDashboardStore } from "@features/dashboard/store";
 
 export default function SortPopup({ chartId }) {
   const sort = useChartStore((s) => s[chartId].sort);
+  const schemasById = useDashboardStore((s) => s.schemasById);
 
   const ySeriesConfig = useChartStore((s) => s[chartId].ySeriesConfig);
   const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);
@@ -31,11 +33,10 @@ export default function SortPopup({ chartId }) {
             value={draft.key}
             onChange={(o) => setDraft({ key: o.key, operator: "none" })}
           />
-          {/* Sort type */}
           <Select
             label="Sort Order"
-            options={Object.keys(sortOptions)}
-            getLabel={(o) => sortOptions[o]}
+            options={SORT_TYPE[schemasById?.[draft.key]?.type] || ["none"]}
+            getLabel={(o) => SORT_OPTIONS[o]}
             value={draft.operator}
             onChange={(o) => setDraft((p) => ({ ...p, operator: o }))}
           />

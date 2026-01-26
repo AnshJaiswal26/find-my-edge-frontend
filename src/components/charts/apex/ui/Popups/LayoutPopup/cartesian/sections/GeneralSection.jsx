@@ -7,8 +7,9 @@ export default function GeneralSection({ layoutDraft, setLayoutDraft }) {
       {/* ---------- Identity ---------- */}
       <Section title={"Identity"}>
         <Input
+          classNames={{ input: "max-w-full!" }}
           vertical
-          label="Chart Title"
+          label="Title"
           type="text"
           value={layoutDraft.title}
           onCommit={(v) => setLayoutDraft((p) => ({ ...p, title: v }))}

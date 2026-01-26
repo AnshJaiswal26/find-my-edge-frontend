@@ -2,7 +2,7 @@ import { DATE_FORMAT_KEYS, formatDate } from "./date";
 import { NUMBER_FORMAT_KEYS, numberFormatters } from "./number";
 import { formatTime, TIME_FORMAT_KEYS } from "./time";
 
-export const DEFAULT_FORMATS = {
+const DEFAULT_FORMATS = {
   number: "NUMBER",
   text: "NUMBER",
   select: "NUMBER",
@@ -13,7 +13,7 @@ export const DEFAULT_FORMATS = {
   "date computed": "YYYY-MM-DD",
 };
 
-export const FORMATS = {
+const FORMATS = {
   number: NUMBER_FORMAT_KEYS,
   text: NUMBER_FORMAT_KEYS,
   "number computed": NUMBER_FORMAT_KEYS,
@@ -23,7 +23,7 @@ export const FORMATS = {
   "date computed": DATE_FORMAT_KEYS,
 };
 
-export function formatValue(value, type, display) {
+function formatValue(value, type, display) {
   const format = display?.format;
   const decimals = display?.decimals ?? 0;
 
@@ -67,3 +67,5 @@ export function formatValue(value, type, display) {
   // ---------- FALLBACK ----------
   return String(value);
 }
+
+export { DEFAULT_FORMATS, FORMATS, formatValue };
