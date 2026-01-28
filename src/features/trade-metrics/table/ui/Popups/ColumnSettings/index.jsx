@@ -1,28 +1,30 @@
-import { useState } from "react";
-import { Popup } from "@layout";
+import { useEffect, useState } from "react";
 import { useTableStore } from "@table/store/useTableStore";
-import { ColumnList } from "./ColumnList";
+import { SidePanelPopup } from "@ui";
 import { ColumnDetails } from "../shared";
+import { Popup } from "@layout";
 
 export default function ColumnSettingsPopup() {
   const columnsById = useTableStore((s) => s.columnsById);
   const columnOrder = useTableStore((s) => s.columnOrder);
-
   const { closePopup, updateColumn, deleteColumn } = useTableStore.getState();
 
-  const [activeColId, setActiveColId] = useState(columnOrder[0] || null);
-  const [draft, setDraft] = useState(columnsById[activeColId] || null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeColumn = columnsById[columnOrder[activeIndex]];
 
-  if (columnOrder.length === 0 || !activeColId || !draft) {
+  const [draft, setDraft] = useState(activeColumn);
+
+  useEffect(() => {
+    if (activeColumn) setDraft(activeColumn);
+  }, [activeColumn]);
+
+  if (!columnOrder.length || !activeColumn || !draft) {
     closePopup();
     return null;
   }
 
-  /* ---------------- validation ---------------- */
-
   const isValid = () => {
     if (!draft.label.trim()) return false;
-
     if (draft.type.includes("computed") && !draft.expression) return false;
 
     if (draft.type === "select") {
@@ -36,49 +38,36 @@ export default function ColumnSettingsPopup() {
     return true;
   };
 
-  /* ---------------- apply ---------------- */
-
   function applyChanges() {
-    console.log("Applying changes:", draft);
     if (!isValid()) return;
-    updateColumn(activeColId, draft);
+    updateColumn(activeColumn.id, draft);
   }
 
   return (
-    <Popup open>
-      <Popup.Container className="w-150 !max-w-150 h-[520px]">
-        <Popup.Header title="Column Settings" onClose={closePopup} />
-
-        <Popup.Body className="!flex h-full">
-          <ColumnList
-            columnsById={columnsById}
-            columnOrder={columnOrder}
-            activeColId={activeColId}
-            onSelect={(id) => {
-              setDraft(columnsById[id]);
-              setActiveColId(id);
-            }}
-          />
-
-          <div className="p-3 w-full overflow-auto">
-            {activeColId && (
-              <ColumnDetails
-                column={columnsById[activeColId]}
-                draft={draft}
-                onDraftChange={setDraft}
-              />
-            )}
-          </div>
-        </Popup.Body>
-
-        <Popup.MultiButtonFooter
-          fnMap={{
-            Delete: { fn: () => deleteColumn(activeColId) },
-            Cancel: { fn: closePopup, align: "right" },
-            Apply: { fn: applyChanges },
-          }}
+    <Popup.Container className="w-150 !max-w-150 h-[520px]">
+      <Popup.Header title={"Column Settings"} onClose={closePopup} />
+      <Popup.Body>
+        <SidePanelPopup
+          items={columnOrder}
+          activeIndex={activeIndex}
+          onSelectIndex={setActiveIndex}
+          getLabel={(id) => columnsById[id].label}
+          renderDetails={() => (
+            <ColumnDetails
+              column={activeColumn}
+              draft={draft}
+              onDraftChange={setDraft}
+            />
+          )}
         />
-      </Popup.Container>
-    </Popup>
+      </Popup.Body>
+      <Popup.MultiButtonFooter
+        fnMap={{
+          Delete: { fn: () => deleteColumn(activeColumn.id) },
+          Cancel: { fn: closePopup, align: "right" },
+          Apply: { fn: applyChanges },
+        }}
+      />
+    </Popup.Container>
   );
 }

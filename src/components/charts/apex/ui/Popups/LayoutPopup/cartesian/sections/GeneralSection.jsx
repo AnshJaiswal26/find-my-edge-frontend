@@ -1,5 +1,5 @@
 import { Input, Button } from "@ui";
-import { Divider, Section } from "@layout";
+import { Section } from "@layout";
 
 export default function GeneralSection({ layoutDraft, setLayoutDraft }) {
   return (

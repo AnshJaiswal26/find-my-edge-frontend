@@ -315,6 +315,25 @@ export const useDashboardStore = create(
       });
     },
 
+    addChart(type, config) {
+      const chart = createChart(type, config);
+
+      useChartStore.setState((cs) => {
+        cs[chart.meta.id] = chart;
+      });
+
+      console.log(chart);
+
+      set((s) => {
+        s.order.push({
+          id: chart.meta.id,
+          category: chart.meta.category,
+          type: chart.meta.type,
+        });
+      });
+      get().closePopup();
+    },
+
     addStats(stats) {
       const { stats: storeStats } = get();
 

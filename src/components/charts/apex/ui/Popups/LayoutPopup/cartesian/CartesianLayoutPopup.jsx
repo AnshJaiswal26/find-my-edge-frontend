@@ -9,87 +9,54 @@ import {
 import { BarSection, BarSeriesSection } from "./sections/bar";
 import { LineSection, LineSeriesSection } from "./sections/line";
 import LegendSection from "../shared/LegendSection";
+import { SidePanelPopup } from "@ui";
 
 export default function CartesianLayoutPopup(props) {
   const { type, chart } = props;
   const isHorizontal = chart.layout.horizontal;
 
-  const [active, setActive] = useState("general");
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const sectionMap = useMemo(() => {
-    return {
-      general: GeneralSection,
-      grid: GridSection,
+  const sections = useMemo(() => {
+    const base = [
+      { id: "general", label: "General", Comp: GeneralSection },
+      { id: "grid", label: "Grid", Comp: GridSection },
+    ];
 
-      ...(type === "bar" && {
-        bar: BarSection,
-        series: BarSeriesSection,
-      }),
+    if (type === "bar") {
+      base.push(
+        { id: "bar", label: "Bar", Comp: BarSection },
+        { id: "series", label: "Series", Comp: BarSeriesSection },
+      );
+    }
 
-      ...(type === "line" && {
-        line: LineSection,
-        series: LineSeriesSection,
-      }),
+    if (type === "line") {
+      base.push(
+        { id: "line", label: "Line", Comp: LineSection },
+        { id: "series", label: "Series", Comp: LineSeriesSection },
+      );
+    }
 
-      xAxis: XAxisSection,
-      yAxis: YAxisSection,
-      legend: LegendSection,
-    };
+    base.push(
+      { id: "xAxis", label: "X Axis", Comp: XAxisSection },
+      { id: "yAxis", label: "Y Axis", Comp: YAxisSection },
+      { id: "legend", label: "Legend", Comp: LegendSection },
+    );
+
+    return base;
   }, [type]);
 
-  const ActiveSection = sectionMap[active];
-
   return (
-    <div className="flex h-full">
-      {/* LEFT NAV */}
-      <div className="w-30 border-r border-(--border-muted) space-y-1">
-        {[
-          ["general", "General"],
-          ["grid", "Grid"],
-          ...(type === "bar"
-            ? [
-                ["bar", "Bar"],
-                ["series", "Series"],
-              ]
-            : []),
-          ...(type === "line"
-            ? [
-                ["line", "Line"],
-                ["series", "Series"],
-              ]
-            : []),
-          ["xAxis", "X Axis"],
-          ["yAxis", "Y Axis"],
-          ["legend", "Legend"],
-        ].map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => setActive(id)}
-            className={`
-              w-full text-left px-3 py-2 text-sm
-              transition
-              ${
-                active === id
-                  ? "bg-(--hover) text-(--text)"
-                  : "text-(--text-muted) hover:bg-(--surface-muted)"
-              }
-            `}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {/* RIGHT CONTENT */}
-      <div className="flex-1 p-3 overflow-y-auto">
-        {ActiveSection ? (
-          <ActiveSection {...props} isHorizontal={isHorizontal} />
-        ) : (
-          <div className="text-(--text-muted) text-sm">
-            No settings available.
-          </div>
-        )}
-      </div>
-    </div>
+    <SidePanelPopup
+      items={sections}
+      activeIndex={activeIndex}
+      onSelectIndex={setActiveIndex}
+      getLabel={(s) => s.label}
+      getKey={(s) => s.id}
+      renderDetails={(section) => {
+        const Comp = section.Comp;
+        return <Comp {...props} isHorizontal={isHorizontal} />;
+      }}
+    />
   );
 }

@@ -22,24 +22,22 @@ export default function AddColumnPopup() {
   };
 
   return (
-    <Popup open>
-      <Popup.Container className="h-110!">
-        <Popup.Header title="Add Metric" onClose={closePopup} />
+    <Popup.Container className="h-110!">
+      <Popup.Header title="Add Metric" onClose={closePopup} />
 
-        <Popup.Body className="!p-4 space-y-4 items-center">
-          <ColumnDetails
-            column={{ type: draft.type, dependencies: draft.dependencies }}
-            draft={draft}
-            onDraftChange={setDraft}
-          />
-        </Popup.Body>
-
-        <Popup.Footer
-          text={["Cancel", "Add Column"]}
-          onCancel={closePopup}
-          onApply={save}
+      <Popup.Body className="!p-4 space-y-4 items-center">
+        <ColumnDetails
+          column={{ type: draft.type, dependencies: draft.dependencies }}
+          draft={draft}
+          onDraftChange={setDraft}
         />
-      </Popup.Container>
-    </Popup>
+      </Popup.Body>
+
+      <Popup.Footer
+        text={["Cancel", "Add Column"]}
+        onCancel={closePopup}
+        onApply={save}
+      />
+    </Popup.Container>
   );
 }

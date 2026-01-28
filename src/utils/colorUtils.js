@@ -177,7 +177,7 @@ const evaluateColorRules = (value, rules = []) => {
     }
   }
 
-  return null;
+  return { color: "var(--info)" };
 };
 
 export {

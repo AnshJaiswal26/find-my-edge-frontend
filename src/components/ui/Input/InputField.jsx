@@ -14,6 +14,7 @@ export function InputField({
   value,
   normalize = false,
   sizes,
+  formatter,
   onChange,
   onCommit,
   onBlur,
@@ -47,19 +48,26 @@ export function InputField({
   };
 
   return (
-    <input
-      {...props}
-      step={1}
-      type={typeMap[type] ?? type}
-      value={displayValue}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      className={`
+    <div className={type === "range" ? "flex items-center gap-2" : "w-full"}>
+      {type === "range" && (
+        <span className="text-[0.85rem] text-(--text)">
+          {formatter(displayValue)}
+        </span>
+      )}
+      <input
+        {...props}
+        step={1}
+        type={typeMap[type] ?? type}
+        value={displayValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        className={`
         ${BASE_CLASS}
-        max-w-50 min-w-30 py-4.5!
-        ${sizes?.input}
+        max-w-50 min-w-30 py-4.5
+        ${type === "range" ? "py-0!" : sizes?.input}
         ${classNames?.input}
       `}
-    />
+      />
+    </div>
   );
 }

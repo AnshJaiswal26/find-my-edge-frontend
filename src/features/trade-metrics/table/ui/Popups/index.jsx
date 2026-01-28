@@ -5,32 +5,27 @@ import SortPopup from "./Sort";
 import SummaryPopup from "./Summary";
 import GroupByPopup from "./GroupBy";
 import { useTableStore } from "@table/store/useTableStore";
+import { Popup } from "@layout";
+
+const PopupContents = {
+  "add-column": AddColumnPopup,
+  "column-settings": ColumnSettingsPopup,
+  filter: FilterPopup,
+  sort: SortPopup,
+  summary: SummaryPopup,
+  group: GroupByPopup,
+};
 
 export default function Popups() {
   const activePopup = useTableStore((s) => s.activePopup);
 
   if (activePopup === null) return null;
 
-  switch (activePopup) {
-    case "add-column":
-      return <AddColumnPopup />;
+  const PopupContent = PopupContents[activePopup];
 
-    case "column-settings":
-      return <ColumnSettingsPopup />;
-
-    case "filter":
-      return <FilterPopup />;
-
-    case "sort":
-      return <SortPopup />;
-
-    case "summary":
-      return <SummaryPopup />;
-
-    case "group":
-      return <GroupByPopup />;
-
-    default:
-      return null;
-  }
+  return (
+    <Popup open>
+      <PopupContent />
+    </Popup>
+  );
 }

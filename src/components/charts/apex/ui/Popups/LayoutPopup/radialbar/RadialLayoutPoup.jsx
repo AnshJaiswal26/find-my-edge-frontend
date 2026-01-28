@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { SidePanelPopup } from "@ui";
 
 import GeneralSection from "./sections/GeneralSection";
 import TrackSection from "./sections/TrackSection";
@@ -8,61 +9,32 @@ import CenterLabelSection from "../shared/CenterLabelsSection";
 import LegendSection from "../shared/LegendSection";
 
 export default function RadialLayoutPopup(props) {
-  const [active, setActive] = useState("general");
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const sectionMap = useMemo(() => {
-    return {
-      general: GeneralSection,
-      track: TrackSection,
-      radialbar: RadialBarSection,
-      series: RadialBarSeriesSection,
-      centerLabels: CenterLabelSection,
-      legend: LegendSection,
-    };
-  }, []);
-
-  const ActiveSection = sectionMap[active];
+  /* -------- Section Definitions -------- */
+  const sections = useMemo(
+    () => [
+      { id: "general", label: "General", Comp: GeneralSection },
+      { id: "track", label: "Track", Comp: TrackSection },
+      { id: "radialbar", label: "Radial Bar", Comp: RadialBarSection },
+      { id: "series", label: "Series", Comp: RadialBarSeriesSection },
+      { id: "centerLabels", label: "Center Labels", Comp: CenterLabelSection },
+      { id: "legend", label: "Legend", Comp: LegendSection },
+    ],
+    [],
+  );
 
   return (
-    <div className="flex h-full">
-      {/* ---------- LEFT NAV ---------- */}
-      <div className="w-30 border-r border-(--border-muted) space-y-1">
-        {[
-          ["general", "General"],
-          ["track", "Track"],
-          ["radialbar", "Radial Bar"],
-          ["series", "Series"],
-          ["centerLabels", "Center Labels"],
-          ["legend", "Legend"],
-        ].map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => setActive(id)}
-            className={`
-              w-full text-left px-3 py-2 text-sm
-              transition
-              ${
-                active === id
-                  ? "bg-(--hover) text-(--text)"
-                  : "text-(--text-muted) hover:bg-(--surface-muted)"
-              }
-            `}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {/* ---------- RIGHT CONTENT ---------- */}
-      <div className="flex-1 p-3 overflow-y-auto">
-        {ActiveSection ? (
-          <ActiveSection {...props} />
-        ) : (
-          <div className="text-(--text-muted) text-sm">
-            No settings available.
-          </div>
-        )}
-      </div>
-    </div>
+    <SidePanelPopup
+      items={sections}
+      activeIndex={activeIndex}
+      onSelectIndex={setActiveIndex}
+      getLabel={(s) => s.label}
+      getKey={(s) => s.id}
+      renderDetails={(section) => {
+        const Comp = section.Comp;
+        return <Comp {...props} />;
+      }}
+    />
   );
 }

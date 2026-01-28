@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Popup } from "@layout";
-import { Input, Select, RangeInput, Button } from "@ui";
+import { Input, Select, RangeInput } from "@ui";
 import { FILTER_OPTIONS, isBetween } from "@utils";
 import { GROUPING_OPTIONS, GROUPING_SCHEMA } from "@lib/analytics/config";
 import { useTableStore } from "@table/store/useTableStore";
-import { Trash2 } from "lucide-react";
+import { RangeBucket } from "./RangeBucket";
 
 export default function GroupByPopup() {
   const columnsById = useTableStore((s) => s.columnsById);
@@ -83,50 +83,7 @@ export default function GroupByPopup() {
               />
 
               {/* RANGE BUCKET → N GROUPS */}
-              {draft.bucket === "range" && (
-                <>
-                  {draft.ranges.map((range, index) => (
-                    <div className="flex items-end space-x-2" key={index}>
-                      <RangeInput
-                        key={index}
-                        type={schema.input}
-                        getLabel={(v) => GROUPING_OPTIONS[v]}
-                        stepUnit={schema.input === "time" ? "minutes" : "raw"}
-                        value={range}
-                        onChange={(range) =>
-                          setDraft((p) => {
-                            const next = [...p.ranges];
-                            next[index] = range;
-                            return { ...p, ranges: next };
-                          })
-                        }
-                      />
-                      <Button.Icon
-                        onClick={() =>
-                          setDraft((p) => ({
-                            ...p,
-                            ranges: p.ranges.filter((_, i) => i !== index),
-                          }))
-                        }
-                      >
-                        <Trash2 size={18} />
-                      </Button.Icon>
-                    </div>
-                  ))}
-                  <div>
-                    <Button.Text
-                      onClick={() =>
-                        setDraft((p) => ({
-                          ...p,
-                          ranges: [...p.ranges, { from: 0, to: 0 }],
-                        }))
-                      }
-                    >
-                      + Add range
-                    </Button.Text>
-                  </div>
-                </>
-              )}
+              <RangeBucket draft={draft} setDraft={setDraft} schema={schema} />
             </>
           )}
 

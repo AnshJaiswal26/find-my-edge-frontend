@@ -46,7 +46,7 @@ export default function Select({
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
 
-    const MIN_HEIGHT = 200;
+    const MIN_HEIGHT = window.innerHeight / 2;
 
     const openDown = spaceBelow >= MIN_HEIGHT || spaceBelow >= spaceAbove;
 

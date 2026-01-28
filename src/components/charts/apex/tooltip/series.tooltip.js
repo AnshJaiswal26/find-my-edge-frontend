@@ -22,18 +22,20 @@ export const seriesTooltipCallback = ({
         ? ySeriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
         : ySeriesConfig;
 
-      const { color, label } =
+      const cfg =
         meta.type === "line"
           ? { color: config[i].color, label: config[i].label }
-          : evaluateColorRules(value, config[i].colorRules);
+          : config[i].colorRules.length > 0
+            ? evaluateColorRules(value, config[i].colorRules)
+            : { color: "var(--info)", label: config[i].name || "" };
 
       return {
         value: formatValue(value, config[0].type, {
           format: layout.yFormat,
           decimals: layout.yDecimals,
         }),
-        label,
-        color,
+        label: cfg.label || config[i].name || "",
+        color: cfg.color || "var(--info)",
       };
     }),
   };

@@ -15,3 +15,4 @@ export { default as Tooltip, tooltipApi } from "./Tooltip";
 export { default as ColorRules } from "./ColorRules";
 export { default as RangeInput } from "./RangeInput";
 export { default as FilterBuilder } from "./FilterBuilder";
+export { default as SidePanelPopup } from "./SidePanelPopup";

@@ -30,6 +30,7 @@ export default function Input({
   onChange,
   onCommit,
   onBlur,
+  formatter = (v) => v,
   classNames,
   ...props
 }) {
@@ -65,6 +66,7 @@ export default function Input({
           onChange={onChange}
           onCommit={onCommit}
           onBlur={onBlur}
+          formatter={formatter}
           classNames={classNames}
           {...props}
         />

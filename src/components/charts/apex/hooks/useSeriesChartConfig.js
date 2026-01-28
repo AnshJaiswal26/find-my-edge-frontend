@@ -7,7 +7,6 @@ import {
   SORT_OPERATION_MAP,
 } from "@utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
-import { useShallow } from "zustand/react/shallow";
 
 const seriesGenerator = {
   bar: ({ seriesConfig, seriesById, filteredOrder }) => {

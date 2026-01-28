@@ -10,7 +10,6 @@ export default function BarSeriesSection({
     <div className="space-y-4">
       {seriesDraft.map((series, index) => {
         const colors = series.colorRules || [];
-        if (!colors.length) return null;
 
         return (
           <Section key={index} title={`Series ${index + 1}`}>
@@ -25,7 +24,7 @@ export default function BarSeriesSection({
               <ColorRules
                 section={false}
                 rules={colors}
-                type={"number"}
+                type={series.type}
                 label
                 onChange={(callBack) =>
                   setSeriesDraft((p) => {

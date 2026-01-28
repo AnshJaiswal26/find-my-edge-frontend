@@ -1,1 +1,1 @@
-export { default as AddWidget } from "./AddWidget";
+export { default as AddWidget } from "./AddWidget/AddWidget";
