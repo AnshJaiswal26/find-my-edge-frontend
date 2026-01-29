@@ -161,9 +161,11 @@ Button.Text = ({
   className = "",
   disabled = false,
   type = "button",
+  ...props
 }) => {
   return (
     <button
+      {...props}
       type={type}
       disabled={disabled}
       onClick={onClick}

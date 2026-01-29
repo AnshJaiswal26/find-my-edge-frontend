@@ -2,7 +2,7 @@ import { ExpressionBuilder } from "../ExpressionBuilder";
 import { ColorRules, Input, Select, SelectOptionsEditor } from "@ui";
 import { DisplaySection } from "./DisplaySection";
 import { Section } from "@layout";
-import { COLUMN_TYPES } from "@table/model";
+import { COLUMN_TYPES, COLUMN_TYPES_LABELS } from "@table/model";
 import { useTableStore } from "@table/store/useTableStore";
 import { DEFAULT_FORMATS } from "@utils";
 
@@ -17,11 +17,12 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
         label={"Column Type"}
         value={draft.type}
         options={COLUMN_TYPES}
-        getLabel={(v) => v.toUpperCase()}
+        getLabel={(v) => COLUMN_TYPES_LABELS[v]}
         onChange={(v) =>
           onDraftChange((p) => ({
             ...p,
             type: v,
+            editable: !v.includes("computed"),
             display: { format: DEFAULT_FORMATS[v], decimals: 2 },
           }))
         }

@@ -147,24 +147,22 @@ function ChartDashboard() {
     };
 
     updateColumns();
-    window.addEventListener("resize", updateColumns);
+    document.addEventListener("resize", updateColumns);
 
     return () => {
       grid.current?.destroy(false);
       grid.current = null;
-      window.removeEventListener("resize", updateColumns);
+      document.removeEventListener("resize", updateColumns);
     };
   }, []);
 
   useEffect(() => {
-    if (!grid.current || order.length === 0) return;
+    if (!grid.current) return;
 
     requestAnimationFrame(() => {
-      grid.current.batchUpdate();
-
-      document.querySelectorAll(".grid-stack-item").forEach((el) => {
-        // 🔥 this is the key
-        if (!el.gridstackNode) {
+      order.forEach(({ id }) => {
+        const el = gridRef.current.querySelector(`[gs-id="${id}"]`);
+        if (el && !el.gridstackNode) {
           grid.current.makeWidget(el);
         }
       });

@@ -1,3 +1,4 @@
+import { DEFAULT_FORMATS } from "@utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
 export function buildLineChart({ x, y, layout = {}, category = "series" }) {
@@ -10,6 +11,8 @@ export function buildLineChart({ x, y, layout = {}, category = "series" }) {
 
     layout: {
       ...DEFAULT_LAYOUTS.line,
+      xFormat: DEFAULT_FORMATS[x.type || "number"],
+      yFormat: DEFAULT_FORMATS[y[0].type || "number"],
       ...layout,
     },
 
@@ -38,9 +41,9 @@ export function buildLineChart({ x, y, layout = {}, category = "series" }) {
 
       label: s.label ?? s.name ?? s.key,
 
-      color: s.color,
-      markerColor: s.markerColor ?? s.color,
-      areaColor: s.areaColor ?? s.color,
+      color: s.color ?? "var(--info)",
+      markerColor: s.markerColor ?? s.color ?? "var(--info)",
+      areaColor: s.areaColor ?? s.color ?? "var(--info)",
     })),
   };
 }

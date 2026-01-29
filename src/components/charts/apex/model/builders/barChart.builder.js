@@ -37,7 +37,14 @@ export function buildBarChart({ x, y, layout = {}, category = "series" }) {
       key: s.key,
       name: s.name ?? s.key,
       type: s.type ?? "number",
-      colorRules: s.colorRules ?? [],
+      colorRules: s.colorRules ?? [
+        {
+          operator: "always",
+          value: 0,
+          value2: 0,
+          color: "var(--info)",
+        },
+      ],
     })),
   };
 }

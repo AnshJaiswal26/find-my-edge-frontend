@@ -3,6 +3,7 @@ import { useChartStore } from "@charts/apex/store/useChartStore";
 import { computeOverSequence } from "@lib/analytics/engine/execute";
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 import { useTradeStore, useUIStore } from "@stores";
+import { evaluateColorRules } from "@utils";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -14,6 +15,7 @@ const stats = [
     aggregate: "SUM_N",
     format: "CURRENCY_SIGNED",
     value: 0,
+    color: null,
   },
 
   {
@@ -23,6 +25,7 @@ const stats = [
     aggregate: "MAX_WIN_STREAK_N",
     format: "NUMBER",
     value: 0,
+    colorRules: [{ operator: "always", color: "var(--success)" }],
   },
 
   {
@@ -32,6 +35,7 @@ const stats = [
     aggregate: "MAX_LOSE_STREAK_N",
     format: "NUMBER",
     value: 0,
+    colorRules: [{ operator: "always", color: "var(--error)" }],
   },
   {
     title: "Avg Risk/Reward",
@@ -334,25 +338,29 @@ export const useDashboardStore = create(
       get().closePopup();
     },
 
-    addStats(stats) {
-      const { stats: storeStats } = get();
+    addStats(stat) {
+      const { stats } = get();
 
-      if (storeStats.length > 19) {
+      if (stats.length > 19) {
         useUIStore
           .getState()
           .showToast("ERROR", "You cannot add more than 20 stats");
         return;
       }
+      console.log(stat);
       set((s) => {
-        stats.forEach((stat) => {
-          const reducer = FUNCTION_REGISTRY[stat.aggregate].reducer;
-          const state = reducer.init(s.seriesOrder.length);
+        const reducer = FUNCTION_REGISTRY[stat.aggregate].reducer;
+        const state = reducer.init(s.seriesOrder.length);
 
-          s.seriesOrder.forEach((id) => {
-            reducer.step(state, s.seriesById[id][stat.key]);
-          });
+        s.seriesOrder.forEach((id) => {
+          reducer.step(state, s.seriesById[id][stat.key]);
+        });
 
-          s.stats.push({ ...stat, value: reducer.result(state) });
+        const result = reducer.result(state);
+
+        s.stats.push({
+          ...stat,
+          value: result,
         });
       });
       get().closePopup();

@@ -27,7 +27,13 @@ export function ChartLegend({
       {seriesConfig.map((s, i) => (
         <Legend
           key={i}
-          color={type === "bar" ? s.colorRules.map((r) => r.color) : s.color}
+          color={
+            type === "bar"
+              ? s.colorRules.length === 0
+                ? "var(--info)"
+                : s.colorRules.map((r) => r.color)
+              : s.color
+          }
           label={s.name ?? s.label}
           selected={selectedSeriesKeys && !selectedSeriesKeys.includes(s.key)}
           onClick={() => {

@@ -44,23 +44,25 @@ export function DurationInput({
 
   const inputClass = `
     ${BASE_CLASS}
-    border-0!
-    max-w-10! min-w-5!
-    text-left p-2!
+    border-0
+    text-center
+    max-w-10 min-w-4
+    text-left
     ${sizes?.input}
   `;
 
   return (
     <div>
-      <div className="text-[0.65rem] text-(--text-muted) ml-2 flex justify-start space-x-10">
-        <span>hh</span>
-        <span>mm</span>
-        <span>ss</span>
+      <div className="text-[0.65rem] text-(--text-muted) ml-2 flex justify-start space-x-9.5">
+        <span>hrs</span>
+        <span>min</span>
+        <span>sec</span>
       </div>
       <div
         className={`
         flex items-center gap-1
         border border-(--border) rounded
+        overflow-hidden
         focus-within:border-(--info)
         ${classNames?.input}
       `}
@@ -81,7 +83,7 @@ export function DurationInput({
           className={inputClass}
           onChange={(e) => update(e, { ...local, m: Number(e.target.value) })}
           onBlur={commit}
-        />
+        />{" "}
         :
         <input
           type="number"
@@ -90,7 +92,7 @@ export function DurationInput({
           className={inputClass}
           onChange={(e) => update(e, { ...local, s: Number(e.target.value) })}
           onBlur={commit}
-        />
+        />{" "}
       </div>
     </div>
   );

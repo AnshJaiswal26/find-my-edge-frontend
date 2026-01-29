@@ -116,6 +116,7 @@ const FILTER_OPERATION_MAP = {
 };
 
 const FILTER_OPTIONS = {
+  always: "Always",
   /* TEXT */
   textContains: "Contains",
   textDoesNotContain: "Does not contain",

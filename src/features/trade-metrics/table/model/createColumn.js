@@ -1,7 +1,7 @@
-export const COLUMN_TYPES = [
+const COLUMN_TYPES = [
   "number computed",
   "time computed",
-  "date computed",
+  // "date computed",
   "number",
   "text",
   "date",
@@ -9,7 +9,34 @@ export const COLUMN_TYPES = [
   "select",
 ];
 
-export function createColumn(partial) {
+const COLUMN_TYPES_LABELS = {
+  "number computed": "COMPUTED",
+  "time computed": "DURATION",
+  // "date computed": "DATE COMPUTED",
+  number: "NUMBER",
+  text: "TEXT",
+  date: "DATE",
+  time: "TIME",
+  select: "SELECT",
+};
+
+const COLUMN_TYPES_GROUP = {
+  number: "number",
+  "number computed": "number",
+
+  time: "time",
+
+  "time computed": "duration",
+
+  date: "date",
+
+  "date computed": "date",
+
+  text: "text",
+  select: "text",
+};
+
+function createColumn(partial) {
   if (!partial.id) {
     throw new Error("createColumn: id is required");
   }
@@ -36,3 +63,5 @@ export function createColumn(partial) {
     options: partial?.options ?? [],
   };
 }
+
+export { COLUMN_TYPES, COLUMN_TYPES_LABELS, COLUMN_TYPES_GROUP, createColumn };

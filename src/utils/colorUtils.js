@@ -160,6 +160,10 @@ const resolveCssColor = (color) => {
 };
 
 const evaluateColorRules = (value, rules = []) => {
+  if (rules.length > 0 && rules[0]?.operator === "always") {
+    return rules[0];
+  }
+
   const sorted = [...rules].sort((a, b) => {
     // numeric rules → higher value first
     if (a.operator === "greaterThan" && b.operator === "greaterThan") {
@@ -177,7 +181,7 @@ const evaluateColorRules = (value, rules = []) => {
     }
   }
 
-  return { color: "var(--info)" };
+  return { color: "var(--info)", label: "Default" };
 };
 
 export {

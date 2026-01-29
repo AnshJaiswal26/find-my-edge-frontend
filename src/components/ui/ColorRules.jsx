@@ -21,10 +21,7 @@ export default function ColorRules({
   if (!rules) return null;
 
   return (
-    <Section
-      title="Conditional Colors"
-      className={section ? "" : "p-0! border-0!"}
-    >
+    <Section title="Colors Rules" className={section ? "" : "p-0! border-0!"}>
       {rules.map((r, i) => (
         <div key={i} className="space-y-3">
           {i !== 0 && <Divider className="my-3" />}
@@ -33,12 +30,12 @@ export default function ColorRules({
             label={"Condition"}
             vertical
             value={r.operator}
-            options={FILTER_TYPE[type]}
+            options={["always", ...FILTER_TYPE[type]]}
             getLabel={(v) => FILTER_OPTIONS[v]}
             onChange={(op) => updateRule(i, { operator: op }, onChange)}
           />
 
-          {isBetween(r.operator) ? (
+          {r.operator === "always" ? null : isBetween(r.operator) ? (
             <RangeInput
               type={type}
               value={{ from: r.value, to: r.value2 }}

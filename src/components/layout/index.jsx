@@ -129,13 +129,13 @@ export const Legend = ({
             <div
               key={i}
               className="w-[0.9rem] h-[0.9rem] rounded-full"
-              style={{ backgroundColor: c }}
+              style={{ backgroundColor: c || "var(--info)" }}
             />
           ))
         ) : (
           <div
             className="w-[0.9rem] h-[0.9rem] rounded-full"
-            style={{ backgroundColor: color }}
+            style={{ backgroundColor: color || "var(--info)" }}
           />
         )}
 

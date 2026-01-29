@@ -1,4 +1,4 @@
-import { FORMATS, formatValue } from "@utils";
+import { evaluateColorRules, FORMATS, formatValue } from "@utils";
 import {
   IndianRupee,
   Percent,
@@ -9,6 +9,7 @@ import {
   Scale,
   Coins,
 } from "lucide-react";
+import { useMemo } from "react";
 
 export const FORMAT_VARIANTS = {
   // ---------- MONEY ----------
@@ -125,6 +126,11 @@ export default function StatCard({ stat }) {
   const v = VARIANTS[ui.variant];
   const Icon = ui.icon;
 
+  const color = useMemo(() => {
+    const rule = evaluateColorRules(stat.value, stat.colorRules);
+    return rule?.label === "Default" ? null : rule.color;
+  }, [stat.value, stat.colorRules]);
+
   return (
     <div
       className={`
@@ -140,7 +146,10 @@ export default function StatCard({ stat }) {
       `}
     >
       {/* Accent strip */}
-      <div className={`absolute left-0 top-0 h-full w-1 ${v.strip}`} />
+      <div
+        className={`absolute left-0 top-0 h-full w-1 ${v.strip}`}
+        style={{ background: color }}
+      />
 
       {/* Content */}
       <div className="relative pl-3 flex gap-3">
@@ -152,7 +161,7 @@ export default function StatCard({ stat }) {
             ${v.bar}/15
           `}
         >
-          <Icon className={`h-10 w-10 ${v.text}`} />
+          <Icon className={`h-10 w-10 ${v.text}`} style={{ color: color }} />
         </div>
 
         {/* Text */}
@@ -161,7 +170,10 @@ export default function StatCard({ stat }) {
             {stat.title}
           </div>
 
-          <div className={`mt-1 text-3xl font-semibold ${v.text}`}>
+          <div
+            className={`mt-1 text-3xl font-semibold ${v.text}`}
+            style={{ color: color }}
+          >
             {formatValue(stat.value, stat.type, {
               format: stat.format,
               decimals: 2,
