@@ -4,31 +4,24 @@ import { useChartStore } from "../store/useChartStore";
 export const groupedTooltipCallback = ({
   seriesIndex,
   chartId,
-  selectedSeriesKeys,
+  filteredConfig, // ✅ now source of truth
+  series, // ✅ computedSeries from chart
 }) => {
   const chart = useChartStore.getState()[chartId];
+  const { layout } = chart;
 
-  const { series, seriesConfig, layout } = chart;
+  // safety
+  if (!filteredConfig?.length || !series?.length) return null;
 
-  //  decide active series key
-  const activeKey =
-    selectedSeriesKeys?.length === 1
-      ? selectedSeriesKeys[0]
-      : seriesConfig[seriesIndex]?.key;
+  const config = filteredConfig[seriesIndex];
+  if (!config) return null;
 
-  // find config
-  const config = seriesConfig.find((s) => s.key === activeKey);
-
-  // find value index
-  const valueIndex = seriesConfig.findIndex((s) => s.key === activeKey);
-
-  // safety guard
-  if (!config || valueIndex === -1) return null;
+  const value = series[seriesIndex];
 
   return {
     dataArray: [
       {
-        value: formatValue(series[valueIndex], config.type, {
+        value: formatValue(value, config.type, {
           format: layout.format,
           decimals: layout.decimals,
         }),

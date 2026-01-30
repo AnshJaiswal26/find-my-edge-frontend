@@ -3,7 +3,6 @@ import { useChartStore } from "@charts/apex/store/useChartStore";
 import { computeOverSequence } from "@lib/analytics/engine/execute";
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 import { useTradeStore, useUIStore } from "@stores";
-import { evaluateColorRules } from "@utils";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -164,21 +163,25 @@ export const useDashboardStore = create(
     },
 
     loadInitialCharts() {
-      const { order, seriesById, seriesOrder } = get();
+      const { order } = get();
       if (order.length > 0) return;
 
       const seriesConfig = [
         {
-          key: "Wins",
-          name: "Wins",
+          key: "WIN_RATE_N",
+          seriesKey: "pnl",
+          name: "WIN_RATE",
           type: "number",
+          reducer: "WIN_RATE_N",
           tooltipLabel: "Wins",
           color: "var(--info)",
         },
         {
-          key: "Loses",
-          name: "Loses",
+          key: "LOSE_RATE_N",
+          seriesKey: "pnl",
+          name: "LOSE_RATE",
           type: "number",
+          reducer: "LOSE_RATE_N",
           tooltipLabel: "Loses",
           color: "var(--warning)",
         },
@@ -251,65 +254,56 @@ export const useDashboardStore = create(
         }),
 
         donut: createChart("donut", {
-          layout: {
-            format: "PERCENT",
-          },
+          layout: { format: "PERCENT" },
           seriesConfig,
-          series: seriesConfig.map((s) => {
-            if (s.key === "Wins") {
-              return (
-                (seriesOrder.reduce((acc, id) => {
-                  acc = seriesById[id].pnl > 0 ? acc + 1 : acc;
-                  return acc;
-                }, 0) /
-                  seriesOrder.length) *
-                100
-              );
-            }
-            return (
-              (seriesOrder.reduce((acc, id) => {
-                acc = seriesById[id].pnl < 0 ? acc + 1 : acc;
-                return acc;
-              }, 0) /
-                seriesOrder.length) *
-              100
-            );
-          }),
         }),
 
         radialBar: createChart("radialBar", {
           layout: { format: "PERCENT" },
           seriesConfig,
-          series: seriesConfig.map((s) => {
-            if (s.key === "Wins") {
-              return (
-                (seriesOrder.reduce((acc, id) => {
-                  acc = seriesById[id].pnl > 0 ? acc + 1 : acc;
-                  return acc;
-                }, 0) /
-                  seriesOrder.length) *
-                100
-              );
-            }
-            return (
-              (seriesOrder.reduce((acc, id) => {
-                acc = seriesById[id].pnl < 0 ? acc + 1 : acc;
-                return acc;
-              }, 0) /
-                seriesOrder.length) *
-              100
-            );
-          }),
+        }),
+
+        radar: createChart("radar", {
+          layout: {
+            title: "Trade Metrics Radar",
+            yFormat: "NUMBER",
+          },
+          series: [
+            {
+              key: 0,
+              name: "Reward",
+              tooltipLabel: "Reward",
+              color: "var(--success)",
+              prefix: "1:",
+              suffix: "",
+            },
+            {
+              key: 1,
+              name: "Risk",
+              tooltipLabel: "Risk",
+              color: "var(--error)",
+              prefix: "1:",
+              suffix: "",
+            },
+            {
+              key: 2,
+              name: "Gain",
+              tooltipLabel: "Gain",
+              color: "var(--info)",
+              prefix: "",
+              suffix: "%",
+            },
+          ],
         }),
       };
 
       useChartStore.setState((s) => {
-        ["bar", "line", "donut", "radialBar"].map((ch) => {
+        ["bar", "line", "donut", "radialBar", "radar"].map((ch) => {
           s[map[ch].meta.id] = map[ch];
         });
       });
       set((s) => {
-        ["bar", "line", "donut", "radialBar"].map((ch) => {
+        ["bar", "line", "donut", "radialBar", "radar"].map((ch) => {
           s.order.push({
             id: map[ch].meta.id,
             category: map[ch].meta.category,

@@ -1,3 +1,4 @@
+import { DEFAULT_FORMATS } from "@utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
 export function buildBarChart({ x, y, layout = {}, category = "series" }) {
@@ -6,12 +7,12 @@ export function buildBarChart({ x, y, layout = {}, category = "series" }) {
       id: crypto.randomUUID(),
       type: "bar",
       category,
-      xSeriesType: "",
-      ySeriesType: "",
     },
 
     layout: {
       ...DEFAULT_LAYOUTS.bar,
+      xFormat: DEFAULT_FORMATS[x.type || "number"],
+      yFormat: DEFAULT_FORMATS[y[0].type || "number"],
       ...layout,
     },
 

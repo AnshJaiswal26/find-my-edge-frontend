@@ -1,28 +1,20 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
-import { WIN_RATE_N } from "@lib/analytics/engine/functions";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
+import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
 
 const getSeries = ({ seriesConfig, seriesById, seriesOrder }) => {
   const series = seriesConfig.map((s) => {
-    if (s.key === "Wins") {
-      const state = WIN_RATE_N.init(seriesOrder.length);
+    const reducer = WINDOW_FUNCTIONS[s.reducer].reducer;
 
-      seriesOrder.forEach((id) => {
-        WIN_RATE_N.step(state, seriesById[id].pnl);
-      });
-
-      return WIN_RATE_N.result(state);
-    }
-
-    const state = WIN_RATE_N.init(seriesOrder.length);
+    const state = reducer.init(seriesOrder.length);
 
     seriesOrder.forEach((id) => {
-      WIN_RATE_N.step(state, seriesById[id].pnl);
+      reducer.step(state, seriesById[id][s.seriesKey]);
     });
 
-    return 100 - WIN_RATE_N.result(state);
+    return reducer.result(state);
   });
   return series;
 };
@@ -42,32 +34,47 @@ export default function useGroupChartConfig({
 }) {
   const type = useChartStore((s) => s[chartId].meta.type);
 
-  const { options, computedSeries } = useMemo(
-    () => ({
-      options: configGenerator?.[type]({
-        chart: useChartStore.getState()[chartId],
-        chartId,
-        seriesById,
-        selectedSeriesKeys,
-        tooltipCallback: (seriesValue, index, seriesIndex) =>
-          groupedTooltipCallback({
-            seriesValue,
-            index,
-            seriesIndex,
-            chartId,
-            selectedSeriesKeys,
-          }),
-      }),
-      computedSeries: seriesGenerator[type]({
-        seriesConfig: selectedSeriesKeys
-          ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-          : seriesConfig,
-        seriesOrder,
-        seriesById,
-      }),
-    }),
-    [seriesConfig, layout, selectedSeriesKeys, seriesById, seriesOrder],
+  const filteredConfig = useMemo(
+    () =>
+      selectedSeriesKeys
+        ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+        : seriesConfig,
+    [seriesConfig, selectedSeriesKeys],
   );
+
+  const computedSeries = useMemo(() => {
+    return seriesGenerator[type]({
+      seriesConfig: filteredConfig,
+      seriesOrder,
+      seriesById,
+    });
+  }, [type, filteredConfig, seriesOrder, seriesById]);
+
+  console.log(filteredConfig);
+
+  const tooltipCb = useCallback(
+    (seriesValue, index, seriesIndex) =>
+      groupedTooltipCallback({
+        seriesValue,
+        index,
+        seriesIndex,
+        chartId,
+        filteredConfig, // ✅ pass filtered config
+        series: computedSeries, // ✅ pass actual data
+      }),
+    [chartId, selectedSeriesKeys],
+  );
+
+  const options = useMemo(() => {
+    return configGenerator?.[type]?.({
+      chart: useChartStore.getState()[chartId],
+      chartId,
+      seriesById,
+      filteredConfig,
+      tooltipCallback: tooltipCb,
+      layout,
+    });
+  }, [type, chartId, layout, seriesById, filteredConfig, tooltipCb]);
 
   return {
     options,

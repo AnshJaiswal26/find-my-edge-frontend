@@ -1,19 +1,15 @@
 import { CartesianChartForm } from "./CartesianChartForm";
+import { GroupedChartForm } from "./GroupedChartForm";
 
-export default function AddChartForm({ type, options, isAddClicked, ref }) {
+export default function AddChartForm({ type, options, ref }) {
   switch (type) {
     case "bar":
     case "line":
-      return (
-        <div className="space-y-4">
-          <CartesianChartForm
-            ref={ref}
-            type={type}
-            options={options}
-            isAddClicked={isAddClicked}
-          />
-        </div>
-      );
+      return <CartesianChartForm ref={ref} type={type} options={options} />;
+
+    case "donut":
+    case "radialBar":
+      return <GroupedChartForm ref={ref} type={type} options={options} />;
 
     default:
       null;

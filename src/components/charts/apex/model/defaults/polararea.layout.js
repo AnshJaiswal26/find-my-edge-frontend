@@ -2,7 +2,6 @@ export const POLARAREA_CHART_LAYOUT = {
   title: "",
   chartWidth: 100,
 
-  selectedLegendIndex: null,
   tooltip: true,
   dataLabels: true,
 

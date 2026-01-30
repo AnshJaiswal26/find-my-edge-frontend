@@ -13,6 +13,7 @@ import { MAX_WIN_STREAK_N } from "./max_win_streak_n";
 import { VOLATILITY_N } from "./volatility_n";
 import { SHARPE_N } from "./sharpe_n";
 import { EXPECTANCY_N } from "./expectancy_n";
+import { LOSE_RATE_N } from "./lose_rate_n";
 
 export {
   SUM_N,
@@ -23,6 +24,7 @@ export {
   AVG_WIN_N,
   AVG_LOSS_N,
   WIN_RATE_N,
+  LOSE_RATE_N,
   STDDEV_N,
   MAX_DRAWDOWN_N,
   MAX_LOSE_STREAK_N,

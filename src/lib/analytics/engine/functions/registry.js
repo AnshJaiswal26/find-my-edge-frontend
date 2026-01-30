@@ -16,3 +16,14 @@ export const FUNCTION_REGISTRY = {
   /* ---------- CONDITIONAL ---------- */
   ...CONDITION_FUNCTIONS,
 };
+
+export const METRIC_COMPUTE_TYPE = {
+  ROW: "row", // per trade (bar/line)
+  GLOBAL_AGGREGATE: "globalAgg", // one value from all trades
+  GLOBAL_RATIO: "globalRatio", // ratio derived from totals
+  GROUP_AGGREGATE: "groupAgg", // one value per group
+  GROUP_RATIO: "groupRatio", // ratio inside each group
+  WINDOW_SERIES: "windowSeries", // rolling value per trade
+  GROUP_WINDOW_SERIES: "groupWindowSeries", // rolling per group
+  DISTRIBUTION: "distribution", // % split of categories
+};

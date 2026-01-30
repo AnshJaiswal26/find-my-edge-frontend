@@ -14,13 +14,11 @@ export const getRadialBarChartConfig = ({
   chartId,
   chart,
   tooltipCallback,
-  selectedSeriesKeys,
+  filteredConfig,
 }) => {
   const config = chart.layout;
 
-  const seriesConfig = selectedSeriesKeys
-    ? chart.seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-    : chart.seriesConfig;
+  const seriesConfig = filteredConfig;
 
   return {
     chart: {

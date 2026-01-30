@@ -1,33 +1,36 @@
 import {
   forwardRef,
+  Fragment,
   useEffect,
   useImperativeHandle,
   useMemo,
   useState,
 } from "react";
 import { Button, Input, Select } from "@ui";
-import { Section } from "@layout";
+import { Divider, Section } from "@layout";
 import { Trash2 } from "lucide-react";
 import { useDashboardStore } from "@features/dashboard/store";
 import { COLUMN_TYPES_GROUP } from "@table/model";
+import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
 
-export const CartesianChartForm = forwardRef(({ type, options }, ref) => {
+export const GroupedChartForm = forwardRef(({ type, options }, ref) => {
   const addChart = useDashboardStore((s) => s.addChart);
 
-  const [layout, setLayout] = useState({
-    xTitleText: "",
-    yTitleText: "",
-    title: "",
-  });
+  const [layout, setLayout] = useState({ title: "" });
 
-  const [seriesX, setSeriesX] = useState({ key: "", name: "", type: "" });
-
-  const [seriesY, setSeriesY] = useState([{ key: "", name: "", type: "" }]);
+  const [seriesConfig, setSeriesConfig] = useState([
+    {
+      key: "",
+      name: "",
+      type: "",
+      reducer: "",
+    },
+  ]);
 
   const yAxisGroup = useMemo(() => {
-    const first = seriesY[0];
+    const first = seriesConfig[0];
     return first?.type ? COLUMN_TYPES_GROUP[first.type] : null;
-  }, [seriesY]);
+  }, [seriesConfig]);
 
   const baseYOptions = useMemo(() => {
     return options.filter((o) => {
@@ -46,13 +49,11 @@ export const CartesianChartForm = forwardRef(({ type, options }, ref) => {
 
   useImperativeHandle(ref, () => ({
     submit() {
-      if (!seriesX.key) return;
-      if (!seriesY[0]?.key) return;
+      if (!seriesConfig[0]?.key) return;
 
       addChart(type, {
         layout,
-        x: seriesX,
-        y: seriesY,
+        seriesConfig,
       });
 
       return;
@@ -62,7 +63,7 @@ export const CartesianChartForm = forwardRef(({ type, options }, ref) => {
   useEffect(() => {
     if (!yAxisGroup) return;
 
-    setSeriesY((prev) =>
+    setSeriesConfig((prev) =>
       prev.map((s, i) => {
         if (i === 0 || !s.type) return s;
 
@@ -83,22 +84,11 @@ export const CartesianChartForm = forwardRef(({ type, options }, ref) => {
         value={layout.title}
         onCommit={(v) => setLayout((p) => ({ ...p, title: v }))}
       />
-      <Section title={"X Axis Series"}>
-        <Select
-          value={seriesX.key}
-          options={options}
-          getLabel={(o) => o.label}
-          getKey={(o) => o.id}
-          onChange={(o) => {
-            setSeriesX({ key: o.id, name: o.label, type: o.type });
-            setLayout((p) => ({ ...p, xTitleText: o.label }));
-          }}
-        />
-      </Section>
 
       <Section title={"Y Axis Series"}>
-        {seriesY.map((s, i) => (
-          <div key={i} className="flex items-end justify-between">
+        {seriesConfig.map((s, i) => (
+          <Fragment key={i}>
+            {i !== 0 && <Divider />}
             <Select
               vertical
               label={`Series ${i + 1}`}
@@ -107,29 +97,55 @@ export const CartesianChartForm = forwardRef(({ type, options }, ref) => {
               getLabel={(o) => o.label}
               getKey={(o) => o.id}
               onChange={(o) => {
-                setSeriesY((p) => {
+                setSeriesConfig((p) => {
                   const next = [...p];
                   next[i] = {
+                    ...next[i],
                     key: o.id,
                     name: o.label,
                     type: o.type,
                   };
                   return next;
                 });
-                setLayout((p) => ({ ...p, yTitleText: o.label }));
               }}
             />
-            <Button.Icon
-              onClick={() => setSeriesY((p) => p.filter((_, idx) => idx !== i))}
-            >
-              <Trash2 size={18} />
-            </Button.Icon>
-          </div>
+            <div key={i} className="flex items-end justify-between">
+              <Select
+                label="Aggregate"
+                vertical
+                value={s.reducer.replace("_N", "")}
+                options={Object.keys(WINDOW_FUNCTIONS).map((k) =>
+                  k.replace("_N", ""),
+                )}
+                onChange={(o) =>
+                  setSeriesConfig((s) => {
+                    const next = [...s];
+                    next[i] = {
+                      ...next[i],
+                      reducer: `${o}_N`,
+                    };
+                    return next;
+                  })
+                }
+              />
+
+              <Button.Icon
+                onClick={() =>
+                  setSeriesConfig((p) => p.filter((_, idx) => idx !== i))
+                }
+              >
+                <Trash2 size={18} />
+              </Button.Icon>
+            </div>
+          </Fragment>
         ))}
         <div>
           <Button.Text
             onClick={() =>
-              setSeriesY((p) => [...p, { key: "", name: "", type: "" }])
+              setSeriesConfig((p) => [
+                ...p,
+                { key: "", name: "", type: "", reducer: "" },
+              ])
             }
             disabled={!yAxisGroup}
             className={!yAxisGroup ? "opacity-50 pointer-events-none" : ""}

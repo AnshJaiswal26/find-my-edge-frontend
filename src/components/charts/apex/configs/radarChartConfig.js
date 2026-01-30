@@ -4,12 +4,11 @@ export const getRadarChartConfig = ({
   chartId,
   chart,
   tooltipCallback,
-  selectedLegendIndex,
+  filteredConfig,
+  series,
 }) => {
   const config = chart.layout;
-  const index = selectedLegendIndex;
-  const seriesConfig =
-    index !== null ? [chart.seriesConfig[index]] : chart.seriesConfig;
+  const seriesConfig = filteredConfig;
 
   return {
     chart: {
@@ -17,8 +16,8 @@ export const getRadarChartConfig = ({
       // offsetY: 20,
     },
 
-    labels: chart.series.filtered.map((d) => d.axis),
-    colors: seriesConfig.map((s) => s.color),
+    labels: series.map((d) => d.axis),
+    // colors: seriesConfig.map((s) => s.color),
 
     tooltip: {
       enabled: config.tooltip,

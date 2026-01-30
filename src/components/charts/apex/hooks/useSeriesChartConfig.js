@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
 import {
@@ -77,41 +77,47 @@ export default function useSeriesChartConfig({
     selection.to,
   ]);
 
-  const { options, computedSeries } = useMemo(
-    () => ({
-      options: configGenerator?.[type]({
-        chart: useChartStore.getState()[chartId],
-        chartId,
-        order: finalOrder,
-        seriesById,
-        selectedSeriesKeys,
-        tooltipCallback: (seriesValue, index, seriesIndex) =>
-          seriesTooltipCallback({
-            seriesValue,
-            index,
-            seriesIndex,
-            chartId,
-            getTitle: (i, key) => seriesById?.[finalOrder[i]]?.[key],
-            selectedSeriesKeys,
-          }),
-      }),
-      computedSeries: seriesGenerator[type]({
-        seriesConfig: selectedSeriesKeys
-          ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-          : seriesConfig,
-        filteredOrder: finalOrder,
-        seriesById,
-      }),
-    }),
-    [
-      seriesConfig,
-      layout,
-      layout?.area,
-      selectedSeriesKeys,
+  const computedSeries = useMemo(() => {
+    return seriesGenerator[type]({
+      seriesConfig: selectedSeriesKeys
+        ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+        : seriesConfig,
+      filteredOrder: finalOrder,
       seriesById,
-      finalOrder,
-    ],
+    });
+  }, [type, seriesConfig, selectedSeriesKeys, finalOrder, seriesById]);
+
+  const tooltipCallback = useCallback(
+    (seriesValue, index, seriesIndex) =>
+      seriesTooltipCallback({
+        seriesValue,
+        index,
+        seriesIndex,
+        chartId,
+        getTitle: (i, key) => seriesById?.[finalOrder[i]]?.[key],
+        selectedSeriesKeys,
+      }),
+    [chartId, seriesById, finalOrder, selectedSeriesKeys],
   );
+
+  const options = useMemo(() => {
+    return configGenerator?.[type]?.({
+      chart: useChartStore.getState()[chartId],
+      chartId,
+      order: finalOrder,
+      seriesById,
+      selectedSeriesKeys,
+      tooltipCallback,
+    });
+  }, [
+    type,
+    chartId,
+    finalOrder,
+    seriesById,
+    selectedSeriesKeys,
+    layout, // if config depends on layout
+    layout?.area,
+  ]);
 
   return { options, series: computedSeries, type };
 }

@@ -2,9 +2,6 @@ export const GROUPED_CHART_LAYOUT = {
   title: "",
   chartWidth: 100,
 
-  selectedLegendIndex: [],
-  unSelectedLegendIndex: [],
-
   tooltip: true,
 
   // Data label parts

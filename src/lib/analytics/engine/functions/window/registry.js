@@ -5,6 +5,7 @@ import {
   AVG_WIN_N,
   COUNT_N,
   EXPECTANCY_N,
+  LOSE_RATE_N,
   MAX_DRAWDOWN_N,
   MAX_LOSE_STREAK_N,
   MAX_N,
@@ -80,6 +81,14 @@ export const WINDOW_FUNCTIONS = {
     arity: 2,
     signature: "WIN_RATE_N(expr, n)",
     description: "Rolling win rate",
+  },
+
+  LOSE_RATE_N: {
+    type: FUNCTION_TYPE.WINDOW,
+    reducer: LOSE_RATE_N,
+    arity: 2,
+    signature: "LOSE_RATE_N(expr, n)",
+    description: "Rolling lose rate",
   },
 
   STDDEV_N: {

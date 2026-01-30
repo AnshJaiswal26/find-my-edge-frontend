@@ -2,7 +2,6 @@ export const RADAR_CHART_LAYOUT = {
   title: "",
   chartWidth: 100,
 
-  selectedLegendIndex: null,
   dataLabels: true,
   tooltip: true,
 

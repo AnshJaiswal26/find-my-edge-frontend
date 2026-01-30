@@ -60,8 +60,14 @@ function createColumn(partial) {
     },
 
     colorRules: partial.colorRules ?? [],
-    options: partial?.options ?? [],
+    options: partial?.options ?? [], 
   };
+}
+
+export class schema {
+  evaluate(){
+    
+  }
 }
 
 export { COLUMN_TYPES, COLUMN_TYPES_LABELS, COLUMN_TYPES_GROUP, createColumn };
