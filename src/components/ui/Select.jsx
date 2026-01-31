@@ -157,9 +157,10 @@ export default function Select({
                     last:border-b-0
                     hover:bg-(--info)
                     hover:text-white
+                    ${classNames?.button}
                   `}
                   onClick={() => {
-                    onChange(item);
+                    onChange(item, i);
                     toggleSelect({ id: selectId, buttonId, listId });
                   }}
                 >

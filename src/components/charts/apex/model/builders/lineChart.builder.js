@@ -1,7 +1,13 @@
 import { DEFAULT_FORMATS } from "@utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
-export function buildLineChart({ x, y, layout = {}, category = "series" }) {
+export function buildLineChart({
+  x,
+  y,
+  groups,
+  layout = {},
+  category = "series",
+}) {
   return {
     meta: {
       id: crypto.randomUUID(),
@@ -15,6 +21,9 @@ export function buildLineChart({ x, y, layout = {}, category = "series" }) {
       yFormat: DEFAULT_FORMATS[y[0].type || "number"],
       ...layout,
     },
+
+    groups: groups ?? null,
+    selectedGroupIndex: groups ? 0 : null,
 
     sort: {
       key: null,

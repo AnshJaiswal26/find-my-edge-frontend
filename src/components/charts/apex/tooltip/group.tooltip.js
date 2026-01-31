@@ -6,6 +6,7 @@ export const groupedTooltipCallback = ({
   chartId,
   filteredConfig, // ✅ now source of truth
   series, // ✅ computedSeries from chart
+  groups,
 }) => {
   const chart = useChartStore.getState()[chartId];
   const { layout } = chart;
@@ -13,7 +14,7 @@ export const groupedTooltipCallback = ({
   // safety
   if (!filteredConfig?.length || !series?.length) return null;
 
-  const config = filteredConfig[seriesIndex];
+  const config = groups ? groups[seriesIndex] : filteredConfig[seriesIndex];
   if (!config) return null;
 
   const value = series[seriesIndex];
@@ -21,12 +22,12 @@ export const groupedTooltipCallback = ({
   return {
     dataArray: [
       {
-        value: formatValue(value, config.type, {
+        value: formatValue(value, config?.type || "number", {
           format: layout.format,
           decimals: layout.decimals,
         }),
-        label: config.tooltipLabel,
-        color: config.color,
+        label: config?.tooltipLabel || config.label,
+        color: config?.color || "var(--info)",
       },
     ],
   };

@@ -12,43 +12,33 @@ import { useDashboardStore } from "./store";
 import { AddWidget } from "./ui/Popups";
 
 const getColumnCount = () => {
-  const w = window.innerWidth;
+  const w = document.innerWidth;
   if (w < 480) return 6;
   if (w < 768) return 12;
   if (w < 1024) return 20;
   return 30;
 };
 
-export const useAsyncTask = (fn) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const run = useCallback(
-    async (...args) => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const result = await fn(...args);
-        return result;
-      } catch (err) {
-        setError(err);
-        throw err; // important: lets caller handle it too
-      } finally {
-        setLoading(false);
-      }
-    },
-    [fn],
-  );
-
-  return { run, loading, error };
-};
-
 export default function Dashboard() {
+  const seriesOrder = useDashboardStore((s) => s.seriesOrder);
+  const seriesById = useDashboardStore((s) => s.seriesById);
+  const schemasById = useDashboardStore((s) => s.schemasById);
+  const schemasOrder = useDashboardStore((s) => s.schemasOrder);
+
   return (
     <>
-      <ChartPopups />
-      <AddWidget />
+      <ChartPopups
+        seriesById={seriesById}
+        seriesOrder={seriesOrder}
+        schemasById={schemasById}
+        schemasOrder={schemasOrder}
+      />
+      <AddWidget
+        seriesById={seriesById}
+        seriesOrder={seriesOrder}
+        schemasById={schemasById}
+        schemasOrder={schemasOrder}
+      />
 
       <Container className="rounded-[4px]">
         <div className="flex-box items-center">
@@ -84,12 +74,22 @@ export default function Dashboard() {
         isSidebarOpen={isSidebarOpen}
       /> */}
 
-      <ChartDashboard />
+      <ChartDashboard
+        seriesById={seriesById}
+        seriesOrder={seriesOrder}
+        schemasById={schemasById}
+        schemasOrder={schemasOrder}
+      />
     </>
   );
 }
 
-function ChartDashboard() {
+function ChartDashboard({
+  seriesOrder,
+  seriesById,
+  schemasById,
+  schemasOrder,
+}) {
   const gridRef = useRef(null);
   const grid = useRef(null);
   const isResponsiveChange = useRef(false);
@@ -97,9 +97,6 @@ function ChartDashboard() {
   const order = useDashboardStore((s) => s.order);
 
   const savedLayout = useChartStore((s) => s.chartGridLayout);
-
-  const seriesOrder = useDashboardStore((s) => s.seriesOrder);
-  const seriesById = useDashboardStore((s) => s.seriesById);
 
   useEffect(() => {
     if (grid.current) return;
@@ -198,8 +195,10 @@ function ChartDashboard() {
                   chartId={id}
                   type={type}
                   category={category}
-                  seriesOrder={seriesOrder}
                   seriesById={seriesById}
+                  seriesOrder={seriesOrder}
+                  schemasById={schemasById}
+                  schemasOrder={schemasOrder}
                 />
               </div>
             </div>

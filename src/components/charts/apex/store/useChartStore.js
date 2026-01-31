@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { createFilterSlice } from "./filter.slice";
 import { createSortSlice } from "./sort.slice";
-import { createGroupSlice } from "./group.slice";
+
 import { createLayoutSlice } from "./layout.slice";
 import { createSeriesSlice } from "./series.slice";
 import { createCoreSlice } from "./core.slice";
@@ -31,7 +31,6 @@ export const useChartStore = create(
     ...createPopupSlice(set, get),
     ...createFilterSlice(set, get),
     ...createSortSlice(set, get),
-    ...createGroupSlice(set, get),
     ...createLayoutSlice(set, get),
     ...createSeriesSlice(set, get),
 

@@ -1,7 +1,8 @@
-import { createColumn } from "./model";
+import { createSchema } from "@lib/analytics/schema";
+
 
 export const columnsById = {
-  date: createColumn({
+  date: createSchema({
     id: "date",
     label: "Date",
     type: "date",
@@ -9,7 +10,7 @@ export const columnsById = {
     display: { format: "YYYY-MM-DD" },
   }),
 
-  entryTime: createColumn({
+  entryTime: createSchema({
     id: "entryTime",
     label: "Entry Time",
     type: "time",
@@ -17,7 +18,7 @@ export const columnsById = {
     display: { format: "hh:mm:ss A" },
   }),
 
-  exitTime: createColumn({
+  exitTime: createSchema({
     id: "exitTime",
     label: "Exit Time",
     type: "time",
@@ -25,7 +26,7 @@ export const columnsById = {
     display: { format: "hh:mm:ss A" },
   }),
 
-  duration: createColumn({
+  duration: createSchema({
     id: "duration",
     label: "Duration",
     type: "time computed",
@@ -45,14 +46,14 @@ export const columnsById = {
     formula: "[Exit Time] - [Entry Time]",
   }),
 
-  symbol: createColumn({
+  symbol: createSchema({
     id: "symbol",
     label: "Symbol",
     type: "text",
     editable: true,
   }),
 
-  entry: createColumn({
+  entry: createSchema({
     id: "entry",
     label: "Entry",
     type: "number",
@@ -60,7 +61,7 @@ export const columnsById = {
     display: { format: "NUMBER", decimals: 2 },
   }),
 
-  exit: createColumn({
+  exit: createSchema({
     id: "exit",
     label: "Exit",
     type: "number",
@@ -68,7 +69,7 @@ export const columnsById = {
     display: { format: "NUMBER", decimals: 2 },
   }),
 
-  qty: createColumn({
+  qty: createSchema({
     id: "qty",
     label: "Qty",
     type: "number",
@@ -76,7 +77,7 @@ export const columnsById = {
     display: { format: "NUMBER" },
   }),
 
-  targetAndSl: createColumn({
+  targetAndSl: createSchema({
     id: "targetAndSl",
     label: "Traget/SL",
     type: "number computed",
@@ -92,7 +93,7 @@ export const columnsById = {
     formula: "Exit - Entry",
   }),
 
-  pnl: createColumn({
+  pnl: createSchema({
     id: "pnl",
     label: "PnL",
     type: "number computed",
@@ -117,7 +118,7 @@ export const columnsById = {
     formula: "(Exit - Entry) * Qty",
   }),
 
-  riskReward: createColumn({
+  riskReward: createSchema({
     id: "riskReward",
     label: "Risk-Reward",
     type: "number computed",
@@ -137,7 +138,7 @@ export const columnsById = {
     formula: "Pnl / 500",
   }),
 
-  // emotion: createColumn({
+  // emotion: createSchema({
   //   id: "emotion",
   //   label: "Emotion",
   //   type: "select",

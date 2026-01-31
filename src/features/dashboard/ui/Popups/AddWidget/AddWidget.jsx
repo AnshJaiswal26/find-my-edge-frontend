@@ -24,7 +24,7 @@ export default function AddWidgetPopup() {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const options = useMemo(() => Object.values(schemasById), []);
+  const options = useMemo(() => Object.values(schemasById), [schemasById]);
 
   if (activePopup !== "widget") return null;
 
@@ -42,6 +42,7 @@ export default function AddWidgetPopup() {
             renderDetails={(item, index) =>
               index === 0 ? (
                 <AddStatsForm
+                  key={index}
                   ref={formRef}
                   options={options}
                   schemasById={schemasById}
@@ -49,9 +50,11 @@ export default function AddWidgetPopup() {
               ) : (
                 <div className="space-y-4">
                   <AddChartForm
+                    key={index}
                     type={item.id}
                     ref={formRef}
                     options={options}
+                    schemasById={schemasById}
                   />{" "}
                 </div>
               )

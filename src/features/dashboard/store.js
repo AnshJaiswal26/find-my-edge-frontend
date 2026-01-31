@@ -60,6 +60,7 @@ const stats = [
     aggregate: "MAX_N",
     format: "CURRENCY_SIGNED",
     value: 0,
+    colorRules: [{ operator: "always", color: "var(--success)" }],
   },
   {
     title: "Max Loss",
@@ -68,6 +69,7 @@ const stats = [
     aggregate: "MIN_N",
     format: "CURRENCY_SIGNED",
     value: 0,
+    colorRules: [{ operator: "always", color: "var(--error)" }],
   },
   {
     title: "Avg Win",
@@ -76,6 +78,7 @@ const stats = [
     aggregate: "AVG_WIN_N",
     format: "CURRENCY_SIGNED",
     value: 0,
+    colorRules: [{ operator: "always", color: "var(--success)" }],
   },
   {
     title: "Avg Loss",
@@ -84,6 +87,7 @@ const stats = [
     aggregate: "AVG_LOSS_N",
     format: "CURRENCY_SIGNED",
     value: 0,
+    colorRules: [{ operator: "always", color: "var(--error)" }],
   },
 ];
 
@@ -97,8 +101,6 @@ export const useDashboardStore = create(
     schemaOrder: [],
     order: [],
     stats: [...stats],
-
-    lastSeenVerison: 0,
 
     openPopup(id) {
       set({ activePopup: id });
@@ -168,20 +170,20 @@ export const useDashboardStore = create(
 
       const seriesConfig = [
         {
-          key: "WIN_RATE_N",
+          key: "WIN_RATE",
           seriesKey: "pnl",
           name: "WIN_RATE",
           type: "number",
-          reducer: "WIN_RATE_N",
+          reducer: "WIN_RATE",
           tooltipLabel: "Wins",
           color: "var(--info)",
         },
         {
-          key: "LOSE_RATE_N",
+          key: "LOSS_RATE",
           seriesKey: "pnl",
-          name: "LOSE_RATE",
+          name: "LOSS_RATE",
           type: "number",
-          reducer: "LOSE_RATE_N",
+          reducer: "LOSS_RATE",
           tooltipLabel: "Loses",
           color: "var(--warning)",
         },
@@ -253,9 +255,34 @@ export const useDashboardStore = create(
           ],
         }),
 
-        donut: createChart("donut", {
+        donut1: createChart("donut", {
           layout: { format: "PERCENT" },
           seriesConfig,
+        }),
+
+        donut2: createChart("donut", {
+          layout: { format: "NUMBER" },
+          seriesConfig: [
+            {
+              key: "PROFIT_FACTOR",
+              seriesKey: "pnl",
+              name: "PROFIT_FACTOR",
+              type: "number",
+              reducer: "PROFIT_FACTOR",
+              tooltipLabel: "PROFIT_FACTOR",
+              color: "var(--success)",
+            },
+
+            {
+              key: "LOSS_FACTOR",
+              seriesKey: "pnl",
+              name: "LOSS_FACTOR",
+              type: "number",
+              reducer: "LOSS_FACTOR",
+              tooltipLabel: "LOSS_FACTOR",
+              color: "var(--error)",
+            },
+          ],
         }),
 
         radialBar: createChart("radialBar", {
@@ -298,12 +325,12 @@ export const useDashboardStore = create(
       };
 
       useChartStore.setState((s) => {
-        ["bar", "line", "donut", "radialBar", "radar"].map((ch) => {
+        ["bar", "line", "donut1", "donut2", "radialBar", "radar"].map((ch) => {
           s[map[ch].meta.id] = map[ch];
         });
       });
       set((s) => {
-        ["bar", "line", "donut", "radialBar", "radar"].map((ch) => {
+        ["bar", "line", "donut1", "donut2", "radialBar", "radar"].map((ch) => {
           s.order.push({
             id: map[ch].meta.id,
             category: map[ch].meta.category,
@@ -314,13 +341,12 @@ export const useDashboardStore = create(
     },
 
     addChart(type, config) {
+      const { closePopup } = get();
       const chart = createChart(type, config);
 
       useChartStore.setState((cs) => {
         cs[chart.meta.id] = chart;
       });
-
-      console.log(chart);
 
       set((s) => {
         s.order.push({
@@ -329,7 +355,7 @@ export const useDashboardStore = create(
           type: chart.meta.type,
         });
       });
-      get().closePopup();
+      closePopup();
     },
 
     addStats(stat) {

@@ -29,6 +29,8 @@ const seriesGenerator = {
 export default function useSeriesChartConfig({
   chartId,
   layout,
+  groups,
+  selectedGroupIndex,
   seriesOrder,
   seriesById,
   seriesConfig,
@@ -41,7 +43,9 @@ export default function useSeriesChartConfig({
   const selection = useChartStore((s) => s[chartId].selection);
 
   const finalOrder = useMemo(() => {
-    let order = seriesOrder;
+    let order = groups
+      ? (groups[selectedGroupIndex ?? 0]?.tradeIds ?? seriesOrder)
+      : seriesOrder;
 
     /* SELECTION */
     if (selection.from !== null && selection.to !== null) {
@@ -75,6 +79,7 @@ export default function useSeriesChartConfig({
     sort.operator,
     selection.from,
     selection.to,
+    selectedGroupIndex,
   ]);
 
   const computedSeries = useMemo(() => {

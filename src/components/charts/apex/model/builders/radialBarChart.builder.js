@@ -1,7 +1,7 @@
 import { DEFAULT_FORMATS } from "@utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
-export function buildRadialBarChart({ seriesConfig, layout = {} }) {
+export function buildRadialBarChart({ seriesConfig, groupSpec, layout = {} }) {
   return {
     meta: {
       id: crypto.randomUUID(),
@@ -14,6 +14,8 @@ export function buildRadialBarChart({ seriesConfig, layout = {} }) {
       format: DEFAULT_FORMATS[seriesConfig[0].type || "number"],
       ...layout,
     },
+
+    groupSpec: groupSpec ?? null,
 
     seriesConfig: seriesConfig.map((s) => ({
       key: s.key,

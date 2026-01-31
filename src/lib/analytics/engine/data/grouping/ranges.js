@@ -9,3 +9,4 @@ export function matchRange(value, ranges, labelFormatter) {
 
   return "Other";
 }
+ 

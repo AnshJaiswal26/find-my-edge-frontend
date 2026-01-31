@@ -3,11 +3,9 @@ import { Popup } from "@layout";
 import { Select } from "@ui";
 import { SORT_OPTIONS, SORT_TYPE } from "@utils";
 import { useChartStore } from "@charts/apex/store/useChartStore";
-import { useDashboardStore } from "@features/dashboard/store";
 
-export default function SortPopup({ chartId }) {
+export default function SortPopup({ chartId, schemasById }) {
   const sort = useChartStore((s) => s[chartId].sort);
-  const schemasById = useDashboardStore((s) => s.schemasById);
 
   const ySeriesConfig = useChartStore((s) => s[chartId].ySeriesConfig);
   const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);

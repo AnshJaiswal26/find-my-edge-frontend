@@ -1,7 +1,13 @@
 import { DEFAULT_FORMATS } from "@utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
-export function buildBarChart({ x, y, layout = {}, category = "series" }) {
+export function buildBarChart({
+  x,
+  y,
+  groupSpec,
+  layout = {},
+  category = "series",
+}) {
   return {
     meta: {
       id: crypto.randomUUID(),
@@ -20,6 +26,9 @@ export function buildBarChart({ x, y, layout = {}, category = "series" }) {
       key: null,
       operator: "none",
     },
+
+    groupSpec: groupSpec ?? null,
+    selectedGroupIndex: groupSpec ? 0 : null,
 
     filters: [],
 

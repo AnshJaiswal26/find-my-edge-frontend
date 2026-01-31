@@ -3,11 +3,9 @@ import { Popup } from "@layout";
 
 import { FilterBuilder } from "@ui";
 import { useChartStore } from "@charts/apex/store/useChartStore";
-import { useDashboardStore } from "@features/dashboard/store";
 
-export default function FilterPopup({ chartId }) {
+export default function FilterPopup({ chartId, schemasById }) {
   const appliedfilters = useChartStore((s) => s[chartId].filters);
-  const schemasById = useDashboardStore((s) => s.schemasById);
 
   const [filters, setFilters] = useState([...appliedfilters]);
 

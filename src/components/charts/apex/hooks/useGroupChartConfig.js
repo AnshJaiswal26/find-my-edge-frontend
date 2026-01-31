@@ -2,16 +2,44 @@ import { useCallback, useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
+import { RATIO_FUNCTIONS } from "@lib/analytics/engine/functions/ratio";
 import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
 
-const getSeries = ({ seriesConfig, seriesById, seriesOrder }) => {
+const getSeries = ({ seriesConfig, seriesById, seriesOrder, groups }) => {
+  if (groups) {
+    const series = [];
+    const s = seriesConfig[0];
+    console.log(groups);
+    for (const group of groups) {
+      const reducer =
+        RATIO_FUNCTIONS[s.reducer]?.reducer ??
+        WINDOW_FUNCTIONS[s.reducer].reducer;
+
+      console.log(series, reducer);
+
+      const state = reducer.init(seriesOrder.length);
+
+      group.tradeIds.forEach((id) => {
+        reducer.step(state, { pnl: seriesById[id].pnl });
+      });
+
+      const result = reducer.result(state);
+
+      series.push(result);
+    }
+    console.log(series);
+    return series;
+  }
+
   const series = seriesConfig.map((s) => {
-    const reducer = WINDOW_FUNCTIONS[s.reducer].reducer;
+    const reducer =
+      RATIO_FUNCTIONS[s.reducer]?.reducer ??
+      WINDOW_FUNCTIONS[s.reducer].reducer;
 
     const state = reducer.init(seriesOrder.length);
 
     seriesOrder.forEach((id) => {
-      reducer.step(state, seriesById[id][s.seriesKey]);
+      reducer.step(state, { pnl: seriesById[id].pnl });
     });
 
     return reducer.result(state);
@@ -27,6 +55,7 @@ const seriesGenerator = {
 export default function useGroupChartConfig({
   chartId,
   layout,
+  groups,
   seriesConfig,
   seriesOrder,
   seriesById,
@@ -47,8 +76,9 @@ export default function useGroupChartConfig({
       seriesConfig: filteredConfig,
       seriesOrder,
       seriesById,
+      groups,
     });
-  }, [type, filteredConfig, seriesOrder, seriesById]);
+  }, [type, filteredConfig, seriesOrder, seriesById, groups]);
 
   console.log(filteredConfig);
 
@@ -61,8 +91,9 @@ export default function useGroupChartConfig({
         chartId,
         filteredConfig, // ✅ pass filtered config
         series: computedSeries, // ✅ pass actual data
+        groups,
       }),
-    [chartId, selectedSeriesKeys],
+    [chartId, selectedSeriesKeys, groups],
   );
 
   const options = useMemo(() => {

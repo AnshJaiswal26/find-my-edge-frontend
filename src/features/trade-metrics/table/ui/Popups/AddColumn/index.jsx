@@ -2,13 +2,13 @@ import { useState } from "react";
 import { ColumnDetails } from "../shared";
 import { useTableStore } from "@table/store/useTableStore";
 import { Popup } from "@layout";
-import { createColumn } from "@table/model";
+import { createSchema } from "@lib/analytics/schema";
 
 export default function AddColumnPopup() {
   const { addColumn, closePopup } = useTableStore.getState();
 
   const [draft, setDraft] = useState(
-    createColumn({
+    createSchema({
       id: "id",
     }),
   );

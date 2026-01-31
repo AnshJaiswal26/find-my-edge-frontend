@@ -1,6 +1,8 @@
 import { splitIntoBuckets } from "./buckets";
 
 export const draftToSpec = (draft) => {
+  if (!draft) return null;
+
   if (draft.kind === "value") {
     return { type: "value", key: draft.key };
   }

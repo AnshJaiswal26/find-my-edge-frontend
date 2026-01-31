@@ -2,9 +2,10 @@ import { ExpressionBuilder } from "../ExpressionBuilder";
 import { ColorRules, Input, Select, SelectOptionsEditor } from "@ui";
 import { DisplaySection } from "./DisplaySection";
 import { Section } from "@layout";
-import { COLUMN_TYPES, COLUMN_TYPES_LABELS } from "@table/model";
+
 import { useTableStore } from "@table/store/useTableStore";
 import { DEFAULT_FORMATS } from "@utils";
+import { SCHEMA_TYPES, SCHEMA_TYPES_LABELS } from "@lib/analytics/schema";
 
 export default function ColumnDetails({ column, draft, onDraftChange }) {
   if (!column) return null;
@@ -16,8 +17,8 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
       <Select
         label={"Column Type"}
         value={draft.type}
-        options={COLUMN_TYPES}
-        getLabel={(v) => COLUMN_TYPES_LABELS[v]}
+        options={SCHEMA_TYPES}
+        getLabel={(v) => SCHEMA_TYPES_LABELS[v]}
         onChange={(v) =>
           onDraftChange((p) => ({
             ...p,

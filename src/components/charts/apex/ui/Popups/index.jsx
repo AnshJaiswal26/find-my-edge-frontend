@@ -3,7 +3,7 @@ import ChartLayoutPopup from "./LayoutPopup";
 import FilterPopup from "./Filter";
 import SortPopup from "./Sort";
 
-export default function ChartPopups() {
+export default function ChartPopups(props) {
   const activePopup = useChartStore((s) => s.activePopup);
 
   if (activePopup === null) return null;
@@ -13,10 +13,10 @@ export default function ChartPopups() {
       return <ChartLayoutPopup chartId={activePopup.chartId} />;
 
     case "filter":
-      return <FilterPopup chartId={activePopup.chartId} />;
+      return <FilterPopup chartId={activePopup.chartId} {...props} />;
 
     case "sort":
-      return <SortPopup chartId={activePopup.chartId} />;
+      return <SortPopup chartId={activePopup.chartId} {...props} />;
 
     default:
       return null;

@@ -3,4 +3,5 @@ export const FUNCTION_TYPE = {
   BASE: "base",
   WINDOW: "window",
   CONDITION: "condition",
+  RATIO: "ratio",
 };

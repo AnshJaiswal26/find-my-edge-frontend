@@ -8,6 +8,8 @@ export function ChartWithConfig({
   chartId,
   type,
   category,
+  groups,
+  selectedGroupIndex,
   seriesById,
   seriesOrder,
 }) {
@@ -39,6 +41,8 @@ export function ChartWithConfig({
         chartId={chartId}
         layout={layout}
         seriesConfig={seriesConfig}
+        groups={groups}
+        selectedGroupIndex={selectedGroupIndex}
         seriesById={seriesById}
         seriesOrder={seriesOrder}
         selectedSeriesKeys={selectedSeriesKeys}
