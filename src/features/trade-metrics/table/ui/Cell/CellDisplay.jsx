@@ -12,10 +12,11 @@ const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
   if (!type.includes("computed")) return;
 
   const explanation = explainFormulaFromColumn(colId, rowId);
+  if (!explanation) return;
 
   tooltipApi.show({
     rect: e.target.getBoundingClientRect(),
-    content: `= ${explanation.formula}\n= ${explanation.expanded}\n= ${explanation.result}`,
+    content: `= ${explanation?.formula}\n= ${explanation?.expanded}\n= ${explanation?.result}`,
     color,
     slide: -30,
     placement: "top",

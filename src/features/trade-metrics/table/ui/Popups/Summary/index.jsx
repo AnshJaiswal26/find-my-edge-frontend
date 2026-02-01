@@ -4,7 +4,6 @@ import { MetricStatsRow } from "./MetricStatsRow";
 import { KpiGrid } from "./KpiGrid";
 import { MetricTableHeader } from "./MetricTableHeader";
 import { formatValue } from "@utils";
-import { useNumericColumns } from "@table/hooks";
 
 function Divider() {
   return <div className="h-px bg-(--border)" />;
@@ -18,8 +17,13 @@ function SectionTitle({ children }) {
   );
 }
 
-function computeSummary(state, numericColumns) {
-  const { rowsById, rowOrder } = state;
+function computeSummary() {
+  const { rowsById, rowOrder, columnsById } = useTableStore.getState();
+
+  const numericColumns = Object.values(columnsById).filter(
+    (col) => col.type !== "text" && col.type !== "select",
+  );
+
   const rows = rowOrder.map((id) => rowsById[id]);
 
   const stats = {};
@@ -95,9 +99,7 @@ function computeSummary(state, numericColumns) {
 export default function SummaryPopup() {
   const closePopup = useTableStore((s) => s.closePopup);
 
-  const { numericColumns } = useNumericColumns();
-
-  const summary = computeSummary(useTableStore.getState(), numericColumns);
+  const summary = computeSummary();
 
   return (
     <Popup open>

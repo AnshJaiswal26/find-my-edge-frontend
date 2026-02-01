@@ -1,4 +1,4 @@
-export const SUM = {
+export const ADD = {
   init() {
     return { sum: 0 };
   },

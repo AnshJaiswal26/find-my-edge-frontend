@@ -1,6 +1,5 @@
 import { createSchema } from "@lib/analytics/schema";
 
-
 export const columnsById = {
   date: createSchema({
     id: "date",
@@ -43,7 +42,7 @@ export const columnsById = {
       left: { type: "key", key: "exitTime" },
       right: { type: "key", key: "entryTime" },
     },
-    formula: "[Exit Time] - [Entry Time]",
+    formula: "Exit Time - Entry Time",
   }),
 
   symbol: createSchema({

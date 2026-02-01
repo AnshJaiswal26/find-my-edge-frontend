@@ -1,16 +1,30 @@
-import { ExpressionBuilder } from "../ExpressionBuilder";
-import { ColorRules, Input, Select, SelectOptionsEditor } from "@ui";
+import {
+  ColorRules,
+  ExpressionBuilder,
+  Input,
+  Select,
+  SelectOptionsEditor,
+} from "@ui";
 import { DisplaySection } from "./DisplaySection";
 import { Section } from "@layout";
 
 import { useTableStore } from "@table/store/useTableStore";
 import { DEFAULT_FORMATS } from "@utils";
 import { SCHEMA_TYPES, SCHEMA_TYPES_LABELS } from "@lib/analytics/schema";
+import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
+import { BASE_FUNCTIONS } from "@lib/analytics/engine/functions/base/registry";
+import { CONDITION_FUNCTIONS } from "@lib/analytics/engine/functions/condition/registry";
+import { useMemo } from "react";
 
-export default function ColumnDetails({ column, draft, onDraftChange }) {
-  if (!column) return null;
+export default function ColumnDetails({ columns, draft, onDraftChange }) {
+  if (!draft) return null;
 
   const isGrouped = useTableStore((s) => s.groupBy !== null);
+
+  const functions = useMemo(() => {
+    const fn = draft.mode === "row" ? BASE_FUNCTIONS : WINDOW_FUNCTIONS;
+    return { ...fn, ...CONDITION_FUNCTIONS };
+  }, [draft.mode]);
 
   return (
     <div className="flex-1 w-full space-y-4 overflow-auto">
@@ -52,14 +66,15 @@ export default function ColumnDetails({ column, draft, onDraftChange }) {
       {/* Computed */}
       {draft.type.includes("computed") && (
         <ExpressionBuilder
-          key={column.id}
+          key={draft.id}
           value={draft.formula}
-          mode={draft.mode}
-          onCommit={(v, exp, dependencies) => {
+          schemas={columns}
+          functions={functions}
+          onCommit={(formula, expression, dependencies) => {
             onDraftChange((p) => ({
               ...p,
-              formula: v,
-              expression: exp,
+              formula,
+              expression,
               dependencies,
             }));
           }}

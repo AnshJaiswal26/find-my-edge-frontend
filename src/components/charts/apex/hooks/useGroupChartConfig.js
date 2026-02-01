@@ -34,7 +34,7 @@ const getSeries = ({ seriesConfig, seriesById, seriesOrder, groups }) => {
   const series = seriesConfig.map((s) => {
     const reducer =
       RATIO_FUNCTIONS[s.reducer]?.reducer ??
-      WINDOW_FUNCTIONS[s.reducer].reducer;
+      WINDOW_FUNCTIONS[s.reducer]?.reducer;
 
     const state = reducer.init(seriesOrder.length);
 

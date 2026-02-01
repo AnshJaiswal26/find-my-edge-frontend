@@ -1,28 +1,42 @@
-import { forwardRef, Fragment, useImperativeHandle, useState } from "react";
-import { Button, GroupByBuilder, Input, Select } from "@ui";
+import {
+  forwardRef,
+  Fragment,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
+import { Button, ExpressionBuilder, GroupByBuilder, Input, Select } from "@ui";
 import { Divider, Section } from "@layout";
 import { Trash2 } from "lucide-react";
 import { useDashboardStore } from "@features/dashboard/store";
-
-import { RATIO_FUNCTIONS } from "@lib/analytics/engine/functions/ratio";
 import { useFilteredOptions } from "@features/dashboard/hooks";
 import { draftToSpec } from "@lib/analytics/engine/data";
+import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
+import { CONDITION_FUNCTIONS } from "@lib/analytics/engine/functions/condition/registry";
 
 export const GroupedChartForm = forwardRef(
   ({ type, options, schemasById }, ref) => {
     const addChart = useDashboardStore((s) => s.addChart);
+
+    const numericSchemas = useMemo(() => {
+      Object.values(schemasById).filter(
+        (s) => s.type !== "text" && s.type !== "select",
+      );
+    }, [schemasById]);
 
     const [groupBy, setGroupBy] = useState({});
     const [grouping, setGrouping] = useState(false);
 
     const [layout, setLayout] = useState({ title: "" });
 
+    const [expr, setExpr] = useState("");
+
     const [seriesConfig, setSeriesConfig] = useState([
       {
         key: "",
         name: "",
         type: "",
-        reducer: "",
+        expression: "",
       },
     ]);
 
@@ -100,7 +114,7 @@ export const GroupedChartForm = forwardRef(
                 }}
               />
               <div key={i} className="flex items-end justify-between">
-                <Select
+                {/* <Select
                   label="Aggregate"
                   vertical
                   value={s.reducer.replace("_N", "")}
@@ -117,6 +131,24 @@ export const GroupedChartForm = forwardRef(
                       return next;
                     })
                   }
+                /> */}
+
+                <ExpressionBuilder
+                  key={i}
+                  value={expr}
+                  schemas={numericSchemas}
+                  functions={{ ...WINDOW_FUNCTIONS, ...CONDITION_FUNCTIONS }}
+                  onCommit={(expr, ast, dependency) => {
+                    setExpr(expr);
+                    setSeriesConfig((s) => {
+                      const next = [...s];
+                      next[i] = {
+                        ...next[i],
+                        expression: ast,
+                      };
+                      return next;
+                    });
+                  }}
                 />
 
                 <Button.Icon

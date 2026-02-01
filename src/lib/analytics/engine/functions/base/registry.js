@@ -1,5 +1,5 @@
 import { FUNCTION_TYPE } from "../type";
-import { SUM, AVG, MAX, MIN, ABS, ROUND, CLAMP } from "./reducers";
+import { ADD, AVG, MAX, MIN, ABS, ROUND, CLAMP } from "./reducers";
 
 export const BASE_FUNCTIONS = {
   ABS: {
@@ -26,11 +26,11 @@ export const BASE_FUNCTIONS = {
     description: "Clamp value to range",
   },
 
-  SUM: {
+  ADD: {
     type: FUNCTION_TYPE.BASE,
-    reducer: SUM,
+    reducer: ADD,
     arity: 2,
-    signature: "SUM(a, b, ...)",
+    signature: "ADD(a, b)",
     description: "Row sum",
   },
 
@@ -38,7 +38,7 @@ export const BASE_FUNCTIONS = {
     type: FUNCTION_TYPE.BASE,
     reducer: AVG,
     arity: 2,
-    signature: "AVG(a, b, ...)",
+    signature: "AVG(a, b)",
     description: "Row average",
   },
 
@@ -46,7 +46,7 @@ export const BASE_FUNCTIONS = {
     type: FUNCTION_TYPE.BASE,
     reducer: MAX,
     arity: 1,
-    signature: "MAX(a, b, ...)",
+    signature: "MAX(a, b)",
     description: "Maximum value",
   },
 
@@ -54,7 +54,7 @@ export const BASE_FUNCTIONS = {
     type: FUNCTION_TYPE.BASE,
     reducer: MIN,
     arity: 1,
-    signature: "MIN(a, b, ...)",
+    signature: "MIN(a, b)",
     description: "Minimum value",
   },
 };

@@ -1,6 +1,6 @@
 export function FormulaSuggestions({ suggestions, highlight, onSelect }) {
   return (
-    <div className="absolute bottom-full z-20 bg-(--surface) border rounded shadow">
+    <div className="absolute bottom-full z-20 bg-(--surface) border rounded shadow overflow-auto max-h-63">
       {suggestions.map((s, i) => (
         <div
           key={i}

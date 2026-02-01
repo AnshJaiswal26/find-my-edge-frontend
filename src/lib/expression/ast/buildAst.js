@@ -4,20 +4,20 @@ export const FUNCTION_ARITY = Object.fromEntries(
   Object.entries(FUNCTION_REGISTRY).map(([name, def]) => [name, def.arity]),
 );
 
-export function buildAST(postfix, labelToId) {
+export function buildAST(postfix, functions) {
   // console.log(postfix);
 
   const stack = [];
-  const dependency = [];
+  const dependency = new Set();
 
   for (const t of postfix) {
     /* ---------- FUNCTION ---------- */
     if (t.type === "function") {
       const name = t.value.toUpperCase();
-      const arity = FUNCTION_ARITY[name];
+      const arity = functions ? functions[name] : FUNCTION_ARITY[name];
 
-      if (arity == null) {
-        throw new Error(`Unknown function: ${name}`);
+      if (arity == null || arity === undefined) {
+        throw new Error(`Unknown function for current mode: ${name}`);
       }
 
       // 🔥 STRICT ARITY CHECK
@@ -45,11 +45,11 @@ export function buildAST(postfix, labelToId) {
 
     /* ---------- IDENTIFIER ---------- */
     if (t.type === "identifier") {
-      const id = labelToId[t.value.toLowerCase()];
+      const id = t.value;
       if (!id) return null;
 
       stack.push({ type: "key", key: id });
-      dependency.push(id);
+      dependency.add(id);
       continue;
     }
 
@@ -81,6 +81,6 @@ export function buildAST(postfix, labelToId) {
 
   return {
     ast: stack[0],
-    dependency,
+    dependency: [...dependency],
   };
 }

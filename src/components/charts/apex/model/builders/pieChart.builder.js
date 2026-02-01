@@ -23,6 +23,7 @@ export function buildDonutChart({ seriesConfig, groupSpec, layout = {} }) {
       seriesKey: s.seriesKey ?? "pnl",
       type: s.type ?? "number",
       reducer: s.reducer ?? "SUM_N",
+      expression: s.expression ?? null,
       tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
       color: s.color ?? "var(--info)",
     })),

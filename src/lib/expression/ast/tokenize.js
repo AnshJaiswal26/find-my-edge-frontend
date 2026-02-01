@@ -65,6 +65,25 @@ export function tokenize(expr) {
       continue;
     }
 
+    if (ch === "@" && expr[i + 1] === "{") {
+      flushIdentifier();
+      i += 2; // skip '@{'
+
+      let id = "";
+      while (i < expr.length && expr[i] !== "}") {
+        id += expr[i++];
+      }
+
+      if (expr[i] !== "}") throw new Error("Unclosed @{");
+
+      i++; // skip '}'
+
+      const t = { type: "identifier", value: id.trim(), isId: true };
+      tokens.push(t);
+      prevToken = t;
+      continue;
+    }
+
     // ---------- comparison operators ----------
     let matchedComparator = false;
 

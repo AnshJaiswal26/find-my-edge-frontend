@@ -17,3 +17,4 @@ export { default as RangeInput } from "./RangeInput";
 export { default as FilterBuilder } from "./FilterBuilder";
 export { default as SidePanelPopup } from "./SidePanelPopup";
 export { default as GroupByBuilder } from "./GroupByBuilder";
+export { default as ExpressionBuilder } from "./ExpressionBuilder";

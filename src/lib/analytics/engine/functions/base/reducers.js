@@ -1,4 +1,4 @@
-import { SUM } from "./sum";
+import { ADD } from "./add";
 import { AVG } from "./avg";
 import { MAX } from "./max";
 import { MIN } from "./min";
@@ -8,4 +8,4 @@ import { IF } from "./if";
 import { CLAMP } from "./clamp";
 import { COALESCE } from "./coalesce";
 
-export { SUM, AVG, MAX, MIN, ABS, ROUND, IF, CLAMP, COALESCE };
+export { ADD, AVG, MAX, MIN, ABS, ROUND, IF, CLAMP, COALESCE };

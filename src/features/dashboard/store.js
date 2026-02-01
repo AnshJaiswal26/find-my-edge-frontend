@@ -279,6 +279,7 @@ export const useDashboardStore = create(
               name: "LOSS_FACTOR",
               type: "number",
               reducer: "LOSS_FACTOR",
+              expression: {},
               tooltipLabel: "LOSS_FACTOR",
               color: "var(--error)",
             },

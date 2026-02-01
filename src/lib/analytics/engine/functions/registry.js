@@ -21,10 +21,3 @@ export const FUNCTION_REGISTRY = {
   ...CONDITION_FUNCTIONS,
 };
 
-export const METRIC_COMPUTE_TYPE = {
-  ROW: "row", // one output per trade (no history)
-  SEQUENCE_AGGREGATE: "seqAgg", // one value from a sequence of trades
-  SEQUENCE_RATIO: "seqRatio", // ratio derived from sequence totals
-  WINDOW_SERIES: "windowSeries", // rolling value per trade
-  DISTRIBUTION: "distribution", // category % split over a sequence
-};
