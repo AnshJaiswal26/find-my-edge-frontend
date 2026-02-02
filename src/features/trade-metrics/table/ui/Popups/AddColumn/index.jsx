@@ -3,10 +3,10 @@ import { ColumnDetails } from "../shared";
 import { useTableStore } from "@table/store/useTableStore";
 import { Popup } from "@layout";
 import { createSchema } from "@lib/analytics/schema";
+import { isValid } from "@table/validation";
 
 export default function AddColumnPopup() {
-  const { addColumn, closePopup, columnsById, columnOrder } =
-    useTableStore.getState();
+  const { addColumn, closePopup, columnsById } = useTableStore.getState();
 
   const [draft, setDraft] = useState(
     createSchema({
@@ -14,37 +14,19 @@ export default function AddColumnPopup() {
     }),
   );
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   const columns = useMemo(() => Object.values(columnsById), []);
 
-  const isDuplicateLabel = () => {
-    const newLabel = draft.label?.trim().toLowerCase();
-    if (!newLabel) return false;
-
-    return columnOrder.some((id) => {
-      const col = columnsById[id];
-      return col?.label?.trim().toLowerCase() === newLabel;
-    });
-  };
-
   const save = () => {
-    const label = draft.label?.trim();
-
-    if (!label) {
-      setError("Label is required");
-      return;
-    }
-
-    if (isDuplicateLabel()) {
-      setError("A column with this label already exists");
-      return;
-    }
-
-    setError("");
+    if (!isValid(draft, setError, { columns })) return;
 
     console.time("save");
-    addColumn({ ...draft, id: crypto.randomUUID(), label });
+    addColumn({
+      ...draft,
+      id: crypto.randomUUID(),
+      editable: !draft.type.includes("computed"),
+    });
     console.log(draft);
     closePopup();
     console.timeEnd("save");
@@ -55,16 +37,11 @@ export default function AddColumnPopup() {
       <Popup.Header title="Add Metric" onClose={closePopup} />
 
       <Popup.Body className="!p-4 space-y-4 items-center">
-        {error && (
-          <div className="text-sm text-red-500 w-full text-left">{error}</div>
-        )}
         <ColumnDetails
           columns={columns}
           draft={draft}
-          onDraftChange={(d) => {
-            setDraft(d);
-            if (error) setError(""); // clear error on change
-          }}
+          onDraftChange={setDraft}
+          error={error}
         />
       </Popup.Body>
 

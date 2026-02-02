@@ -1,11 +1,17 @@
-import React, { useCallback, useMemo, useState, useEffect } from "react";
-import { Input } from "@ui";
+import React, {
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
 import { buildAST, tokenize, toPostfix } from "@lib/expression";
 import { Section } from "@layout";
 import { formatExpression } from "./formatExpression";
 import { getSchemaSuggestions, getFunctionSuggestions } from "./suggestions";
+import { highlightFormula } from "./highlightFormula";
 
 function labelsToIds(expr, usedSchemas) {
   let result = expr;
@@ -29,8 +35,16 @@ export default function ExpressionBuilder({
   const [highlight, setHighlight] = useState(0);
   const [open, setOpen] = useState(true);
   const [usedSchemas, setUsedSchemas] = useState([]);
-
   const [error, setError] = useState(null);
+
+  const textareaRef = useRef(null);
+  const highlightRef = useRef(null);
+
+  useEffect(() => {
+    if (labelExpr === "") {
+      setError("Empty expression");
+    }
+  }, []);
 
   const functionsArity = useMemo(() => {
     return Object.fromEntries(
@@ -44,18 +58,20 @@ export default function ExpressionBuilder({
     [labelExpr, usedSchemas],
   );
 
+  const highlighted = useMemo(() => highlightFormula(labelExpr), [labelExpr]);
+
   // ---------- PARSE ----------
   const parseResult = useMemo(() => {
     if (!idExpr.trim()) return null;
     try {
       const result = buildAST(toPostfix(tokenize(idExpr)), functionsArity);
-
+      setError(null);
       return result;
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
       return null;
     }
-  }, [idExpr]);
+  }, [idExpr, functionsArity]);
 
   const ast = parseResult?.ast ?? null;
   const dependency = parseResult?.dependency ?? null;
@@ -67,61 +83,60 @@ export default function ExpressionBuilder({
 
   const semanticError = useMemo(() => {
     if (!dependency) {
-      if (error) setError(null);
       return null;
     }
-
     for (const dep of dependency) {
-      // dep.isId means it came from @{id}
       if (!validSchemaIds.has(String(dep))) {
         setError(`Unknown reference '${dep}'`);
         return true;
       }
     }
-
     return null;
   }, [dependency, validSchemaIds]);
-
-  // console.log(ast, dependency, idExpr);
 
   // ---------- SUGGESTIONS ----------
   const suggestions = useMemo(() => {
     const m = labelExpr.slice(0, cursor).match(/[a-zA-Z_]+$/);
     if (!m) return [];
-
     const q = m[0].toLowerCase();
     return [
       ...getFunctionSuggestions(q, functions),
       ...getSchemaSuggestions(q, schemas),
     ];
-  }, [labelExpr, cursor, schemas]);
+  }, [labelExpr, cursor, schemas, functions]);
 
   // ---------- APPLY SUGGESTION ----------
   const applySuggestion = useCallback(
     (item) => {
       let insert = "";
-
       if (item.type === "schema") {
         insert = item.label;
-
         setUsedSchemas((prev) =>
           prev.some((c) => c.id === item.id)
             ? prev
             : [...prev, { id: item.id, label: item.label }],
         );
       }
-
       if (item.type === "function") {
-        insert = `${item.name}(`;
+        insert = `${item.name}()`;
       }
 
       const before = labelExpr.slice(0, cursor).replace(/[a-zA-Z_]+$/, "");
       const after = labelExpr.slice(cursor);
-
       const next = `${before}${insert}${after}`;
       setLabelExpr(next);
-      setCursor(before.length + insert.length);
+
+      const newCursor = before.length + insert.length;
+      setCursor(newCursor);
       setOpen(false);
+
+      // Focus and set cursor position
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+          textareaRef.current.setSelectionRange(newCursor, newCursor);
+        }
+      }, 0);
     },
     [labelExpr, cursor],
   );
@@ -129,47 +144,53 @@ export default function ExpressionBuilder({
   // ---------- HANDLE TYPING ----------
   const handleChange = useCallback((e) => {
     setLabelExpr(e.target.value);
-
     setCursor(e.target.selectionStart);
     setOpen(true);
+  }, []);
+
+  // ---------- SYNC SCROLL ----------
+  const handleScroll = useCallback(() => {
+    if (textareaRef.current && highlightRef.current) {
+      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
+      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
+    }
   }, []);
 
   // ---------- KEYBOARD NAV ----------
   const onKeyDown = useCallback(
     (e) => {
-      if (!suggestions.length) return;
+      if (!suggestions.length || !open) return;
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
         setHighlight((h) => (h + 1) % suggestions.length);
       }
-
       if (e.key === "ArrowUp") {
         e.preventDefault();
         setHighlight((h) => (h - 1 + suggestions.length) % suggestions.length);
       }
-
-      if (e.key === "Enter") {
+      if (e.key === "Enter" || e.key === "Tab") {
         e.preventDefault();
         applySuggestion(suggestions[highlight]);
         setHighlight(0);
       }
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
     },
-    [suggestions, highlight, applySuggestion],
+    [suggestions, highlight, applySuggestion, open],
   );
 
-  // run when schemas load
+  // ---------- DETECT SCHEMAS ----------
   useEffect(() => {
     if (!schemas?.length || !labelExpr) return;
-
     const detected = schemas.filter((s) =>
       new RegExp(
         `\\b${s.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
       ).test(labelExpr),
     );
-
     setUsedSchemas(detected.map((s) => ({ id: s.id, label: s.label })));
-  }, [schemas]);
+  }, [schemas, labelExpr]);
 
   // ---------- CHANGE + COMMIT ----------
   useEffect(() => {
@@ -180,32 +201,87 @@ export default function ExpressionBuilder({
     const formatted = formatExpression(labelExpr);
     setLabelExpr(formatted);
     onCommit?.(formatted, ast, dependency);
+    if (labelExpr === "") setError("Expression is required");
     setOpen(false);
   };
 
+  const handleFocus = () => {
+    setOpen(true);
+  };
+
+  const sharedTextLayer =
+    "m-0 p-3 border-0 box-border w-full min-h-[50px] " +
+    "font-mono text-[16px] leading-[1.6] tracking-[0] font-normal " +
+    "whitespace-pre-wrap break-words [tab-size:4] " +
+    "[font-variant-ligatures:none] [font-feature-settings:'liga'_0] " +
+    "[font-kerning:none]";
+
   return (
-    <Section title="Formula">
-      <Input
-        classNames={{ input: "max-w-full!" }}
-        vertical
-        value={labelExpr}
-        placeholder="eg. (Exit - Entry) * Qty"
-        onChange={handleChange}
-        onKeyDown={onKeyDown}
-        onBlur={handleBlur}
-      />
+    <Section title="Expression Query">
+      <div className="relative w-full">
+        <div
+          className="
+            relative w-full min-h-[50px]
+            bg-(--surface-disabled) rounded-lg overflow-hidden
+            border-2 border-(--border) transition-colors
+            focus-within:border-(--info)
+            grid
+          "
+        >
+          {/* Highlight layer */}
+          <div
+            ref={highlightRef}
+            className={`
+              ${sharedTextLayer}
+              absolute inset-0
+              text-(--text) bg-transparent
+              pointer-events-none select-none
+              overflow-hidden 
+              ${!!ast && !semanticError ? "" : "!text-red-500"}
+            `}
+            dangerouslySetInnerHTML={{ __html: highlighted }}
+          />
 
-      {open && (
-        <FormulaSuggestions
-          suggestions={suggestions}
-          highlight={highlight}
-          onSelect={applySuggestion}
-        />
-      )}
+          {/* Input layer */}
+          <textarea
+            ref={textareaRef}
+            value={labelExpr}
+            onChange={handleChange}
+            onKeyDown={onKeyDown}
+            onScroll={handleScroll}
+            onBlur={handleBlur}
+            onFocus={handleFocus}
+            placeholder="Enter formula..."
+            spellCheck={false}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            className={`
+            ${sharedTextLayer}
+            relative z-10
+            bg-transparent
+            text-transparent caret-(--text)
+            outline-none resize-vertical
+            min-h-[50px] max-h-[300px]
+            overflow-auto
+            placeholder:text-(--text-muted)
+            focus:placeholder:opacity-50
+          `}
+          />
+        </div>
 
-      {labelExpr && (
-        <FormulaValidation valid={!!ast && !semanticError} error={error} />
-      )}
+        {open && suggestions.length > 0 && (
+          <FormulaSuggestions
+            suggestions={suggestions}
+            highlight={highlight}
+            onSelect={applySuggestion}
+          />
+        )}
+
+        {labelExpr !== null && (
+          <FormulaValidation valid={!!ast && !semanticError} error={error} />
+        )}
+      </div>
     </Section>
   );
 }

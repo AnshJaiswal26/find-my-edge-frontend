@@ -53,6 +53,13 @@ export function buildAST(postfix, functions) {
       continue;
     }
 
+    /* ---------- STRING ---------- */
+    if (t.type === "string") {
+      stack.push({ type: "constant", value: t.value });
+      console.log(t.value);
+      continue;
+    }
+
     /* ---------- NUMBER ---------- */
     if (t.type === "number") {
       stack.push({ type: "constant", value: t.value });

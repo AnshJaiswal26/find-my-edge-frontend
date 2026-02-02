@@ -3,6 +3,7 @@ import { useTableStore } from "@table/store/useTableStore";
 import { SidePanelPopup } from "@ui";
 import { ColumnDetails } from "../shared";
 import { Popup } from "@layout";
+import { isValid } from "@table/validation";
 
 export default function ColumnSettingsPopup() {
   const columnsById = useTableStore((s) => s.columnsById);
@@ -13,6 +14,7 @@ export default function ColumnSettingsPopup() {
   const activeColumn = columnsById[columnOrder[activeIndex]];
 
   const [draft, setDraft] = useState(activeColumn);
+  const [error, setError] = useState("");
 
   const columns = useMemo(() => Object.values(columnsById), []);
 
@@ -25,42 +27,8 @@ export default function ColumnSettingsPopup() {
     return null;
   }
 
-  const isLabelDuplicate = () => {
-    const normalized = draft.label.trim().toLowerCase();
-
-    return columnOrder.some((id) => {
-      const col = columnsById[id];
-      if (!col) return false;
-
-      // allow same label if editing the same column
-      if (activeColumn && col.id === activeColumn.id) return false;
-
-      return col.label.trim().toLowerCase() === normalized;
-    });
-  };
-
-  const isValid = () => {
-    if (!draft.label.trim()) return false;
-
-    if (isLabelDuplicate()) return false; // 🔥 FIXED
-
-    if (draft.type.includes("computed") && !draft.expression) return false;
-
-    if (draft.type === "select") {
-      if (
-        !draft.options ||
-        draft.options.length === 0 ||
-        !draft.options.every((o) => o.trim())
-      ) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
   function applyChanges() {
-    if (!isValid()) return;
+    if (!isValid(draft, setError, { activeColumn, columns })) return;
     updateColumn(activeColumn.id, draft);
   }
 
@@ -77,8 +45,10 @@ export default function ColumnSettingsPopup() {
             <ColumnDetails
               key={i}
               columns={columns}
+              activeColumn={activeColumn}
               draft={draft}
               onDraftChange={setDraft}
+              error={error}
             />
           )}
         />
@@ -87,7 +57,7 @@ export default function ColumnSettingsPopup() {
         fnMap={{
           Delete: { fn: () => deleteColumn(activeColumn.id) },
           Cancel: { fn: closePopup, align: "right" },
-          Apply: { fn: applyChanges },
+          Apply: { fn: applyChanges, disabled: error },
         }}
       />
     </Popup.Container>

@@ -14,9 +14,15 @@ import { SCHEMA_TYPES, SCHEMA_TYPES_LABELS } from "@lib/analytics/schema";
 import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
 import { BASE_FUNCTIONS } from "@lib/analytics/engine/functions/base/registry";
 import { CONDITION_FUNCTIONS } from "@lib/analytics/engine/functions/condition/registry";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-export default function ColumnDetails({ columns, draft, onDraftChange }) {
+export default function ColumnDetails({
+  columns,
+  draft,
+  onDraftChange,
+  activeColumn,
+  error,
+}) {
   if (!draft) return null;
 
   const isGrouped = useTableStore((s) => s.groupBy !== null);
@@ -57,10 +63,15 @@ export default function ColumnDetails({ columns, draft, onDraftChange }) {
           vertical
           placeholder="Enter Column Name"
           value={draft.label}
-          onChange={(e) =>
-            onDraftChange((p) => ({ ...p, label: e.target.value }))
-          }
+          onChange={(e) => {
+            onDraftChange((p) => ({ ...p, label: e.target.value }));
+          }}
         />
+        {error?.input && (
+          <div className="text-sm text-red-500 w-full text-left">
+            {error.input}
+          </div>
+        )}
       </Section>
 
       {/* Computed */}

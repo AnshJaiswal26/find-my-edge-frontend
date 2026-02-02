@@ -3,6 +3,7 @@ import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 const OPS = "+-*/()";
 const FUNCTIONS = new Set(Object.keys(FUNCTION_REGISTRY));
 const COMPARATORS = ["<=", ">=", "==", "!=", "<", ">"];
+const LOGICAL_OPS = new Set(["AND", "OR"]);
 
 export function tokenize(expr) {
   const tokens = [];
@@ -15,7 +16,18 @@ export function tokenize(expr) {
   const flushIdentifier = () => {
     if (!buf) return;
 
-    const isFunction = FUNCTIONS.has(buf) && expr[i] === "(";
+    const upper = buf.toUpperCase();
+
+    // Logical operators
+    if (LOGICAL_OPS.has(upper)) {
+      const t = { type: "op", value: upper };
+      tokens.push(t);
+      prevToken = t;
+      buf = "";
+      return;
+    }
+
+    const isFunction = FUNCTIONS.has(upper) && expr[i] === "(";
 
     const t = {
       type: isFunction ? "function" : "identifier",
@@ -79,6 +91,26 @@ export function tokenize(expr) {
       i++; // skip '}'
 
       const t = { type: "identifier", value: id.trim(), isId: true };
+      tokens.push(t);
+      prevToken = t;
+      continue;
+    }
+
+    /* ---------- string constant "..." ---------- */
+    if (ch === '"') {
+      flushIdentifier();
+      i++; // skip opening quote
+      let str = "";
+
+      while (i < expr.length && expr[i] !== '"') {
+        str += expr[i++];
+      }
+
+      if (expr[i] !== '"') throw new Error("Unclosed string literal");
+
+      i++; // skip closing quote
+
+      const t = { type: "string", value: str };
       tokens.push(t);
       prevToken = t;
       continue;
@@ -153,6 +185,20 @@ export function tokenize(expr) {
     /* ---------- comma (function argument separator) ---------- */
     if (ch === ",") {
       flushIdentifier();
+
+      const prev = tokens[tokens.length - 1];
+      const next = expr[i + 1];
+
+      // No leading comma or double comma
+      if (!prev || prev.type === "comma" || prev.type === "lparen") {
+        throw new Error("Unexpected comma");
+      }
+
+      // No trailing comma before ')'
+      if (next === ")") {
+        throw new Error("Trailing comma not allowed");
+      }
+
       tokens.push({ type: "comma" });
       prevToken = null;
       i++;

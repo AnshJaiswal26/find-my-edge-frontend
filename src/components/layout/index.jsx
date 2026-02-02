@@ -273,6 +273,8 @@ Popup.Footer = ({
   text = ["Cancel", "Apply"],
   onCancel,
   onApply,
+  disableCancel = false,
+  disableApply = false,
   className = "",
 }) => {
   return (
@@ -284,8 +286,17 @@ Popup.Footer = ({
         ${className}
       `}
     >
-      {onCancel && <Button text={text[0]} onClick={onCancel} hollow />}
-      {onApply && <Button text={text[1]} onClick={onApply} />}
+      {onCancel && (
+        <Button
+          text={text[0]}
+          onClick={onCancel}
+          hollow
+          disabled={disableCancel}
+        />
+      )}
+      {onApply && (
+        <Button text={text[1]} onClick={onApply} disabled={disableApply} />
+      )}
     </footer>
   );
 };
@@ -308,6 +319,7 @@ Popup.MultiButtonFooter = ({ fnMap = {}, className = "" }) => {
           key={label}
           text={label}
           onClick={p?.fn}
+          disabled={p?.disabled}
           classNames={{
             wrapper:
               p?.align === "right" && idx === firstRightIndex

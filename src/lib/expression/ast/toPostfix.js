@@ -13,6 +13,9 @@ const PRECEDENCE = {
   "<=": 1,
   "==": 1,
   "!=": 1,
+
+  AND: 0,
+  OR: -1,
 };
 
 export function toPostfix(tokens) {
@@ -20,7 +23,7 @@ export function toPostfix(tokens) {
   const ops = [];
 
   for (const t of tokens) {
-    if (t.type === "identifier" || t.type === "number") {
+    if (t.type === "identifier" || t.type === "number" || t.type === "string") {
       out.push(t);
       continue;
     }
@@ -42,10 +45,13 @@ export function toPostfix(tokens) {
     }
 
     if (t.type === "op") {
+      const prec = PRECEDENCE[t.value];
+      if (prec == null) throw new Error(`Unknown operator: ${t.value}`);
+
       while (
         ops.length &&
         ops.at(-1).type === "op" &&
-        PRECEDENCE[ops.at(-1).value] >= PRECEDENCE[t.value]
+        PRECEDENCE[ops.at(-1).value] >= prec
       ) {
         out.push(ops.pop());
       }

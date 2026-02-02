@@ -10,5 +10,5 @@ export function createRow(columnsById, id) {
     trade[column.id] = cell.value;
   });
 
-  return { row: { id, cells }, trade };
+  return { row: { id, highlight: false, cells }, trade };
 }

@@ -50,18 +50,23 @@ export function evaluateExpression(expr, ctx = {}) {
         case "/":
           return right === 0 ? null : left / right;
 
+        case "AND":
+          return left && right ? 1 : 0;
+        case "OR":
+          return left || right ? 1 : 0;
+
         case ">":
-          return left > right;
+          return left > right ? 1 : 0;
         case "<":
-          return left < right;
+          return left < right ? 1 : 0;
         case ">=":
-          return left >= right;
+          return left >= right ? 1 : 0;
         case "<=":
-          return left <= right;
+          return left <= right ? 1 : 0;
         case "==":
-          return left === right;
+          return left === right ? 1 : 0;
         case "!=":
-          return left !== right;
+          return left !== right ? 1 : 0;
 
         default:
           return null;

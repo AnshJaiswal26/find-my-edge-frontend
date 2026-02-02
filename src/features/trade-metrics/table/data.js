@@ -134,7 +134,7 @@ export const columnsById = {
       left: { type: "key", key: "pnl" },
       right: { type: "constant", value: 500 },
     },
-    formula: "Pnl / 500",
+    formula: "PnL / 500",
   }),
 
   // emotion: createSchema({

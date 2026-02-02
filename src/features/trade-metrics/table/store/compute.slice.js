@@ -1,6 +1,7 @@
 import { useTradeStore } from "@stores";
 import { collectAffectedColumns } from "../dependency";
 import { computeOverSequence } from "@lib/analytics/engine/execute";
+import { columnOrder } from "@table/data";
 
 export const createComputeSlice = (set, get) => ({
   /* ------------------------------------------------------- */
@@ -92,6 +93,22 @@ export const createComputeSlice = (set, get) => ({
           });
         });
 
+        return;
+      }
+
+      if (payload.reason === "row-delete") {
+        columnOrder.forEach((id) => {
+          const col = columnsById[id];
+          console.log(col, id);
+          if (!col || col?.mode !== "cumulative") return;
+
+          compute({
+            schema: col,
+            sequenceIds: rowOrder,
+            startIndex: Math.max(payload.rowIndex - 1, 0),
+            usePrev: true,
+          });
+        });
         return;
       }
 

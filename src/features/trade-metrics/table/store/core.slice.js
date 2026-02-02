@@ -32,12 +32,25 @@ export const createCoreSlice = (set, get) => ({
   },
 
   deleteRow(id) {
+    let rowIndex = 0;
+
     set((s) => {
       delete s.rowsById[id];
-      s.rowOrder = s.rowOrder.filter((x) => x !== id);
+      s.rowOrder = s.rowOrder.filter((x, i) => {
+        if (x === id) rowIndex = i;
+        return x !== id;
+      });
     });
 
     useTradeStore.getState().deleteTrade(id);
+
+    get().recompute({ reason: "row-delete", rowIndex });
+  },
+
+  toggleHighlightRow(id) {
+    set((s) => {
+      s.rowsById[id].highlight = !s.rowsById[id].highlight;
+    });
   },
 
   /* ------------------------------------------------- */
