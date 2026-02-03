@@ -54,9 +54,17 @@ export const createComputeSlice = (set, get) => ({
 
       const compute = ({ sequenceIds, schema, startIndex, usePrev }) => {
         computeOverSequence({
-          tradesById,
-          sequenceIds,
           schema,
+          getTradeAt: (index) => {
+            if (index < 0) return null;
+            const id = sequenceIds[index];
+            return id ? tradesById[id] : null;
+          },
+          getTradeCount: () => sequenceIds.length,
+          getSchemaType: (key) => {
+            const col = columnsById[key];
+            return { format: col?.display?.format, type: col.type };
+          },
           getValue,
           setValue,
           startIndex,

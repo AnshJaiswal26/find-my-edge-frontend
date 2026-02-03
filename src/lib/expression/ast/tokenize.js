@@ -196,7 +196,7 @@ export function tokenize(expr) {
 
       // No trailing comma before ')'
       if (next === ")") {
-        throw new Error("Trailing comma not allowed");
+        throw new Error("Comma before closing parenthesis not allowed");
       }
 
       tokens.push({ type: "comma" });

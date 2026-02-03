@@ -33,7 +33,7 @@ export const isValid = (draft, setError, ctx) => {
       draft.options.length === 0 ||
       !draft.options.every((o) => o.trim())
     ) {
-      setError({ select: "Options is required" });
+      setError({ select: "Options are required" });
       return false;
     }
   }

@@ -43,3 +43,9 @@ export {
   FORMATS,
   DEFAULT_FORMATS,
 } from "./format";
+
+export {
+  parseDateByFormat,
+  parseTimeByFormat,
+  deformatValue,
+} from "./deFormat";

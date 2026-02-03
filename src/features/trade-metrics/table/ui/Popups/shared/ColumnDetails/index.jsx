@@ -14,22 +14,21 @@ import { SCHEMA_TYPES, SCHEMA_TYPES_LABELS } from "@lib/analytics/schema";
 import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
 import { BASE_FUNCTIONS } from "@lib/analytics/engine/functions/base/registry";
 import { CONDITION_FUNCTIONS } from "@lib/analytics/engine/functions/condition/registry";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export default function ColumnDetails({
   columns,
   draft,
   onDraftChange,
-  activeColumn,
   error,
+  builderRef,
 }) {
   if (!draft) return null;
 
   const isGrouped = useTableStore((s) => s.groupBy !== null);
 
-  const functions = useMemo(() => {
-    const fn = draft.mode === "row" ? BASE_FUNCTIONS : WINDOW_FUNCTIONS;
-    return { ...fn, ...CONDITION_FUNCTIONS };
+  const mode = useMemo(() => {
+    return draft.mode === "row" ? "BASE" : "WINDOW";
   }, [draft.mode]);
 
   return (
@@ -80,7 +79,8 @@ export default function ColumnDetails({
           key={draft.id}
           value={draft.formula}
           schemas={columns}
-          functions={functions}
+          mode={mode}
+          ref={builderRef}
           onCommit={(formula, expression, dependencies) => {
             onDraftChange((p) => ({
               ...p,

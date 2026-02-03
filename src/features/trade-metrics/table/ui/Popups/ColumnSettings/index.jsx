@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTableStore } from "@table/store/useTableStore";
 import { SidePanelPopup } from "@ui";
 import { ColumnDetails } from "../shared";
@@ -6,6 +6,8 @@ import { Popup } from "@layout";
 import { isValid } from "@table/validation";
 
 export default function ColumnSettingsPopup() {
+  const builderRef = useRef();
+
   const columnsById = useTableStore((s) => s.columnsById);
   const columnOrder = useTableStore((s) => s.columnOrder);
   const { closePopup, updateColumn, deleteColumn } = useTableStore.getState();
@@ -28,6 +30,13 @@ export default function ColumnSettingsPopup() {
   }
 
   function applyChanges() {
+    const error = builderRef.current.validateNow();
+
+    if (error) {
+      setError(error);
+      return;
+    }
+
     if (!isValid(draft, setError, { activeColumn, columns })) return;
     updateColumn(activeColumn.id, draft);
   }
@@ -45,10 +54,10 @@ export default function ColumnSettingsPopup() {
             <ColumnDetails
               key={i}
               columns={columns}
-              activeColumn={activeColumn}
               draft={draft}
               onDraftChange={setDraft}
               error={error}
+              builderRef={builderRef}
             />
           )}
         />

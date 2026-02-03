@@ -1,26 +1,66 @@
-import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
+import {
+  FUNCTION_REGISTRY,
+  FUNCTION_ALLOW_BY_MODE,
+} from "@lib/analytics/engine/functions/registry";
 
-export const FUNCTION_ARITY = Object.fromEntries(
-  Object.entries(FUNCTION_REGISTRY).map(([name, def]) => [name, def.arity]),
-);
+function containsWindowFunction(node) {
+  if (!node) return false;
 
-export function buildAST(postfix, functions) {
+  if (node.type === "function") {
+    const def = FUNCTION_REGISTRY[node.name];
+    if (def?.type === "WINDOW") return true;
+
+    return node.args.some(containsWindowFunction);
+  }
+
+  if (node.type === "binary") {
+    return (
+      containsWindowFunction(node.left) || containsWindowFunction(node.right)
+    );
+  }
+
+  if (node.type === "unary") {
+    return containsWindowFunction(node.arg);
+  }
+
+  return false;
+}
+
+export function buildAST(postfix, type) {
   // console.log(postfix);
 
   const stack = [];
-  const dependency = new Set();
+  const dependencies = new Set();
 
   for (const t of postfix) {
     /* ---------- FUNCTION ---------- */
     if (t.type === "function") {
       const name = t.value.toUpperCase();
-      const arity = functions ? functions[name] : FUNCTION_ARITY[name];
 
-      if (arity == null || arity === undefined) {
-        throw new Error(`Unknown function for current mode: ${name}`);
+      // 🔹 Get function definition (execution behavior)
+      const fnDef = FUNCTION_REGISTRY[name];
+      if (!fnDef) {
+        throw new Error(`Unknown function ${name}`);
       }
 
-      // 🔥 STRICT ARITY CHECK
+      // 🔹 Validate function allowed in this computation mode
+      if (type) {
+        const allowed = FUNCTION_ALLOW_BY_MODE[type];
+        if (!allowed?.has(name)) {
+          throw new Error(
+            `Function ${name} is not allowed in ${type} computation`,
+          );
+        }
+      }
+
+      const arity = fnDef.arity;
+
+      if (arity == null || arity === undefined) {
+        throw new Error(
+          `Function ${name} is not suitable for current computation mode`,
+        );
+      }
+
       if (stack.length < arity) {
         throw new Error(`Function ${name} expects ${arity} argument(s)`);
       }
@@ -32,6 +72,17 @@ export function buildAST(postfix, functions) {
           throw new Error(`Function ${name} expects ${arity} argument(s)`);
         }
         args.unshift(arg);
+      }
+
+      //  Prevent WINDOW inside WINDOW
+      if (fnDef?.type === "WINDOW") {
+        for (const arg of args) {
+          if (containsWindowFunction(arg)) {
+            throw new Error(
+              `Nested rolling/window functions are not allowed inside ${name}`,
+            );
+          }
+        }
       }
 
       stack.push({
@@ -49,14 +100,13 @@ export function buildAST(postfix, functions) {
       if (!id) return null;
 
       stack.push({ type: "key", key: id });
-      dependency.add(id);
+      dependencies.add(id);
       continue;
     }
 
     /* ---------- STRING ---------- */
     if (t.type === "string") {
       stack.push({ type: "constant", value: t.value });
-      console.log(t.value);
       continue;
     }
 
@@ -88,6 +138,6 @@ export function buildAST(postfix, functions) {
 
   return {
     ast: stack[0],
-    dependency: [...dependency],
+    dependencies: [...dependencies],
   };
 }

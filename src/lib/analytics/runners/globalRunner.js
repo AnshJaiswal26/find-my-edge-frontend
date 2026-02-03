@@ -1,26 +1,30 @@
-export function runBackwardWindowReducer(reducer, fn, ctx) {
-  const [expr, nExpr] = fn.args;
+export function runGlobalReducer(reducer, fn, ctx) {
+  const [expr] = fn.args;
 
-  const n = Math.floor(ctx.evaluate(nExpr, ctx) ?? 0);
-  const state = reducer.init(n);
+  const state = reducer.init();
   if (!state) return null;
 
+  const total = ctx.getTradeCount?.();
+  if (total == null) return null;
+
+  // Reusable evaluation context
   const rowCtx = {
     ...ctx,
     tradeIndex: 0,
     prevTrade: null,
     currentTrade: null,
+
     getValue(key) {
       return ctx.getValueFromTrade(this.currentTrade, key);
     },
   };
 
-  for (let i = ctx.tradeIndex; i >= 0; i--) {
+  for (let i = 0; i < total; i++) {
     const trade = ctx.getTradeAt(i);
-    if (!trade) break;
+    if (!trade) continue;
 
     rowCtx.tradeIndex = i;
-    rowCtx.prevTrade = ctx.getTradeAt(i - 1);
+    rowCtx.prevTrade = i > 0 ? ctx.getTradeAt(i - 1) : null;
     rowCtx.currentTrade = trade;
 
     const value = ctx.evaluate(expr, rowCtx);

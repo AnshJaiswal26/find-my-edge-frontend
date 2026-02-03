@@ -1,54 +1,79 @@
 import { evaluateExpression } from "@lib/expression";
 
+function assertFn(name, fn) {
+  if (typeof fn !== "function") {
+    throw new Error(`computeOverSequence: '${name}' must be a function`);
+  }
+}
+
 export function computeOverSequence({
-  tradesById,
-  sequenceIds,
   schema,
   getValue,
   setValue,
   startIndex = 0,
   usePrev = false,
+  useGlobal = false,
+  getTradeAt,
+  getTradeCount,
+  getSchemaType,
 }) {
   if (!schema.expression) return;
+
+  assertFn("getTradeAt", getTradeAt);
+  assertFn("getTradeCount", getTradeCount);
+  assertFn("getValue", getValue);
+  assertFn("setValue", setValue);
 
   let prevValue = schema.initialValue ?? 0;
   let prevTrade = null;
 
-  // seed previous state only if needed
   if (usePrev && startIndex > 0) {
-    const prevId = sequenceIds[startIndex - 1];
-    prevTrade = tradesById[prevId];
+    prevTrade = getTradeAt(startIndex - 1);
     prevValue = getValue(prevTrade, schema.id) ?? prevValue;
   }
 
-  const ctxBase = {
+  // 🔹 Base evaluation context (never recreated)
+  const ctx = {
     evaluate: evaluateExpression,
-
-    getTradeAt: (index) => {
-      const id = sequenceIds[index];
-      return id ? tradesById[id] : null;
-    },
-
-    getPrevTradeAt: (index) => {
-      if (index <= 0) return null;
-      const id = sequenceIds[index - 1];
-      return id ? tradesById[id] : null;
-    },
-
-    getTradeCount: () => sequenceIds.length,
-
+    getTradeAt,
+    getTradeCount,
     getValueFromTrade: getValue,
+    getSchemaType,
+
+    // Mutable fields
+    tradeIndex: 0,
+    prevTrade: null,
+    prevValue: null,
+    currentTrade: null,
+
+    getValue(key) {
+      return getValue(this.currentTrade, key);
+    },
   };
 
-  for (let i = startIndex; i < sequenceIds.length; i++) {
-    const trade = tradesById[sequenceIds[i]];
+  if (useGlobal) {
+    return evaluateExpression(schema.expression, ctx);
+  }
 
-    const value = evaluateExpression(schema.expression, {
-      ...ctxBase,
-      tradeIndex: i,
-      ...(usePrev && { prevTrade, prevValue }),
-      getValue: (key) => getValue(trade, key),
-    });
+  if (typeof getTradeCount !== "function") {
+    throw new Error("computeOverSequence requires getTradeCount()");
+  }
+
+  const seqLength = getTradeCount();
+
+  for (let i = startIndex; i < seqLength; i++) {
+    const trade = getTradeAt(i);
+    if (!trade) continue;
+
+    ctx.tradeIndex = i;
+    ctx.currentTrade = trade;
+
+    if (usePrev) {
+      ctx.prevTrade = prevTrade;
+      ctx.prevValue = prevValue;
+    }
+
+    const value = evaluateExpression(schema.expression, ctx);
 
     setValue(trade, schema, value);
 

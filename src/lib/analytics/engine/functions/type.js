@@ -1,7 +1,8 @@
 export const FUNCTION_TYPE = {
-  COLUMN: "column",
-  BASE: "base",
-  WINDOW: "window",
-  CONDITION: "condition",
-  RATIO: "ratio",
+  COLUMN: "COLUMN",
+  BASE: "BASE",
+  WINDOW: "WINDOW",
+  CONDITION: "CONDITION",
+  RATIO: "RATIO",
+  GLOBAL: "GLOBAL",
 };

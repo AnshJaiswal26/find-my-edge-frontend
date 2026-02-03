@@ -1,5 +1,8 @@
+import {
+  FUNCTION_REGISTRY,
+  FUNCTION_ALLOW_BY_MODE,
+} from "@lib/analytics/engine/functions/registry";
 import { highlightMatch } from "./highlightMatch";
-import { CONDITION_FUNCTIONS } from "@lib/analytics/engine/functions/condition/registry";
 
 export function getSchemaSuggestions(q, schemas, showAll = false) {
   const filtered = showAll
@@ -14,18 +17,24 @@ export function getSchemaSuggestions(q, schemas, showAll = false) {
   }));
 }
 
-export function getFunctionSuggestions(q, functions, showAll = false) {
-  const entries = Object.entries({ ...functions, ...CONDITION_FUNCTIONS });
+export function getFunctionSuggestions(q, mode, showAll = false) {
+  const allowedNames =
+    mode === "ALL"
+      ? Object.keys(FUNCTION_REGISTRY)
+      : Array.from(FUNCTION_ALLOW_BY_MODE[mode] || []);
+
+  const entries = allowedNames.map((name) => [name, FUNCTION_REGISTRY[name]]);
 
   const filtered = showAll
     ? entries
-    : entries.filter(([name]) => name.toLowerCase().includes(q));
+    : entries.filter(([name]) => name.toLowerCase().includes(q.toLowerCase()));
 
-  return filtered.map(([name, value]) => ({
+  return filtered.map(([name, def]) => ({
     type: "function",
     name,
-    icon: value.icon,
-    signature: value.signature,
-    highlight: highlightMatch(value.signature, q),
+    icon: def.icon,
+    signature: def.signature,
+    description: def.description,
+    highlight: highlightMatch(def.signature, q),
   }));
 }

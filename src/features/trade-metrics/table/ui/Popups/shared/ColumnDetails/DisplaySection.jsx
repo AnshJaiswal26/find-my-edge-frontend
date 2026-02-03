@@ -37,33 +37,6 @@ export function DisplaySection({ display, onChange, type }) {
           }
         />
       )}
-
-      {display?.format === "custom" && (
-        <div className="flex justify-between">
-          <Input
-            vertical
-            label="Prefix"
-            placeholder="Enter Prefix"
-            value={display.prefix}
-            onChange={(e) =>
-              onChange({
-                display: { ...display, prefix: e.target.value },
-              })
-            }
-          />
-          <Input
-            vertical
-            label="Suffix"
-            placeholder="Enter Suffix"
-            value={display.suffix}
-            onChange={(e) =>
-              onChange({
-                display: { ...display, suffix: e.target.value },
-              })
-            }
-          />
-        </div>
-      )}
     </Section>
   );
 }

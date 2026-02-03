@@ -1,2 +1,2 @@
-export { buildAST, tokenize, toPostfix } from "./ast";
+export { buildAST, tokenize, toPostfix, validateTypes } from "./ast";
 export { evaluateExpression } from "./evaluateExpression";

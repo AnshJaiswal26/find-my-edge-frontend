@@ -4,14 +4,17 @@ import React, {
   useState,
   useEffect,
   useRef,
+  forwardRef,
+  useImperativeHandle,
 } from "react";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
-import { buildAST, tokenize, toPostfix } from "@lib/expression";
+import { buildAST, tokenize, toPostfix, validateTypes } from "@lib/expression";
 import { Section } from "@layout";
 import { formatExpression } from "./formatExpression";
 import { getSchemaSuggestions, getFunctionSuggestions } from "./suggestions";
 import { highlightFormula } from "./highlightFormula";
+import { FunctionDocsPanel } from "./FunctionDocPanel";
 
 function labelsToIds(expr, usedSchemas) {
   let result = expr;
@@ -23,13 +26,10 @@ function labelsToIds(expr, usedSchemas) {
   return result;
 }
 
-export default function ExpressionBuilder({
-  value = "",
-  schemas,
-  functions,
-  onCommit,
-  onChange,
-}) {
+export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
+  { value = "", schemas, onCommit, onChange, mode = "BASE" },
+  ref,
+) {
   const [labelExpr, setLabelExpr] = useState(value);
   const [cursor, setCursor] = useState(0);
   const [highlight, setHighlight] = useState(0);
@@ -46,12 +46,6 @@ export default function ExpressionBuilder({
     }
   }, []);
 
-  const functionsArity = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries(functions).map(([name, def]) => [name, def.arity]),
-    );
-  }, [functions]);
-
   // ---------- ID EXPRESSION ----------
   const idExpr = useMemo(
     () => labelsToIds(labelExpr, usedSchemas),
@@ -61,20 +55,27 @@ export default function ExpressionBuilder({
   const highlighted = useMemo(() => highlightFormula(labelExpr), [labelExpr]);
 
   // ---------- PARSE ----------
-  const parseResult = useMemo(() => {
-    if (!idExpr.trim()) return null;
+  const { ast, dependencies } = useMemo(() => {
+    if (!idExpr.trim())
+      return { ast: null, dependencies: null, error: "Empty expression" };
+
     try {
-      const result = buildAST(toPostfix(tokenize(idExpr)), functionsArity);
-      setError(null);
-      return result;
+      const result = buildAST(toPostfix(tokenize(idExpr)), mode);
+
+      if (result?.ast) {
+        validateTypes(result.ast, mode);
+      }
+
+      if (error) {
+        setError(null);
+      }
+
+      return { ...result, error: null };
     } catch (err) {
       setError(err.message);
-      return null;
+      return { ast: null, dependencies: null, error: err.message };
     }
-  }, [idExpr, functionsArity]);
-
-  const ast = parseResult?.ast ?? null;
-  const dependency = parseResult?.dependency ?? null;
+  }, [idExpr, mode]);
 
   const validSchemaIds = useMemo(
     () => new Set(schemas?.map((s) => String(s.id))),
@@ -82,17 +83,17 @@ export default function ExpressionBuilder({
   );
 
   const semanticError = useMemo(() => {
-    if (!dependency) {
+    if (!dependencies) {
       return null;
     }
-    for (const dep of dependency) {
+    for (const dep of dependencies) {
       if (!validSchemaIds.has(String(dep))) {
         setError(`Unknown reference '${dep}'`);
         return true;
       }
     }
     return null;
-  }, [dependency, validSchemaIds]);
+  }, [dependencies, validSchemaIds]);
 
   // ---------- SUGGESTIONS ----------
   const suggestions = useMemo(() => {
@@ -100,10 +101,10 @@ export default function ExpressionBuilder({
     if (!m) return [];
     const q = m[0].toLowerCase();
     return [
-      ...getFunctionSuggestions(q, functions),
+      ...getFunctionSuggestions(q, mode),
       ...getSchemaSuggestions(q, schemas),
     ];
-  }, [labelExpr, cursor, schemas, functions]);
+  }, [labelExpr, cursor, schemas, mode]);
 
   // ---------- APPLY SUGGESTION ----------
   const applySuggestion = useCallback(
@@ -140,13 +141,6 @@ export default function ExpressionBuilder({
     },
     [labelExpr, cursor],
   );
-
-  // ---------- HANDLE TYPING ----------
-  const handleChange = useCallback((e) => {
-    setLabelExpr(e.target.value);
-    setCursor(e.target.selectionStart);
-    setOpen(true);
-  }, []);
 
   // ---------- SYNC SCROLL ----------
   const handleScroll = useCallback(() => {
@@ -192,25 +186,38 @@ export default function ExpressionBuilder({
     setUsedSchemas(detected.map((s) => ({ id: s.id, label: s.label })));
   }, [schemas, labelExpr]);
 
-  // ---------- CHANGE + COMMIT ----------
-  useEffect(() => {
-    onChange?.(labelExpr, ast, dependency);
-  }, [labelExpr, ast, dependency, onChange]);
+  // ---------- HANDLE TYPING ----------
+  const handleChange = useCallback(
+    (e) => {
+      setLabelExpr(e.target.value);
+      setCursor(e.target.selectionStart);
+      setOpen(true);
+      onChange?.(labelExpr, ast, dependencies, error);
+    },
+    [labelExpr, ast, dependencies, error],
+  );
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     const formatted = formatExpression(labelExpr);
     setLabelExpr(formatted);
-    onCommit?.(formatted, ast, dependency);
+    onCommit?.(formatted, ast, dependencies, error);
     if (labelExpr === "") setError("Expression is required");
     setOpen(false);
-  };
+  }, [labelExpr, ast, dependencies, error]);
 
   const handleFocus = () => {
     setOpen(true);
   };
 
+  useImperativeHandle(ref, () => ({
+    validateNow: () => error,
+    getAST: () => ast,
+    getDependencies: () => dependencies,
+    getExpression: () => labelExpr,
+  }));
+
   const sharedTextLayer =
-    "m-0 p-3 border-0 box-border w-full min-h-[50px] " +
+    "m-0 p-3 border-0 box-border w-full min-h-[52px] " +
     "font-mono text-[16px] leading-[1.6] tracking-[0] font-normal " +
     "whitespace-pre-wrap break-words [tab-size:4] " +
     "[font-variant-ligatures:none] [font-feature-settings:'liga'_0] " +
@@ -221,7 +228,7 @@ export default function ExpressionBuilder({
       <div className="relative w-full">
         <div
           className="
-            relative w-full min-h-[50px]
+            relative w-full min-h-[52px]
             bg-(--surface-disabled) rounded-lg overflow-hidden
             border-2 border-(--border) transition-colors
             focus-within:border-(--info)
@@ -282,6 +289,8 @@ export default function ExpressionBuilder({
           <FormulaValidation valid={!!ast && !semanticError} error={error} />
         )}
       </div>
+      <FunctionDocsPanel />
+      <FunctionDocsPanel mode={mode} />
     </Section>
   );
-}
+});

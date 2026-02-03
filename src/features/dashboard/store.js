@@ -116,12 +116,20 @@ export const useDashboardStore = create(
 
         Object.values(schemasById).forEach((schema) => {
           computeOverSequence({
-            tradesById: seriesById,
-            sequenceIds: seriesOrder,
             schema,
             getValue: (trade, key) => trade[key],
             setValue: (trade, schema, value) => {
               trade[schema.id] = value;
+            },
+            getTradeAt: (index) => {
+              if (index < 0) return null;
+              const id = seriesOrder[index];
+              return id ? seriesById[id] : null;
+            },
+            getTradeCount: () => seriesOrder.length,
+            getSchemaType: (key) => {
+              const sch = schemasById[key];
+              return { format: sch?.display?.format, type: sch.type };
             },
             usePrev: schema.mode !== "row",
           });
