@@ -37,13 +37,13 @@ export function buildAST(postfix, type) {
     if (t.type === "function") {
       const name = t.value.toUpperCase();
 
-      // 🔹 Get function definition (execution behavior)
+      // Get function definition (execution behavior)
       const fnDef = FUNCTION_REGISTRY[name];
       if (!fnDef) {
         throw new Error(`Unknown function ${name}`);
       }
 
-      // 🔹 Validate function allowed in this computation mode
+      // Validate function allowed in this computation mode
       if (type) {
         const allowed = FUNCTION_ALLOW_BY_MODE[type];
         if (!allowed?.has(name)) {

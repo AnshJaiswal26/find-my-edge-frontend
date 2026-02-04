@@ -15,7 +15,10 @@ export const CellSelect = ({
       className="w-full h-full px-2 py-1 outline-0"
       autoFocus
       value={draft}
-      onChange={(e) => setDraft(e.target.value)}
+      onChange={(e) => {
+        console.log(e.target.value);
+        setDraft(e.target.value);
+      }}
       onBlur={() => {
         onCommit(draft);
         setEditing(false);

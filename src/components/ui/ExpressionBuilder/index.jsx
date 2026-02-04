@@ -15,6 +15,7 @@ import { formatExpression } from "./formatExpression";
 import { getSchemaSuggestions, getFunctionSuggestions } from "./suggestions";
 import { highlightFormula } from "./highlightFormula";
 import { FunctionDocsPanel } from "./FunctionDocPanel";
+import { formatAST } from "./formatAst";
 
 function labelsToIds(expr, usedSchemas) {
   let result = expr;
@@ -27,7 +28,7 @@ function labelsToIds(expr, usedSchemas) {
 }
 
 export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
-  { value = "", schemas, onCommit, onChange, mode = "BASE" },
+  { value = "", schemasById, onCommit, onChange, mode = "BASE" },
   ref,
 ) {
   const [labelExpr, setLabelExpr] = useState(value);
@@ -46,6 +47,8 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
     }
   }, []);
 
+  const schemas = useMemo(() => Object.values(schemasById), [schemasById]);
+
   // ---------- ID EXPRESSION ----------
   const idExpr = useMemo(
     () => labelsToIds(labelExpr, usedSchemas),
@@ -63,7 +66,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       const result = buildAST(toPostfix(tokenize(idExpr)), mode);
 
       if (result?.ast) {
-        validateTypes(result.ast, mode);
+        validateTypes(result.ast, mode, schemasById);
       }
 
       if (error) {
@@ -163,11 +166,31 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
         e.preventDefault();
         setHighlight((h) => (h - 1 + suggestions.length) % suggestions.length);
       }
-      if (e.key === "Enter" || e.key === "Tab") {
+      if (e.key === "Enter") {
         e.preventDefault();
         applySuggestion(suggestions[highlight]);
         setHighlight(0);
       }
+      if (e.key === "Tab") {
+        e.preventDefault();
+
+        const start = e.target.selectionStart;
+        const end = e.target.selectionEnd;
+
+        const newValue =
+          labelExpr.substring(0, start) + "\t" + labelExpr.substring(end);
+
+        setLabelExpr(newValue);
+        setCursor(start + 1);
+
+        requestAnimationFrame(() => {
+          textareaRef.current.selectionStart =
+            textareaRef.current.selectionEnd = start + 1;
+        });
+
+        return;
+      }
+
       if (e.key === "Escape") {
         setOpen(false);
       }
@@ -197,17 +220,45 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
     [labelExpr, ast, dependencies, error],
   );
 
-  const handleBlur = useCallback(() => {
-    const formatted = formatExpression(labelExpr);
-    setLabelExpr(formatted);
-    onCommit?.(formatted, ast, dependencies, error);
-    if (labelExpr === "") setError("Expression is required");
-    setOpen(false);
-  }, [labelExpr, ast, dependencies, error]);
+  const autoResize = useCallback(() => {
+    const ta = textareaRef.current;
+    const hl = highlightRef.current;
+    if (!ta || !hl) return;
 
-  const handleFocus = () => {
-    setOpen(true);
-  };
+    ta.style.height = "auto"; // reset first
+    ta.style.height = ta.scrollHeight + "px";
+
+    hl.style.height = ta.style.height; // keep highlight layer same
+  }, []);
+
+  const handleBlur = useCallback(() => {
+    if (!ast) {
+      setOpen(false);
+      return;
+    }
+
+    let formatted = labelExpr;
+
+    if (labelExpr.length >= 40) {
+      formatted = formatAST(ast, 0, schemasById);
+      setLabelExpr(formatted);
+    } else {
+      formatted = formatExpression(labelExpr);
+      setLabelExpr(formatted);
+    }
+
+    onCommit?.(formatted, ast, dependencies, error);
+
+    if (!formatted.trim()) setError("Expression is required");
+
+    autoResize();
+
+    setOpen(false);
+  }, [ast, dependencies, error]);
+
+  useEffect(() => {
+    autoResize();
+  }, [labelExpr, autoResize]);
 
   useImperativeHandle(ref, () => ({
     validateNow: () => error,
@@ -217,7 +268,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   }));
 
   const sharedTextLayer =
-    "m-0 p-3 border-0 box-border w-full min-h-[52px] " +
+    "m-0 p-3 border-0 box-border w-full " +
     "font-mono text-[16px] leading-[1.6] tracking-[0] font-normal " +
     "whitespace-pre-wrap break-words [tab-size:4] " +
     "[font-variant-ligatures:none] [font-feature-settings:'liga'_0] " +
@@ -228,7 +279,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       <div className="relative w-full">
         <div
           className="
-            relative w-full min-h-[52px]
+            relative w-full
             bg-(--surface-disabled) rounded-lg overflow-hidden
             border-2 border-(--border) transition-colors
             focus-within:border-(--info)
@@ -257,7 +308,6 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
             onKeyDown={onKeyDown}
             onScroll={handleScroll}
             onBlur={handleBlur}
-            onFocus={handleFocus}
             placeholder="Enter formula..."
             spellCheck={false}
             autoComplete="off"
@@ -268,11 +318,9 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
             relative z-10
             bg-transparent
             text-transparent caret-(--text)
-            outline-none resize-vertical
-            min-h-[50px] max-h-[300px]
-            overflow-auto
+            outline-none resize-none
+            overflow-hidden max-h-[300px]
             placeholder:text-(--text-muted)
-            focus:placeholder:opacity-50
           `}
           />
         </div>

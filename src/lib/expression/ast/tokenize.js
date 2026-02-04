@@ -49,7 +49,7 @@ export function tokenize(expr) {
     const ch = expr[i];
 
     /* ---------- whitespace ---------- */
-    if (ch === " ") {
+    if (/\s/.test(ch)) {
       flushIdentifier();
       i++;
       continue;

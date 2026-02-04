@@ -3,12 +3,13 @@ import { useTableStore } from "@table/store/useTableStore";
 import { Cell } from "../Cell/Cell";
 import { HighlighterIcon, Trash2 } from "lucide-react";
 
-export const Row = memo(function Row({ rowId, index, groupId }) {
+export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
   const columnOrder = useTableStore((s) => s.columnOrder);
   const updateCell = useTableStore((s) => s.updateCell);
   const deleteRow = useTableStore((s) => s.deleteRow);
   const toggleHighlightRow = useTableStore((s) => s.toggleHighlightRow);
   const highlight = useTableStore((s) => s.rowsById[rowId].highlight);
+  const scrollEdge = useTableStore((s) => s.scrollEdge);
 
   const [hover, setHover] = useState(false);
 
@@ -25,7 +26,7 @@ export const Row = memo(function Row({ rowId, index, groupId }) {
         className="
           sticky left-0 w-12 shrink-0
           flex items-center justify-center
-          border-r border-(--border)
+          border-1 border-(--border)
           bg-(--surface-muted)
           font-bold z-2
           group
@@ -74,18 +75,19 @@ export const Row = memo(function Row({ rowId, index, groupId }) {
       </div>
 
       {/* CELLS */}
-      <div className="flex">
-        {columnOrder.map((colId) => (
-          <Cell
-            key={colId}
-            rowId={rowId}
-            colId={colId}
-            onCommit={(value) => {
-              updateCell(rowId, colId, value, groupId);
-            }}
-          />
-        ))}
-      </div>
+
+      {columnOrder.map((colId) => (
+        <Cell
+          key={colId}
+          rowId={rowId}
+          colId={colId}
+          scrollEdge={scrollEdge}
+          isStickyColumn={colId === groupBy?.key}
+          onCommit={(value) => {
+            updateCell(rowId, colId, value, groupId);
+          }}
+        />
+      ))}
     </div>
   );
 });

@@ -11,7 +11,6 @@ export function runGlobalReducer(reducer, fn, ctx) {
   const rowCtx = {
     ...ctx,
     tradeIndex: 0,
-    prevTrade: null,
     currentTrade: null,
 
     getValue(key) {
@@ -24,7 +23,6 @@ export function runGlobalReducer(reducer, fn, ctx) {
     if (!trade) continue;
 
     rowCtx.tradeIndex = i;
-    rowCtx.prevTrade = i > 0 ? ctx.getTradeAt(i - 1) : null;
     rowCtx.currentTrade = trade;
 
     const value = ctx.evaluate(expr, rowCtx);

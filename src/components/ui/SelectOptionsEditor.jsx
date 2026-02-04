@@ -1,8 +1,8 @@
-import { Section } from "@layout";
+import { ErrorText, Section } from "@layout";
 import { Input } from "@ui";
 import { Trash2 } from "lucide-react";
 
-export default function SelectOptionsEditor({ options, onChange }) {
+export default function SelectOptionsEditor({ error, options, onChange }) {
   function updateOption(index, value) {
     const next = [...options];
     next[index] = value;
@@ -48,6 +48,7 @@ export default function SelectOptionsEditor({ options, onChange }) {
           + Add option
         </button>
       </div>
+      {error?.select && <ErrorText text={error.select} />}
     </Section>
   );
 }

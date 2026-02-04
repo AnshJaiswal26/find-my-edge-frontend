@@ -6,26 +6,20 @@ import {
   SelectOptionsEditor,
 } from "@ui";
 import { DisplaySection } from "./DisplaySection";
-import { Section } from "@layout";
+import { ErrorText, Section } from "@layout";
 
-import { useTableStore } from "@table/store/useTableStore";
 import { DEFAULT_FORMATS } from "@utils";
 import { SCHEMA_TYPES, SCHEMA_TYPES_LABELS } from "@lib/analytics/schema";
-import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
-import { BASE_FUNCTIONS } from "@lib/analytics/engine/functions/base/registry";
-import { CONDITION_FUNCTIONS } from "@lib/analytics/engine/functions/condition/registry";
 import { useMemo } from "react";
 
 export default function ColumnDetails({
-  columns,
+  columnsById,
   draft,
   onDraftChange,
   error,
   builderRef,
 }) {
   if (!draft) return null;
-
-  const isGrouped = useTableStore((s) => s.groupBy !== null);
 
   const mode = useMemo(() => {
     return draft.mode === "row" ? "BASE" : "WINDOW";
@@ -51,7 +45,7 @@ export default function ColumnDetails({
       <Select
         label={"Computation Mode"}
         value={draft.mode}
-        options={["row", "cumulative", ...(isGrouped ? ["grouped"] : [])]}
+        options={["row", "cumulative", "grouped"]}
         getLabel={(v) => v.toUpperCase()}
         onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
       />
@@ -66,35 +60,48 @@ export default function ColumnDetails({
             onDraftChange((p) => ({ ...p, label: e.target.value }));
           }}
         />
-        {error?.input && (
-          <div className="text-sm text-red-500 w-full text-left">
-            {error.input}
-          </div>
-        )}
+        {error?.input && <ErrorText text={error.input} />}
       </Section>
 
       {/* Computed */}
       {draft.type.includes("computed") && (
-        <ExpressionBuilder
-          key={draft.id}
-          value={draft.formula}
-          schemas={columns}
-          mode={mode}
-          ref={builderRef}
-          onCommit={(formula, expression, dependencies) => {
-            onDraftChange((p) => ({
-              ...p,
-              formula,
-              expression,
-              dependencies,
-            }));
-          }}
-        />
+        <>
+          <Section title={"Initial Value"}>
+            <Input
+              vertical
+              type="number"
+              placeholder="Enter initital value"
+              value={draft.initialValue}
+              onChange={(e) => {
+                onDraftChange((p) => ({
+                  ...p,
+                  initialValue: Number(e.target.value),
+                }));
+              }}
+            />
+          </Section>
+          <ExpressionBuilder
+            key={draft.id}
+            value={draft.formula}
+            schemasById={columnsById}
+            mode={mode}
+            ref={builderRef}
+            onCommit={(formula, expression, dependencies) => {
+              onDraftChange((p) => ({
+                ...p,
+                formula,
+                expression,
+                dependencies,
+              }));
+            }}
+          />
+        </>
       )}
 
       {/* Select */}
       {draft.type === "select" && (
         <SelectOptionsEditor
+          error={error}
           options={draft?.options || []}
           onChange={(opts) => onDraftChange((p) => ({ ...p, options: opts }))}
         />

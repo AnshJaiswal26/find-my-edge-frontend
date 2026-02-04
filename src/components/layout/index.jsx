@@ -424,3 +424,13 @@ export const Divider = ({ vertical = false, className }) => {
     />
   );
 };
+
+export const ErrorText = ({ text = "" }) => {
+  return <div className="text-sm text-(--error) w-full text-left">{text}</div>;
+};
+
+export const SuccessText = ({ text = "" }) => {
+  return (
+    <div className="text-sm text-(--success) w-full text-left">{text}</div>
+  );
+};

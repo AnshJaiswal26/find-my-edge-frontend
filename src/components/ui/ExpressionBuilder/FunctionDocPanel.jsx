@@ -20,6 +20,8 @@ export function FunctionDocsPanel({ mode = "ALL" }) {
   const grouped = useMemo(() => {
     const map = {};
 
+    console.log(mode);
+
     // Decide which function names are allowed
     const allowedNames =
       mode === "ALL"

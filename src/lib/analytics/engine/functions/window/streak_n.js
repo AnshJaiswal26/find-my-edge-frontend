@@ -1,12 +1,11 @@
-export const MAX_LOSE_STREAK_N = {
+export const STREAK_N = {
   init(n) {
     if (n <= 0) return null;
-
     return {
       n,
-      seen: 0, // number of non-null values processed
-      current: 0, // current losing streak
-      max: 0, // max losing streak found
+      seen: 0,
+      current: 0,
+      max: 0,
     };
   },
 
@@ -15,13 +14,12 @@ export const MAX_LOSE_STREAK_N = {
 
     state.seen++;
 
-    if (value < 0) {
+    if (value === 1) {
       state.current++;
       if (state.current > state.max) {
         state.max = state.current;
       }
     } else {
-      // streak breaks on win or zero
       state.current = 0;
     }
 

@@ -59,29 +59,31 @@ export const createCoreSlice = (set, get) => ({
 
   addColumn(metric) {
     const state = get();
+    console.log(metric);
 
     set((s) => {
       s.columnsById[metric.id] = metric;
       s.columnOrder.push(metric.id);
 
-      const affectedMap = buildAffectedMap(s.columnsById);
+      s.affectedMap = buildAffectedMap(s.columnsById, s.columnOrder);
 
-      s.affectedMap = affectedMap;
+      s.rowOrder.forEach((rowId) => {
+        const row = s.rowsById[rowId];
+        if (!row) return;
 
-      Object.values(s.rowsById).forEach((row) => {
         const { value } = createCell(metric);
-        row.cells[metric.id] = { value, display: value, meta: {} };
+        row.cells[metric.id] = { value, meta: {} };
       });
     });
 
     useTradeStore.getState().addSchema(metric);
 
-    if (metric.mode === "grouped") return;
-
-    state.recompute({
-      reason: "column",
-      colId: metric.id,
-    });
+    if (metric.type.includes("computed")) {
+      state.recompute({
+        reason: "column",
+        colId: metric.id,
+      });
+    }
 
     state.closePopup();
   },
@@ -91,7 +93,8 @@ export const createCoreSlice = (set, get) => ({
 
     set((s) => {
       s.columnOrder = s.columnOrder.filter((id) => id !== colId);
-      Object.values(s.rowsById).forEach((row) => delete row.cells[colId]);
+      s.rowOrder.forEach((id) => delete s.rowsById[id].cells[colId]);
+
       delete s.columnsById[colId];
       s.selectedColumn = null;
       delete s.affectedMap[colId];
@@ -103,19 +106,18 @@ export const createCoreSlice = (set, get) => ({
     get().closePopup();
   },
 
-  updateColumn(activeColId, draft) {
+  updateColumn(colId, draft) {
     const state = get();
-    console.log(draft);
+    // console.log(draft);
 
     set((s) => {
-      Object.assign(s.columnsById[activeColId], draft);
-      s.affectedMap = buildAffectedMap(s.columnsById);
+      Object.assign(s.columnsById[colId], draft);
+      s.affectedMap = buildAffectedMap(s.columnsById, s.columnOrder);
     });
 
-    useTradeStore.getState().updateSchema(activeColId, draft);
+    useTradeStore.getState().updateSchema(colId, draft);
 
-    if (draft.type.includes("computed"))
-      state.recompute({ reason: "column", colId: activeColId });
+    state.recompute({ reason: "column", colId });
 
     state.closePopup();
   },

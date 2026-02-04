@@ -3,6 +3,8 @@ import { useTableStore } from "@table/store/useTableStore";
 
 export function TableHeader({ tableRef }) {
   const columnOrder = useTableStore((s) => s.columnOrder);
+  const groupBy = useTableStore((s) => s.groupBy?.key);
+  const scrollEdge = useTableStore((s) => s.scrollEdge);
 
   return (
     <div
@@ -25,7 +27,14 @@ export function TableHeader({ tableRef }) {
       {/* COLUMN HEADERS */}
       <div className="flex">
         {columnOrder?.map((id, index) => (
-          <ColumnHeader key={id} colId={id} index={index} tableRef={tableRef} />
+          <ColumnHeader
+            key={id}
+            colId={id}
+            index={index}
+            tableRef={tableRef}
+            scrollEdge={scrollEdge}
+            isGroupColumn={groupBy == id}
+          />
         ))}
       </div>
     </div>

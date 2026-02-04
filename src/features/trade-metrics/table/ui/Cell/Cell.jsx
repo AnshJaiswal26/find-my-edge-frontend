@@ -1,53 +1,87 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTableStore } from "@table/store/useTableStore";
 import { CellInput } from "./CellInput";
 import { CellSelect } from "./CellSelect";
 import { CellDisplay } from "./CellDisplay";
 
-export const Cell = memo(function Cell({ rowId, colId, onCommit }) {
+export const Cell = memo(function Cell({
+  rowId,
+  colId,
+  onCommit,
+  scrollEdge,
+  isStickyColumn,
+}) {
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState("");
 
   const cell = useTableStore((s) => s.rowsById[rowId].cells[colId]);
-
   const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
+  const column = useTableStore((s) => s.columnsById[colId]);
 
-  const type = useTableStore((s) => s.columnsById[colId].type);
+  const type = column.type;
 
-  const isNotGrouped = useTableStore(
-    (s) => !s.groupBy && s.columnsById[colId].mode === "grouped"
-  );
+  /* ---------- Keep draft synced with store value ---------- */
+  const [draft, setDraft] = useState(cell.value);
 
-  if (isNotGrouped) return null;
+  useEffect(() => {
+    if (!editing) {
+      setDraft(cell.value);
+    }
+  }, [cell.value, editing]);
 
+  /* ---------- Sticky logic for grouped column ---------- */
+  const isGroupColumn = isStickyColumn;
+
+  const stickyStyle =
+    isGroupColumn && scrollEdge
+      ? {
+          position: "sticky",
+          ...(scrollEdge === "right"
+            ? { left: 51, boxShadow: "2px 0px 3px rgba(0,0,0,0.12)" }
+            : {
+                right: 0,
+                borderLeft: "1px solid var(--border)",
+                boxShadow: "-2px 0px 3px rgba(0,0,0,0.12)",
+              }),
+          zIndex: 25,
+          background: "var(--surface)",
+        }
+      : {};
+
+  /* ================= EDIT MODE ================= */
   if (editing) {
     const Editor = type === "select" ? CellSelect : CellInput;
 
     return (
       <div
-        style={{ width }}
-        className="border-1 border-(--info) overflow-hidden"
+        style={{ width, ...stickyStyle }}
+        className="border border-(--info) overflow-hidden"
       >
         <Editor
           colId={colId}
           draft={draft}
           setDraft={setDraft}
-          onCommit={onCommit}
+          onCommit={(value) => {
+            onCommit(value);
+            setEditing(false);
+          }}
           setEditing={setEditing}
         />
       </div>
     );
   }
 
+  /* ================= DISPLAY MODE ================= */
   return (
-    <CellDisplay
-      type={type}
-      cell={cell}
-      colId={colId}
-      rowId={rowId}
-      width={width}
-      setDraft={setDraft}
-      setEditing={setEditing}
-    />
+    <div style={stickyStyle}>
+      <CellDisplay
+        type={type}
+        cell={cell}
+        colId={colId}
+        rowId={rowId}
+        width={width}
+        setDraft={setDraft}
+        setEditing={setEditing}
+      />
+    </div>
   );
 });

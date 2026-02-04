@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTableStore } from "./store/useTableStore";
 
 import { Toolbar } from "./ui/Toolbar/Toolbar";
@@ -10,9 +10,43 @@ import { Loader } from "@layout";
 export function Table() {
   const tableRef = useRef(null);
 
-  const { addRow, openPopup, deleteColumn } = useTableStore.getState();
+  const setScrollEdge = useTableStore((s) => s.setScrollEdge);
+  const addRow = useTableStore((s) => s.addRow);
+  const openPopup = useTableStore((s) => s.openPopup);
+  const deleteColumn = useTableStore((s) => s.deleteColumn);
 
   const isDataLoading = useTableStore((s) => s.isDataLoading);
+
+  /* -------- Detect horizontal scroll edge -------- */
+  useEffect(() => {
+    const el = tableRef.current;
+    if (!el) return;
+
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (ticking) return;
+
+      ticking = true;
+      requestAnimationFrame(() => {
+        const { scrollLeft, scrollWidth, clientWidth } = el;
+        const maxScrollLeft = scrollWidth - clientWidth;
+        const midpoint = maxScrollLeft / 2;
+
+        if (scrollLeft < midpoint) {
+          setScrollEdge("left");
+        } else {
+          setScrollEdge("right");
+        }
+
+        ticking = false;
+      });
+    };
+
+    handleScroll();
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [setScrollEdge]);
 
   if (isDataLoading) return <Loader />;
 
@@ -20,7 +54,6 @@ export function Table() {
     <div className="flex flex-col flex-1 gap-4 relative">
       <Popups />
 
-      {/* TOOLBAR */}
       <Toolbar
         onAddTrade={addRow}
         onAddColumn={() => openPopup("add-column")}
@@ -32,20 +65,20 @@ export function Table() {
         onOpenColumnSettings={() => openPopup("column-settings")}
       />
 
-      {/* TABLE */}
+      {/* SCROLL CONTAINER */}
       <div
         ref={tableRef}
         className="
-        relative
-        border border-(--border)
-        rounded
-        text-(--text)
-        text-sm
-        max-h-[430px]
-        -mb-4
-        w-full
-        overflow-auto
-      "
+          relative
+          border border-(--border)
+          rounded
+          text-(--text)
+          text-sm
+          max-h-[430px]
+          -mb-4
+          w-full
+          overflow-auto
+        "
       >
         <div className="min-w-max relative">
           <TableHeader tableRef={tableRef} />

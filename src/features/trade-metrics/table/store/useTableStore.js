@@ -21,6 +21,10 @@ export const useTableStore = create(
   immer((set, get) => ({
     isDataLoading: false,
 
+    scrollEdge: "left", // "left" | "right"
+
+    setScrollEdge: (dir) => set({ scrollEdge: dir }),
+
     ...createGroupSlice(set, get),
 
     ...createSelectionSlice(set, get),
@@ -43,7 +47,7 @@ export const useTableStore = create(
       set({
         columnsById: schemasById,
         columnOrder: schemaOrder,
-        affectedMap: buildAffectedMap(schemasById),
+        affectedMap: buildAffectedMap(schemasById, schemaOrder),
       });
     },
 

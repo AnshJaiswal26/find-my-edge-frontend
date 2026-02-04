@@ -1,9 +1,10 @@
-const isDuplicateLabel = (draft, columns, activeColumn) => {
+const isDuplicateLabel = (draft, ctx) => {
   const newLabel = draft.label?.trim().toLowerCase();
   if (!newLabel) return false;
 
-  return columns.some((col) => {
-    if (activeColumn && col.id === activeColumn.id) return false;
+  return ctx.columnOrder.some((id) => {
+    const col = ctx.columnsById[id];
+    if (ctx?.activeColumn && col.id === ctx.activeColumn.id) return false;
 
     return col?.label?.trim().toLowerCase() === newLabel;
   });
@@ -20,8 +21,8 @@ export const isValid = (draft, setError, ctx) => {
     return false;
   }
 
-  if (ctx && ctx?.columns) {
-    if (isDuplicateLabel(draft, ctx.columns, ctx.activeColumn)) {
+  if (ctx && ctx?.columnsById) {
+    if (isDuplicateLabel(draft, ctx)) {
       setError({ input: "A column with this label already exists" });
       return false;
     }

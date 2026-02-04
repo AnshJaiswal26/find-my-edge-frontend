@@ -55,10 +55,6 @@ export function computeOverSequence({
     return evaluateExpression(schema.expression, ctx);
   }
 
-  if (typeof getTradeCount !== "function") {
-    throw new Error("computeOverSequence requires getTradeCount()");
-  }
-
   const seqLength = getTradeCount();
 
   for (let i = startIndex; i < seqLength; i++) {

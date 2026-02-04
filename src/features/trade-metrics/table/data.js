@@ -137,14 +137,14 @@ export const columnsById = {
     formula: "PnL / 500",
   }),
 
-  // emotion: createSchema({
-  //   id: "emotion",
-  //   label: "Emotion",
-  //   type: "select",
-  //   editable: true,
-  //   options: ["Calm", "Fear", "Greed"],
-  //   display: { format: "badge" },
-  // }),
+  emotion: createSchema({
+    id: "emotion",
+    label: "Emotion",
+    type: "select",
+    editable: true,
+    options: ["Calm", "Fear", "Greed"],
+    display: { format: "badge" },
+  }),
 };
 
 export const columnOrder = [

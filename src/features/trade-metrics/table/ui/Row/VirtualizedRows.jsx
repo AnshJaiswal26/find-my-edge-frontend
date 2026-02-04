@@ -56,7 +56,7 @@ export default function VirtualizedRow({ scrollRef }) {
         return (
           <div
             key={item.type === "group" ? `group-${item.groupId}` : item.rowId}
-            className="absolute w-full top-0 left-0"
+            className="absolute top-0 left-0 w-max min-w-full"
             style={{ transform: `translateY(${vRow.start}px)` }}
           >
             {item.type === "group" ? (
@@ -67,12 +67,14 @@ export default function VirtualizedRow({ scrollRef }) {
                   label={item.label}
                   groupBy={groupBy}
                 />
+                <div className="w-full h-2" />
               </>
             ) : (
               <Row
                 rowId={item.rowId}
                 index={item.index}
                 groupId={item?.groupId}
+                groupBy={groupBy}
               />
             )}
           </div>

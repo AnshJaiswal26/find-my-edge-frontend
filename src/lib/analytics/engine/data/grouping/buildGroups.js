@@ -1,14 +1,21 @@
 import { compileGroupSpec } from "./compileGroupSpec";
 
-export function buildGroups({ tradeOrder, tradesById, groupSpec, getValue }) {
+export function buildGroups({
+  tradeOrder,
+  tradesById,
+  groupSpec,
+  getValue,
+  getFormat,
+}) {
   if (!groupSpec) return null;
 
-  const getKey = compileGroupSpec(groupSpec, getValue);
+  const getKey = compileGroupSpec(groupSpec, getValue, getFormat);
+  const format = getFormat(groupSpec.key);
   const map = new Map();
 
   for (const tradeId of tradeOrder) {
     const trade = tradesById[tradeId];
-    const label = getKey(trade) ?? "Empty";
+    const label = getKey(trade, format) ?? "Empty";
 
     if (!map.has(label)) {
       map.set(label, { groupId: label, label, tradeIds: [] });

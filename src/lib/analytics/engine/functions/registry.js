@@ -1,4 +1,4 @@
-import { COLUMN_FUNCTIONS } from "./column/registry";
+import { SCHEMA_FUNCTIONS } from "./schema/registry";
 import { BASE_FUNCTIONS } from "./base/registry";
 import { WINDOW_FUNCTIONS } from "./window/registry";
 import { CONDITION_FUNCTIONS } from "./condition/registry";
@@ -11,6 +11,8 @@ export const FUNCTION_REGISTRY = {
 
   /* ---------- WINDOW / ROLLING ---------- */
   ...WINDOW_FUNCTIONS,
+
+  ...SCHEMA_FUNCTIONS,
 
   /* ---------- RATIO ---------- */
   ...RATIO_FUNCTIONS,
@@ -35,6 +37,7 @@ export const FUNCTION_ALLOW_BY_MODE = {
   /* ---------------------------------- */
   WINDOW: new Set([
     ...Object.keys(BASE_FUNCTIONS),
+    ...Object.keys(SCHEMA_FUNCTIONS),
     ...Object.keys(CONDITION_FUNCTIONS),
     ...Object.keys(WINDOW_FUNCTIONS),
   ]),

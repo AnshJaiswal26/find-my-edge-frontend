@@ -1,9 +1,12 @@
 export function runBackwardWindowReducer(reducer, fn, ctx) {
-  const [expr, nExpr] = fn.args;
-
+  const args = fn.args;
+  const nExpr = args[args.length - 1]; // last arg is always window size
   const n = Math.floor(ctx.evaluate(nExpr, ctx) ?? 0);
+
   const state = reducer.init(n);
   if (!state) return null;
+
+  const valueExprs = args.slice(0, -1); // all other args go to reducer.step
 
   const rowCtx = {
     ...ctx,
@@ -20,12 +23,12 @@ export function runBackwardWindowReducer(reducer, fn, ctx) {
     if (!trade) break;
 
     rowCtx.tradeIndex = i;
-    rowCtx.prevTrade = ctx.getTradeAt(i - 1);
     rowCtx.currentTrade = trade;
 
-    const value = ctx.evaluate(expr, rowCtx);
+    const evaluated = valueExprs.map((expr) => ctx.evaluate(expr, rowCtx));
 
-    const cont = reducer.step(state, value);
+    const cont = reducer.step(state, ...evaluated);
+
     if (cont === false) break;
   }
 

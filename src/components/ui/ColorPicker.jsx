@@ -234,7 +234,7 @@ export default function ColorPicker({
                 />
                 <CopyIcon
                   size={25}
-                  className="absolute top-1 right-1 hover:bg-(--hover) p-1 rounded"
+                  className="absolute top-[50%] -translate-y-1/2 right-1 hover:bg-(--hover) p-1 rounded"
                   onClick={() => {
                     setIsCopied(true);
                     navigator.clipboard.writeText(input);

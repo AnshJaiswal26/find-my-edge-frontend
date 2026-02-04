@@ -7,8 +7,8 @@ export const CONDITION_FUNCTIONS = {
     exec: fnIF,
     arity: 3,
     signature: "IF(cond, yes, no)",
-    argTypes: ["boolean", "any", "any"],
-    returnType: "any",
+    argTypes: ["boolean", "number", "number"],
+    returnType: "number",
     description: "Conditional expression",
   },
 };

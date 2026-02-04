@@ -1,7 +1,6 @@
 import { useTradeStore } from "@stores";
 import { collectAffectedColumns } from "../dependency";
 import { computeOverSequence } from "@lib/analytics/engine/execute";
-import { columnOrder } from "@table/data";
 
 export const createComputeSlice = (set, get) => ({
   /* ------------------------------------------------------- */
@@ -39,6 +38,7 @@ export const createComputeSlice = (set, get) => ({
         rowsById: tradesById,
         rowOrder,
         columnsById,
+        columnOrder,
         affectedMap,
         groupBy,
         groups,
@@ -52,7 +52,7 @@ export const createComputeSlice = (set, get) => ({
         trade.cells[schema.id].value = value;
       };
 
-      const compute = ({ sequenceIds, schema, startIndex, usePrev }) => {
+      const compute = ({ sequenceIds, schema, startIndex = 0, usePrev }) => {
         computeOverSequence({
           schema,
           getTradeAt: (index) => {
@@ -107,7 +107,6 @@ export const createComputeSlice = (set, get) => ({
       if (payload.reason === "row-delete") {
         columnOrder.forEach((id) => {
           const col = columnsById[id];
-          console.log(col, id);
           if (!col || col?.mode !== "cumulative") return;
 
           compute({
@@ -116,6 +115,26 @@ export const createComputeSlice = (set, get) => ({
             startIndex: Math.max(payload.rowIndex - 1, 0),
             usePrev: true,
           });
+        });
+        return;
+      }
+
+      if (payload.reason === "grouping") {
+        console.log(payload);
+        columnOrder.forEach((id) => {
+          const col = columnsById[id];
+          console.log(col, id);
+          if (!col || col?.mode !== "grouped") return;
+
+          console.log(id);
+
+          groups.forEach((group) =>
+            compute({
+              schema: col,
+              sequenceIds: group.tradeIds,
+              usePrev: true,
+            }),
+          );
         });
         return;
       }
@@ -190,7 +209,6 @@ export const createComputeSlice = (set, get) => ({
           );
           return;
         }
-
         // Normal
         compute({
           schema,

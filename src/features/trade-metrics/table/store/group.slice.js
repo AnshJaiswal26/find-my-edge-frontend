@@ -19,13 +19,16 @@ export const createGroupSlice = (set, get) => ({
   },
 
   clearGroupBy: () => {
+    const { closePopup, recompute } = get();
+
     set(() => ({
       groupBy: null,
       groups: null,
       expandedGroups: {},
     }));
 
-    get().closePopup();
+    recompute({ reason: "grouping" });
+    closePopup();
   },
 
   /* ---------------- Expand / Collapse ---------------- */
@@ -46,7 +49,15 @@ export const createGroupSlice = (set, get) => ({
     })),
 
   buildGroups: (spec) => {
-    const { rowsById, sortedRowOrder, filteredRowOrder, rowOrder } = get();
+    const {
+      rowsById,
+      sortedRowOrder,
+      filteredRowOrder,
+      rowOrder,
+      columnsById,
+      groupBy,
+      recompute,
+    } = get();
 
     const effectiveOrder = sortedRowOrder.length
       ? sortedRowOrder
@@ -57,11 +68,15 @@ export const createGroupSlice = (set, get) => ({
     const groups = buildGroups({
       tradeOrder: effectiveOrder,
       tradesById: rowsById,
-      groupSpec: draftToSpec(spec),
+      groupSpec: draftToSpec(spec ?? groupBy),
       getValue: (row, key) => row.cells[key]?.value ?? null,
+      getFormat: (key) => ({
+        type: columnsById[key].type,
+        display: columnsById[key]?.display,
+      }),
     });
 
     set({ groups });
-    get().recompute({ reason: "all" });
+    recompute({ reason: "grouping", groups });
   },
 });

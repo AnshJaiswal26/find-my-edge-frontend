@@ -1,10 +1,12 @@
-export function buildAffectedMap(columnsById) {
+export function buildAffectedMap(schemasById, schemaOrder) {
   const affected = {};
 
-  Object.values(columnsById).forEach((col) => {
-    col.dependencies?.forEach((dep) => {
+  schemaOrder.forEach((id) => {
+    const schema = schemasById[id];
+
+    schema.dependencies?.forEach((dep) => {
       if (!affected[dep]) affected[dep] = [];
-      affected[dep].push(col.id);
+      affected[dep].push(schema.id);
     });
   });
 

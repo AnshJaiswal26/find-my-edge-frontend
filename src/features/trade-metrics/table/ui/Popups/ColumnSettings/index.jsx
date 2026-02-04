@@ -18,8 +18,6 @@ export default function ColumnSettingsPopup() {
   const [draft, setDraft] = useState(activeColumn);
   const [error, setError] = useState("");
 
-  const columns = useMemo(() => Object.values(columnsById), []);
-
   useEffect(() => {
     if (activeColumn) setDraft(activeColumn);
   }, [activeColumn]);
@@ -30,14 +28,15 @@ export default function ColumnSettingsPopup() {
   }
 
   function applyChanges() {
-    const error = builderRef.current.validateNow();
+    const error = builderRef.current?.validateNow?.();
 
     if (error) {
       setError(error);
       return;
     }
 
-    if (!isValid(draft, setError, { activeColumn, columns })) return;
+    if (!isValid(draft, setError, { activeColumn, columnsById, columnOrder }))
+      return;
     updateColumn(activeColumn.id, draft);
   }
 
@@ -53,7 +52,7 @@ export default function ColumnSettingsPopup() {
           renderDetails={(_, i) => (
             <ColumnDetails
               key={i}
-              columns={columns}
+              columnsById={columnsById}
               draft={draft}
               onDraftChange={setDraft}
               error={error}
@@ -66,7 +65,7 @@ export default function ColumnSettingsPopup() {
         fnMap={{
           Delete: { fn: () => deleteColumn(activeColumn.id) },
           Cancel: { fn: closePopup, align: "right" },
-          Apply: { fn: applyChanges, disabled: error },
+          Apply: { fn: applyChanges },
         }}
       />
     </Popup.Container>

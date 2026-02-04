@@ -3,7 +3,11 @@ import {
   FUNCTION_ALLOW_BY_MODE,
 } from "@lib/analytics/engine/functions/registry";
 
-function getNodeType(node, mode) {
+function isSchemaReference(node) {
+  return node?.type === "key";
+}
+
+function getNodeType(node, mode, schemasById) {
   if (!node) return "any";
 
   if (node.type === "constant") {
@@ -13,11 +17,47 @@ function getNodeType(node, mode) {
   }
 
   if (node.type === "key") {
-    return "number"; // or derive from schema later
+    if (!schemasById) return "any";
+
+    const schema = schemasById[node.key];
+
+    if (!schema) {
+      throw new Error(`Unknown field reference: ${node.key}`);
+    }
+
+    switch (schema.type) {
+      case "number":
+      case "number computed":
+
+      case "time":
+      case "time computed":
+
+      case "date":
+      case "datetime":
+        return "number";
+
+      case "select":
+      case "text":
+        return "string";
+
+      case "boolean":
+        return "boolean";
+
+      // case "time":
+      // case "time computed":
+      //   return "number";
+
+      // case "date":
+      // case "datetime":
+      //   return "number"; // or "number" if you treat dates as timestamps
+
+      default:
+        return "any";
+    }
   }
 
   if (node.type === "unary") {
-    const t = getNodeType(node.arg);
+    const t = getNodeType(node.arg, mode, schemasById);
     if (node.op === "-" && t !== "number") {
       throw new Error("Unary minus requires a number");
     }
@@ -25,8 +65,8 @@ function getNodeType(node, mode) {
   }
 
   if (node.type === "binary") {
-    const left = getNodeType(node.left);
-    const right = getNodeType(node.right);
+    const left = getNodeType(node.left, mode, schemasById);
+    const right = getNodeType(node.right, mode, schemasById);
 
     if (["+", "-", "*", "/"].includes(node.op)) {
       if (left !== "number" || right !== "number") {
@@ -51,7 +91,7 @@ function getNodeType(node, mode) {
     const def = FUNCTION_REGISTRY[node.name];
     if (!def) throw new Error(`Unknown function ${node.name}`);
 
-    // 🔹 Mode permission check
+    // Mode permission check
     if (mode) {
       const allowed = FUNCTION_ALLOW_BY_MODE[mode];
       if (!allowed?.has(node.name)) {
@@ -66,12 +106,40 @@ function getNodeType(node, mode) {
 
     for (let i = 0; i < argTypes.length; i++) {
       const expected = argTypes[i];
-      const actual = getNodeType(args[i]);
+      const actual = getNodeType(args[i], mode, schemasById);
 
-      if (expected !== "any" && expected !== actual) {
-        throw new Error(
-          `Function ${node.name} argument ${i + 1} must be ${expected}`,
-        );
+      if (expected === "any") continue;
+
+      if (typeof expected === "object" && expected.key) {
+        if (args[i]?.type !== "key") {
+          throw new Error(
+            `Function ${node.name} argument ${i + 1} must be a field reference`,
+          );
+        }
+
+        const keyType = getNodeType(args[i], mode, schemasById);
+
+        if (expected.key !== "any" && keyType !== expected.key) {
+          throw new Error(
+            `Function ${node.name} argument ${i + 1} must reference a ${expected.key} field`,
+          );
+        }
+        continue;
+      }
+
+      // Union type support
+      if (Array.isArray(expected)) {
+        if (!expected.includes(actual)) {
+          throw new Error(
+            `Function ${node.name} argument ${i + 1} must be ${expected.join(" or ")}`,
+          );
+        }
+      } else {
+        if (expected !== actual) {
+          throw new Error(
+            `Function ${node.name} argument ${i + 1} must be ${expected}`,
+          );
+        }
       }
     }
 
@@ -81,6 +149,6 @@ function getNodeType(node, mode) {
   return "any";
 }
 
-export function validateTypes(ast, mode) {
-  getNodeType(ast, mode);
+export function validateTypes(ast, mode, schemasById) {
+  getNodeType(ast, mode, schemasById);
 }

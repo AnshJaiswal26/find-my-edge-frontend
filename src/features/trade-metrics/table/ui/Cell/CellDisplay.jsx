@@ -38,8 +38,6 @@ export const CellDisplay = memo(function CellDisplay({
 
   const unselectColumn = useTableStore((s) => s.unselectColumn);
 
-  const [selected, setSelected] = useState(false);
-
   const color = useMemo(() => {
     const { color, label } = evaluateColorRules(cell.value, colorRules);
     return label === "Default" ? null : color;
@@ -52,18 +50,16 @@ export const CellDisplay = memo(function CellDisplay({
 
   return (
     <div
-      tabIndex={0}
+      tabIndex={-1}
       style={{
         width,
         color,
         border: cell.meta?.error ? "1px solid var(--error)" : "",
       }}
-      className="relative px-2 py-1 border-r border-(--border) truncate overflow-hidden"
+      className="relative px-2 py-1 border-1 border-(--border) truncate overflow-hidden focus:border-(--info)"
       onClick={() => {
-        setSelected(true);
         unselectColumn({ id: colId });
       }}
-      onBlur={() => setSelected(false)}
       onDoubleClick={() => {
         if (!editable) return;
         setDraft(formatForInput(cell.value ?? "", type));
@@ -73,9 +69,6 @@ export const CellDisplay = memo(function CellDisplay({
       onMouseLeave={tooltipApi.hide}
     >
       {displayValue}
-      {selected && (
-        <div className="absolute inset-0 border border-(--info) bg-(--info-soft)" />
-      )}
     </div>
   );
 });

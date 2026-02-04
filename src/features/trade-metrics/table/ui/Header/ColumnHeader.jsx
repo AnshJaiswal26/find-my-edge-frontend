@@ -15,20 +15,18 @@ function getColumnRects(tableEl) {
   );
 }
 
-export function ColumnHeader({ colId, index, tableRef }) {
+export function ColumnHeader({
+  colId,
+  index,
+  tableRef,
+  scrollEdge,
+  isGroupColumn,
+}) {
   const headerRef = useRef(null);
 
   const column = useTableStore((s) => s.columnsById[colId]);
   const width = useTableStore((s) => s.columnWidths?.[colId] ?? 150);
   const editable = useTableStore((s) => isColumnEditable(colId, s));
-
-  const isNotGrouped = useTableStore(
-    (s) => !s.groupBy && s.columnsById[colId].mode === "grouped",
-  );
-
-  const isSticky = useTableStore((s) => s.groupBy?.key === column.id);
-
-  if (isNotGrouped) return null;
 
   const {
     startColumnDrag,
@@ -105,7 +103,22 @@ export function ColumnHeader({ colId, index, tableRef }) {
       ref={headerRef}
       data-col-header
       className="group relative select-none overflow-hidden overflow-ellipsis text-nowrap"
-      style={{ width }}
+      style={{
+        width,
+        ...(isGroupColumn &&
+          scrollEdge && {
+            position: "sticky",
+            ...(scrollEdge === "right"
+              ? { left: 51, boxShadow: "2px 0px 3px rgba(0,0,0,0.12)" }
+              : {
+                  right: 0,
+                  borderLeft: "1px solid var(--border)",
+                  boxShadow: "-2px 0px 3px rgba(0,0,0,0.12)",
+                }),
+            zIndex: 25,
+            background: "var(--surface-muted)",
+          }),
+      }}
       onClick={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         selectColumn({ id: colId, width: rect.width, left: rect.left });

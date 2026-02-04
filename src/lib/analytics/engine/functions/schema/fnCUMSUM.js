@@ -1,4 +1,4 @@
-export function fnCUM(fn, ctx) {
+export function fnCUMSUM(fn, ctx) {
   const value = ctx.evaluate(fn.args[0], ctx);
 
   if (ctx.prevValue === null || ctx.prevValue === undefined) {
