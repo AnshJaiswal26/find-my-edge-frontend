@@ -2,47 +2,31 @@ import { useCallback, useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
-import { RATIO_FUNCTIONS } from "@lib/analytics/engine/functions/ratio";
-import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
 
-const getSeries = ({ seriesConfig, seriesById, seriesOrder, groups }) => {
-  if (groups) {
-    const series = [];
-    const s = seriesConfig[0];
-    console.log(groups);
-    for (const group of groups) {
-      const reducer =
-        RATIO_FUNCTIONS[s.reducer]?.reducer ??
-        WINDOW_FUNCTIONS[s.reducer].reducer;
+import {
+  COMPUTATION_MODE,
+  computeOverSequence,
+} from "@lib/analytics/engine/execute";
 
-      console.log(series, reducer);
-
-      const state = reducer.init(seriesOrder.length);
-
-      group.tradeIds.forEach((id) => {
-        reducer.step(state, { pnl: seriesById[id].pnl });
-      });
-
-      const result = reducer.result(state);
-
-      series.push(result);
-    }
-    console.log(series);
-    return series;
-  }
-
+const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
   const series = seriesConfig.map((s) => {
-    const reducer =
-      RATIO_FUNCTIONS[s.reducer]?.reducer ??
-      WINDOW_FUNCTIONS[s.reducer]?.reducer;
-
-    const state = reducer.init(seriesOrder.length);
-
-    seriesOrder.forEach((id) => {
-      reducer.step(state, { pnl: seriesById[id].pnl });
+    const value = computeOverSequence({
+      schema: { expression: s.expression },
+      getTradeAt: (index) => {
+        if (index < 0) return null;
+        const id = seriesOrder[index];
+        return id ? seriesById[id] : null;
+      },
+      getTradeCount: () => seriesOrder.length,
+      getSchemaType: (key) => {
+        const schema = schemasById[key];
+        return { format: schema?.display?.format, type: schema.type };
+      },
+      getValue: (trade, key) => trade[key] ?? null,
+      setValue: () => null,
+      mode: COMPUTATION_MODE.AGGREGATE,
     });
-
-    return reducer.result(state);
+    return value;
   });
   return series;
 };
@@ -59,6 +43,7 @@ export default function useGroupChartConfig({
   seriesConfig,
   seriesOrder,
   seriesById,
+  schemasById,
   selectedSeriesKeys,
 }) {
   const type = useChartStore((s) => s[chartId].meta.type);
@@ -76,11 +61,10 @@ export default function useGroupChartConfig({
       seriesConfig: filteredConfig,
       seriesOrder,
       seriesById,
+      schemasById,
       groups,
     });
-  }, [type, filteredConfig, seriesOrder, seriesById, groups]);
-
-  console.log(filteredConfig);
+  }, [type, filteredConfig, seriesOrder, seriesById, groups, schemasById]);
 
   const tooltipCb = useCallback(
     (seriesValue, index, seriesIndex) =>
@@ -93,7 +77,7 @@ export default function useGroupChartConfig({
         series: computedSeries, // ✅ pass actual data
         groups,
       }),
-    [chartId, selectedSeriesKeys, groups],
+    [chartId, selectedSeriesKeys, groups, computedSeries],
   );
 
   const options = useMemo(() => {
@@ -102,14 +86,23 @@ export default function useGroupChartConfig({
       chartId,
       seriesById,
       filteredConfig,
+      series: computedSeries,
       tooltipCallback: tooltipCb,
       layout,
     });
-  }, [type, chartId, layout, seriesById, filteredConfig, tooltipCb]);
+  }, [
+    type,
+    chartId,
+    layout,
+    seriesById,
+    filteredConfig,
+    tooltipCb,
+    computedSeries,
+  ]);
 
   return {
     options,
-    series: computedSeries,
+    series: computedSeries.map((v) => Math.abs(v)),
     type,
   };
 }

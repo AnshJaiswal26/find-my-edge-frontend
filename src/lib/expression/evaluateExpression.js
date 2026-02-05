@@ -1,15 +1,22 @@
+import { COMPUTATION_MODE } from "@lib/analytics/engine/execute";
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
+import { FUNCTION_TYPE } from "@lib/analytics/engine/functions/type";
 import {
-  runBackwardWindowReducer,
+  runWindowReducer,
   runBaseReducer,
-  runGlobalReducer,
+  runAggregateReducer,
+  runNativeWindowReducer,
+  runNativeAggregateReducer,
 } from "@lib/analytics/runners";
 import { deformatValue } from "@utils";
 
 const runReducers = {
   BASE: runBaseReducer,
-  WINDOW: runBackwardWindowReducer,
-  GLOBAL: runGlobalReducer,
+  WINDOW: runWindowReducer,
+  GLOBAL: runAggregateReducer,
+  RATIO: runAggregateReducer,
+  NATIVE_WINDOW: runNativeWindowReducer,
+  NATIVE_AGG: runNativeAggregateReducer,
 };
 
 const DEFORMAT_CACHE = new Map();
@@ -39,7 +46,7 @@ const normalizeInput = (left, right, format, kind) => {
   return [left, right];
 };
 
-const SCHEMA_TYPE_CACHE = new Map(); // key → column key
+const SCHEMA_TYPE_CACHE = new Map(); // key → schema key
 
 function getOperandSchemaType(node, ctx) {
   if (node.type !== "key") return null;
@@ -58,6 +65,9 @@ function getOperandSchemaType(node, ctx) {
 /* -------------------------------------------------- */
 
 export function evaluateExpression(expr, ctx = {}) {
+  // console.log({ ...expr }, ctx);
+  if (!expr || typeof expr !== "object") return null;
+
   switch (expr.type) {
     case "constant":
       return expr.value;
@@ -144,6 +154,18 @@ export function evaluateExpression(expr, ctx = {}) {
     case "function": {
       const entry = FUNCTION_REGISTRY[expr.name.toUpperCase()];
       if (!entry?.exec && !entry?.reducer) return null;
+
+      console.log(entry);
+
+      // // 🚨 Prevent aggregate reducers from running in row mode
+      // if (
+      //   entry.reducer &&
+      //   ctx.mode !== COMPUTATION_MODE.AGGREGATE &&
+      //   entry.type !== FUNCTION_TYPE.WINDOW &&
+      //   entry.type !== FUNCTION_TYPE.NATIVE_WINDOW
+      // ) {
+      //   return null;
+      // }
 
       return entry?.reducer
         ? runReducers[entry.type](entry.reducer, expr, ctx)

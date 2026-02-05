@@ -1,5 +1,5 @@
-export function runGlobalReducer(reducer, fn, ctx) {
-  const [expr] = fn.args;
+export function runAggregateReducer(reducer, fn, ctx) {
+  const args = fn.args;
 
   const state = reducer.init();
   if (!state) return null;
@@ -25,10 +25,9 @@ export function runGlobalReducer(reducer, fn, ctx) {
     rowCtx.tradeIndex = i;
     rowCtx.currentTrade = trade;
 
-    const value = ctx.evaluate(expr, rowCtx);
+    const evaluated = args.map((expr) => ctx.evaluate(expr, rowCtx));
 
-    const cont = reducer.step(state, value);
-    if (cont === false) break;
+    reducer.step(state, ...evaluated);
   }
 
   return reducer.result(state);

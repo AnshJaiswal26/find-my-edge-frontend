@@ -16,6 +16,7 @@ import { getSchemaSuggestions, getFunctionSuggestions } from "./suggestions";
 import { highlightFormula } from "./highlightFormula";
 import { FunctionDocsPanel } from "./FunctionDocPanel";
 import { formatAST } from "./formatAst";
+import { validateRatioExpression } from "./sematicModeValidators";
 
 function labelsToIds(expr, usedSchemas) {
   let result = expr;
@@ -28,7 +29,14 @@ function labelsToIds(expr, usedSchemas) {
 }
 
 export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
-  { value = "", schemasById, onCommit, onChange, mode = "BASE" },
+  {
+    value = "",
+    schemasById,
+    onCommit,
+    onChange,
+    mode = "BASE",
+    semanticMode = "STANDARD",
+  },
   ref,
 ) {
   const [labelExpr, setLabelExpr] = useState(value);
@@ -37,6 +45,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   const [open, setOpen] = useState(true);
   const [usedSchemas, setUsedSchemas] = useState([]);
   const [error, setError] = useState(null);
+  const [copy, setCopy] = useState(false);
 
   const textareaRef = useRef(null);
   const highlightRef = useRef(null);
@@ -67,6 +76,9 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
 
       if (result?.ast) {
         validateTypes(result.ast, mode, schemasById);
+        if (semanticMode === "RATIO_REQUIRED") {
+          validateRatioExpression(result.ast, schemasById);
+        }
       }
 
       if (error) {
@@ -268,7 +280,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   }));
 
   const sharedTextLayer =
-    "m-0 p-3 border-0 box-border w-full " +
+    "m-0 p-5 border-0 box-border w-full " +
     "font-mono text-[16px] leading-[1.6] tracking-[0] font-normal " +
     "whitespace-pre-wrap break-words [tab-size:4] " +
     "[font-variant-ligatures:none] [font-feature-settings:'liga'_0] " +
@@ -323,6 +335,16 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
             placeholder:text-(--text-muted)
           `}
           />
+          <div
+            className="absolute top-1 right-3 text-(--text-muted) rounded py-1 px-2 hover:bg-(--hover) cursor-pointer z-200"
+            onClick={() => {
+              setCopy(true);
+              navigator.clipboard.writeText(labelExpr);
+              setTimeout(() => setCopy(false), 2000);
+            }}
+          >
+            <span>{copy ? "✓" : ""} Copy </span>
+          </div>
         </div>
 
         {open && suggestions.length > 0 && (

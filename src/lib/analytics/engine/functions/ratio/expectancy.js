@@ -12,19 +12,18 @@ export const EXPECTANCY = {
       state.winSum += pnl;
     } else if (pnl < 0) {
       state.losses++;
-      state.lossSum += pnl;
+      state.lossSum += Math.abs(pnl);
     }
   },
 
   result(state) {
     const total = state.wins + state.losses;
-    if (!total || !state.wins || !state.losses) return null;
+    if (total === 0) return 0;
 
     const winRate = state.wins / total;
-    const lossRate = state.losses / total;
-    const avgWin = state.winSum / state.wins;
-    const avgLoss = Math.abs(state.lossSum / state.losses);
+    const avgWin = state.wins ? state.winSum / state.wins : 0;
+    const avgLoss = state.losses ? state.lossSum / state.losses : 0;
 
-    return winRate * avgWin - lossRate * avgLoss;
+    return winRate * avgWin - (1 - winRate) * avgLoss;
   },
 };

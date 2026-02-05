@@ -21,7 +21,7 @@ export function createCell(column) {
       break;
 
     case "select": {
-      value = column?.options?.[0] ?? "";
+      value = column?.options?.[0] ?? "-";
       break;
     }
 

@@ -30,7 +30,7 @@ export default function AddWidgetPopup() {
 
   return (
     <Popup open>
-      <Popup.Container className="max-w-200! w-136!">
+      <Popup.Container className="max-w-200! w-156!">
         {" "}
         <Popup.Header title="Add StatCard" onClose={closePopup} />
         <Popup.Body>

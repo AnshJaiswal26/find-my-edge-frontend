@@ -13,6 +13,7 @@ const applyReducer = (reducerName, values) => {
 export const getPieChartConfig = ({
   chartId,
   chart,
+  series,
   tooltipCallback,
   filteredConfig,
 }) => {
@@ -32,11 +33,13 @@ export const getPieChartConfig = ({
 
     dataLabels: {
       enabled: config.dataLabels,
-      formatter: (val) =>
-        formatValue(val, seriesConfig[0].type, {
+      formatter: (val, w) => {
+        const index = w.globals.seriesTotals.findIndex((v) => v === +val);
+        formatValue(series[index], seriesConfig[index].type, {
           format: config.format,
           decimals: config.decimals,
-        }),
+        });
+      },
     },
 
     tooltip: {
@@ -81,21 +84,23 @@ export const getPieChartConfig = ({
             },
             value: {
               show: config.value ?? true,
-              formatter: (val) =>
-                formatValue(val, seriesConfig[0].type, {
+              formatter: (val, w) => {
+                const index = w.globals.seriesTotals.findIndex(
+                  (v) => v === +val,
+                );
+                return formatValue(series[index], seriesConfig[index].type, {
                   format: config.format,
                   decimals: config.decimals,
-                }),
+                });
+              },
             },
             total: {
               show: config.total ?? true,
               label: config.totalLabel ?? "Total",
-              formatter: (w) => {
-                const vals = w.config.series;
-                const result = applyReducer(config.reducer ?? "SUM_N", vals);
+              formatter: () => {
+                const result = applyReducer(config.reducer ?? "SUM", series);
                 return formatValue(result, seriesConfig[0].type, {
-                  format:
-                    config.reducer !== "COUNT_N" ? config.format : "NUMBER",
+                  format: config.reducer !== "COUNT" ? config.format : "NUMBER",
                   decimals: config.decimals,
                 });
               },

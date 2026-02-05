@@ -28,7 +28,7 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
           flex items-center justify-center
           border-1 border-(--border)
           bg-(--surface-muted)
-          font-bold z-2
+          font-bold z-40
           group
           text-(--text)
         "

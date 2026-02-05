@@ -1,0 +1,5 @@
+export const COMPUTATION_MODE = {
+  BASE: "BASE",
+  WINDOW: "WINDOW",
+  AGGREGATE: "AGGREGATE",
+};

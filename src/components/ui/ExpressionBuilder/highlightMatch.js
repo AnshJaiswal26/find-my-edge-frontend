@@ -1,7 +1,9 @@
 export function highlightMatch(text, query) {
-  if (!query) {
-    return { before: text, match: "", after: "" };
+  if (!query || !text) {
+    return { before: text ?? "", match: "", after: "" };
   }
+
+  console.log(text, query);
 
   const lowerText = text.toLowerCase();
   const lowerQuery = query.toLowerCase();

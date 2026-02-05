@@ -47,9 +47,9 @@ export default function CenterLabelSection({
         <Select
           vertical
           label="Aggregate"
-          value={layoutDraft.reducer.replace("_N", "")}
+          value={layoutDraft.reducer}
           options={["SUM", "COUNT", "AVG", "MAX", "MIN"]}
-          onChange={(v) => setLayoutDraft((p) => ({ ...p, reducer: `${v}_N` }))}
+          onChange={(v) => setLayoutDraft((p) => ({ ...p, reducer: v }))}
         />
 
         <Divider />

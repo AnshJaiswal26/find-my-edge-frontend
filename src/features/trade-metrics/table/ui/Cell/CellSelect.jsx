@@ -14,16 +14,16 @@ export const CellSelect = ({
     <select
       className="w-full h-full px-2 py-1 outline-0"
       autoFocus
-      value={draft}
+      value={draft || "—"}
       onChange={(e) => {
-        console.log(e.target.value);
         setDraft(e.target.value);
       }}
       onBlur={() => {
-        onCommit(draft);
+        onCommit(draft || "—");
         setEditing(false);
       }}
     >
+      <option className="bg-(--surface)">—</option>
       {options.map((o) => (
         <option key={o} className="bg-(--surface)">
           {o}

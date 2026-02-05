@@ -15,6 +15,7 @@ export const getRadialBarChartConfig = ({
   chart,
   tooltipCallback,
   filteredConfig,
+  series,
 }) => {
   const config = chart.layout;
 
@@ -65,20 +66,21 @@ export const getRadialBarChartConfig = ({
           name: { show: config.name ?? true },
           value: {
             show: config.value ?? true,
-            formatter: (val) =>
-              formatValue(val, seriesConfig[0].type, {
-                format: config.format,
-                decimals: config.decimals,
-              }),
+            formatter: (val, w) => {
+              const index = w.config.series.indexOf(Number(val));
+              return formatValue(series[index], seriesConfig[index].type, {
+                format: seriesConfig[index].format,
+                decimals: seriesConfig[index].decimals,
+              });
+            },
           },
           total: {
             show: config.total ?? true,
             label: config.totalLabel ?? "Total",
             formatter: (w) => {
-              const vals = w.config.series;
-              const result = applyReducer(config.reducer ?? "SUM_N", vals);
+              const result = applyReducer(config.reducer ?? "SUM", series);
               return formatValue(result, seriesConfig[0].type, {
-                format: config.format,
+                format: config.reducer !== "COUNT" ? config.format : "NUMBER",
                 decimals: config.decimals,
               });
             },

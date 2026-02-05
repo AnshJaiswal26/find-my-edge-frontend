@@ -35,7 +35,7 @@ export default function VirtualizedRow({ scrollRef }) {
   const rowVirtualizer = useVirtualizer({
     count: visibleRows.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: (index) => (visibleRows[index].type === "group" ? 40 : 31.3),
+    estimateSize: (index) => (visibleRows[index].type === "group" ? 45 : 31.3),
     overscan: 6,
   });
 
@@ -61,13 +61,13 @@ export default function VirtualizedRow({ scrollRef }) {
           >
             {item.type === "group" ? (
               <>
-                <div className="w-full h-2" />
+                <div className="w-full h-3" />
                 <GroupRow
                   groupId={item.groupId}
                   label={item.label}
                   groupBy={groupBy}
                 />
-                <div className="w-full h-2" />
+                <div className="w-full h-3" />
               </>
             ) : (
               <Row

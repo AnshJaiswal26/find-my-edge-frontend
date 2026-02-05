@@ -56,7 +56,7 @@ export const CellDisplay = memo(function CellDisplay({
         color,
         border: cell.meta?.error ? "1px solid var(--error)" : "",
       }}
-      className="relative px-2 py-1 border-1 border-(--border) truncate overflow-hidden focus:border-(--info)"
+      className="relative px-2 py-1 border-1 border-(--border) truncate overflow-hidden focus:border-(--info) h-full"
       onClick={() => {
         unselectColumn({ id: colId });
       }}
@@ -65,7 +65,7 @@ export const CellDisplay = memo(function CellDisplay({
         setDraft(formatForInput(cell.value ?? "", type));
         setEditing(true);
       }}
-      onMouseEnter={(e) => handleMouseEnter(e, type, cell, colId, rowId, color)}
+      // onMouseEnter={(e) => handleMouseEnter(e, type, cell, colId, rowId, color)}
       onMouseLeave={tooltipApi.hide}
     >
       {displayValue}

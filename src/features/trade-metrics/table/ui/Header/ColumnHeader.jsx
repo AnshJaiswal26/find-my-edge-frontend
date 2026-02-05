@@ -116,6 +116,7 @@ export function ColumnHeader({
                   boxShadow: "-2px 0px 3px rgba(0,0,0,0.12)",
                 }),
             zIndex: 25,
+            color: "var(--text-muted)",
             background: "var(--surface-muted)",
           }),
       }}

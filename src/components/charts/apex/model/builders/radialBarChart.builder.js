@@ -11,7 +11,6 @@ export function buildRadialBarChart({ seriesConfig, groupSpec, layout = {} }) {
 
     layout: {
       ...DEFAULT_LAYOUTS.radialBar,
-      format: DEFAULT_FORMATS[seriesConfig[0].type || "number"],
       ...layout,
     },
 
@@ -20,9 +19,9 @@ export function buildRadialBarChart({ seriesConfig, groupSpec, layout = {} }) {
     seriesConfig: seriesConfig.map((s) => ({
       key: s.key,
       name: s.name ?? s.key,
-      seriesKey: s.seriesKey ?? "pnl",
       type: s.type ?? "number",
-      reducer: s.reducer ?? "SUM_N",
+      format: s.format ?? DEFAULT_FORMATS[s.type || "number"],
+      decimals: s.decimals ?? 2,
       expression: s.expression ?? null,
       tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
       color: s.color ?? "var(--info)",

@@ -42,7 +42,8 @@ export const Cell = memo(function Cell({
                 borderLeft: "1px solid var(--border)",
                 boxShadow: "-2px 0px 3px rgba(0,0,0,0.12)",
               }),
-          zIndex: 25,
+          color: "var(--text)",
+          zIndex: 2,
           background: "var(--surface)",
         }
       : {};
@@ -72,7 +73,7 @@ export const Cell = memo(function Cell({
 
   /* ================= DISPLAY MODE ================= */
   return (
-    <div style={stickyStyle}>
+    <div style={stickyStyle} className="h-full!">
       <CellDisplay
         type={type}
         cell={cell}

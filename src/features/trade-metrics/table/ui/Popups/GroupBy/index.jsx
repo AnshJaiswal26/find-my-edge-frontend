@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Popup } from "@layout";
+import { Popup, ErrorText } from "@layout";
 import { GroupByBuilder } from "@ui";
 import { useTableStore } from "@table/store/useTableStore";
 
@@ -21,13 +21,22 @@ export default function GroupByPopup() {
             groupBy={draft}
             onChange={setDraft}
           />
+          {draft?.labels &&
+            draft?.labels?.match === draft?.labels?.nonMatch && (
+              <ErrorText text="Group names must be different" />
+            )}
         </Popup.Body>
 
         <Popup.Footer
           text={["Clear", "Apply"]}
           onCancel={clearGroupBy}
           onApply={() => {
-            if (!draft.key || !draft.kind) return;
+            if (
+              !draft.key ||
+              !draft.kind ||
+              draft?.labels?.match === draft?.labels?.nonMatch
+            )
+              return;
             setGroupBy(draft);
           }}
         />

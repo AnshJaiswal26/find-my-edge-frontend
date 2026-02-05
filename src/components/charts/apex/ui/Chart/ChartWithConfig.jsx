@@ -12,6 +12,8 @@ export function ChartWithConfig({
   selectedGroupIndex,
   seriesById,
   seriesOrder,
+  schemasById,
+  schemasOrder,
 }) {
   const layout = useChartStore((s) => s[chartId].layout);
   const seriesConfig = useChartStore(
@@ -45,6 +47,8 @@ export function ChartWithConfig({
         selectedGroupIndex={selectedGroupIndex}
         seriesById={seriesById}
         seriesOrder={seriesOrder}
+        schemasById={schemasById}
+        schemasOrder={schemasOrder}
         selectedSeriesKeys={selectedSeriesKeys}
       />
     </div>

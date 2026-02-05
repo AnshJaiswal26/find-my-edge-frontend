@@ -1,5 +1,4 @@
 import { SUM } from "./sum";
-import { AVG } from "./avg";
 import { MAX } from "./max";
 import { MIN } from "./min";
 import { COUNT } from "./count";
@@ -12,18 +11,33 @@ import { COUNT_POSITIVE } from "./count_positive";
 import { STDDEV } from "./stddev";
 import { VARIANCE } from "./variance";
 
+
+import { SUM_IF } from "./sum_if";
+import { STREAK } from "./streak";
+import { MAX_DRAWDOWN } from "./max_drawdown";
+import { VOLATILITY } from "./volatility";
+
 export {
   SUM,
-  AVG,
   MAX,
   MIN,
   COUNT,
   COUNT_IF,
   COUNT_ALL,
+  COUNT_POSITIVE,
+  COUNT_NEGATIVE,
   SUM_POSITIVE,
   SUM_NEGATIVE,
-  COUNT_NEGATIVE,
-  COUNT_POSITIVE,
+  SUM_IF,
+
+  // Distribution
   STDDEV,
   VARIANCE,
+  VOLATILITY, // stddev of returns → still dispersion metric
+
+  // Conditional / Sequence
+  STREAK, // longest streak is a max over sequence
+
+  // Path-based metrics
+  MAX_DRAWDOWN,
 };

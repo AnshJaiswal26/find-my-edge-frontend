@@ -6,7 +6,6 @@ import {
   RotateCcw,
   LayoutGrid,
   ColumnsSettings,
-  Trash2,
   Rows3,
   Columns3,
   Group,
@@ -22,7 +21,6 @@ export function Toolbar({
   onFilter,
   onSort,
   onGroup,
-  onDelete,
   onToggleSummary,
   onToggleHeatmap,
   onResetLayout,
@@ -56,7 +54,7 @@ export function Toolbar({
           <div className="flex items-center gap-1">
             <Button.Icon
               disabled={isFilterApplied}
-              tooltip={{ text: "Add Trade", position: "bottom" }}
+              tooltip={{ text: "Add Row", position: "bottom" }}
               onClick={onAddTrade}
             >
               <Rows3 size={16} />
@@ -71,7 +69,7 @@ export function Toolbar({
 
             <Button.Icon
               className={isFilterApplied ? "bg-(--hover)!" : ""}
-              tooltip={{ text: "Filter Trades", position: "bottom" }}
+              tooltip={{ text: "Filter", position: "bottom" }}
               onClick={onFilter}
             >
               <Filter size={16} />
@@ -91,13 +89,6 @@ export function Toolbar({
               onClick={onGroup}
             >
               <Group size={16} />
-            </Button.Icon>
-
-            <Button.Icon
-              tooltip={{ text: "Delete Selected", position: "bottom" }}
-              onClick={onDelete}
-            >
-              <Trash2 size={16} />
             </Button.Icon>
           </div>
 

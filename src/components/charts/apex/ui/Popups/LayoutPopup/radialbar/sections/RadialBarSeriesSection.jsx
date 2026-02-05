@@ -1,5 +1,6 @@
 import { Section } from "@layout";
-import { ColorPicker, Input } from "@ui";
+import { ColorPicker, Input, Select } from "@ui";
+import { FORMATS } from "@utils";
 
 export default function RadialBarSeriesSection({ seriesDraft, updateSeries }) {
   return (
@@ -20,6 +21,26 @@ export default function RadialBarSeriesSection({ seriesDraft, updateSeries }) {
               value={series.tooltipLabel}
               onCommit={(v) => updateSeries(index, { tooltipLabel: v })}
             />
+
+            {/* ---------- Formatting ---------- */}
+            <Select
+              vertical
+              label="Format"
+              value={series.format}
+              options={FORMATS[series.type]}
+              onChange={(v) => updateSeries(index, { format: v })}
+            />
+
+            {series.type.includes("number") && (
+              <Input
+                label="Decimals"
+                type="range"
+                min={0}
+                max={5}
+                value={series.decimals}
+                onCommit={(v) => updateSeries(index, { decimals: Number(v) })}
+              />
+            )}
 
             <ColorPicker
               label="Bar Color"

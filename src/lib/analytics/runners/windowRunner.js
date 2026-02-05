@@ -1,4 +1,4 @@
-export function runBackwardWindowReducer(reducer, fn, ctx) {
+export function runWindowReducer(reducer, fn, ctx) {
   const args = fn.args;
   const nExpr = args[args.length - 1]; // last arg is always window size
   const n = Math.floor(ctx.evaluate(nExpr, ctx) ?? 0);

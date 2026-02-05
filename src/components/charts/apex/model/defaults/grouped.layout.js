@@ -9,9 +9,6 @@ export const GROUPED_CHART_LAYOUT = {
 
   value: true,
 
-  format: "",
-  decimals: 2,
-
   total: true,
   totalLabel: "SUM",
   reducer: "SUM_N",

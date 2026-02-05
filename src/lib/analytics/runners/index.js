@@ -1,3 +1,5 @@
 export { runBaseReducer } from "./baseRunner";
-export { runBackwardWindowReducer } from "./windowRunner";
-export { runGlobalReducer } from "./globalRunner";
+export { runWindowReducer } from "./windowRunner";
+export { runNativeWindowReducer } from "./nativeWindowRunner";
+export { runAggregateReducer } from "./aggregateRunner";
+export { runNativeAggregateReducer } from "./nativeAggregateRunner";

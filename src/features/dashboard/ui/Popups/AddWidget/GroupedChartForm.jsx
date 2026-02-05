@@ -3,6 +3,7 @@ import {
   Fragment,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { Button, ExpressionBuilder, GroupByBuilder, Input, Select } from "@ui";
@@ -11,18 +12,11 @@ import { Trash2 } from "lucide-react";
 import { useDashboardStore } from "@features/dashboard/store";
 import { useFilteredOptions } from "@features/dashboard/hooks";
 import { draftToSpec } from "@lib/analytics/engine/data";
-import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
-import { CONDITION_FUNCTIONS } from "@lib/analytics/engine/functions/condition/registry";
 
 export const GroupedChartForm = forwardRef(
   ({ type, options, schemasById }, ref) => {
     const addChart = useDashboardStore((s) => s.addChart);
-
-    const numericSchemas = useMemo(() => {
-      Object.values(schemasById).filter(
-        (s) => s.type !== "text" && s.type !== "select",
-      );
-    }, [schemasById]);
+    const builderRef = useRef();
 
     const [groupBy, setGroupBy] = useState({});
     const [grouping, setGrouping] = useState(false);
@@ -43,7 +37,6 @@ export const GroupedChartForm = forwardRef(
     const { optionsGroup, baseOptions, filteredOptions } = useFilteredOptions({
       series: seriesConfig,
       setSeries: setSeriesConfig,
-      groupSpec: draftToSpec(groupBy),
       options,
     });
 
@@ -54,7 +47,6 @@ export const GroupedChartForm = forwardRef(
         addChart(type, {
           layout,
           seriesConfig,
-          groupSpec: draftToSpec(groupBy),
         });
 
         return;
@@ -93,72 +85,55 @@ export const GroupedChartForm = forwardRef(
           {seriesConfig.map((s, i) => (
             <Fragment key={i}>
               {i !== 0 && <Divider />}
-              <Select
-                vertical
-                label={`Series ${i + 1}`}
-                value={s.key}
-                options={i === 0 ? baseOptions : filteredOptions}
-                getLabel={(o) => o.label}
-                getKey={(o) => o.id}
-                onChange={(o) => {
-                  setSeriesConfig((p) => {
-                    const next = [...p];
-                    next[i] = {
-                      ...next[i],
-                      key: o.id,
-                      name: o.label,
-                      type: o.type,
-                    };
-                    return next;
-                  });
-                }}
-              />
-              <div key={i} className="flex items-end justify-between">
-                {/* <Select
-                  label="Aggregate"
+              <div className="flex items-end justify-between">
+                <Select
                   vertical
-                  value={s.reducer.replace("_N", "")}
-                  options={Object.keys(RATIO_FUNCTIONS).map((k) =>
-                    k.replace("_N", ""),
-                  )}
-                  onChange={(o) =>
-                    setSeriesConfig((s) => {
-                      const next = [...s];
+                  label={`Series ${i + 1}`}
+                  value={s.key}
+                  options={i === 0 ? baseOptions : filteredOptions}
+                  getLabel={(o) => o.label}
+                  getKey={(o) => o.id}
+                  onChange={(o) => {
+                    setSeriesConfig((p) => {
+                      const next = [...p];
                       next[i] = {
                         ...next[i],
-                        reducer: `${o}`,
-                      };
-                      return next;
-                    })
-                  }
-                /> */}
-
-                <ExpressionBuilder
-                  key={i}
-                  value={expr}
-                  schemas={numericSchemas}
-                  functions={{ ...WINDOW_FUNCTIONS, ...CONDITION_FUNCTIONS }}
-                  onCommit={(expr, ast, dependency) => {
-                    setExpr(expr);
-                    setSeriesConfig((s) => {
-                      const next = [...s];
-                      next[i] = {
-                        ...next[i],
-                        expression: ast,
+                        key: o.id,
+                        name: o.label,
+                        type: o.type,
                       };
                       return next;
                     });
                   }}
                 />
-
                 <Button.Icon
                   onClick={() =>
                     setSeriesConfig((p) => p.filter((_, idx) => idx !== i))
                   }
                 >
                   <Trash2 size={18} />
-                </Button.Icon>
+                </Button.Icon>{" "}
               </div>
+
+              <ExpressionBuilder
+                key={i}
+                ref={builderRef}
+                value={expr}
+                schemasById={schemasById}
+                mode={"GLOBAL"}
+                semanticMode={"RATIO_REQUIRED"}
+                onCommit={(expr, ast, dependency) => {
+                  setExpr(expr);
+                  setSeriesConfig((s) => {
+                    const next = [...s];
+                    next[i] = {
+                      ...next[i],
+                      expression: ast,
+                    };
+                    return next;
+                  });
+                }}
+              />
             </Fragment>
           ))}
           <div>

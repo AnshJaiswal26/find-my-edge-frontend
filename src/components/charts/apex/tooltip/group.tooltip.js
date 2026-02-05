@@ -19,12 +19,28 @@ export const groupedTooltipCallback = ({
 
   const value = series[seriesIndex];
 
+  if (chart.meta.type === "donut") {
+    console.log(config);
+    return {
+      dataArray: [
+        {
+          value: formatValue(value, config?.type || "number", {
+            format: layout.format,
+            decimals: layout.decimals,
+          }),
+          label: config?.tooltipLabel || config.label,
+          color: config?.color || "var(--info)",
+        },
+      ],
+    };
+  }
+
   return {
     dataArray: [
       {
         value: formatValue(value, config?.type || "number", {
-          format: layout.format,
-          decimals: layout.decimals,
+          format: config.format,
+          decimals: config.decimals,
         }),
         label: config?.tooltipLabel || config.label,
         color: config?.color || "var(--info)",

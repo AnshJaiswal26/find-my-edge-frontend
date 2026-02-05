@@ -55,8 +55,8 @@ export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
                 }),
             }}
             className="
-              px-2 py-1 font-medium border-r border-(--border)
-              overflow-hidden text-nowrap
+              px-2 py-1 font-bold border border-(--border)
+              overflow-hidden text-nowrap text-(--text-muted)
             "
           >
             {isGroupColumn ? label : ""}

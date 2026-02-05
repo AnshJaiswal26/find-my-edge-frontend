@@ -1,10 +1,20 @@
 import { createChart } from "@charts/apex/model/factory";
 import { useChartStore } from "@charts/apex/store/useChartStore";
-import { computeOverSequence } from "@lib/analytics/engine/execute";
+import {
+  COMPUTATION_MODE,
+  computeOverSequence,
+} from "@lib/analytics/engine/execute";
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
+import { buildAST, tokenize, toPostfix } from "@lib/expression";
 import { useTradeStore, useUIStore } from "@stores";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+
+function makeAST(expr) {
+  const ast = buildAST(toPostfix(tokenize(expr)), "GLOBAL").ast;
+  // console.log(ast);
+  return ast;
+}
 
 const stats = [
   {
@@ -117,7 +127,7 @@ export const useDashboardStore = create(
         Object.values(schemasById).forEach((schema) => {
           computeOverSequence({
             schema,
-            getValue: (trade, key) => trade[key],
+            getValue: (trade, key) => trade[key] ?? null,
             setValue: (trade, schema, value) => {
               trade[schema.id] = value;
             },
@@ -131,7 +141,10 @@ export const useDashboardStore = create(
               const sch = schemasById[key];
               return { format: sch?.display?.format, type: sch.type };
             },
-            usePrev: schema.mode !== "row",
+            mode:
+              schema.mode !== "row"
+                ? COMPUTATION_MODE.WINDOW
+                : COMPUTATION_MODE.BASE,
           });
         });
       });
@@ -179,20 +192,20 @@ export const useDashboardStore = create(
       const seriesConfig = [
         {
           key: "WIN_RATE",
-          seriesKey: "pnl",
-          name: "WIN_RATE",
+          name: "Win Rate",
           type: "number",
-          reducer: "WIN_RATE",
+          expression: makeAST("AVG_IF(pnl, pnl > 0)"), // ✅ AST
+          exprString: "RATE(pnl > 0) * 100", // optional UI
           tooltipLabel: "Wins",
           color: "var(--info)",
         },
         {
           key: "LOSS_RATE",
-          seriesKey: "pnl",
-          name: "LOSS_RATE",
+          name: "Loss Rate",
           type: "number",
-          reducer: "LOSS_RATE",
-          tooltipLabel: "Loses",
+          expression: makeAST("AVG_IF(pnl, pnl < 0)"),
+          exprString: "RATE(pnl < 0) * 100",
+          tooltipLabel: "Losses",
           color: "var(--warning)",
         },
       ];
@@ -273,22 +286,44 @@ export const useDashboardStore = create(
           seriesConfig: [
             {
               key: "PROFIT_FACTOR",
-              seriesKey: "pnl",
-              name: "PROFIT_FACTOR",
+              name: "Profit Factor",
               type: "number",
-              reducer: "PROFIT_FACTOR",
-              tooltipLabel: "PROFIT_FACTOR",
+              expression: makeAST("SUM_POSITIVE(pnl) / ABS(SUM_NEGATIVE(pnl))"),
+              exprString: "SUM_POSITIVE(pnl) / ABS(SUM_NEGATIVE(pnl))",
+              tooltipLabel: "Profit Factor",
               color: "var(--success)",
             },
-
             {
               key: "LOSS_FACTOR",
-              seriesKey: "pnl",
-              name: "LOSS_FACTOR",
+              name: "Loss Factor",
               type: "number",
-              reducer: "LOSS_FACTOR",
-              expression: {},
-              tooltipLabel: "LOSS_FACTOR",
+              expression: makeAST("ABS(SUM_NEGATIVE(pnl)) / SUM_POSITIVE(pnl)"),
+              exprString: "ABS(SUM_NEGATIVE(pnl)) / SUM_POSITIVE(pnl)",
+              tooltipLabel: "Loss Factor",
+              color: "var(--error)",
+            },
+          ],
+        }),
+
+        donut3: createChart("donut", {
+          layout: { format: "NUMBER" },
+          seriesConfig: [
+            {
+              key: "PROFIT_FACTOR",
+              name: "Profit Factor",
+              type: "number",
+              expression: makeAST("SUM_POSITIVE(pnl) / ABS(SUM_NEGATIVE(pnl))"),
+              exprString: "SUM_POSITIVE(pnl) / ABS(SUM_NEGATIVE(pnl))",
+              tooltipLabel: "Profit Factor",
+              color: "var(--success)",
+            },
+            {
+              key: "LOSS_FACTOR",
+              name: "Loss Factor",
+              type: "number",
+              expression: makeAST("ABS(SUM_NEGATIVE(pnl)) / SUM_POSITIVE(pnl)"),
+              exprString: "ABS(SUM_NEGATIVE(pnl)) / SUM_POSITIVE(pnl)",
+              tooltipLabel: "Loss Factor",
               color: "var(--error)",
             },
           ],

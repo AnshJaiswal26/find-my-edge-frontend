@@ -1,6 +1,9 @@
 import { useTradeStore } from "@stores";
 import { collectAffectedColumns } from "../dependency";
-import { computeOverSequence } from "@lib/analytics/engine/execute";
+import {
+  COMPUTATION_MODE,
+  computeOverSequence,
+} from "@lib/analytics/engine/execute";
 
 export const createComputeSlice = (set, get) => ({
   /* ------------------------------------------------------- */
@@ -52,7 +55,7 @@ export const createComputeSlice = (set, get) => ({
         trade.cells[schema.id].value = value;
       };
 
-      const compute = ({ sequenceIds, schema, startIndex = 0, usePrev }) => {
+      const compute = ({ sequenceIds, schema, startIndex = 0, mode }) => {
         computeOverSequence({
           schema,
           getTradeAt: (index) => {
@@ -68,7 +71,7 @@ export const createComputeSlice = (set, get) => ({
           getValue,
           setValue,
           startIndex,
-          usePrev,
+          mode,
         });
       };
 
@@ -78,7 +81,9 @@ export const createComputeSlice = (set, get) => ({
        * FULL RECOMPUTE
        * ================================ */
       if (!payload || payload.reason === "all") {
-        Object.values(columnsById).forEach((schema) => {
+        columnOrder.forEach((id) => {
+          const schema = columnsById[id];
+
           if (!isComputed(schema)) return;
 
           // Grouped
@@ -87,7 +92,7 @@ export const createComputeSlice = (set, get) => ({
               compute({
                 schema,
                 sequenceIds: group.tradeIds,
-                usePrev: true,
+                mode: COMPUTATION_MODE.WINDOW,
               }),
             );
             return;
@@ -97,7 +102,10 @@ export const createComputeSlice = (set, get) => ({
           compute({
             schema,
             sequenceIds: rowOrder,
-            usePrev: schema.mode !== "row",
+            mode:
+              schema.mode !== "row"
+                ? COMPUTATION_MODE.WINDOW
+                : COMPUTATION_MODE.BASE,
           });
         });
 
@@ -113,28 +121,33 @@ export const createComputeSlice = (set, get) => ({
             schema: col,
             sequenceIds: rowOrder,
             startIndex: Math.max(payload.rowIndex - 1, 0),
-            usePrev: true,
+            mode: COMPUTATION_MODE.WINDOW,
           });
         });
         return;
       }
 
       if (payload.reason === "grouping") {
-        console.log(payload);
         columnOrder.forEach((id) => {
           const col = columnsById[id];
-          console.log(col, id);
+
           if (!col || col?.mode !== "grouped") return;
 
-          console.log(id);
-
-          groups.forEach((group) =>
-            compute({
-              schema: col,
-              sequenceIds: group.tradeIds,
-              usePrev: true,
-            }),
-          );
+          if (groups) {
+            groups.forEach((group) =>
+              compute({
+                schema: col,
+                sequenceIds: group.tradeIds,
+                mode: COMPUTATION_MODE.WINDOW,
+              }),
+            );
+            return;
+          }
+          compute({
+            schema: col,
+            sequenceIds: rowOrder,
+            mode: COMPUTATION_MODE.WINDOW,
+          });
         });
         return;
       }
@@ -160,7 +173,7 @@ export const createComputeSlice = (set, get) => ({
               schema,
               sequenceIds: group.tradeIds,
               startIndex: group.tradeIds.indexOf(rowId),
-              usePrev: true,
+              mode: COMPUTATION_MODE.WINDOW,
             });
 
             return;
@@ -171,7 +184,7 @@ export const createComputeSlice = (set, get) => ({
             compute({
               schema,
               sequenceIds: [rowId],
-              usePrev: false,
+              mode: COMPUTATION_MODE.BASE,
             });
             return;
           }
@@ -184,7 +197,7 @@ export const createComputeSlice = (set, get) => ({
             schema,
             sequenceIds: rowOrder,
             startIndex: changedIndex,
-            usePrev: true,
+            mode: COMPUTATION_MODE.WINDOW,
           });
         });
 
@@ -204,7 +217,7 @@ export const createComputeSlice = (set, get) => ({
             compute({
               schema,
               sequenceIds: group.tradeIds,
-              usePrev: true,
+              mode: COMPUTATION_MODE.WINDOW,
             }),
           );
           return;
@@ -213,7 +226,10 @@ export const createComputeSlice = (set, get) => ({
         compute({
           schema,
           sequenceIds: rowOrder,
-          usePrev: schema.mode !== "row",
+          mode:
+            schema.mode !== "row"
+              ? COMPUTATION_MODE.WINDOW
+              : COMPUTATION_MODE.BASE,
         });
       }
     });

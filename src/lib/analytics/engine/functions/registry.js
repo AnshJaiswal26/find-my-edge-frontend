@@ -45,11 +45,11 @@ export const FUNCTION_ALLOW_BY_MODE = {
   // /* ---------------------------------- */
   // /* Ratio / derived row column         */
   // /* ---------------------------------- */
-  // RATIO: new Set([
-  //   ...Object.keys(BASE_FUNCTIONS),
-  //   ...Object.keys(CONDITION_FUNCTIONS),
-  //   ...Object.keys(RATIO_FUNCTIONS),
-  // ]),
+  RATIO: new Set([
+    ...Object.keys(BASE_FUNCTIONS),
+    ...Object.keys(CONDITION_FUNCTIONS),
+    ...Object.keys(RATIO_FUNCTIONS),
+  ]),
 
   /* ---------------------------------- */
   /* Full-sequence aggregate (charts)   */

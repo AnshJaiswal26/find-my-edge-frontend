@@ -12,17 +12,17 @@ export function buildDonutChart({ seriesConfig, groupSpec, layout = {} }) {
     layout: {
       ...DEFAULT_LAYOUTS.pie,
       format: DEFAULT_FORMATS[seriesConfig[0].type || "number"],
+      decimals: 2,
       ...layout,
     },
 
     groupSpec: groupSpec ?? null,
 
     seriesConfig: seriesConfig.map((s) => ({
-      key: s.key,
+      key: crypto.randomUUID(),
       name: s.name ?? s.key,
-      seriesKey: s.seriesKey ?? "pnl",
+      // seriesKey: crypto.randomUUID(),
       type: s.type ?? "number",
-      reducer: s.reducer ?? "SUM_N",
       expression: s.expression ?? null,
       tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
       color: s.color ?? "var(--info)",

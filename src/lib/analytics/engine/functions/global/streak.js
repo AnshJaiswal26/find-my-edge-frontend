@@ -1,0 +1,18 @@
+export const STREAK = {
+  init() {
+    return { max: 0, current: 0 };
+  },
+
+  step(state, [condition]) {
+    if (condition) {
+      state.current++;
+      state.max = Math.max(state.max, state.current);
+    } else {
+      state.current = 0;
+    }
+  },
+
+  result(state) {
+    return state.max;
+  },
+};
