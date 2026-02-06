@@ -10,6 +10,7 @@ import StatCards from "./components/StatsGrid";
 import { Container, Loader } from "@layout";
 import { useDashboardStore } from "./store";
 import { AddWidget } from "./ui/Popups";
+import { useTradeStore } from "@stores";
 
 const getColumnCount = () => {
   const w = document.innerWidth;
@@ -20,10 +21,10 @@ const getColumnCount = () => {
 };
 
 export default function Dashboard() {
-  const seriesOrder = useDashboardStore((s) => s.seriesOrder);
-  const seriesById = useDashboardStore((s) => s.seriesById);
-  const schemasById = useDashboardStore((s) => s.schemasById);
-  const schemasOrder = useDashboardStore((s) => s.schemasOrder);
+  const seriesOrder = useTradeStore((s) => s.tradeOrder);
+  const seriesById = useTradeStore((s) => s.tradesById);
+  const schemasById = useTradeStore((s) => s.schemasById);
+  const schemasOrder = useTradeStore((s) => s.schemasOrder);
 
   return (
     <>
@@ -39,6 +40,12 @@ export default function Dashboard() {
         schemasById={schemasById}
         schemasOrder={schemasOrder}
       />
+
+      {/* <ConfirmationPopup
+        open={true}
+        onCancel={() => null}
+        onConfirm={() => null}
+      /> */}
 
       <Container className="rounded-[4px]">
         <div className="flex-box items-center">
@@ -95,6 +102,7 @@ function ChartDashboard({
   const isResponsiveChange = useRef(false);
 
   const order = useDashboardStore((s) => s.order);
+  const deleteChart = useDashboardStore((s) => s.deleteChart);
 
   const savedLayout = useChartStore((s) => s.chartGridLayout);
 
@@ -167,9 +175,11 @@ function ChartDashboard({
   }, [order]);
 
   useEffect(() => {
+    useDashboardStore.getState().loadInitialCharts();
     window.dispatchEvent(new Event("resize"));
-    useDashboardStore.getState().hydrateFromTrades();
   }, []);
+
+  console.log(seriesById, seriesOrder);
 
   return (
     <div className="grid-stack" ref={gridRef}>
@@ -199,6 +209,7 @@ function ChartDashboard({
                   seriesOrder={seriesOrder}
                   schemasById={schemasById}
                   schemasOrder={schemasOrder}
+                  onRemove={deleteChart}
                 />
               </div>
             </div>

@@ -34,7 +34,8 @@ export default function GroupByPopup() {
             if (
               !draft.key ||
               !draft.kind ||
-              draft?.labels?.match === draft?.labels?.nonMatch
+              (draft?.labels &&
+                draft?.labels?.match === draft?.labels?.nonMatch)
             )
               return;
             setGroupBy(draft);

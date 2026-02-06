@@ -5,6 +5,23 @@ import {
   computeOverSequence,
 } from "@lib/analytics/engine/execute";
 
+function syncRowsToTradeStore(rowsById, changedRowIds) {
+  if (!changedRowIds.size) return;
+
+  useTradeStore.setState((state) => {
+    changedRowIds.forEach((id) => {
+      const row = rowsById[id];
+      const trade = {};
+
+      Object.entries(row.cells).forEach(([colId, cell]) => {
+        trade[colId] = cell.value;
+      });
+
+      state.tradesById[id] = { id, ...trade };
+    });
+  });
+}
+
 export const createComputeSlice = (set, get) => ({
   /* ------------------------------------------------------- */
   /*              CELL AND RECOMPUTE ACTIONS                 */
@@ -36,6 +53,8 @@ export const createComputeSlice = (set, get) => ({
   },
 
   recompute(payload) {
+    const changedRowIds = new Set();
+
     set((state) => {
       const {
         rowsById: tradesById,
@@ -45,14 +64,22 @@ export const createComputeSlice = (set, get) => ({
         affectedMap,
         groupBy,
         groups,
+        filteredRowOrder,
+        sortedRowOrder,
       } = state;
 
       /* ================================
        * Helpers
        * ================================ */
       const getValue = (trade, key) => trade.cells[key]?.value ?? null;
+
       const setValue = (trade, schema, value) => {
-        trade.cells[schema.id].value = value;
+        const cell = trade.cells[schema.id];
+
+        if (cell.value === value) return; // no real change
+
+        cell.value = value;
+        changedRowIds.add(trade.id); // 🔥 track row that changed
       };
 
       const compute = ({ sequenceIds, schema, startIndex = 0, mode }) => {
@@ -108,11 +135,7 @@ export const createComputeSlice = (set, get) => ({
                 : COMPUTATION_MODE.BASE,
           });
         });
-
-        return;
-      }
-
-      if (payload.reason === "row-delete") {
+      } else if (payload.reason === "row-delete") {
         columnOrder.forEach((id) => {
           const col = columnsById[id];
           if (!col || col?.mode !== "cumulative") return;
@@ -124,10 +147,13 @@ export const createComputeSlice = (set, get) => ({
             mode: COMPUTATION_MODE.WINDOW,
           });
         });
-        return;
-      }
+      } else if (payload.reason === "grouping") {
+        const effectiveOrder = sortedRowOrder.length
+          ? sortedRowOrder
+          : filteredRowOrder.length
+            ? filteredRowOrder
+            : rowOrder;
 
-      if (payload.reason === "grouping") {
         columnOrder.forEach((id) => {
           const col = columnsById[id];
 
@@ -145,17 +171,14 @@ export const createComputeSlice = (set, get) => ({
           }
           compute({
             schema: col,
-            sequenceIds: rowOrder,
+            sequenceIds: effectiveOrder,
             mode: COMPUTATION_MODE.WINDOW,
           });
         });
-        return;
-      }
-
-      /* ================================
-       * CELL CHANGE (PARTIAL)
-       * ================================ */
-      if (payload.reason === "cell") {
+      } else if (payload.reason === "cell") {
+        /* ================================
+         * CELL CHANGE (PARTIAL)
+         * ================================ */
         const { rowId, colId } = payload;
 
         const affectedSchemas = collectAffectedColumns(colId, affectedMap);
@@ -200,14 +223,11 @@ export const createComputeSlice = (set, get) => ({
             mode: COMPUTATION_MODE.WINDOW,
           });
         });
-
-        return;
-      }
+      } else if (payload.reason === "column" && payload.colId) {
 
       /* ================================
        * COLUMN CHANGE
        * ================================ */
-      if (payload.reason === "column" && payload.colId) {
         const schema = columnsById[payload.colId];
         if (!isComputed(schema)) return;
 
@@ -232,6 +252,7 @@ export const createComputeSlice = (set, get) => ({
               : COMPUTATION_MODE.BASE,
         });
       }
+      syncRowsToTradeStore(tradesById, changedRowIds);
     });
   },
 });

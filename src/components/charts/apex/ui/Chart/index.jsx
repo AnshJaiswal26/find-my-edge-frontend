@@ -16,6 +16,7 @@ export default function CustomApexChart({
   seriesById,
   schemasById,
   schemasOrder,
+  onRemove,
 }) {
   const groupSpec = useChartStore((s) => s[chartId]?.groupSpec);
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
@@ -64,6 +65,7 @@ export default function CustomApexChart({
           seriesById={seriesById}
           schemasById={schemasById}
           schemasOrder={schemasOrder}
+          onRemove={onRemove}
         />
       </div>
     </ChartContainer>

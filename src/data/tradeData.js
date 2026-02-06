@@ -50,12 +50,6 @@ function getRandomTradingDuration() {
   };
 }
 
-const days = 100;
-const dateBeforeDays = getDateBeforeDays(days);
-
-let cumulativePnl = 0;
-let capital = 15000;
-
 const fix = (v) => +parseFloat(v).toFixed(2);
 
 const randomPrice = (min = 100, max = 400) =>
@@ -72,57 +66,63 @@ const randomSymbol = (num) => {
   else return "SENSEX";
 };
 
-export const tradeData = Array.from({ length: days }).map((_, i) => {
-  const num = Math.random();
-  const tradeId = `T00${i + 1}`;
+const days = 100;
+const dateBeforeDays = getDateBeforeDays(days);
+
+let cumulativePnl = 0;
+let capital = 15000;
+
+export const tradeData = [];
+
+for (let i = 0; i < days; i++) {
   const date = generateDate(dateBeforeDays, i);
 
-  const risk = 500;
+  // 🔁 Random number of trades for this day (1–5)
+  const tradesToday = Math.floor(Math.random() * 5) + 1;
 
-  const qty = randomQty(); // 10–30
-  const entry = randomPrice(100, 400); // base price
+  for (let t = 0; t < tradesToday; t++) {
+    const num = Math.random();
+    const tradeId = `T${i + 1}_${t + 1}`;
 
-  // 🔒 exit move: max risk / qty pts down, 100 pts up
-  const move = randomPrice(-risk / qty, 100);
-  const exit = num > 0.5 ? fix(-risk / qty + entry) : fix(entry + move);
+    const risk = 500;
+    const qty = randomQty();
+    const entry = randomPrice(100, 400);
 
-  // ✅ derived PnL
-  const pnl = fix((exit - entry) * qty);
+    const move = randomPrice(-risk / qty, 100);
+    const exit = num > 0.5 ? fix(-risk / qty + entry) : fix(entry + move);
 
-  const { entryTime, exitTime, durationSeconds } = getRandomTradingDuration();
-  const charges = fix(65 + num * 10);
-  const trade = `Trade ${i + 1}`;
-  const rr = fix(pnl / risk);
+    const pnl = fix((exit - entry) * qty);
 
-  cumulativePnl = fix(cumulativePnl + pnl);
-  capital = fix(capital + pnl);
+    const { entryTime, exitTime, durationSeconds } = getRandomTradingDuration();
+    const charges = fix(65 + num * 10);
+    const rr = fix(pnl / risk);
 
-  if (i === 0) {
-    console.log(entryTime, exitTime, durationSeconds);
+    cumulativePnl = fix(cumulativePnl + pnl);
+    capital = fix(capital + pnl);
+
+    tradeData.push({
+      tradeId,
+      date,
+      entryTime,
+      exitTime,
+      duration: durationSeconds,
+      symbol: randomSymbol(num),
+      entry,
+      exit,
+      qty,
+      sl: fix(entry - risk / qty),
+      pnl,
+      cumulativePnl,
+      profit: pnl > 0 ? pnl : 0,
+      loss: pnl < 0 ? pnl : 0,
+      risk,
+      charges,
+      trade: `Trade ${i + 1}-${t + 1}`,
+      riskReward: rr,
+      capital,
+    });
   }
-
-  return {
-    tradeId: tradeId,
-    date,
-    entryTime: entryTime,
-    exitTime: exitTime,
-    duration: durationSeconds,
-    symbol: randomSymbol(num),
-    entry,
-    exit,
-    qty,
-    sl: exit - entry,
-    pnl,
-    cumulativePnl: cumulativePnl,
-    profit: pnl > 0 ? pnl : 0,
-    loss: pnl < 0 ? pnl : 0,
-    risk,
-    charges,
-    trade,
-    riskReward: rr,
-    capital,
-  };
-});
+}
 
 console.log(tradeData);
-console.log(+tradeData.reduce((acc, r) => r.Pnl + acc, 0).toFixed(2));
+console.log("Total PnL:", fix(tradeData.reduce((acc, r) => acc + r.pnl, 0)));

@@ -121,7 +121,9 @@ export const GroupedChartForm = forwardRef(
                 value={expr}
                 schemasById={schemasById}
                 mode={"GLOBAL"}
-                semanticMode={"RATIO_REQUIRED"}
+                semanticMode={
+                  type == "radialBar" ? "RATIO_REQUIRED" : "STANDARD"
+                }
                 onCommit={(expr, ast, dependency) => {
                   setExpr(expr);
                   setSeriesConfig((s) => {

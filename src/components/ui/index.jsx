@@ -18,3 +18,4 @@ export { default as FilterBuilder } from "./FilterBuilder";
 export { default as SidePanelPopup } from "./SidePanelPopup";
 export { default as GroupByBuilder } from "./GroupByBuilder";
 export { ExpressionBuilder } from "./ExpressionBuilder";
+export { default as ConfirmationPopup } from "./ConfirmationPopup";

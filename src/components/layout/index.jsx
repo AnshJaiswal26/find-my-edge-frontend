@@ -275,7 +275,7 @@ Popup.Footer = ({
   onApply,
   disableCancel = false,
   disableApply = false,
-  className = "",
+  classNames,
 }) => {
   return (
     <footer
@@ -283,7 +283,7 @@ Popup.Footer = ({
         p-[15px]
         border-t border-(--border)
         flex justify-end gap-4
-        ${className}
+        ${classNames?.footer}
       `}
     >
       {onCancel && (
@@ -292,10 +292,16 @@ Popup.Footer = ({
           onClick={onCancel}
           hollow
           disabled={disableCancel}
+          classNames={{ button: classNames?.cancelBtn }}
         />
       )}
       {onApply && (
-        <Button text={text[1]} onClick={onApply} disabled={disableApply} />
+        <Button
+          text={text[1]}
+          onClick={onApply}
+          disabled={disableApply}
+          classNames={{ button: classNames?.applyBtn }}
+        />
       )}
     </footer>
   );

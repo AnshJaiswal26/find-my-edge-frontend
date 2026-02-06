@@ -45,8 +45,6 @@ function App() {
 
     useTradeStore.getState().fetchTrades();
     useTableStore.getState().hydrateFromTrades();
-    useDashboardStore.getState().hydrateFromTrades();
-    useDashboardStore.getState().recomputeAll();
 
     const close = () => {
       setSelect(null);

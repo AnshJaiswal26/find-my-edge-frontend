@@ -47,20 +47,6 @@ export const useTradeStore = create(
       set({ tradesById, tradeOrder, isLoading: false });
     },
 
-    getChangesSince(lastSeenVersion) {
-      const { tradeVersions, schemaVersions } = get();
-
-      const changedTrades = Object.keys(tradeVersions).filter(
-        (id) => tradeVersions[id] > lastSeenVersion,
-      );
-
-      const changedSchemas = Object.keys(schemaVersions).filter(
-        (id) => schemaVersions[id] > lastSeenVersion,
-      );
-
-      return { changedTrades, changedSchemas };
-    },
-
     addTrade(trade, id) {
       set((s) => {
         s.tradesById[id] = { id, ...trade };

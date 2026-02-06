@@ -58,14 +58,14 @@ const commonActions = [
   {
     icon: Trash2,
     title: "Remove Chart",
-    onClick: (chartId) => deleteChart(chartId),
   },
 ];
 
-export default function Toolbar({ chartId }) {
+export default function Toolbar({ chartId, onRemove }) {
   const chart = useChartStore.getState()[chartId];
 
-  const isGroupType = chart.meta.category === "group";
+  const isGroupType =
+    chart.meta.category === "group" || chart.meta.category === "axis-series";
 
   const iconButtonsBar = isGroupType
     ? commonActions
@@ -77,7 +77,11 @@ export default function Toolbar({ chartId }) {
         <Button.Icon
           key={index}
           tooltip={{ text: item.title, position: "left" }}
-          onClick={() => item?.onClick?.(chartId)}
+          onClick={() => {
+            item.title === "Remove Chart"
+              ? onRemove?.(chartId)
+              : item?.onClick?.(chartId);
+          }}
         >
           <item.icon size={16} className="text-inherit" />
         </Button.Icon>

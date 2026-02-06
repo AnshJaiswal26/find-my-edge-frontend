@@ -1,5 +1,6 @@
 export const createCoreSlice = (set, get) => ({
   deleteChart(chartId) {
+    console.log(chartId);
     set((s) => {
       delete s[chartId];
       s.order = s.order.filter(({ id }) => id !== chartId);

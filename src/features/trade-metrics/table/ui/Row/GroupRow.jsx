@@ -7,7 +7,6 @@ export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
   const columnWidths = useTableStore((s) => s.columnWidths);
   const expanded = useTableStore((s) => !!s.expandedGroups[groupId]);
   const toggleGroup = useTableStore((s) => s.toggleGroup);
-  const scrollEdge = useTableStore((s) => s.scrollEdge);
 
   const groupedColId = groupBy?.key;
 
@@ -38,26 +37,11 @@ export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
         return (
           <div
             key={colId}
-            style={{
-              width: columnWidths[colId] ?? 150,
-              ...(isGroupColumn &&
-                scrollEdge && {
-                  position: "sticky",
-                  ...(scrollEdge === "right"
-                    ? { left: 51, boxShadow: "2px 0px 3px rgba(0,0,0,0.12)" }
-                    : {
-                        right: 0,
-                        borderLeft: "1px solid var(--border)",
-                        boxShadow: "-2px 0px 3px rgba(0,0,0,0.12)",
-                      }),
-                  zIndex: 25,
-                  background: "var(--surface-muted)",
-                }),
-            }}
-            className="
+            style={{ width: columnWidths[colId] ?? 150 }}
+            className={`
               px-2 py-1 font-bold border border-(--border)
               overflow-hidden text-nowrap text-(--text-muted)
-            "
+              ${isGroupColumn ? "stick-left text-(--text-muted) bg-(--surface-muted)" : ""}`}
           >
             {isGroupColumn ? label : ""}
           </div>

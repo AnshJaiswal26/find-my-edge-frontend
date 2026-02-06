@@ -20,7 +20,6 @@ export const groupedTooltipCallback = ({
   const value = series[seriesIndex];
 
   if (chart.meta.type === "donut") {
-    console.log(config);
     return {
       dataArray: [
         {

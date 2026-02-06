@@ -1,48 +1,44 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import TradeDayDetails from "./TradeDayDetials";
+import { useCalendarTrades } from "./hooks/useCalendarData";
 import CalendarHeader from "./CalendarHeader";
 import CalendarGrid from "./CalendarGrid";
 import PopupSummary from "./PopupSummary";
-import PopupOverview from "./PopupOverview";
 import { Container } from "@layout";
 
 const YearlyCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
 
-  const data = [
-    { date: "2025-04-18", type: "profit", amount: 500 },
-    { date: "2025-04-15", type: "loss", amount: 200 },
-    { date: "2025-04-16", type: "no-trade" },
-  ];
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const data = useCalendarTrades(year, month);
 
   return (
-    <div
-      className="
-          flex flex-wrap justify-center gap-6
-          w-full max-w-[1400px] h-full
-        "
-    >
-      <Container childClassName="gap-2!" className="flex-3">
-        <CalendarHeader
-          date={currentDate}
-          onPrev={() =>
-            setCurrentDate(
-              new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
-            )
-          }
-          onNext={() =>
-            setCurrentDate(
-              new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
-            )
-          }
-        />
+    <div className="w-full flex px-6 py-6 border">
+      {/* LEFT SIDE */}
+      <div className="flex gap-5 w-full">
+        <Container className="gap-4! w-[40%]">
+          <CalendarHeader
+            date={currentDate}
+            onPrev={() => setCurrentDate(new Date(year, month - 1, 1))}
+            onNext={() => setCurrentDate(new Date(year, month + 1, 1))}
+          />
 
-        <CalendarGrid currentDate={currentDate} data={data} />
-      </Container>
+          <CalendarGrid
+            currentDate={currentDate}
+            data={data}
+            onSelectDate={setSelectedDate}
+          />
+        </Container>
 
-      <div className="flex flex-col flex-2 gap-6 min-w-[300px]">
-        <PopupSummary />
-        <PopupOverview />
+        <TradeDayDetails data={data} selectedDate={selectedDate} />
       </div>
+
+      {/* RIGHT SIDE */}
+      {/* <div>
+          <PopupSummary data={data} currentDate={currentDate} />
+        </div> */}
     </div>
   );
 };

@@ -5,40 +5,59 @@ const CalendarHeader = ({ date, onPrev, onNext }) => {
     <div
       className="
         flex items-center justify-between
-        px-6 py-4 rounded-xl
-        bg-gradient-to-b from-(--surface) to-(--surface-muted)
-        text-(--text)
-        shadow-lg
+        px-4 py-3
+        rounded-xl
+        bg-(--surface)
         border border-(--border-muted)
       "
     >
+      {/* Left Nav */}
       <button
         onClick={onPrev}
         className="
-          p-2 rounded-full
+          flex items-center justify-center
+          w-9 h-9
+          rounded-lg
+          bg-(--surface-muted)
           hover:bg-(--hover)
-          transition
+          text-(--text-muted)
+          hover:text-(--text)
         "
       >
-        <ChevronLeft size={19} />
+        <ChevronLeft size={18} />
       </button>
 
-      <div className="flex items-center gap-3 text-lg font-semibold">
-        <span className="opacity-80">
-          <CalendarDaysIcon />
-        </span>
-        {date.toLocaleString("default", { month: "long" })} {date.getFullYear()}
+      {/* Center Title */}
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-(--surface-muted) text-(--text-muted)">
+          <CalendarDaysIcon size={18} />
+        </div>
+
+        <div className="flex flex-col leading-tight">
+          <span className="text-xs uppercase tracking-wider text-(--text-muted)">
+            Trading Calendar
+          </span>
+          <span className="text-base font-semibold text-(--text)">
+            {date.toLocaleString("default", { month: "long" })}{" "}
+            {date.getFullYear()}
+          </span>
+        </div>
       </div>
 
+      {/* Right Nav */}
       <button
         onClick={onNext}
         className="
-          p-2 rounded-full
+          flex items-center justify-center
+          w-9 h-9
+          rounded-lg
+          bg-(--surface-muted)
           hover:bg-(--hover)
-          transition
+          text-(--text-muted)
+          hover:text-(--text)
         "
       >
-        <ChevronRight size={19} />
+        <ChevronRight size={18} />
       </button>
     </div>
   );

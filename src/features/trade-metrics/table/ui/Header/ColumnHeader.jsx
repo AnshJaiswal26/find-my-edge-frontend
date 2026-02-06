@@ -15,13 +15,7 @@ function getColumnRects(tableEl) {
   );
 }
 
-export function ColumnHeader({
-  colId,
-  index,
-  tableRef,
-  scrollEdge,
-  isGroupColumn,
-}) {
+export function ColumnHeader({ colId, index, tableRef, isGroupColumn }) {
   const headerRef = useRef(null);
 
   const column = useTableStore((s) => s.columnsById[colId]);
@@ -102,42 +96,31 @@ export function ColumnHeader({
     <div
       ref={headerRef}
       data-col-header
-      className="group relative select-none overflow-hidden overflow-ellipsis text-nowrap"
-      style={{
-        width,
-        ...(isGroupColumn &&
-          scrollEdge && {
-            position: "sticky",
-            ...(scrollEdge === "right"
-              ? { left: 51, boxShadow: "2px 0px 3px rgba(0,0,0,0.12)" }
-              : {
-                  right: 0,
-                  borderLeft: "1px solid var(--border)",
-                  boxShadow: "-2px 0px 3px rgba(0,0,0,0.12)",
-                }),
-            zIndex: 25,
-            color: "var(--text-muted)",
-            background: "var(--surface-muted)",
-          }),
-      }}
+      className={`group relative select-none overflow-hidden overflow-ellipsis text-nowrap 
+      ${isGroupColumn ? "stick-left text-(--text-muted) bg-(--surface-muted)" : ""}`}
+      style={{ width }}
       onClick={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         selectColumn({ id: colId, width: rect.width, left: rect.left });
       }}
     >
-      {/* DRAG */}
-      <div
-        onPointerDown={(e) => handlePointerDown(e, "drag")}
-        className="opacity-0 group-hover:opacity-60 absolute -bottom-1 left-1/2 -translate-x-1/2 cursor-grab"
-      >
-        <GripHorizontal size={18} />
-      </div>
+      {!isGroupColumn && (
+        <>
+          {/* DRAG */}
+          <div
+            onPointerDown={(e) => handlePointerDown(e, "drag")}
+            className="opacity-0 group-hover:opacity-60 absolute -bottom-1 left-1/2 -translate-x-1/2 cursor-grab"
+          >
+            <GripHorizontal size={18} />
+          </div>
 
-      {/* RESIZE */}
-      <div
-        onPointerDown={(e) => handlePointerDown(e, "resize")}
-        className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-(--cyan)"
-      />
+          {/* RESIZE */}
+          <div
+            onPointerDown={(e) => handlePointerDown(e, "resize")}
+            className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-(--cyan)"
+          />
+        </>
+      )}
 
       <div
         className={`flex font-bold items-center px-2 py-1 border-r border-(--border) justify-between`}

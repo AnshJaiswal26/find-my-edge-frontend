@@ -10,43 +10,11 @@ import { Loader } from "@layout";
 export function Table() {
   const tableRef = useRef(null);
 
-  const setScrollEdge = useTableStore((s) => s.setScrollEdge);
   const addRow = useTableStore((s) => s.addRow);
   const openPopup = useTableStore((s) => s.openPopup);
   const deleteColumn = useTableStore((s) => s.deleteColumn);
 
   const isDataLoading = useTableStore((s) => s.isDataLoading);
-
-  /* -------- Detect horizontal scroll edge -------- */
-  useEffect(() => {
-    const el = tableRef.current;
-    if (!el) return;
-
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (ticking) return;
-
-      ticking = true;
-      requestAnimationFrame(() => {
-        const { scrollLeft, scrollWidth, clientWidth } = el;
-        const maxScrollLeft = scrollWidth - clientWidth;
-        const midpoint = maxScrollLeft / 2;
-
-        if (scrollLeft < midpoint) {
-          setScrollEdge("left");
-        } else {
-          setScrollEdge("right");
-        }
-
-        ticking = false;
-      });
-    };
-
-    handleScroll();
-    el.addEventListener("scroll", handleScroll, { passive: true });
-    return () => el.removeEventListener("scroll", handleScroll);
-  }, [setScrollEdge]);
 
   if (isDataLoading) return <Loader />;
 

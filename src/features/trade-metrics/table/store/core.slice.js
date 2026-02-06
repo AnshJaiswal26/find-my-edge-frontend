@@ -31,18 +31,24 @@ export const createCoreSlice = (set, get) => ({
     useTradeStore.getState().addTrade(trade, id);
   },
 
-  deleteRow(id) {
+  deleteRow(rowId) {
     let rowIndex = 0;
 
     set((s) => {
-      delete s.rowsById[id];
-      s.rowOrder = s.rowOrder.filter((x, i) => {
-        if (x === id) rowIndex = i;
-        return x !== id;
+      delete s.rowsById[rowId];
+      s.rowOrder = s.rowOrder.filter((id, i) => {
+        if (id === rowId) rowIndex = i;
+        return id !== rowId;
       });
+
+      if (s.groups) {
+        s.groups.forEach((group) => {
+          group.tradeIds = group.tradeIds.filter((id) => id !== rowId);
+        });
+      }
     });
 
-    useTradeStore.getState().deleteTrade(id);
+    useTradeStore.getState().deleteTrade(rowId);
 
     get().recompute({ reason: "row-delete", rowIndex });
   },

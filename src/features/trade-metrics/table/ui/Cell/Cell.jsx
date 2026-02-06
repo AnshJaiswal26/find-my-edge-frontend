@@ -8,8 +8,8 @@ export const Cell = memo(function Cell({
   rowId,
   colId,
   onCommit,
-  scrollEdge,
-  isStickyColumn,
+  highlight,
+  isGroupColumn,
 }) {
   const [editing, setEditing] = useState(false);
 
@@ -28,34 +28,14 @@ export const Cell = memo(function Cell({
     }
   }, [cell.value, editing]);
 
-  /* ---------- Sticky logic for grouped column ---------- */
-  const isGroupColumn = isStickyColumn;
-
-  const stickyStyle =
-    isGroupColumn && scrollEdge
-      ? {
-          position: "sticky",
-          ...(scrollEdge === "right"
-            ? { left: 51, boxShadow: "2px 0px 3px rgba(0,0,0,0.12)" }
-            : {
-                right: 0,
-                borderLeft: "1px solid var(--border)",
-                boxShadow: "-2px 0px 3px rgba(0,0,0,0.12)",
-              }),
-          color: "var(--text)",
-          zIndex: 2,
-          background: "var(--surface)",
-        }
-      : {};
-
   /* ================= EDIT MODE ================= */
   if (editing) {
     const Editor = type === "select" ? CellSelect : CellInput;
 
     return (
       <div
-        style={{ width, ...stickyStyle }}
-        className="border border-(--info) overflow-hidden"
+        style={{ width }}
+        className={`border border-(--info) overflow-hidden ${isGroupColumn ? "stick-left bg-(--surface-muted) text-(--text)" : ""}`}
       >
         <Editor
           colId={colId}
@@ -73,7 +53,9 @@ export const Cell = memo(function Cell({
 
   /* ================= DISPLAY MODE ================= */
   return (
-    <div style={stickyStyle} className="h-full!">
+    <div
+      className={`h-full! ${highlight ? "bg-(--warning) text-black" : ""} ${isGroupColumn ? "stick-left bg-(--surface)" : ""}`}
+    >
       <CellDisplay
         type={type}
         cell={cell}

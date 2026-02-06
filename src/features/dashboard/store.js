@@ -1,9 +1,5 @@
 import { createChart } from "@charts/apex/model/factory";
 import { useChartStore } from "@charts/apex/store/useChartStore";
-import {
-  COMPUTATION_MODE,
-  computeOverSequence,
-} from "@lib/analytics/engine/execute";
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 import { buildAST, tokenize, toPostfix } from "@lib/expression";
 import { useTradeStore, useUIStore } from "@stores";
@@ -12,7 +8,6 @@ import { immer } from "zustand/middleware/immer";
 
 function makeAST(expr) {
   const ast = buildAST(toPostfix(tokenize(expr)), "GLOBAL").ast;
-  // console.log(ast);
   return ast;
 }
 
@@ -120,64 +115,15 @@ export const useDashboardStore = create(
       set({ activePopup: null });
     },
 
-    recomputeAll() {
-      set((state) => {
-        const { seriesById, seriesOrder, schemasById } = state;
-
-        Object.values(schemasById).forEach((schema) => {
-          computeOverSequence({
-            schema,
-            getValue: (trade, key) => trade[key] ?? null,
-            setValue: (trade, schema, value) => {
-              trade[schema.id] = value;
-            },
-            getTradeAt: (index) => {
-              if (index < 0) return null;
-              const id = seriesOrder[index];
-              return id ? seriesById[id] : null;
-            },
-            getTradeCount: () => seriesOrder.length,
-            getSchemaType: (key) => {
-              const sch = schemasById[key];
-              return { format: sch?.display?.format, type: sch.type };
-            },
-            mode:
-              schema.mode !== "row"
-                ? COMPUTATION_MODE.WINDOW
-                : COMPUTATION_MODE.BASE,
-          });
-        });
-      });
-
-      get().loadInitialCharts();
-      get().recomputeStats();
-    },
-
-    hydrateSchema() {
-      const { schemasById, schemaOrder } = useTradeStore.getState();
-      set({ schemasById: { ...schemasById }, schemaOrder: [...schemaOrder] });
-    },
-
-    hydrateFromTrades() {
-      const { tradeOrder, tradesById } = useTradeStore.getState();
-      const { hydrateSchema, recomputeAll } = get();
-
-      // always keep schemas in sync
-      hydrateSchema();
-
-      set({ seriesOrder: [...tradeOrder], seriesById: { ...tradesById } });
-
-      recomputeAll();
-    },
-
     recomputeStats() {
+      const { tradeOrder, tradesById } = useTradeStore.getState();
       set((s) => {
         s.stats.forEach((stat) => {
           const reducer = FUNCTION_REGISTRY[stat.aggregate].reducer;
-          const acc = reducer.init(s.seriesOrder.length);
+          const acc = reducer.init(tradeOrder.length);
 
-          s.seriesOrder.forEach((id) => {
-            reducer.step(acc, s.seriesById[id][stat.key]);
+          tradeOrder.forEach((id) => {
+            reducer.step(acc, tradesById[id][stat.key]);
           });
 
           stat.value = reducer.result(acc);
@@ -186,7 +132,8 @@ export const useDashboardStore = create(
     },
 
     loadInitialCharts() {
-      const { order } = get();
+      const { order, recomputeStats } = get();
+      recomputeStats();
       if (order.length > 0) return;
 
       const seriesConfig = [
@@ -402,8 +349,11 @@ export const useDashboardStore = create(
       closePopup();
     },
 
+    deleteChart(chartId) {},
+
     addStats(stat) {
       const { stats } = get();
+      const { tradeOrder, tradesById } = useTradeStore.getState();
 
       if (stats.length > 19) {
         useUIStore
@@ -414,10 +364,10 @@ export const useDashboardStore = create(
       console.log(stat);
       set((s) => {
         const reducer = FUNCTION_REGISTRY[stat.aggregate].reducer;
-        const state = reducer.init(s.seriesOrder.length);
+        const state = reducer.init(tradeOrder.length);
 
-        s.seriesOrder.forEach((id) => {
-          reducer.step(state, s.seriesById[id][stat.key]);
+        tradeOrder.forEach((id) => {
+          reducer.step(state, tradesById[id][stat.key]);
         });
 
         const result = reducer.result(state);

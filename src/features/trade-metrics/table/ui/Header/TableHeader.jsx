@@ -20,7 +20,7 @@ export function TableHeader({ tableRef }) {
         className="sticky top-0 left-0
           w-12 shrink-0
           border-r border-(--border)
-          bg-(--surface-muted) z-3
+          bg-(--surface-muted) z-40
         "
       />
 
@@ -31,6 +31,8 @@ export function TableHeader({ tableRef }) {
             key={id}
             colId={id}
             index={index}
+            isStickyFirst={index <= 4}
+            isStickyLast={index >= columnOrder.length - 4}
             tableRef={tableRef}
             scrollEdge={scrollEdge}
             isGroupColumn={groupBy == id}

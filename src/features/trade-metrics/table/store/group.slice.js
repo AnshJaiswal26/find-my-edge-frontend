@@ -76,7 +76,13 @@ export const createGroupSlice = (set, get) => ({
       }),
     });
 
-    set({ groups });
+    set((s) => {
+      s.groups = groups;
+      s.columnOrder = [
+        groupBy.key,
+        ...s.columnOrder.filter((id) => id !== groupBy.key),
+      ];
+    });
     recompute({ reason: "grouping", groups });
   },
 });

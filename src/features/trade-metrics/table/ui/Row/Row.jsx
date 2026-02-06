@@ -8,8 +8,7 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
   const updateCell = useTableStore((s) => s.updateCell);
   const deleteRow = useTableStore((s) => s.deleteRow);
   const toggleHighlightRow = useTableStore((s) => s.toggleHighlightRow);
-  const highlight = useTableStore((s) => s.rowsById[rowId].highlight);
-  const scrollEdge = useTableStore((s) => s.scrollEdge);
+  const highlight = useTableStore((s) => s.rowsById[rowId]?.highlight);
 
   const [hover, setHover] = useState(false);
 
@@ -19,7 +18,7 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
     <div
       className={`
         relative flex w-max border-b border-(--border)
-        bg-(--surface) hover:bg-(--hover) ${highlight ? "bg-(--warning) hover:bg-(--warning) text-black" : ""}`}
+        bg-(--surface) hover:bg-(--hover)`}
     >
       {/* HANDLE / HEADER */}
       <div
@@ -81,8 +80,8 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
           key={colId}
           rowId={rowId}
           colId={colId}
-          scrollEdge={scrollEdge}
-          isStickyColumn={colId === groupBy?.key}
+          highlight={highlight}
+          isGroupColumn={colId === groupBy?.key}
           onCommit={(value) => {
             updateCell(rowId, colId, value, groupId);
           }}

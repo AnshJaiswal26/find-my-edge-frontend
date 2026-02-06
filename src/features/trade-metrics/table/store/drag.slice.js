@@ -48,7 +48,11 @@ export const createDragSlice = (set, get) => ({
           typeof toIndex === "number" &&
           fromIndex !== toIndex
         ) {
-          const newOrder = moveItem(s.columnOrder, fromIndex, toIndex);
+          const newOrder = moveItem(
+            s.columnOrder,
+            fromIndex,
+            s.groupBy && toIndex == 0 ? 1 : toIndex,
+          );
           s.columnOrder = newOrder;
           useTradeStore.getState().updateSchemaOrder(newOrder);
         }
