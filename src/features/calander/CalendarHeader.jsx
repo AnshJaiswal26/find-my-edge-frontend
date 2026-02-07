@@ -1,6 +1,16 @@
 import { CalendarDaysIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { useCalendarStore } from "./store/uesCalendarStore";
 
-const CalendarHeader = ({ date, onPrev, onNext }) => {
+const CalendarHeader = () => {
+  const currentDate = useCalendarStore((s) => s.currentDate);
+  const setCurrentDate = useCalendarStore((s) => s.setCurrentDate);
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const handlePrev = () => setCurrentDate(new Date(year, month - 1, 1));
+  const handleNext = () => setCurrentDate(new Date(year, month + 1, 1));
+
   return (
     <div
       className="
@@ -9,11 +19,12 @@ const CalendarHeader = ({ date, onPrev, onNext }) => {
         rounded-xl
         bg-(--surface)
         border border-(--border-muted)
+        shadow-lg
       "
     >
       {/* Left Nav */}
       <button
-        onClick={onPrev}
+        onClick={handlePrev}
         className="
           flex items-center justify-center
           w-9 h-9
@@ -38,15 +49,15 @@ const CalendarHeader = ({ date, onPrev, onNext }) => {
             Trading Calendar
           </span>
           <span className="text-base font-semibold text-(--text)">
-            {date.toLocaleString("default", { month: "long" })}{" "}
-            {date.getFullYear()}
+            {currentDate.toLocaleString("default", { month: "long" })}{" "}
+            {currentDate.getFullYear()}
           </span>
         </div>
       </div>
 
       {/* Right Nav */}
       <button
-        onClick={onNext}
+        onClick={handleNext}
         className="
           flex items-center justify-center
           w-9 h-9

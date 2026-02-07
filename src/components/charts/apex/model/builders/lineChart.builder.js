@@ -4,7 +4,7 @@ import { DEFAULT_LAYOUTS } from "../defaults";
 export function buildLineChart({
   x,
   y,
-  groups,
+  groupSpec,
   layout = {},
   category = "series",
 }) {
@@ -22,8 +22,7 @@ export function buildLineChart({
       ...layout,
     },
 
-    groups: groups ?? null,
-    selectedGroupIndex: groups ? 0 : null,
+    groupSpec: groupSpec ?? null,
 
     sort: {
       key: null,

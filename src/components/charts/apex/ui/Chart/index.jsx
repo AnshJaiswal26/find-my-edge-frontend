@@ -20,7 +20,6 @@ export default function CustomApexChart({
 }) {
   const groupSpec = useChartStore((s) => s[chartId]?.groupSpec);
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
-
   const groups = useMemo(() => {
     if (!groupSpec) return null;
 
@@ -29,8 +28,12 @@ export default function CustomApexChart({
       tradesById: seriesById,
       groupSpec,
       getValue: (trade, key) => trade[key],
+      getFormat: (key) => ({
+        type: schemasById[key].type,
+        display: schemasById[key]?.display,
+      }),
     });
-  }, [seriesOrder, seriesById, groupSpec]);
+  }, [seriesOrder, seriesById, schemasById, schemasById, groupSpec]);
 
   return (
     <ChartContainer chartId={chartId}>

@@ -1,8 +1,17 @@
 import CalendarCell from "./CalendarCell";
+import { useCalendarStore } from "./store/uesCalendarStore";
 
-const CalendarGrid = ({ currentDate, data, onSelectDate }) => {
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+const CalendarGrid = ({ currentDate, data, isYearView = false }) => {
+  const storeDate = useCalendarStore((s) => s.currentDate);
+
+  const setSelectedDate = useCalendarStore((s) => s.setSelectedDate);
+  const setCurrentDate = useCalendarStore((s) => s.setCurrentDate);
+
+  const activeDate = isYearView ? currentDate : storeDate;
+
+  const year = activeDate.getFullYear();
+  const month = activeDate.getMonth();
+
   const days = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay();
   const today = new Date();
@@ -11,10 +20,17 @@ const CalendarGrid = ({ currentDate, data, onSelectDate }) => {
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= days; d++) cells.push(d);
 
+  const handleSelectDate = (dateStr) => {
+    const d = new Date(dateStr);
+    setSelectedDate(d);
+    setCurrentDate(d);
+  };
+
   return (
     <div className="mt-4">
-      {/* Week Header */}
-      <div className="grid grid-cols-7 mb-2 px-1 text-[10px] font-medium text-(--text-muted)">
+      <div
+        className={`grid grid-cols-7 mb-2 px-1 font-normal text-(--text-muted) ${isYearView ? "text-[10px]" : "text-xs"}`}
+      >
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
           <div key={d} className="text-center">
             {d}
@@ -22,23 +38,18 @@ const CalendarGrid = ({ currentDate, data, onSelectDate }) => {
         ))}
       </div>
 
-      {/* Calendar Body */}
       <div
-        className="
+        className={`
           grid grid-cols-7
-          gap-1.5
+          ${isYearView ? "gap-1 p-1" : "gap-1.5 p-1.5"}
           rounded-xl
           bg-(--surface-muted)/30
-          p-1.5
-        "
+        `}
       >
         {cells.map((d, i) => {
           const dateStr =
             d &&
-            `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(
-              2,
-              "0",
-            )}`;
+            `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
           const trade = data.find((t) => t.date === dateStr);
 
@@ -53,9 +64,11 @@ const CalendarGrid = ({ currentDate, data, onSelectDate }) => {
               key={i}
               day={d}
               trade={trade}
+              year={year}
+              month={month}
               isToday={isToday}
-              isInactive={!d}
-              onSelectDate={onSelectDate}
+              isYearView={isYearView}
+              onSelectDate={handleSelectDate}
             />
           );
         })}

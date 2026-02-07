@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { ChartPopups, CustomApexChart } from "@charts/index";
 
@@ -178,8 +178,6 @@ function ChartDashboard({
     useDashboardStore.getState().loadInitialCharts();
     window.dispatchEvent(new Event("resize"));
   }, []);
-
-  console.log(seriesById, seriesOrder);
 
   return (
     <div className="grid-stack" ref={gridRef}>

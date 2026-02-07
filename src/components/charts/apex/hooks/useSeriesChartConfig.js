@@ -42,6 +42,8 @@ export default function useSeriesChartConfig({
   const sort = useChartStore((s) => s[chartId].sort);
   const selection = useChartStore((s) => s[chartId].selection);
 
+  console.log(groups);
+
   const finalOrder = useMemo(() => {
     let order = groups
       ? (groups[selectedGroupIndex ?? 0]?.tradeIds ?? seriesOrder)
@@ -80,6 +82,7 @@ export default function useSeriesChartConfig({
     selection.from,
     selection.to,
     selectedGroupIndex,
+    groups,
   ]);
 
   const computedSeries = useMemo(() => {

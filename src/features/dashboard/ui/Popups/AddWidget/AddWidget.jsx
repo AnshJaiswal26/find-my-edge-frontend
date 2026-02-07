@@ -15,12 +15,12 @@ const CHART_TYPES = [
   { id: "radar", label: "Radar" },
 ];
 
-export default function AddWidgetPopup() {
+export default function AddWidgetPopup({ schemasById }) {
   const formRef = useRef(null);
 
   const activePopup = useDashboardStore((s) => s.activePopup);
 
-  const { closePopup, schemasById } = useDashboardStore.getState();
+  const { closePopup } = useDashboardStore.getState();
 
   const [activeIndex, setActiveIndex] = useState(0);
 

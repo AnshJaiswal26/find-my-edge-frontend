@@ -155,9 +155,7 @@ export function evaluateExpression(expr, ctx = {}) {
       const entry = FUNCTION_REGISTRY[expr.name.toUpperCase()];
       if (!entry?.exec && !entry?.reducer) return null;
 
-      console.log(entry);
-
-      // // 🚨 Prevent aggregate reducers from running in row mode
+      // Prevent aggregate reducers from running in row mode
       // if (
       //   entry.reducer &&
       //   ctx.mode !== COMPUTATION_MODE.AGGREGATE &&
