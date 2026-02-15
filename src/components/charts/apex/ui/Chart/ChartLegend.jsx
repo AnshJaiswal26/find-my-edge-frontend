@@ -1,5 +1,6 @@
 import { Legend } from "@layout";
 import styles from "./CustomApexChart.module.css";
+import { useMemo } from "react";
 
 function toggleSeriesKey(key, selected, cfg) {
   if (!selected) return cfg.filter((c) => c.key !== key).map((c) => c.key);

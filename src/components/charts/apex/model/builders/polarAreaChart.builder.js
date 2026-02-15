@@ -1,5 +1,15 @@
 import { DEFAULT_LAYOUTS } from "../defaults";
 
+export const buildPolarSeriesConfig = (s) => ({
+  key: s.key,
+  name: s.name ?? s.key,
+  type: s.type ?? "number",
+  tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
+  color: s.color,
+  prefix: s.prefix ?? "",
+  suffix: s.suffix ?? "",
+});
+
 export function buildPolarAreaChart({ series, layout = {} }) {
   return {
     meta: {
@@ -13,14 +23,6 @@ export function buildPolarAreaChart({ series, layout = {} }) {
       ...layout,
     },
 
-    seriesConfig: series.map((s) => ({
-      key: s.key,
-      name: s.name ?? s.key,
-      type: s.type ?? "number",
-      tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
-      color: s.color,
-      prefix: s.prefix ?? "",
-      suffix: s.suffix ?? "",
-    })),
+    seriesConfig: series.map(buildPolarSeriesConfig),
   };
 }

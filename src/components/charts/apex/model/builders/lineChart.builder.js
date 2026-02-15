@@ -1,6 +1,18 @@
 import { DEFAULT_FORMATS } from "@utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
+export const buildLineSeriesConfig = (s) => ({
+  key: s.key,
+  name: s.name ?? s.key,
+  type: s.type ?? "number",
+
+  label: s.label ?? s.name ?? s.key,
+
+  color: s.color ?? "var(--info)",
+  markerColor: s.markerColor ?? s.color ?? "var(--info)",
+  areaColor: s.areaColor ?? s.color ?? "var(--info)",
+});
+
 export function buildLineChart({
   x,
   y,
@@ -42,16 +54,6 @@ export function buildLineChart({
       type: x.type ?? "number",
     },
 
-    ySeriesConfig: y.map((s) => ({
-      key: s.key,
-      name: s.name ?? s.key,
-      type: s.type ?? "number",
-
-      label: s.label ?? s.name ?? s.key,
-
-      color: s.color ?? "var(--info)",
-      markerColor: s.markerColor ?? s.color ?? "var(--info)",
-      areaColor: s.areaColor ?? s.color ?? "var(--info)",
-    })),
+    ySeriesConfig: y.map(buildLineSeriesConfig),
   };
 }

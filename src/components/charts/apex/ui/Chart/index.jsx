@@ -20,6 +20,7 @@ export default function CustomApexChart({
 }) {
   const groupSpec = useChartStore((s) => s[chartId]?.groupSpec);
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
+
   const groups = useMemo(() => {
     if (!groupSpec) return null;
 
@@ -39,7 +40,7 @@ export default function CustomApexChart({
     <ChartContainer chartId={chartId}>
       <div className="flex items-center justify-between">
         <ChartTitle chartId={chartId} />
-        {groups && (
+        {groups && category === "grouped" && (
           <Select
             classNames={{ button: "py-1.5!" }}
             options={groups}
@@ -55,6 +56,7 @@ export default function CustomApexChart({
           type={type}
           category={category}
           groups={groups}
+          groupSpec={groupSpec}
           selectedGroupIndex={selectedGroupIndex}
           seriesOrder={seriesOrder}
           seriesById={seriesById}

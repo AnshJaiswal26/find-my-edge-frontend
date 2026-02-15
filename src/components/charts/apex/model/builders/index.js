@@ -1,9 +1,15 @@
-import { buildBarChart } from "./barChart.builder";
-import { buildLineChart } from "./lineChart.builder";
-import { buildDonutChart } from "./pieChart.builder";
-import { buildPolarAreaChart } from "./polarAreaChart.builder";
-import { buildRadarChart } from "./radarChart.builder";
-import { buildRadialBarChart } from "./radialBarChart.builder";
+import { buildBarChart, buildBarSeriesConfig } from "./barChart.builder";
+import { buildLineChart, buildLineSeriesConfig } from "./lineChart.builder";
+import { buildDonutChart, buildDonutSeriesConfig } from "./pieChart.builder";
+import {
+  buildPolarAreaChart,
+  buildPolarSeriesConfig,
+} from "./polarAreaChart.builder";
+import { buildRadarChart, buildRadarSeriesConfig } from "./radarChart.builder";
+import {
+  buildRadialBarChart,
+  buildRadialSeriesConfig,
+} from "./radialBarChart.builder";
 
 export const CHART_BUILDERS = {
   bar: buildBarChart,
@@ -12,4 +18,13 @@ export const CHART_BUILDERS = {
   radialBar: buildRadialBarChart,
   radar: buildRadarChart,
   polarArea: buildPolarAreaChart,
+};
+
+export const CHART_SERIES_CONFIG_BUILDERS = {
+  bar: buildBarSeriesConfig,
+  line: buildLineSeriesConfig,
+  donut: buildDonutSeriesConfig,
+  radialBar: buildRadialSeriesConfig,
+  radar: buildRadarSeriesConfig,
+  polarArea: buildPolarSeriesConfig,
 };

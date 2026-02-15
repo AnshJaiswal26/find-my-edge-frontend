@@ -4,16 +4,26 @@ export const draftToSpec = (draft) => {
   if (!draft) return null;
 
   if (draft.kind === "value") {
-    return { type: "value", key: draft.key };
+    return { type: "value", key: draft.key, ast: draft?.ast };
   }
 
   if (draft.kind === "bucket") {
     if (["day", "month", "year"].includes(draft.bucket)) {
-      return { type: "dateBucket", key: draft.key, unit: draft.bucket };
+      return {
+        type: "dateBucket",
+        key: draft.key,
+        unit: draft.bucket,
+        ast: draft?.ast,
+      };
     }
 
     if (draft.bucket === "hour") {
-      return { type: "timeBucket", key: draft.key, unit: "hour" };
+      return {
+        type: "timeBucket",
+        key: draft.key,
+        unit: "hour",
+        ast: draft?.ast,
+      };
     }
 
     if (draft.bucket === "range") {
@@ -22,9 +32,9 @@ export const draftToSpec = (draft) => {
         : splitIntoBuckets(draft.ranges);
 
       if (draft.schemaType.includes("time")) {
-        return { type: "timeRange", key: draft.key, ranges };
+        return { type: "timeRange", key: draft.key, ranges, ast: draft?.ast };
       }
-      return { type: "numberRange", key: draft.key, ranges };
+      return { type: "numberRange", key: draft.key, ranges, ast: draft?.ast };
     }
   }
 
@@ -36,6 +46,7 @@ export const draftToSpec = (draft) => {
       value: draft.value,
       valueTo: draft.valueTo,
       labels: draft.labels,
+      ast: draft?.ast,
     };
   }
 };

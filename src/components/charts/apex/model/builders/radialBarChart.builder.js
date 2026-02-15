@@ -1,6 +1,17 @@
 import { DEFAULT_FORMATS } from "@utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
+export const buildRadialSeriesConfig = (s) => ({
+  key: s.key,
+  name: s.name ?? s.key,
+  type: s.type ?? "number",
+  format: s.format ?? DEFAULT_FORMATS[s.type || "number"],
+  decimals: s.decimals ?? 2,
+  expression: s.expression ?? null,
+  tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
+  color: s.color ?? "var(--info)",
+});
+
 export function buildRadialBarChart({ seriesConfig, groupSpec, layout = {} }) {
   return {
     meta: {
@@ -16,15 +27,9 @@ export function buildRadialBarChart({ seriesConfig, groupSpec, layout = {} }) {
 
     groupSpec: groupSpec ?? null,
 
-    seriesConfig: seriesConfig.map((s) => ({
-      key: s.key,
-      name: s.name ?? s.key,
-      type: s.type ?? "number",
-      format: s.format ?? DEFAULT_FORMATS[s.type || "number"],
-      decimals: s.decimals ?? 2,
-      expression: s.expression ?? null,
-      tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
-      color: s.color ?? "var(--info)",
-    })),
+    seriesConfig:
+      groupSpec && groupSpec.ast
+        ? []
+        : seriesConfig.map(buildRadialSeriesConfig),
   };
 }

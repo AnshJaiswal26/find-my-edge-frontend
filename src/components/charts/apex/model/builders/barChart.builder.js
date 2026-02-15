@@ -1,6 +1,20 @@
 import { DEFAULT_FORMATS } from "@utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
+export const buildBarSeriesConfig = (s) => ({
+  key: s.key,
+  name: s.name ?? s.key,
+  type: s.type ?? "number",
+  colorRules: s.colorRules ?? [
+    {
+      operator: "always",
+      value: 0,
+      value2: 0,
+      color: "var(--info)",
+    },
+  ],
+});
+
 export function buildBarChart({
   x,
   y,
@@ -43,18 +57,6 @@ export function buildBarChart({
       type: x.type ?? "number",
     },
 
-    ySeriesConfig: y.map((s) => ({
-      key: s.key,
-      name: s.name ?? s.key,
-      type: s.type ?? "number",
-      colorRules: s.colorRules ?? [
-        {
-          operator: "always",
-          value: 0,
-          value2: 0,
-          color: "var(--info)",
-        },
-      ],
-    })),
+    ySeriesConfig: y.map(buildBarSeriesConfig),
   };
 }

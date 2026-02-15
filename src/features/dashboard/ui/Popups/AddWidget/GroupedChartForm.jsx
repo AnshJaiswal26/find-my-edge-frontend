@@ -42,11 +42,12 @@ export const GroupedChartForm = forwardRef(
 
     useImperativeHandle(ref, () => ({
       submit() {
-        if (!seriesConfig[0]?.key) return;
+        if (!grouping && !seriesConfig[0]?.key) return;
 
         addChart(type, {
           layout,
           seriesConfig,
+          groupSpec: draftToSpec(groupBy),
         });
 
         return;
@@ -71,88 +72,103 @@ export const GroupedChartForm = forwardRef(
           onChange={setGrouping}
         />
 
-        {grouping && (
+        {grouping ? (
           <Section title={"Group Chart Series"}>
             <GroupByBuilder
               schemasById={schemasById}
               groupBy={groupBy}
               onChange={setGroupBy}
             />
-          </Section>
-        )}
 
-        <Section title={"Y Axis Series"}>
-          {seriesConfig.map((s, i) => (
-            <Fragment key={i}>
-              {i !== 0 && <Divider />}
-              <div className="flex items-end justify-between">
-                <Select
-                  vertical
-                  label={`Series ${i + 1}`}
-                  value={s.key}
-                  options={i === 0 ? baseOptions : filteredOptions}
-                  getLabel={(o) => o.label}
-                  getKey={(o) => o.id}
-                  onChange={(o) => {
-                    setSeriesConfig((p) => {
-                      const next = [...p];
+            <ExpressionBuilder
+              ref={builderRef}
+              label="Expression Query Per Group"
+              value={expr}
+              schemasById={schemasById}
+              mode={"GLOBAL"}
+              semanticMode={type == "radialBar" ? "RATIO_REQUIRED" : "STANDARD"}
+              onCommit={(expr, ast, dependency) => {
+                setExpr(expr);
+                setGroupBy((p) => ({ ...p, ast }));
+              }}
+            />
+          </Section>
+        ) : (
+          <Section title={"Y Axis Series"}>
+            {seriesConfig.map((s, i) => (
+              <Fragment key={i}>
+                {i !== 0 && <Divider />}
+                <div className="flex items-end justify-between">
+                  <Select
+                    vertical
+                    label={`Series ${i + 1}`}
+                    value={s.key}
+                    options={i === 0 ? baseOptions : filteredOptions}
+                    getLabel={(o) => o.label}
+                    getKey={(o) => o.id}
+                    onChange={(o) => {
+                      setSeriesConfig((p) => {
+                        const next = [...p];
+                        next[i] = {
+                          ...next[i],
+                          key: o.id,
+                          name: o.label,
+                          type: o.type,
+                        };
+                        return next;
+                      });
+                    }}
+                  />
+                  <Button.Icon
+                    onClick={() =>
+                      setSeriesConfig((p) => p.filter((_, idx) => idx !== i))
+                    }
+                  >
+                    <Trash2 size={18} />
+                  </Button.Icon>{" "}
+                </div>
+
+                <ExpressionBuilder
+                  key={i}
+                  ref={builderRef}
+                  value={expr}
+                  schemasById={schemasById}
+                  mode={"GLOBAL"}
+                  semanticMode={
+                    type == "radialBar" ? "RATIO_REQUIRED" : "STANDARD"
+                  }
+                  onCommit={(expr, ast, dependency) => {
+                    setExpr(expr);
+                    setSeriesConfig((s) => {
+                      const next = [...s];
                       next[i] = {
                         ...next[i],
-                        key: o.id,
-                        name: o.label,
-                        type: o.type,
+                        expression: ast,
                       };
                       return next;
                     });
                   }}
                 />
-                <Button.Icon
-                  onClick={() =>
-                    setSeriesConfig((p) => p.filter((_, idx) => idx !== i))
-                  }
-                >
-                  <Trash2 size={18} />
-                </Button.Icon>{" "}
-              </div>
-
-              <ExpressionBuilder
-                key={i}
-                ref={builderRef}
-                value={expr}
-                schemasById={schemasById}
-                mode={"GLOBAL"}
-                semanticMode={
-                  type == "radialBar" ? "RATIO_REQUIRED" : "STANDARD"
+              </Fragment>
+            ))}
+            <div>
+              <Button.Text
+                onClick={() =>
+                  setSeriesConfig((p) => [
+                    ...p,
+                    { key: "", name: "", type: "", reducer: "" },
+                  ])
                 }
-                onCommit={(expr, ast, dependency) => {
-                  setExpr(expr);
-                  setSeriesConfig((s) => {
-                    const next = [...s];
-                    next[i] = {
-                      ...next[i],
-                      expression: ast,
-                    };
-                    return next;
-                  });
-                }}
-              />
-            </Fragment>
-          ))}
-          <div>
-            <Button.Text
-              onClick={() =>
-                setSeriesConfig((p) => [
-                  ...p,
-                  { key: "", name: "", type: "", reducer: "" },
-                ])
-              }
-              disabled={!optionsGroup}
-              className={!optionsGroup ? "opacity-50 pointer-events-none" : ""}
-            >
-              + Add Series
-            </Button.Text>
-          </div>
-        </Section>
+                disabled={!optionsGroup}
+                className={
+                  !optionsGroup ? "opacity-50 pointer-events-none" : ""
+                }
+              >
+                + Add Series
+              </Button.Text>
+            </div>
+          </Section>
+        )}
       </>
     );
   },

@@ -55,12 +55,9 @@ const EditorRightActions = () => {
       <strong>{username}</strong>
 
       <div className="flex items-center gap-2">
-        <ThemeToggle />
-
         <Button.Icon>
           <Bell size={18} className="text-yellow-400 fill-yellow-400" />
         </Button.Icon>
-
         <Button.Icon onClick={() => navigate("/settings")}>
           <Settings size={18} className="text-gray-400" />
         </Button.Icon>
@@ -73,17 +70,18 @@ export default function Editor() {
   return (
     <div
       className="
-        sticky top-0 z-1000
+        sticky top-0 z-[100]
         flex justify-between items-center
-        gap-40
+        gap-6 md:gap-10 lg:gap-20
         w-full min-h-10 h-[min(15vh,60px)]
         p-4
-        backdrop-blur-sm
-        bg-(--surface-muted-soft)
+        backdrop-blur-md
+        bg-[color-mix(in_srgb,var(--surface)_25%,transparent)]
         shadow-(--shadow)
         text-(--text)
         whitespace-nowrap
         overflow-x-auto overflow-y-hidden
+        border-b border-(--border)
       "
     >
       <EditorLeftActions />

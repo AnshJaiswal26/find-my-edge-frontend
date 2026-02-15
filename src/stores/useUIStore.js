@@ -2,11 +2,9 @@
 import { create } from "zustand";
 
 const getTheme = () => {
-  const theme = localStorage.getItem("theme");
-  if (theme)
-    document.documentElement.classList.toggle("dark-theme", theme === "dark");
-
-  return theme || "dark";
+  const theme = localStorage.getItem("theme") || "dark-1";
+  document.documentElement.setAttribute("data-theme", theme);
+  return theme;
 };
 
 export const useUIStore = create((set) => ({
@@ -52,14 +50,11 @@ export const useUIStore = create((set) => ({
     });
   },
 
-  toggleTheme: () =>
-    set((prev) => {
-      const isDark = prev.theme === "dark";
-      const theme = isDark ? "light" : "dark";
-      document.documentElement.classList.toggle("dark-theme", !isDark);
-      localStorage.setItem("theme", theme);
-      return { theme };
-    }),
+  setTheme: (theme) => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    set({ theme });
+  },
 
   toggleSidebar: () =>
     set((prev) => {

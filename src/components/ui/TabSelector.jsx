@@ -30,9 +30,9 @@ export default function TabContainer({
             ${
               currentTab === key
                 ? `
-                  bg-(--info-soft)
+                  bg-[color-mix(in_srgb,var(--surface-disabled)_85%,transparent)]
                   text-(--text)
-                  border-b-2 border-(--info)
+                  border-b-2 border-(--text)
                 `
                 : ""
             }

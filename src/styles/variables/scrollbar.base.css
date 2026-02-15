@@ -1,5 +1,5 @@
 @layer base {
-  :root {
+  /* :root {
     --scrollbar-track: #f5f7f8;
     --scrollbar-thumb: #aaaeaf;
     --scrollbar-thumb-hover: #878b8b;
@@ -9,7 +9,7 @@
     --scrollbar-track: #1c2334;
     --scrollbar-thumb: #77797b;
     --scrollbar-thumb-hover: #bcbaba;
-  }
+  } */
 
   /* Default scrollbar */
   * {

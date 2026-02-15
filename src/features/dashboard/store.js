@@ -141,7 +141,7 @@ export const useDashboardStore = create(
           key: "WIN_RATE",
           name: "Win Rate",
           type: "number",
-          expression: makeAST("AVG_IF(pnl, pnl > 0)"), // ✅ AST
+          expression: makeAST("WIN_RATE()"), // ✅ AST
           exprString: "RATE(pnl > 0) * 100", // optional UI
           tooltipLabel: "Wins",
           color: "var(--info)",
@@ -150,7 +150,7 @@ export const useDashboardStore = create(
           key: "LOSS_RATE",
           name: "Loss Rate",
           type: "number",
-          expression: makeAST("AVG_IF(pnl, pnl < 0)"),
+          expression: makeAST("LOSS_RATE()"),
           exprString: "RATE(pnl < 0) * 100",
           tooltipLabel: "Losses",
           color: "var(--warning)",

@@ -1,9 +1,14 @@
-import { Select, Input, RangeInput } from "@ui";
+import { Select, Input, RangeInput, ExpressionBuilder } from "@ui";
 import { FILTER_OPTIONS, isBetween } from "@utils";
 import { GROUPING_OPTIONS, GROUPING_SCHEMA } from "@lib/analytics/config";
 import { RangeBucket } from "./RangeBucket";
 
-export default function GroupByBuilder({ schemasById, groupBy, onChange }) {
+export default function GroupByBuilder({
+  schemasById,
+  groupBy,
+  onChange,
+  ast,
+}) {
   const draft = groupBy ?? {};
 
   const field = draft.key ? schemasById[draft.key] : null;

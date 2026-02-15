@@ -2,7 +2,7 @@ import { FILTER_OPERATION_MAP, formatValue } from "@utils";
 import { getDateBucket, getTimeBucket } from "./buckets";
 import { matchRange } from "./ranges";
 
-export function compileGroupSpec(spec, getValue, getFormat) {
+export function compileGroupSpec(spec, getValue) {
   switch (spec.type) {
     case "value":
       return (trade, { type, display }) => {

@@ -31,6 +31,7 @@ function labelsToIds(expr, usedSchemas) {
 export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   {
     value = "",
+    label = null,
     schemasById,
     onCommit,
     onChange,
@@ -287,7 +288,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
     "[font-kerning:none]";
 
   return (
-    <Section title="Expression Query">
+    <Section title={label ?? "Expression Query"}>
       <div className="relative w-full">
         <div
           className="

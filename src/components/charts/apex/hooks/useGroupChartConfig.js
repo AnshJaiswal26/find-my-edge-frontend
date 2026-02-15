@@ -8,7 +8,40 @@ import {
   computeOverSequence,
 } from "@lib/analytics/engine/execute";
 
-const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
+const getSeries = ({
+  seriesConfig,
+  seriesById,
+  seriesOrder,
+  schemasById,
+  groups,
+  groupSpec,
+}) => {
+  if (groupSpec?.ast) {
+    const series = [];
+    for (const group of groups) {
+      console.log(group);
+      const value = computeOverSequence({
+        schema: { expression: groupSpec.ast },
+        getTradeAt: (index) => {
+          if (index < 0) return null;
+          const id = group.tradeIds[index];
+          return id ? seriesById[id] : null;
+        },
+        getTradeCount: () => seriesOrder.length,
+        getSchemaType: (key) => {
+          const schema = schemasById[key];
+          return { format: schema?.display?.format, type: schema.type };
+        },
+        getValue: (trade, key) => trade[key] ?? null,
+        setValue: () => null,
+        mode: COMPUTATION_MODE.AGGREGATE,
+      });
+      series.push(value);
+    }
+    console.log(series);
+    return series;
+  }
+
   const series = seriesConfig.map((s) => {
     const value = computeOverSequence({
       schema: { expression: s.expression },
@@ -28,6 +61,7 @@ const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
     });
     return value;
   });
+  console.log(series);
   return series;
 };
 
@@ -40,6 +74,7 @@ export default function useGroupChartConfig({
   chartId,
   layout,
   groups,
+  groupSpec,
   seriesConfig,
   seriesOrder,
   seriesById,
@@ -63,6 +98,7 @@ export default function useGroupChartConfig({
       seriesById,
       schemasById,
       groups,
+      groupSpec,
     });
   }, [type, filteredConfig, seriesOrder, seriesById, groups, schemasById]);
 

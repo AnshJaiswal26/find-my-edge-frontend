@@ -32,7 +32,7 @@
   height: 30px;
 }
 
-.dark-theme input[type="date"],
-.dark-theme input[type="time"] {
+[data-theme^="dark-"] input[type="date"],
+[data-theme^="dark-"] input[type="time"] {
   color-scheme: dark;
 }
