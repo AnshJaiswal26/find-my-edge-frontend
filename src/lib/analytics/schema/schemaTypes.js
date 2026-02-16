@@ -1,67 +1,97 @@
+/* ------------------ SOURCE ------------------ */
 const SCHEMA_SOURCE = {
   SYSTEM: "system",
   USER: "user",
   COMPUTED: "computed",
 };
 
-const VALUE_TYPE = {
+/* ------------------ SEMANTIC TYPES ------------------ */
+const SEMANTIC_TYPES = {
   NUMBER: "number",
-  TEXT: "text",
+  DURATION: "duration",
+
   DATE: "date",
   TIME: "time",
+  DATETIME: "datetime",
+
+  STRING: "string",
+  BOOLEAN: "boolean",
+
+  ANY: "any",
 };
 
-const COMPUTE_TYPE = {
-  ROW: "row",
-  GLOBAL: "global",
-  GROUP: "group",
-  WINDOW: "window",
-  GROUP_WINDOW: "group-window",
-};
-
+/* ------------------ SCHEMA TYPES ------------------ */
 const SCHEMA_TYPES = [
-  "number computed",
-  "time computed",
-  // "date computed",
+  // 🔢 Numeric
   "number",
-  "text",
+  "number computed",
+
+  // ⏳ Duration (🔥 FIXED — separate from time)
+  "duration",
+  "duration computed",
+
+  // 📅 Temporal
   "date",
+  "date computed",
+
   "time",
+  "time computed",
+
+  "datetime",
+  "datetime computed",
+
+  // 📝 Categorical
+  "text",
   "select",
+
+  // ✅ Logical
+  "boolean",
 ];
 
-const SCHEMA_TYPES_LABELS = {
-  "number computed": "COMPUTED",
-  "time computed": "DURATION",
-  // "date computed": "DATE COMPUTED",
-  number: "NUMBER",
-  text: "TEXT",
-  date: "DATE",
-  time: "TIME",
-  select: "SELECT",
-};
+/* ------------------ LABELS (UI PURPOSE) ------------------ */
+const BASE_TYPES = [
+  "number",
+  "duration",
+  "date",
+  "time",
+  "datetime",
+  "text",
+  "select",
+  // "boolean",
+];
 
+/* ------------------ TYPE → SEMANTIC ------------------ */
 const SCHEMA_TYPES_GROUP = {
-  number: "number",
-  "number computed": "number",
+  // 🔢 Numeric
+  number: SEMANTIC_TYPES.NUMBER,
+  "number computed": SEMANTIC_TYPES.NUMBER,
 
-  time: "time",
+  // ⏳ Duration
+  duration: SEMANTIC_TYPES.DURATION,
+  "duration computed": SEMANTIC_TYPES.DURATION,
 
-  "time computed": "duration",
+  // 📅 Temporal
+  date: SEMANTIC_TYPES.DATE,
+  "date computed": SEMANTIC_TYPES.DATE,
 
-  date: "date",
+  time: SEMANTIC_TYPES.TIME,
+  "time computed": SEMANTIC_TYPES.TIME,
 
-  "date computed": "date",
+  datetime: SEMANTIC_TYPES.DATETIME,
+  "datetime computed": SEMANTIC_TYPES.DATETIME,
 
-  text: "text",
-  select: "text",
+  // 📝 Categorical
+  text: SEMANTIC_TYPES.STRING,
+  select: SEMANTIC_TYPES.STRING,
+
+  // ✅ Logical
+  boolean: SEMANTIC_TYPES.BOOLEAN,
 };
 
 export {
   SCHEMA_SOURCE,
-  VALUE_TYPE,
-  COMPUTE_TYPE,
+  SEMANTIC_TYPES,
   SCHEMA_TYPES,
-  SCHEMA_TYPES_LABELS,
+  BASE_TYPES,
   SCHEMA_TYPES_GROUP,
 };

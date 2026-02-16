@@ -30,5 +30,5 @@ export function computedAggregate({
     },
   };
 
-  return evaluateExpression(schema.expression, ctx);
+  return evaluateExpression(schema.ast, ctx);
 }

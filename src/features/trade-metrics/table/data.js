@@ -1,10 +1,12 @@
-import { createSchema } from "@lib/analytics/schema";
+import { createSchema, SCHEMA_SOURCE } from "@lib/analytics/schema";
 
 export const columnsById = {
   date: createSchema({
     id: "date",
     label: "Date",
     type: "date",
+    source: SCHEMA_SOURCE.SYSTEM,
+    semanticType: "date",
     editable: true,
     display: { format: "YYYY-MM-DD" },
   }),
@@ -13,6 +15,8 @@ export const columnsById = {
     id: "entryTime",
     label: "Entry Time",
     type: "time",
+    source: SCHEMA_SOURCE.SYSTEM,
+    semanticType: "time",
     editable: true,
     display: { format: "hh:mm:ss A" },
   }),
@@ -21,6 +25,8 @@ export const columnsById = {
     id: "exitTime",
     label: "Exit Time",
     type: "time",
+    source: SCHEMA_SOURCE.SYSTEM,
+    semanticType: "time",
     editable: true,
     display: { format: "hh:mm:ss A" },
   }),
@@ -29,6 +35,8 @@ export const columnsById = {
     id: "duration",
     label: "Duration",
     type: "time computed",
+    semanticType: "duration", // important
+    source: SCHEMA_SOURCE.COMPUTED,
     editable: false,
     dependencies: ["entryTime", "exitTime"],
     display: { format: "HH:mm:ss", decimals: 0 },
@@ -36,7 +44,7 @@ export const columnsById = {
       { operator: "lessThan", value: 5, color: "var(--warning)" },
       { operator: "greaterThan", value: 30, color: "var(--info)" },
     ],
-    expression: {
+    ast: {
       type: "binary",
       op: "-",
       left: { type: "key", key: "exitTime" },
@@ -48,7 +56,9 @@ export const columnsById = {
   symbol: createSchema({
     id: "symbol",
     label: "Symbol",
+    source: SCHEMA_SOURCE.SYSTEM,
     type: "text",
+    semanticType: "string",
     editable: true,
   }),
 
@@ -56,6 +66,8 @@ export const columnsById = {
     id: "entry",
     label: "Entry",
     type: "number",
+    semanticType: "number",
+    source: SCHEMA_SOURCE.SYSTEM,
     editable: true,
     display: { format: "NUMBER", decimals: 2 },
   }),
@@ -64,6 +76,8 @@ export const columnsById = {
     id: "exit",
     label: "Exit",
     type: "number",
+    semanticType: "number",
+    source: SCHEMA_SOURCE.SYSTEM,
     editable: true,
     display: { format: "NUMBER", decimals: 2 },
   }),
@@ -72,6 +86,8 @@ export const columnsById = {
     id: "qty",
     label: "Qty",
     type: "number",
+    semanticType: "number",
+    source: SCHEMA_SOURCE.SYSTEM,
     editable: true,
     display: { format: "NUMBER" },
   }),
@@ -80,10 +96,12 @@ export const columnsById = {
     id: "targetAndSl",
     label: "Traget/SL",
     type: "number computed",
+    semanticType: "number",
+    source: SCHEMA_SOURCE.COMPUTED,
     editable: false,
     dependencies: ["entry", "exit"],
     display: { format: "NUMBER", decimals: 2 },
-    expression: {
+    ast: {
       type: "binary",
       op: "-",
       left: { type: "key", key: "exit" },
@@ -96,6 +114,8 @@ export const columnsById = {
     id: "pnl",
     label: "PnL",
     type: "number computed",
+    semanticType: "number",
+    source: SCHEMA_SOURCE.COMPUTED,
     editable: false,
     dependencies: ["exit", "entry", "qty"],
     display: { format: "CURRENCY", decimals: 2 },
@@ -103,7 +123,7 @@ export const columnsById = {
       { operator: "greaterThan", value: 0, color: "var(--success)" },
       { operator: "lessThan", value: 0, color: "var(--error)" },
     ],
-    expression: {
+    ast: {
       type: "binary",
       op: "*",
       left: {
@@ -121,6 +141,8 @@ export const columnsById = {
     id: "riskReward",
     label: "Risk-Reward",
     type: "number computed",
+    semanticType: "number",
+    source: SCHEMA_SOURCE.COMPUTED,
     editable: false,
     dependencies: ["pnl"],
     display: { format: "RATIO", decimals: 2 },
@@ -128,7 +150,7 @@ export const columnsById = {
       { operator: "greaterThan", value: 0, color: "var(--success)" },
       { operator: "lessThan", value: 0, color: "var(--error)" },
     ],
-    expression: {
+    ast: {
       type: "binary",
       op: "/",
       left: { type: "key", key: "pnl" },
@@ -141,6 +163,7 @@ export const columnsById = {
     id: "emotion",
     label: "Emotion",
     type: "select",
+    semanticType: "string",
     editable: true,
     options: ["Calm", "Fear", "Greed"],
     display: { format: "badge" },

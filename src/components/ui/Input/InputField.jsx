@@ -2,12 +2,39 @@ import { useEffect, useState } from "react";
 import { parseInputValue, formatForInput } from "@utils";
 import { BASE_CLASS } from "./baseClasses";
 
-const typeMap = {
-  select: "text",
-  "date computed": "date",
-  "time computed": "time",
-  "number computed": "number",
-};
+function getInputType(semantic, type) {
+  // fallback (for legacy or external usage)
+  if (!semantic) return type;
+
+  switch (semantic) {
+    case "number":
+      return "number";
+
+    case "date":
+      return "date";
+
+    case "time":
+      return "time";
+
+    case "datetime":
+      return "datetime-local";
+
+    case "duration":
+      return "text"; // 🔥 important (custom parsing)
+
+    case "boolean":
+      return "checkbox";
+
+    case "string":
+      return "text";
+
+    case "range":
+      return "range";
+
+    default:
+      return "text";
+  }
+}
 
 export function InputField({
   type = "text",
@@ -57,7 +84,7 @@ export function InputField({
       <input
         {...props}
         step={1}
-        type={typeMap[type] ?? type}
+        type={getInputType(type, "text")}
         value={displayValue}
         onChange={handleChange}
         onBlur={handleBlur}

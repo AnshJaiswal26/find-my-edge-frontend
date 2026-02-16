@@ -5,7 +5,7 @@ export const buildDonutSeriesConfig = (s) => ({
   key: s.key,
   name: s.name ?? s.key,
   type: s.type ?? "number",
-  expression: s.expression ?? null,
+  ast: s.ast ?? null,
   tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
   color: s.color ?? "var(--info)",
 });
@@ -27,9 +27,6 @@ export function buildDonutChart({ seriesConfig, groupSpec, layout = {} }) {
 
     groupSpec: groupSpec ?? null,
 
-    seriesConfig:
-      groupSpec && groupSpec.ast
-        ? []
-        : seriesConfig.map(buildDonutSeriesConfig),
+    seriesConfig: seriesConfig.map(buildDonutSeriesConfig),
   };
 }

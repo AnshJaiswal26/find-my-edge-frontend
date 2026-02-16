@@ -8,43 +8,10 @@ import {
   computeOverSequence,
 } from "@lib/analytics/engine/execute";
 
-const getSeries = ({
-  seriesConfig,
-  seriesById,
-  seriesOrder,
-  schemasById,
-  groups,
-  groupSpec,
-}) => {
-  if (groupSpec?.ast) {
-    const series = [];
-    for (const group of groups) {
-      console.log(group);
-      const value = computeOverSequence({
-        schema: { expression: groupSpec.ast },
-        getTradeAt: (index) => {
-          if (index < 0) return null;
-          const id = group.tradeIds[index];
-          return id ? seriesById[id] : null;
-        },
-        getTradeCount: () => seriesOrder.length,
-        getSchemaType: (key) => {
-          const schema = schemasById[key];
-          return { format: schema?.display?.format, type: schema.type };
-        },
-        getValue: (trade, key) => trade[key] ?? null,
-        setValue: () => null,
-        mode: COMPUTATION_MODE.AGGREGATE,
-      });
-      series.push(value);
-    }
-    console.log(series);
-    return series;
-  }
-
+const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
   const series = seriesConfig.map((s) => {
     const value = computeOverSequence({
-      schema: { expression: s.expression },
+      schema: { ast: s.ast },
       getTradeAt: (index) => {
         if (index < 0) return null;
         const id = seriesOrder[index];
@@ -53,7 +20,7 @@ const getSeries = ({
       getTradeCount: () => seriesOrder.length,
       getSchemaType: (key) => {
         const schema = schemasById[key];
-        return { format: schema?.display?.format, type: schema.type };
+        return { format: schema?.display?.format, type: schema.semanticType };
       },
       getValue: (trade, key) => trade[key] ?? null,
       setValue: () => null,
@@ -61,7 +28,6 @@ const getSeries = ({
     });
     return value;
   });
-  console.log(series);
   return series;
 };
 
@@ -73,8 +39,6 @@ const seriesGenerator = {
 export default function useGroupChartConfig({
   chartId,
   layout,
-  groups,
-  groupSpec,
   seriesConfig,
   seriesOrder,
   seriesById,
@@ -97,10 +61,8 @@ export default function useGroupChartConfig({
       seriesOrder,
       seriesById,
       schemasById,
-      groups,
-      groupSpec,
     });
-  }, [type, filteredConfig, seriesOrder, seriesById, groups, schemasById]);
+  }, [type, filteredConfig, seriesOrder, seriesById, schemasById]);
 
   const tooltipCb = useCallback(
     (seriesValue, index, seriesIndex) =>
@@ -111,9 +73,8 @@ export default function useGroupChartConfig({
         chartId,
         filteredConfig, // ✅ pass filtered config
         series: computedSeries, // ✅ pass actual data
-        groups,
       }),
-    [chartId, selectedSeriesKeys, groups, computedSeries],
+    [chartId, selectedSeriesKeys, computedSeries],
   );
 
   const options = useMemo(() => {

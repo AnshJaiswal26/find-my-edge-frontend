@@ -1,3 +1,5 @@
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+
 const isDuplicateLabel = (draft, ctx) => {
   const newLabel = draft.label?.trim().toLowerCase();
   if (!newLabel) return false;
@@ -16,7 +18,7 @@ export const isValid = (draft, setError, ctx) => {
     return false;
   }
 
-  if (draft.type.includes("computed") && !draft.expression) {
+  if (draft.source === SCHEMA_SOURCE.COMPUTEDs && !draft.ast) {
     setError({ ast: "Expression is required" });
     return false;
   }

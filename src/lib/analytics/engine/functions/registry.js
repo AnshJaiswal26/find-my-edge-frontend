@@ -40,6 +40,7 @@ export const FUNCTION_ALLOW_BY_MODE = {
     ...Object.keys(SCHEMA_FUNCTIONS),
     ...Object.keys(CONDITION_FUNCTIONS),
     ...Object.keys(WINDOW_FUNCTIONS),
+    "COUNT_ALL",
   ]),
 
   // /* ---------------------------------- */

@@ -1,4 +1,6 @@
+import { useEffect, useMemo, useState } from "react";
 import {
+  Button,
   ColorRules,
   ExpressionBuilder,
   Input,
@@ -9,8 +11,11 @@ import { DisplaySection } from "./DisplaySection";
 import { ErrorText, Section } from "@layout";
 
 import { DEFAULT_FORMATS } from "@utils";
-import { SCHEMA_TYPES, SCHEMA_TYPES_LABELS } from "@lib/analytics/schema";
-import { useMemo } from "react";
+import {
+  BASE_TYPES,
+  SCHEMA_SOURCE,
+  SCHEMA_TYPES_GROUP,
+} from "@lib/analytics/schema";
 
 export default function ColumnDetails({
   columnsById,
@@ -21,27 +26,66 @@ export default function ColumnDetails({
 }) {
   if (!draft) return null;
 
+  const [isComputed, setIsComputed] = useState(
+    draft.source === SCHEMA_SOURCE.COMPUTED,
+  );
+
   const mode = useMemo(() => {
     return draft.mode === "row" ? "BASE" : "WINDOW";
   }, [draft.mode]);
 
+  useEffect(() => {
+    setIsComputed(draft.source === SCHEMA_SOURCE.COMPUTED);
+  }, [draft.source]);
+
+  console.log(draft);
+
   return (
     <div className="flex-1 w-full space-y-4 overflow-auto">
-      <Select
-        label={"Column Type"}
-        value={draft.type}
-        options={SCHEMA_TYPES}
-        getLabel={(v) => SCHEMA_TYPES_LABELS[v]}
-        onChange={(v) =>
-          onDraftChange((p) => ({
-            ...p,
-            type: v,
-            editable: !v.includes("computed"),
-            display: { format: DEFAULT_FORMATS[v], decimals: 2 },
-          }))
-        }
+      {/* ✅ TYPE (only base types) */}
+      {!isComputed && (
+        <Select
+          label={"Column Type"}
+          value={draft.type}
+          options={BASE_TYPES}
+          getLabel={(v) => v.toUpperCase()}
+          onChange={(v) =>
+            onDraftChange((p) => ({
+              ...p,
+              type: v,
+              semanticType: SCHEMA_TYPES_GROUP[v],
+              editable: true,
+              display: { format: DEFAULT_FORMATS[v], decimals: 2 },
+            }))
+          }
+        />
+      )}
+
+      {/* 🔥 COMPUTED TOGGLE */}
+      <Button.Toggle
+        label="Derived"
+        value={isComputed}
+        onChange={(val) => {
+          setIsComputed(val);
+
+          if (!val) {
+            // reset computed fields
+            onDraftChange((p) => ({
+              ...p,
+              ast: null,
+              formula: "",
+              dependencies: [],
+            }));
+          } else {
+            onDraftChange((p) => ({
+              ...p,
+              source: SCHEMA_SOURCE.COMPUTED,
+            }));
+          }
+        }}
       />
 
+      {/* MODE */}
       <Select
         label={"Computation Mode"}
         value={draft.mode}
@@ -50,7 +94,7 @@ export default function ColumnDetails({
         onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
       />
 
-      {/* Label */}
+      {/* LABEL */}
       <Section title={"Label"}>
         <Input
           vertical
@@ -63,14 +107,14 @@ export default function ColumnDetails({
         {error?.input && <ErrorText text={error.input} />}
       </Section>
 
-      {/* Computed */}
-      {draft.type.includes("computed") && (
+      {/* 🔥 EXPRESSION BUILDER */}
+      {isComputed && (
         <>
           <Section title={"Initial Value"}>
             <Input
               vertical
               type="number"
-              placeholder="Enter initital value"
+              placeholder="Enter initial value"
               value={draft.initialValue}
               onChange={(e) => {
                 onDraftChange((p) => ({
@@ -80,26 +124,30 @@ export default function ColumnDetails({
               }}
             />
           </Section>
+
           <ExpressionBuilder
             key={draft.id}
             value={draft.formula}
             schemasById={columnsById}
             mode={mode}
             ref={builderRef}
-            onCommit={(formula, expression, dependencies) => {
+            onCommit={(formula, ast, dependencies, semanticType) => {
               onDraftChange((p) => ({
                 ...p,
                 formula,
-                expression,
+                ast,
                 dependencies,
+                semanticType,
+                type: `${semanticType} computed`, // 🔥 auto
+                editable: false,
               }));
             }}
           />
         </>
       )}
 
-      {/* Select */}
-      {draft.type === "select" && (
+      {/* SELECT OPTIONS */}
+      {!isComputed && draft.type === "select" && (
         <SelectOptionsEditor
           error={error}
           options={draft?.options || []}
@@ -107,16 +155,16 @@ export default function ColumnDetails({
         />
       )}
 
-      {/* Display */}
+      {/* DISPLAY */}
       <DisplaySection
-        type={draft.type}
+        type={draft.semanticType}
         display={draft.display}
         onChange={onDraftChange}
       />
 
-      {/* Color rules */}
+      {/* COLOR RULES */}
       <ColorRules
-        type={draft.type}
+        type={draft.semanticType || draft.type}
         rules={draft.colorRules}
         onChange={onDraftChange}
       />

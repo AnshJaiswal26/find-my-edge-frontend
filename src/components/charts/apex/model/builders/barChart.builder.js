@@ -5,6 +5,7 @@ export const buildBarSeriesConfig = (s) => ({
   key: s.key,
   name: s.name ?? s.key,
   type: s.type ?? "number",
+  ast: s.ast ?? null,
   colorRules: s.colorRules ?? [
     {
       operator: "always",

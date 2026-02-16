@@ -1,4 +1,3 @@
-import { DurationInput } from "./DurationInput";
 import { InputField } from "./InputField";
 
 const sizeClasses = {
@@ -35,7 +34,6 @@ export default function Input({
   ...props
 }) {
   const sizes = sizeClasses[size];
-  const Component = type === "time computed" ? DurationInput : InputField;
 
   return (
     <div
@@ -58,7 +56,7 @@ export default function Input({
           classNames?.inputWrapper
         } ${vertical ? "justify-start!" : ""}`}
       >
-        <Component
+        <InputField
           value={value}
           sizes={sizes}
           type={type}

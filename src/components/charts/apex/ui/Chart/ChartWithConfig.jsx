@@ -3,7 +3,6 @@ import { ChartLegend } from "./ChartLegend";
 import { ChartViewport } from "./ChartViewport";
 import { useState } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
-import { createChartSeriesConfig } from "@charts/apex/model/factory";
 
 export function ChartWithConfig({
   chartId,
@@ -18,18 +17,10 @@ export function ChartWithConfig({
   schemasOrder,
 }) {
   const layout = useChartStore((s) => s[chartId].layout);
-  const config = useChartStore(
+  const seriesConfig = useChartStore(
     (s) => s[chartId].ySeriesConfig ?? s[chartId].seriesConfig,
   );
 
-  const seriesConfig =
-    groups && groupSpec.ast
-      ? groups.map((g) =>
-          createChartSeriesConfig(type, { key: g.groupId, name: g.label }),
-        )
-      : config;
-
-  console.log(seriesConfig, groups, groupSpec);
   const [selectedSeriesKeys, setSelectedSeriesKeys] = useState(null);
 
   return (

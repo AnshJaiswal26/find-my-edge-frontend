@@ -17,7 +17,7 @@ export const Cell = memo(function Cell({
   const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
   const column = useTableStore((s) => s.columnsById[colId]);
 
-  const type = column.type;
+  const type = column.semanticType;
 
   /* ---------- Keep draft synced with store value ---------- */
   const [draft, setDraft] = useState(cell.value);
@@ -30,7 +30,7 @@ export const Cell = memo(function Cell({
 
   /* ================= EDIT MODE ================= */
   if (editing) {
-    const Editor = type === "select" ? CellSelect : CellInput;
+    const Editor = column.type === "select" ? CellSelect : CellInput;
 
     return (
       <div

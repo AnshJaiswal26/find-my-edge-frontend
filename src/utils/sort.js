@@ -5,20 +5,15 @@ const TIME_SORTS = ["sortEarliestFirst", "sortLatestFirst"];
 const DURATION_SORTS = ["sortShortestFirst", "sortLongestFirst"];
 
 const SORT_TYPE = {
-  text: TEXT_SORTS,
-  select: TEXT_SORTS,
-
+  string: TEXT_SORTS,
   number: NUMBER_SORTS,
-  "number computed": NUMBER_SORTS,
+  // boolean: BOOLEAN_SORTS,
 
   date: DATE_SORTS,
-  "date computed": DATE_SORTS,
-
   time: TIME_SORTS,
-  "time computed": TIME_SORTS,
+  datetime: DATE_SORTS,
 
   duration: DURATION_SORTS,
-  "duration computed": DURATION_SORTS,
 };
 
 // Sort operations

@@ -40,7 +40,7 @@ export default function CustomApexChart({
     <ChartContainer chartId={chartId}>
       <div className="flex items-center justify-between">
         <ChartTitle chartId={chartId} />
-        {groups && category === "grouped" && (
+        {groups && !groupSpec?.ast && category !== "grouped" && (
           <Select
             classNames={{ button: "py-1.5!" }}
             options={groups}

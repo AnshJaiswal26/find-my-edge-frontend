@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { ColumnDetails } from "../shared";
 import { useTableStore } from "@table/store/useTableStore";
 import { Popup } from "@layout";
-import { createSchema } from "@lib/analytics/schema";
+import { createSchema, SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { isValid } from "@table/validation";
 
 export default function AddColumnPopup() {
@@ -33,7 +33,7 @@ export default function AddColumnPopup() {
     addColumn({
       ...draft,
       id: crypto.randomUUID(),
-      editable: !draft.type.includes("computed"),
+      editable: draft.source !== SCHEMA_SOURCE.COMPUTED,
     });
     // console.log(draft);
     closePopup();

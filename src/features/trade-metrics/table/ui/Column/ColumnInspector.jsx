@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useTableStore } from "@table/store/useTableStore";
 import { ChevronLeft } from "lucide-react";
 import { Divider } from "@layout";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 
 export function ColumnInspector() {
   const selectedColId = useTableStore((s) => s.selectedColumn?.id);
@@ -11,7 +12,7 @@ export function ColumnInspector() {
 
   const column = columnsById[selectedColId];
   if (!column) return null;
-  if (column.type !== "number" && !column.type.includes("computed"))
+  if (column.type !== "number" && column.source !== SCHEMA_SOURCE.COMPUTED)
     return null;
 
   return (
@@ -85,10 +86,10 @@ function InlineStat({ label, value, formula }) {
   const color = formula
     ? "text-(--info)"
     : value > 0
-    ? "text-(--success)"
-    : value < 0
-    ? "text-(--error)"
-    : "text-(--text)";
+      ? "text-(--success)"
+      : value < 0
+        ? "text-(--error)"
+        : "text-(--text)";
   return (
     <span className="flex items-center gap-1">
       <span className="text-(--text-muted) font-serif">{label}:</span>

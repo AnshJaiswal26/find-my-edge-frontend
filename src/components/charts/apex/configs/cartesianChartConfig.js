@@ -9,6 +9,7 @@ export const cartesianChartConfig = ({
   seriesById,
   selectedSeriesKeys,
   tooltipCallback,
+  mode,
 }) => {
   const config = chart.layout;
   const xKey = chart.xSeriesConfig.key;
@@ -20,18 +21,23 @@ export const cartesianChartConfig = ({
     tickPlacement: "on",
     labels: {
       show: config.xLabels,
-      formatter: (v) =>
-        formatValue(
-          seriesById[order[v - 1]]?.[xKey],
-          chart.xSeriesConfig.type,
-          {
-            format: config.xFormat,
-            decimals: config.xDecimals,
-          },
-        ),
+      formatter: (v) => {
+        const item = order[v - 1];
+
+        // 🔥 GROUP AGGREGATE
+        if (mode === "GROUP_AGGREGATE") {
+          return item?.label ?? "";
+        }
+
+        // 🔥 SERIES / GROUP_SELECT
+        return formatValue(seriesById[item]?.[xKey], chart.xSeriesConfig.type, {
+          format: config.xFormat,
+          decimals: config.xDecimals,
+        });
+      },
+
       style: { fontSize: style.fontSize, colors: config.xLabelsColor },
     },
-    axisTicks: order.length,
     title: {
       text: config.xTitleText,
       style: { fontSize: style.fontSize, color: config.xTitleColor },

@@ -5,6 +5,7 @@ export const buildLineSeriesConfig = (s) => ({
   key: s.key,
   name: s.name ?? s.key,
   type: s.type ?? "number",
+  ast: s.ast ?? null,
 
   label: s.label ?? s.name ?? s.key,
 

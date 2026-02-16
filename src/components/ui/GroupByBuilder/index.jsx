@@ -12,15 +12,15 @@ export default function GroupByBuilder({
   const draft = groupBy ?? {};
 
   const field = draft.key ? schemasById[draft.key] : null;
-  const schema = field ? GROUPING_SCHEMA[field.type] : null;
+  const schema = field ? GROUPING_SCHEMA[field.semanticType] : null;
 
   const update = (patch) => onChange?.({ ...draft, ...patch });
 
   const onFieldChange = (f) => {
     update({
       key: f.id,
-      schemaType: f.type,
-      kind: GROUPING_SCHEMA[f.type].kinds[0],
+      schemaType: f.semanticType,
+      kind: GROUPING_SCHEMA[f.semanticType].kinds[0],
       ranges: [],
       bucket: undefined,
       operator: undefined,

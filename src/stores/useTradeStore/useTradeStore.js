@@ -1,4 +1,5 @@
 import { tradeData } from "@data";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { columnsById } from "@table/data";
 import { parseInputValue } from "@utils";
 import { create } from "zustand";
@@ -36,8 +37,11 @@ export const useTradeStore = create(
         schemaOrder.forEach((schemaId) => {
           const schema = schemasById[schemaId];
 
-          if (!schema.type.includes("computed"))
-            trade[schema.id] = parseInputValue(t[schema.id], schema.type);
+          if (schema.source !== SCHEMA_SOURCE.COMPUTED)
+            trade[schema.id] = parseInputValue(
+              t[schema.id],
+              schema.semanticType,
+            );
         });
 
         tradesById[id] = { id, ...trade };

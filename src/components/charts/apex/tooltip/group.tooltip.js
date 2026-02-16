@@ -6,7 +6,6 @@ export const groupedTooltipCallback = ({
   chartId,
   filteredConfig, // ✅ now source of truth
   series, // ✅ computedSeries from chart
-  groups,
 }) => {
   const chart = useChartStore.getState()[chartId];
   const { layout } = chart;
@@ -14,7 +13,7 @@ export const groupedTooltipCallback = ({
   // safety
   if (!filteredConfig?.length || !series?.length) return null;
 
-  const config = groups ? groups[seriesIndex] : filteredConfig[seriesIndex];
+  const config = filteredConfig[seriesIndex];
   if (!config) return null;
 
   const value = series[seriesIndex];

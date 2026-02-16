@@ -45,7 +45,7 @@ export const CellDisplay = memo(function CellDisplay({
 
   const displayValue = useMemo(
     () => formatValue(cell.value, type, display),
-    [cell.value, type, display, colId],
+    [cell.value, type, display],
   );
 
   return (

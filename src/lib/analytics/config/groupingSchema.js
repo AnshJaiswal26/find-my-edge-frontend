@@ -19,33 +19,19 @@ export const GROUPING_SCHEMA = {
     operators: FILTER_TYPE.number,
   },
 
-  "number computed": {
-    kinds: ["value", "bucket", "condition"],
-    buckets: ["range"],
-    input: "number",
-    operators: FILTER_TYPE.number,
-  },
-
-  text: {
+  string: {
     kinds: ["value", "condition"],
     input: "text",
-    operators: FILTER_TYPE.text,
+    operators: FILTER_TYPE.string,
   },
 
-  select: {
+  boolean: {
     kinds: ["value", "condition"],
-    input: "select",
-    operators: FILTER_TYPE.select,
+    input: "boolean",
+    operators: FILTER_TYPE.boolean,
   },
 
   date: {
-    kinds: ["value", "bucket", "condition"],
-    buckets: ["day", "month", "year"],
-    input: "date",
-    operators: FILTER_TYPE.date,
-  },
-
-  "date computed": {
     kinds: ["value", "bucket", "condition"],
     buckets: ["day", "month", "year"],
     input: "date",
@@ -59,10 +45,17 @@ export const GROUPING_SCHEMA = {
     operators: FILTER_TYPE.time,
   },
 
-  "time computed": {
+  datetime: {
     kinds: ["value", "bucket", "condition"],
-    buckets: ["hour", "range"],
-    input: "time computed",
-    operators: FILTER_TYPE["time computed"],
+    buckets: ["day", "month", "year", "hour"],
+    input: "datetime",
+    operators: FILTER_TYPE.datetime,
+  },
+
+  duration: {
+    kinds: ["value", "bucket", "condition"],
+    buckets: ["range"], // 🔥 important
+    input: "duration",
+    operators: FILTER_TYPE.duration,
   },
 };

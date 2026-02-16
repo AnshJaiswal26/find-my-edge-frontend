@@ -56,9 +56,9 @@ export function computeRowSequence({
       ctx.prevTrade = prevTrade;
       ctx.prevValue = prevValue;
     }
-    // console.log({ ...schema.expression });
+    // console.log({ ...schema.ast });
 
-    const value = evaluateExpression(schema.expression, ctx);
+    const value = evaluateExpression(schema.ast, ctx);
     setValue(trade, schema, value);
 
     if (mode === COMPUTATION_MODE.WINDOW) {

@@ -3,7 +3,7 @@ export const STREAK = {
     return { max: 0, current: 0 };
   },
 
-  step(state, [condition]) {
+  step(state, condition) {
     if (condition) {
       state.current++;
       state.max = Math.max(state.max, state.current);

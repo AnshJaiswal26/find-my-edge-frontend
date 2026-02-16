@@ -3,7 +3,6 @@ const TIME_FORMATS = [
   { key: "HH:mm:ss", label: "09:30:15" },
   { key: "hh:mm A", label: "09:30 AM" },
   { key: "hh:mm:ss A", label: "09:30:15 AM" },
-  { key: "mm:ss", label: "05:32" },
 ];
 
 const TIME_FORMAT_KEYS = TIME_FORMATS.map(({ key }) => key);
@@ -11,9 +10,9 @@ const TIME_FORMAT_KEYS = TIME_FORMATS.map(({ key }) => key);
 function formatTime(value, format) {
   if (typeof value !== "number") return "—";
 
-  // seconds since midnight → h:m:s
   const totalSeconds = Math.max(0, Math.floor(value));
 
+  // ⏰ wraps at 24h
   const h24 = Math.floor(totalSeconds / 3600) % 24;
   const m = Math.floor((totalSeconds % 3600) / 60);
   const s = totalSeconds % 60;
@@ -31,5 +30,4 @@ function formatTime(value, format) {
 
   return format.replace(/HH|hh|mm|ss|A/g, (k) => map[k]);
 }
-
 export { TIME_FORMATS, TIME_FORMAT_KEYS, formatTime };

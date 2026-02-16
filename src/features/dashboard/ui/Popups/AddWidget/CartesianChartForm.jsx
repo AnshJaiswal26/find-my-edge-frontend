@@ -1,5 +1,11 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
-import { Button, GroupByBuilder, Input, Select } from "@ui";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import { Button, ExpressionBuilder, GroupByBuilder, Input, Select } from "@ui";
 import { Section } from "@layout";
 import { Trash2 } from "lucide-react";
 import { useDashboardStore } from "@features/dashboard/store";
@@ -9,9 +15,13 @@ import { draftToSpec } from "@lib/analytics/engine/data";
 export const CartesianChartForm = forwardRef(
   ({ type, options, schemasById }, ref) => {
     const addChart = useDashboardStore((s) => s.addChart);
+    const builderRef = useRef();
 
     const [groupBy, setGroupBy] = useState({});
     const [grouping, setGrouping] = useState(false);
+    const [aggregation, setAggregation] = useState(false);
+
+    const [expr, setExpr] = useState("");
 
     const [layout, setLayout] = useState({
       xTitleText: "",
@@ -21,7 +31,9 @@ export const CartesianChartForm = forwardRef(
 
     const [seriesX, setSeriesX] = useState({ key: "", name: "", type: "" });
 
-    const [seriesY, setSeriesY] = useState([{ key: "", name: "", type: "" }]);
+    const [seriesY, setSeriesY] = useState([
+      { key: "", name: "", type: "", ast: null },
+    ]);
 
     const { optionsGroup, baseOptions, filteredOptions } = useFilteredOptions({
       series: seriesY,
@@ -31,19 +43,43 @@ export const CartesianChartForm = forwardRef(
 
     useImperativeHandle(ref, () => ({
       submit() {
-        if (!seriesX.key) return;
-        if (!seriesY[0]?.key) return;
+        console.log(groupBy);
+        if (aggregation) {
+          if (!groupBy?.key) return;
+          if (!groupBy?.ast) return;
+        } else {
+          if (!seriesX.key) return;
+          if (!seriesY[0]?.key) return;
+        }
 
         addChart(type, {
           layout,
           groupSpec: draftToSpec(groupBy),
-          x: seriesX,
+          x: aggregation
+            ? {
+                key: groupBy.key,
+                name: groupBy.label,
+              }
+            : seriesX,
           y: seriesY,
         });
-
-        return;
       },
     }));
+
+    useEffect(() => {
+      if (aggregation && groupBy?.key) {
+        setSeriesX({
+          key: groupBy.key,
+          name: groupBy.label,
+          type: "text",
+        });
+
+        setLayout((p) => ({
+          ...p,
+          xTitleText: groupBy.label,
+        }));
+      }
+    }, [aggregation, groupBy]);
 
     return (
       <>
@@ -70,66 +106,93 @@ export const CartesianChartForm = forwardRef(
               groupBy={groupBy}
               onChange={setGroupBy}
             />
+
+            <Button.Toggle
+              label={"Aggregation"}
+              hint={"Show aggregate per group (single metric)"}
+              value={aggregation}
+              onChange={setAggregation}
+            />
+
+            {aggregation && (
+              <ExpressionBuilder
+                ref={builderRef}
+                value={expr}
+                schemasById={schemasById}
+                mode={"GLOBAL"}
+                semanticMode={"AGGREGATE"}
+                onCommit={(expr, ast, dependencies) => {
+                  setExpr(expr);
+                  setGroupBy((p) => ({ ...p, ast, dependencies }));
+                }}
+              />
+            )}
           </Section>
         )}
 
-        <Section title={"X Axis Series"}>
-          <Select
-            value={seriesX.key}
-            options={options}
-            getLabel={(o) => o.label}
-            getKey={(o) => o.id}
-            onChange={(o) => {
-              setSeriesX({ key: o.id, name: o.label, type: o.type });
-              setLayout((p) => ({ ...p, xTitleText: o.label }));
-            }}
-          />
-        </Section>
-
-        <Section title={"Y Axis Series"}>
-          {seriesY.map((s, i) => (
-            <div key={i} className="flex items-end justify-between">
+        {!aggregation && (
+          <>
+            <Section title={"X Axis Series"}>
               <Select
-                vertical
-                label={`Series ${i + 1}`}
-                value={s.key}
-                options={i === 0 ? baseOptions : filteredOptions}
+                value={seriesX.key}
+                options={options}
                 getLabel={(o) => o.label}
                 getKey={(o) => o.id}
                 onChange={(o) => {
-                  setSeriesY((p) => {
-                    const next = [...p];
-                    next[i] = {
-                      key: o.id,
-                      name: o.label,
-                      type: o.type,
-                    };
-                    return next;
-                  });
-                  setLayout((p) => ({ ...p, yTitleText: o.label }));
+                  setSeriesX({ key: o.id, name: o.label, type: o.type });
+                  setLayout((p) => ({ ...p, xTitleText: o.label }));
                 }}
               />
-              <Button.Icon
-                onClick={() =>
-                  setSeriesY((p) => p.filter((_, idx) => idx !== i))
-                }
-              >
-                <Trash2 size={18} />
-              </Button.Icon>
-            </div>
-          ))}
-          <div>
-            <Button.Text
-              onClick={() =>
-                setSeriesY((p) => [...p, { key: "", name: "", type: "" }])
-              }
-              disabled={!optionsGroup}
-              className={!optionsGroup ? "opacity-50 pointer-events-none" : ""}
-            >
-              + Add Series
-            </Button.Text>
-          </div>
-        </Section>
+            </Section>
+
+            <Section title={"Y Axis Series"}>
+              {seriesY.map((s, i) => (
+                <div key={i} className="flex items-end justify-between">
+                  <Select
+                    vertical
+                    label={`Series ${i + 1}`}
+                    value={s.key}
+                    options={i === 0 ? baseOptions : filteredOptions}
+                    getLabel={(o) => o.label}
+                    getKey={(o) => o.id}
+                    onChange={(o) => {
+                      setSeriesY((p) => {
+                        const next = [...p];
+                        next[i] = {
+                          key: o.id,
+                          name: o.label,
+                          type: o.type,
+                        };
+                        return next;
+                      });
+                      setLayout((p) => ({ ...p, yTitleText: o.label }));
+                    }}
+                  />
+                  <Button.Icon
+                    onClick={() =>
+                      setSeriesY((p) => p.filter((_, idx) => idx !== i))
+                    }
+                  >
+                    <Trash2 size={18} />
+                  </Button.Icon>
+                </div>
+              ))}
+              <div>
+                <Button.Text
+                  onClick={() =>
+                    setSeriesY((p) => [...p, { key: "", name: "", type: "" }])
+                  }
+                  disabled={!optionsGroup}
+                  className={
+                    !optionsGroup ? "opacity-50 pointer-events-none" : ""
+                  }
+                >
+                  + Add Series
+                </Button.Text>
+              </div>
+            </Section>
+          </>
+        )}
       </>
     );
   },

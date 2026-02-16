@@ -18,6 +18,8 @@ export default function ColumnSettingsPopup() {
   const [draft, setDraft] = useState(activeColumn);
   const [error, setError] = useState("");
 
+  console.log(draft);
+
   useEffect(() => {
     if (activeColumn) setDraft(activeColumn);
   }, [activeColumn]);

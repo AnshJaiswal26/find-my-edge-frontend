@@ -1,6 +1,7 @@
 import { createCell, createRow } from "../model";
 import { buildAffectedMap } from "../dependency";
 import { useTradeStore } from "@stores";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 
 export const createCoreSlice = (set, get) => ({
   rowsById: {},
@@ -84,7 +85,7 @@ export const createCoreSlice = (set, get) => ({
 
     useTradeStore.getState().addSchema(metric);
 
-    if (metric.type.includes("computed")) {
+    if (metric.source === SCHEMA_SOURCE.COMPUTED) {
       state.recompute({
         reason: "column",
         colId: metric.id,

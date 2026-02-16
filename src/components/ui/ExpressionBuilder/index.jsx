@@ -9,14 +9,20 @@ import React, {
 } from "react";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
-import { buildAST, tokenize, toPostfix, validateTypes } from "@lib/expression";
+import {
+  buildAST,
+  tokenize,
+  toPostfix,
+  validateTypes,
+  validateSemantic,
+} from "@lib/expression";
 import { Section } from "@layout";
 import { formatExpression } from "./formatExpression";
 import { getSchemaSuggestions, getFunctionSuggestions } from "./suggestions";
 import { highlightFormula } from "./highlightFormula";
 import { FunctionDocsPanel } from "./FunctionDocPanel";
 import { formatAST } from "./formatAst";
-import { validateRatioExpression } from "./sematicModeValidators";
+import { validateExpression } from "./semanticModeValidators";
 
 function labelsToIds(expr, usedSchemas) {
   let result = expr;
@@ -68,18 +74,26 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   const highlighted = useMemo(() => highlightFormula(labelExpr), [labelExpr]);
 
   // ---------- PARSE ----------
-  const { ast, dependencies } = useMemo(() => {
+  const { ast, dependencies, semanticType } = useMemo(() => {
     if (!idExpr.trim())
-      return { ast: null, dependencies: null, error: "Empty expression" };
+      return {
+        ast: null,
+        dependencies: null,
+        semanticType: null,
+        error: "Empty expression",
+      };
 
     try {
       const result = buildAST(toPostfix(tokenize(idExpr)), mode);
 
       if (result?.ast) {
         validateTypes(result.ast, mode, schemasById);
-        if (semanticMode === "RATIO_REQUIRED") {
-          validateRatioExpression(result.ast, schemasById);
+        const semanticType = validateSemantic(result.ast, schemasById);
+
+        if (semanticMode === "AGGREGATE") {
+          validateExpression(result.ast);
         }
+        result.semanticType = semanticType;
       }
 
       if (error) {
@@ -89,7 +103,12 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       return { ...result, error: null };
     } catch (err) {
       setError(err.message);
-      return { ast: null, dependencies: null, error: err.message };
+      return {
+        ast: null,
+        dependencies: null,
+        semanticType: null,
+        error: err.message,
+      };
     }
   }, [idExpr, mode]);
 
@@ -228,7 +247,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       setLabelExpr(e.target.value);
       setCursor(e.target.selectionStart);
       setOpen(true);
-      onChange?.(labelExpr, ast, dependencies, error);
+      onChange?.(labelExpr, ast, dependencies, semanticType, error);
     },
     [labelExpr, ast, dependencies, error],
   );
@@ -260,7 +279,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       setLabelExpr(formatted);
     }
 
-    onCommit?.(formatted, ast, dependencies, error);
+    onCommit?.(formatted, ast, dependencies, semanticType, error);
 
     if (!formatted.trim()) setError("Expression is required");
 
@@ -278,6 +297,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
     getAST: () => ast,
     getDependencies: () => dependencies,
     getExpression: () => labelExpr,
+    getSemanticType: () => semanticType,
   }));
 
   const sharedTextLayer =
@@ -356,9 +376,15 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
           />
         )}
 
-        {labelExpr !== null && (
-          <FormulaValidation valid={!!ast && !semanticError} error={error} />
-        )}
+        <div className="flex items-center justify-between">
+          {" "}
+          {labelExpr !== null && (
+            <FormulaValidation valid={!!ast && !semanticError} error={error} />
+          )}
+          {!!ast && !semanticError && (
+            <span className="text-(--text-muted)">Output: {semanticType}</span>
+          )}
+        </div>
       </div>
       <FunctionDocsPanel />
       <FunctionDocsPanel mode={mode} />

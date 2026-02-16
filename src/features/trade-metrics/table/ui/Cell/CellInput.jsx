@@ -1,8 +1,35 @@
-import { parseInputValue } from "@utils";
+import { formatForInput, parseInputValue } from "@utils";
 import { useTableStore } from "@table/store/useTableStore";
 
+function getInputType(semanticType) {
+  switch (semanticType) {
+    case "number":
+      return "number";
+
+    case "date":
+      return "date";
+
+    case "time":
+      return "time";
+
+    case "datetime":
+      return "datetime-local";
+
+    case "duration":
+      return "text"; // 🔥 custom parsing
+
+    case "boolean":
+      return "checkbox";
+
+    default:
+      return "text";
+  }
+}
+
 export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
-  const type = useTableStore((s) => s.columnsById[colId].type);
+  const type = useTableStore((s) => s.columnsById[colId].semanticType);
+
+  const inputType = getInputType(type);
 
   return (
     <input
@@ -12,10 +39,18 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
       [&::-webkit-outer-spin-button]:appearance-none
       [&::-webkit-inner-spin-button]:appearance-none"
       autoFocus
-      type={["date", "time", "number"].includes(type) ? type : "text"}
+      type={inputType}
       step={1}
-      value={draft ?? ""}
-      onChange={(e) => setDraft(e.target.value)}
+      value={
+        draft != null
+          ? typeof draft === "number"
+            ? formatForInput(draft, type) // ✅ correct
+            : draft // ✅ already valid input string
+          : ""
+      }
+      onChange={(e) => {
+        setDraft(e.target.value);
+      }}
       onBlur={() => {
         const normalized = parseInputValue(draft, type);
         onCommit(normalized);

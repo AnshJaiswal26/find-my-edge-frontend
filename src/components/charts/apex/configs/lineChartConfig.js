@@ -7,6 +7,7 @@ export const getLineChartConfig = ({
   seriesById,
   tooltipCallback,
   selectedSeriesKeys,
+  mode,
 }) => {
   const config = chart.layout;
 
@@ -20,6 +21,7 @@ export const getLineChartConfig = ({
     order,
     seriesById,
     tooltipCallback,
+    mode,
   });
 
   return {

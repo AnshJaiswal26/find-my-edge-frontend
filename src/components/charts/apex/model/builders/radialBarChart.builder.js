@@ -7,7 +7,7 @@ export const buildRadialSeriesConfig = (s) => ({
   type: s.type ?? "number",
   format: s.format ?? DEFAULT_FORMATS[s.type || "number"],
   decimals: s.decimals ?? 2,
-  expression: s.expression ?? null,
+  ast: s.ast ?? null,
   tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
   color: s.color ?? "var(--info)",
 });
@@ -27,9 +27,6 @@ export function buildRadialBarChart({ seriesConfig, groupSpec, layout = {} }) {
 
     groupSpec: groupSpec ?? null,
 
-    seriesConfig:
-      groupSpec && groupSpec.ast
-        ? []
-        : seriesConfig.map(buildRadialSeriesConfig),
+    seriesConfig: seriesConfig.map(buildRadialSeriesConfig),
   };
 }

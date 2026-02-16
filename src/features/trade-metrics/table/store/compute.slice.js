@@ -4,6 +4,7 @@ import {
   COMPUTATION_MODE,
   computeOverSequence,
 } from "@lib/analytics/engine/execute";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 
 function syncRowsToTradeStore(rowsById, changedRowIds) {
   if (!changedRowIds.size) return;
@@ -93,7 +94,7 @@ export const createComputeSlice = (set, get) => ({
           getTradeCount: () => sequenceIds.length,
           getSchemaType: (key) => {
             const col = columnsById[key];
-            return { format: col?.display?.format, type: col.type };
+            return { format: col?.display?.format, type: col.semanticType };
           },
           getValue,
           setValue,
@@ -102,7 +103,7 @@ export const createComputeSlice = (set, get) => ({
         });
       };
 
-      const isComputed = (schema) => schema && schema.type.includes("computed");
+      const isComputed = (schema) => schema?.source === SCHEMA_SOURCE.COMPUTED;
 
       /* ================================
        * FULL RECOMPUTE
@@ -224,10 +225,9 @@ export const createComputeSlice = (set, get) => ({
           });
         });
       } else if (payload.reason === "column" && payload.colId) {
-
-      /* ================================
-       * COLUMN CHANGE
-       * ================================ */
+        /* ================================
+         * COLUMN CHANGE
+         * ================================ */
         const schema = columnsById[payload.colId];
         if (!isComputed(schema)) return;
 

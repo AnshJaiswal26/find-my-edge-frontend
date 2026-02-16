@@ -7,6 +7,7 @@ export const getBarChartConfig = ({
   seriesById,
   selectedSeriesKeys,
   tooltipCallback,
+  mode,
 }) => {
   const config = chart.layout;
 
@@ -17,6 +18,7 @@ export const getBarChartConfig = ({
     seriesById,
     selectedSeriesKeys,
     tooltipCallback,
+    mode,
   });
 
   return {

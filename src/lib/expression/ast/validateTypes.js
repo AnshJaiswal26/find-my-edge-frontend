@@ -3,10 +3,6 @@ import {
   FUNCTION_ALLOW_BY_MODE,
 } from "@lib/analytics/engine/functions/registry";
 
-function isSchemaReference(node) {
-  return node?.type === "key";
-}
-
 function getNodeType(node, mode, schemasById) {
   if (!node) return "any";
 
@@ -29,11 +25,17 @@ function getNodeType(node, mode, schemasById) {
       case "number":
       case "number computed":
 
+      case "duration":
+      case "duration computed":
+
       case "time":
       case "time computed":
 
       case "date":
+      case "date computed":
+
       case "datetime":
+      case "datetime computed":
         return "number";
 
       case "select":
@@ -42,14 +44,6 @@ function getNodeType(node, mode, schemasById) {
 
       case "boolean":
         return "boolean";
-
-      // case "time":
-      // case "time computed":
-      //   return "number";
-
-      // case "date":
-      // case "datetime":
-      //   return "number"; // or "number" if you treat dates as timestamps
 
       default:
         return "any";
@@ -69,9 +63,11 @@ function getNodeType(node, mode, schemasById) {
     const right = getNodeType(node.right, mode, schemasById);
 
     if (["+", "-", "*", "/"].includes(node.op)) {
+      // existing numeric check (execution level)
       if (left !== "number" || right !== "number") {
         throw new Error(`Operator ${node.op} requires numeric operands`);
       }
+
       return "number";
     }
 

@@ -77,11 +77,10 @@ export default function Editor() {
         p-4
         backdrop-blur-md
         bg-[color-mix(in_srgb,var(--surface)_25%,transparent)]
-        shadow-(--shadow)
+       
         text-(--text)
         whitespace-nowrap
         overflow-x-auto overflow-y-hidden
-        border-b border-(--border)
       "
     >
       <EditorLeftActions />

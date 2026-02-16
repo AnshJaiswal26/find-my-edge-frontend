@@ -2,174 +2,120 @@ import {
   forwardRef,
   Fragment,
   useImperativeHandle,
-  useMemo,
   useRef,
   useState,
 } from "react";
-import { Button, ExpressionBuilder, GroupByBuilder, Input, Select } from "@ui";
+import { Button, ExpressionBuilder, Input } from "@ui";
 import { Divider, Section } from "@layout";
 import { Trash2 } from "lucide-react";
 import { useDashboardStore } from "@features/dashboard/store";
-import { useFilteredOptions } from "@features/dashboard/hooks";
-import { draftToSpec } from "@lib/analytics/engine/data";
 
-export const GroupedChartForm = forwardRef(
-  ({ type, options, schemasById }, ref) => {
-    const addChart = useDashboardStore((s) => s.addChart);
-    const builderRef = useRef();
+export const GroupedChartForm = forwardRef(({ type, schemasById }, ref) => {
+  const addChart = useDashboardStore((s) => s.addChart);
+  const builderRef = useRef();
 
-    const [groupBy, setGroupBy] = useState({});
-    const [grouping, setGrouping] = useState(false);
+  const [layout, setLayout] = useState({ title: "" });
 
-    const [layout, setLayout] = useState({ title: "" });
+  const [expr, setExpr] = useState("");
 
-    const [expr, setExpr] = useState("");
+  const [seriesConfig, setSeriesConfig] = useState([
+    {
+      key: "",
+      name: "",
+      type: "",
+      ast: null,
+    },
+  ]);
 
-    const [seriesConfig, setSeriesConfig] = useState([
-      {
-        key: "",
-        name: "",
-        type: "",
-        expression: "",
-      },
-    ]);
+  useImperativeHandle(ref, () => ({
+    submit() {
+      if (!seriesConfig[0]?.key) return;
 
-    const { optionsGroup, baseOptions, filteredOptions } = useFilteredOptions({
-      series: seriesConfig,
-      setSeries: setSeriesConfig,
-      options,
-    });
+      addChart(type, {
+        layout,
+        seriesConfig,
+      });
 
-    useImperativeHandle(ref, () => ({
-      submit() {
-        if (!grouping && !seriesConfig[0]?.key) return;
+      return;
+    },
+  }));
 
-        addChart(type, {
-          layout,
-          seriesConfig,
-          groupSpec: draftToSpec(groupBy),
-        });
+  return (
+    <>
+      <Input
+        label="Chart Title"
+        vertical
+        placeholder="Enter chart title"
+        classNames={{ input: "max-w-full!" }}
+        value={layout.title}
+        onCommit={(v) => setLayout((p) => ({ ...p, title: v }))}
+      />
 
-        return;
-      },
-    }));
-
-    return (
-      <>
-        <Input
-          label="Chart Title"
-          vertical
-          placeholder="Enter chart title"
-          classNames={{ input: "max-w-full!" }}
-          value={layout.title}
-          onCommit={(v) => setLayout((p) => ({ ...p, title: v }))}
-        />
-
-        <Button.Toggle
-          label={"Grouping"}
-          hint={"Group chart series by metric"}
-          value={grouping}
-          onChange={setGrouping}
-        />
-
-        {grouping ? (
-          <Section title={"Group Chart Series"}>
-            <GroupByBuilder
-              schemasById={schemasById}
-              groupBy={groupBy}
-              onChange={setGroupBy}
-            />
+      <Section title={"Series"}>
+        {seriesConfig.map((s, i) => (
+          <Fragment key={i}>
+            {i !== 0 && <Divider />}
+            <div className="flex items-end justify-between">
+              <Input
+                label={"Label"}
+                vertical
+                value={s.key}
+                placeholder="Enter Label"
+                onChange={(e) => {
+                  setSeriesConfig((p) => {
+                    const next = [...p];
+                    next[i] = {
+                      ...next[i],
+                      key: e.target.value,
+                      name: e.target.value,
+                    };
+                    return next;
+                  });
+                }}
+              />
+              <Button.Icon
+                onClick={() =>
+                  setSeriesConfig((p) => p.filter((_, idx) => idx !== i))
+                }
+              >
+                <Trash2 size={18} />
+              </Button.Icon>{" "}
+            </div>
 
             <ExpressionBuilder
+              key={i}
               ref={builderRef}
-              label="Expression Query Per Group"
               value={expr}
               schemasById={schemasById}
               mode={"GLOBAL"}
-              semanticMode={type == "radialBar" ? "RATIO_REQUIRED" : "STANDARD"}
-              onCommit={(expr, ast, dependency) => {
+              semanticMode={"AGGREGATE"}
+              onCommit={(expr, ast, dependencies) => {
                 setExpr(expr);
-                setGroupBy((p) => ({ ...p, ast }));
+                setSeriesConfig((s) => {
+                  const next = [...s];
+                  next[i] = {
+                    ...next[i],
+                    ast,
+                    type: dependencies.length
+                      ? schemasById[dependencies[0]].type
+                      : "number",
+                  };
+                  return next;
+                });
               }}
             />
-          </Section>
-        ) : (
-          <Section title={"Y Axis Series"}>
-            {seriesConfig.map((s, i) => (
-              <Fragment key={i}>
-                {i !== 0 && <Divider />}
-                <div className="flex items-end justify-between">
-                  <Select
-                    vertical
-                    label={`Series ${i + 1}`}
-                    value={s.key}
-                    options={i === 0 ? baseOptions : filteredOptions}
-                    getLabel={(o) => o.label}
-                    getKey={(o) => o.id}
-                    onChange={(o) => {
-                      setSeriesConfig((p) => {
-                        const next = [...p];
-                        next[i] = {
-                          ...next[i],
-                          key: o.id,
-                          name: o.label,
-                          type: o.type,
-                        };
-                        return next;
-                      });
-                    }}
-                  />
-                  <Button.Icon
-                    onClick={() =>
-                      setSeriesConfig((p) => p.filter((_, idx) => idx !== i))
-                    }
-                  >
-                    <Trash2 size={18} />
-                  </Button.Icon>{" "}
-                </div>
-
-                <ExpressionBuilder
-                  key={i}
-                  ref={builderRef}
-                  value={expr}
-                  schemasById={schemasById}
-                  mode={"GLOBAL"}
-                  semanticMode={
-                    type == "radialBar" ? "RATIO_REQUIRED" : "STANDARD"
-                  }
-                  onCommit={(expr, ast, dependency) => {
-                    setExpr(expr);
-                    setSeriesConfig((s) => {
-                      const next = [...s];
-                      next[i] = {
-                        ...next[i],
-                        expression: ast,
-                      };
-                      return next;
-                    });
-                  }}
-                />
-              </Fragment>
-            ))}
-            <div>
-              <Button.Text
-                onClick={() =>
-                  setSeriesConfig((p) => [
-                    ...p,
-                    { key: "", name: "", type: "", reducer: "" },
-                  ])
-                }
-                disabled={!optionsGroup}
-                className={
-                  !optionsGroup ? "opacity-50 pointer-events-none" : ""
-                }
-              >
-                + Add Series
-              </Button.Text>
-            </div>
-          </Section>
-        )}
-      </>
-    );
-  },
-);
+          </Fragment>
+        ))}
+        <div>
+          <Button.Text
+            onClick={() =>
+              setSeriesConfig((p) => [...p, { key: "", name: "", type: "" }])
+            }
+          >
+            + Add Series
+          </Button.Text>
+        </div>
+      </Section>
+    </>
+  );
+});

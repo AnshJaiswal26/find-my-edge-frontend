@@ -11,7 +11,7 @@ export const GROUPED_CHART_LAYOUT = {
 
   total: true,
   totalLabel: "SUM",
-  reducer: "SUM_N",
+  reducer: "SUM",
 
   legend: true,
   legendPosition: "bottom",

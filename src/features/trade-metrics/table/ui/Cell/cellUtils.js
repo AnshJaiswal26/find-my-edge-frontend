@@ -1,3 +1,4 @@
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { useTableStore } from "@table/store/useTableStore";
 import { formatValue } from "@utils";
 
@@ -12,7 +13,7 @@ export function explainFormulaFromColumn(colId, rowId) {
   const row = rowsById[rowId];
 
   if (
-    !column.type.includes("computed") ||
+    column.source !== SCHEMA_SOURCE.COMPUTED ||
     !column.formula ||
     !column.dependencies?.length
   ) {
@@ -47,6 +48,10 @@ export function explainFormulaFromColumn(colId, rowId) {
   return {
     formula: column.formula,
     expanded,
-    result: formatValue(row.cells[colId]?.value, column.type, column.display),
+    result: formatValue(
+      row.cells[colId]?.value,
+      column.semanticType,
+      column.display,
+    ),
   };
 }

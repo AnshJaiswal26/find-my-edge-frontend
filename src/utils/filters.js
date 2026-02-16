@@ -44,18 +44,15 @@ const DURATION_OPS = [
 ];
 
 const FILTER_TYPE = {
-  text: TEXT_OPS,
-  select: TEXT_OPS,
-
+  string: TEXT_OPS,
   number: NUMBER_OPS,
-  "number computed": NUMBER_OPS,
+  // boolean: BOOLEAN_OPS,
 
   date: DATE_OPS,
-  "date computed": DATE_OPS,
-
   time: TIME_OPS,
+  datetime: DATE_OPS,
 
-  "time computed": DURATION_OPS,
+  duration: DURATION_OPS,
 };
 
 // =============== Helpers ======================
