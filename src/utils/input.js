@@ -1,4 +1,15 @@
+const INPUT_TYPES = {
+  number: "number",
+  date: "date",
+  time: "time",
+  datetime: "datetime-local",
+  duration: "text",
+  boolean: "checkbox",
+  range: "range",
+};
+
 function parseInputValue(raw, semantic) {
+  // if (typeof raw === "number") return raw;
   if (raw == null || raw === "") return null;
 
   switch (semantic) {
@@ -24,23 +35,8 @@ function parseInputValue(raw, semantic) {
 
     /* ---------- DURATION ---------- */
     case "duration": {
-      // supports HH:mm:ss OR DD:HH:mm:ss
-      const parts = raw.split(":").map(Number);
-
-      let d = 0,
-        h = 0,
-        m = 0,
-        s = 0;
-
-      if (parts.length === 4) {
-        [d, h, m, s] = parts;
-      } else if (parts.length === 3) {
-        [h, m, s] = parts;
-      } else if (parts.length === 2) {
-        [m, s] = parts;
-      } else {
-        s = parts[0];
-      }
+      // ALWAYS expect DD:HH:mm:ss
+      const [d = 0, h = 0, m = 0, s = 0] = raw.split(":").map(Number);
 
       return d * 86400 + h * 3600 + m * 60 + s;
     }
@@ -56,7 +52,7 @@ function parseInputValue(raw, semantic) {
 
       const dt = new Date(y, m - 1, d, hh, mm, ss);
 
-      return Math.floor(dt.getTime() / 1000); // 🔥 store in seconds
+      return Math.floor(dt.getTime() / 1000); //  store in seconds
     }
 
     default:
@@ -67,7 +63,9 @@ function parseInputValue(raw, semantic) {
 const pad2 = (n) => String(n).padStart(2, "0");
 
 function formatForInput(value, semantic) {
-  if (value == null || value === "" || Number.isNaN(value)) return "";
+  if (typeof value === "string") return value;
+
+  if (value == null || value === "" || Number.isNaN(value)) return null;
 
   switch (semantic) {
     /* ---------- DATE ---------- */
@@ -113,23 +111,17 @@ function formatForInput(value, semantic) {
 
     /* ---------- DURATION ---------- */
     case "duration": {
+      if (value == null) return "00:00:00:00";
+
       const sign = value < 0 ? "-" : "";
       const totalSeconds = Math.abs(Math.floor(value));
 
       const days = Math.floor(totalSeconds / 86400);
-      const totalHours = Math.floor(totalSeconds / 3600); // 🔥 important
       const hours = Math.floor((totalSeconds % 86400) / 3600);
-
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
 
-      // if using DD format
-      if (days > 0) {
-        return `${sign}${pad2(days)}:${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`;
-      }
-
-      // otherwise use TOTAL hours
-      return `${sign}${pad2(totalHours)}:${pad2(minutes)}:${pad2(seconds)}`;
+      return `${sign}${pad2(days)}:${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`;
     }
 
     /* ---------- NUMBER ---------- */
@@ -150,4 +142,4 @@ function formatForInput(value, semantic) {
   }
 }
 
-export { parseInputValue, pad2, formatForInput };
+export { parseInputValue, pad2, formatForInput, INPUT_TYPES };

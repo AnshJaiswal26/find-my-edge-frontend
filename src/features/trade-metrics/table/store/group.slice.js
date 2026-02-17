@@ -71,7 +71,7 @@ export const createGroupSlice = (set, get) => ({
       groupSpec: draftToSpec(spec ?? groupBy),
       getValue: (row, key) => row.cells[key]?.value ?? null,
       getFormat: (key) => ({
-        type: columnsById[key].type,
+        type: columnsById[key].semanticType,
         display: columnsById[key]?.display,
       }),
     });

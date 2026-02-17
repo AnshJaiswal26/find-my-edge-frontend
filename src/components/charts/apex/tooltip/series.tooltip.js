@@ -1,4 +1,4 @@
-import { evaluateColorRules, formatValue } from "@utils";
+import { evaluateColorRules, formatGroupValue, formatValue } from "@utils";
 import { useChartStore } from "../store/useChartStore";
 
 export const seriesTooltipCallback = ({
@@ -7,16 +7,25 @@ export const seriesTooltipCallback = ({
   chartId,
   getTitle,
   selectedSeriesKeys,
+  mode,
 }) => {
   const chart = useChartStore.getState()[chartId];
 
   const { meta, xSeriesConfig, ySeriesConfig, layout } = chart;
+  const title = getTitle(index, xSeriesConfig.key);
 
   return {
-    title: formatValue(getTitle(index, xSeriesConfig.key), xSeriesConfig.type, {
-      format: layout.xFormat,
-      decimals: layout.xDecimals,
-    }),
+    title:
+      mode === "GROUP_AGGREGATE"
+        ? formatGroupValue(title, xSeriesConfig.type, {
+            format: layout.xFormat,
+            decimals: layout.xDecimals,
+          })
+        : formatValue(title, xSeriesConfig.type, {
+            format: layout.xFormat,
+            decimals: layout.xDecimals,
+          }),
+
     dataArray: seriesValue.map((value, i) => {
       const config = selectedSeriesKeys
         ? ySeriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))

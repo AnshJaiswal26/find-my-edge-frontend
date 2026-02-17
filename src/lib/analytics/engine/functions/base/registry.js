@@ -8,6 +8,7 @@ export const BASE_FUNCTIONS = {
     arity: 1,
     argTypes: ["number"],
     returnType: "number",
+    semantic: { args: ["number"], return: "number" },
     signature: "ABS(expr)",
     description: "Absolute value",
   },
@@ -18,6 +19,7 @@ export const BASE_FUNCTIONS = {
     arity: 2,
     argTypes: ["number", "number"], // value, digits
     returnType: "number",
+    semantic: { args: ["number", "number"], return: "number" },
     signature: "ROUND(expr, digits)",
     description: "Round to N decimal places",
   },
@@ -28,6 +30,7 @@ export const BASE_FUNCTIONS = {
     arity: 3,
     argTypes: ["number", "number", "number"], // value, min, max
     returnType: "number",
+    semantic: { args: ["number", "number", "number"], return: "number" },
     signature: "CLAMP(expr, min, max)",
     description: "Clamp value to range",
   },

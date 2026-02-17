@@ -11,6 +11,8 @@ export default function YAxisSection({
   const axisLabel = isHorizontal ? "X-Axis" : "Y-Axis";
   const seriesType = chart.ySeriesConfig[0].type;
 
+  console.log(seriesType);
+
   return (
     <Section title={axisLabel}>
       <div className="space-y-4">

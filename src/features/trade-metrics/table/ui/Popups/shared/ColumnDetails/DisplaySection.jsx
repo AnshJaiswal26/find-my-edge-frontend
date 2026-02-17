@@ -26,12 +26,12 @@ export function DisplaySection({ display, onChange, type }) {
           min={0}
           max={5}
           value={display.decimals}
-          onChange={(e) =>
+          onChange={(v) =>
             onChange((p) => ({
               ...p,
               display: {
                 ...p.display,
-                decimals: Number(e.target.value),
+                decimals: Number(v),
               },
             }))
           }

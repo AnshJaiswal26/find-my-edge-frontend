@@ -1,40 +1,7 @@
 import { useEffect, useState } from "react";
-import { parseInputValue, formatForInput } from "@utils";
+import { parseInputValue, formatForInput, INPUT_TYPES } from "@utils";
 import { BASE_CLASS } from "./baseClasses";
-
-function getInputType(semantic, type) {
-  // fallback (for legacy or external usage)
-  if (!semantic) return type;
-
-  switch (semantic) {
-    case "number":
-      return "number";
-
-    case "date":
-      return "date";
-
-    case "time":
-      return "time";
-
-    case "datetime":
-      return "datetime-local";
-
-    case "duration":
-      return "text"; // 🔥 important (custom parsing)
-
-    case "boolean":
-      return "checkbox";
-
-    case "string":
-      return "text";
-
-    case "range":
-      return "range";
-
-    default:
-      return "text";
-  }
-}
+import { DurationInput } from "./DurationInput";
 
 export function InputField({
   type = "text",
@@ -57,6 +24,27 @@ export function InputField({
 
   const rawValue = commitMode ? local : value;
 
+  /* ------ DURATION (SPECIAL CASE) -------- */
+  if (type === "duration") {
+    return (
+      <DurationInput
+        value={formatForInput(rawValue, type)}
+        onChange={(val) => {
+          commitMode
+            ? setLocal(val)
+            : onChange?.(parseInputValue(val, "duration"));
+        }}
+        onBlur={(val, e) => {
+          const parsed = parseInputValue(val, "duration");
+          if (commitMode) onCommit?.(parsed);
+          onBlur?.(e);
+        }}
+        className={`${BASE_CLASS} max-w-50 min-w-30 py-4.5 ${sizes?.input} ${classNames?.input}`}
+        {...props}
+      />
+    );
+  }
+
   const displayValue = normalize
     ? formatForInput(rawValue, type)
     : (rawValue ?? "");
@@ -66,7 +54,7 @@ export function InputField({
       ? parseInputValue(e.target.value, type)
       : e.target.value;
 
-    commitMode ? setLocal(parsed) : onChange?.(e, parsed);
+    commitMode ? setLocal(parsed) : onChange?.(parsed, e);
   };
 
   const handleBlur = (e) => {
@@ -84,7 +72,7 @@ export function InputField({
       <input
         {...props}
         step={1}
-        type={getInputType(type, "text")}
+        type={INPUT_TYPES[type] || "text"}
         value={displayValue}
         onChange={handleChange}
         onBlur={handleBlur}

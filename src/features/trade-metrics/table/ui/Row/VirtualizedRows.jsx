@@ -64,7 +64,7 @@ export default function VirtualizedRow({ scrollRef }) {
                 <div className="w-full h-3" />
                 <GroupRow
                   groupId={item.groupId}
-                  label={item.label}
+                  meta={item.meta}
                   groupBy={groupBy}
                 />
                 <div className="w-full h-3" />

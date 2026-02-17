@@ -1,46 +1,26 @@
-import { FILTER_OPERATION_MAP, formatValue } from "@utils";
+import { FILTER_OPERATION_MAP } from "@utils";
 import { getDateBucket, getTimeBucket } from "./buckets";
 import { matchRange } from "./ranges";
 
 export function compileGroupSpec(spec, getValue) {
   switch (spec.type) {
     case "value":
-      return (trade, { type, display }) => {
-        const value = getValue(trade, spec.key);
-        if (value) {
-          return formatValue(value, type, display);
-        }
-        return "Empty";
-      };
+      return (trade) => getValue(trade, spec.key);
 
     case "dateBucket":
-      return (trade, format) =>
-        getDateBucket(getValue(trade, spec.key), spec.unit, format);
+      return (trade) => getDateBucket(getValue(trade, spec.key), spec.unit);
 
     case "timeBucket":
-      return (trade, format) =>
-        getTimeBucket(getValue(trade, spec.key), spec.unit, format);
+      return (trade) => getTimeBucket(getValue(trade, spec.key), spec.unit);
 
     case "numberRange":
-      return (trade, format) =>
-        matchRange(
-          getValue(trade, spec.key),
-          spec.ranges,
-          (f, t) => `${f} – ${t}`,
-          format,
-        );
+      return (trade) => matchRange(getValue(trade, spec.key), spec.ranges);
 
     case "timeRange":
-      return (trade, format) =>
-        matchRange(
-          getValue(trade, spec.key),
-          spec.ranges,
-          (f, t) => `${f} – ${t}`,
-          format,
-        );
+      return (trade) => matchRange(getValue(trade, spec.key), spec.ranges);
 
     case "condition":
-      return (trade, { type, display }) => {
+      return (trade) => {
         const fn = FILTER_OPERATION_MAP[spec.operator];
         const result = fn(getValue(trade, spec.key), spec.value, spec.valueTo);
 

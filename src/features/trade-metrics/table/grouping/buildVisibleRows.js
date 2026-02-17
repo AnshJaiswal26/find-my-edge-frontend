@@ -5,8 +5,7 @@ export function buildVisibleRows(groups, expandedGroups) {
   for (const group of groups) {
     result.push({
       type: "group",
-      groupId: group.groupId,
-      label: group.label,
+      ...group,
     });
 
     if (expandedGroups[group.groupId]) {

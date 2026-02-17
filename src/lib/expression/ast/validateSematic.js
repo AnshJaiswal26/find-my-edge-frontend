@@ -1,77 +1,5 @@
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
 
-function getSemanticType(node, schemasById) {
-  if (!node) return "any";
-
-  /* ------------------ CONSTANT ------------------ */
-  if (node.type === "constant") {
-    if (typeof node.value === "number") return "number";
-    if (typeof node.value === "string") return "string";
-    return "any";
-  }
-
-  /* ------------------ KEY ------------------ */
-  if (node.type === "key") {
-    const schema = schemasById[node.key];
-    if (!schema) return "any";
-
-    return schema.semanticType || "any"; // 🔥 use semanticType directly
-  }
-
-  /* ------------------ FUNCTION ------------------ */
-  if (node.type === "function") {
-    const def = FUNCTION_REGISTRY[node.name];
-    return def?.returnType || "any";
-  }
-
-  /* ------------------ UNARY ------------------ */
-  if (node.type === "unary") {
-    return getSemanticType(node.arg, schemasById);
-  }
-
-  /* ------------------ BINARY ------------------ */
-  if (node.type === "binary") {
-    const left = getSemanticType(node.left, schemasById);
-    const right = getSemanticType(node.right, schemasById);
-
-    /* ---------- COMPARISON ---------- */
-    if ([">", "<", ">=", "<=", "==", "!="].includes(node.op)) {
-      return "boolean";
-    }
-
-    /* ---------- LOGICAL ---------- */
-    if (["AND", "OR"].includes(node.op)) {
-      return "boolean";
-    }
-
-    /* ---------- DATE / TIME DIFF ---------- */
-    if (node.op === "-") {
-      if (
-        (left === "date" && right === "date") ||
-        (left === "time" && right === "time") ||
-        (left === "datetime" && right === "datetime")
-      ) {
-        return "duration";
-      }
-    }
-
-    /* ---------- NUMERIC ---------- */
-    if (left === "number" && right === "number") {
-      return "number";
-    }
-
-    /* ---------- DURATION MATH ---------- */
-    if (left === "duration" && right === "duration") {
-      return "duration";
-    }
-
-    /* ---------- INVALID ---------- */
-    return "any"; // or throw error (better handled in validateTypes)
-  }
-
-  return "any";
-}
-
 export function validateSemantic(node, schemasById) {
   if (!node) return "any";
 
@@ -85,7 +13,6 @@ export function validateSemantic(node, schemasById) {
   /* ------------------ KEY ------------------ */
   if (node.type === "key") {
     const schema = schemasById[node.key];
-    console.log(node.key);
     return schema?.semanticType || "any";
   }
 
@@ -99,29 +26,65 @@ export function validateSemantic(node, schemasById) {
     const left = validateSemantic(node.left, schemasById);
     const right = validateSemantic(node.right, schemasById);
 
+    /* ---------- ARITHMETIC ---------- */
     if (["+", "-", "*", "/"].includes(node.op)) {
-      if (left !== right) {
-        throw new Error(`Invalid operation: ${left} ${node.op} ${right}`);
-      }
-    }
-
-    /* ---------- TYPE INFERENCE ---------- */
-    if ([">", "<", ">=", "<=", "==", "!="].includes(node.op)) {
-      return "boolean";
-    }
-
-    if (["AND", "OR"].includes(node.op)) {
-      return "boolean";
-    }
-
-    if (node.op === "-") {
-      if (left === right && ["date", "time", "datetime"].includes(left)) {
+      /* ---------- DATE - DATE ---------- */
+      if (
+        node.op === "-" &&
+        left === right &&
+        ["date", "time", "datetime"].includes(left)
+      ) {
         return "duration";
       }
+
+      /* ---------- DURATION RULES FIRST ---------- */
+
+      if (left === "duration" && right === "duration") {
+        if (["+", "-"].includes(node.op)) return "duration";
+        if (node.op === "/") return "number";
+        throw new Error(`Invalid operation: duration ${node.op} duration`);
+      }
+
+      if (left === "duration" && right === "number") {
+        if (["*", "/"].includes(node.op)) return "duration";
+        throw new Error(`Invalid operation: duration ${node.op} number`);
+      }
+
+      if (left === "number" && right === "duration") {
+        if (node.op === "*") return "duration";
+        throw new Error(`Invalid operation: number ${node.op} duration`);
+      }
+
+      /* ---------- NUMBER ---------- */
+
+      if (left === "number" && right === "number") {
+        return "number";
+      }
+
+      /* ---------- INVALID ---------- */
+
+      throw new Error(`Invalid arithmetic: ${left} ${node.op} ${right}`);
     }
 
-    if (left === "number" && right === "number") return "number";
-    if (left === "duration" && right === "duration") return "duration";
+    /* ---------- COMPARISON ---------- */
+    if ([">", "<", ">=", "<=", "==", "!="].includes(node.op)) {
+      if (left !== right) {
+        throw new Error(
+          `Invalid comparison: ${left} ${node.op} ${right} (types must match)`,
+        );
+      }
+      return "boolean";
+    }
+
+    /* ---------- LOGICAL ---------- */
+    if (["AND", "OR"].includes(node.op)) {
+      if (left !== "boolean" || right !== "boolean") {
+        throw new Error(
+          `Invalid logical op: ${left} ${node.op} ${right} (expected boolean)`,
+        );
+      }
+      return "boolean";
+    }
 
     return "any";
   }
@@ -156,8 +119,24 @@ export function validateSemantic(node, schemasById) {
       });
     }
 
-    // ✅ return type
-    return def.semantic?.returnType || def.returnType || "any";
+    /* ---------- RETURN TYPE RESOLUTION ---------- */
+
+    // 🔥 handle "same"
+    if (def.semantic?.return === "same") {
+      // usually based on first argument
+      return validateSemantic(args[0], schemasById);
+    }
+
+    // 🔥 future-proof: function-based return
+    if (typeof def.semantic?.return === "function") {
+      const resolvedArgs = args.map((arg) =>
+        validateSemantic(arg, schemasById),
+      );
+      return def.semantic.return(resolvedArgs);
+    }
+
+    // default
+    return def.semantic?.return || def.returnType || "any";
   }
 
   return "any";

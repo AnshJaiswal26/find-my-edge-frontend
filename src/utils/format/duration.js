@@ -4,7 +4,7 @@ const DURATION_FORMATS = [
   { key: "ss", label: "45" },
   { key: "DD:HH:mm:ss", label: "02:05:30:15" },
 
-  // 🔥 NEW HUMAN FORMATS
+  // NEW HUMAN FORMATS
   { key: "human", label: "2h 30m 15s" },
   { key: "human-short", label: "2h 30m" },
   { key: "human-min", label: "150m" },

@@ -3,7 +3,7 @@ import { cartesianChartConfig } from "./cartesianChartConfig";
 export const getBarChartConfig = ({
   chart,
   chartId,
-  order,
+  data,
   seriesById,
   selectedSeriesKeys,
   tooltipCallback,
@@ -14,7 +14,7 @@ export const getBarChartConfig = ({
   const base = cartesianChartConfig({
     chart,
     chartId,
-    order,
+    data,
     seriesById,
     selectedSeriesKeys,
     tooltipCallback,
@@ -30,7 +30,7 @@ export const getBarChartConfig = ({
       stackType: config.stacked100 ? "100%" : "normal",
       toolbar: {
         ...base.chart.toolbar,
-        tools: { ...base.chart.toolbar.tools, selection: order.length > 1 },
+        tools: { ...base.chart.toolbar.tools, selection: data.length > 1 },
       },
     },
 

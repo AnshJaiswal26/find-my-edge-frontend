@@ -1,99 +1,30 @@
-import { useEffect, useState } from "react";
-import { BASE_CLASS } from "./baseClasses";
+import { useDurationInput } from "@hooks";
 
-const toParts = (seconds = 0) => ({
-  h: Math.floor(seconds / 3600),
-  m: Math.floor((seconds % 3600) / 60),
-  s: seconds % 60,
-});
-
-const toSeconds = ({ h, m, s }) => h * 3600 + m * 60 + s;
-const pad2 = (n) => String(n).padStart(2, "0");
-
-export function DurationInput({
-  value = 0,
-  sizes,
+export const DurationInput = ({
+  value,
   onChange,
-  onCommit,
-  classNames,
-}) {
-  const commitMode = typeof onCommit === "function";
-  const [local, setLocal] = useState(toParts(value));
+  onBlur,
+  className = "",
+  ...props
+}) => {
+  const durationInput = useDurationInput(value || "", onChange);
 
-  useEffect(() => {
-    setLocal(toParts(value));
-  }, [value]);
-
-  const update = (e, next) => {
-    // Convert current + edited values into total seconds
-    const totalSeconds =
-      (next.h ?? 0) * 3600 + (next.m ?? 0) * 60 + (next.s ?? 0);
-
-    // Optional hard limits
-    const clampedSeconds = Math.max(0, totalSeconds);
-
-    // Normalize back into h:m:s
-    const normalized = toParts(clampedSeconds);
-
-    commitMode ? setLocal(normalized) : onChange?.(e, clampedSeconds);
+  const handleBlur = (e) => {
+    const val = durationInput.value; // correct value
+    onBlur?.(val, e); // pass value + event
   };
-
-  const commit = () => {
-    onCommit?.(toSeconds(local));
-  };
-
-  const inputClass = `
-    ${BASE_CLASS}
-    border-0
-    text-center
-    max-w-10 min-w-4
-    text-left
-    ${sizes?.input}
-  `;
 
   return (
-    <div>
-      <div className="text-[0.65rem] text-(--text-muted) ml-2 flex justify-start space-x-9.5">
-        <span>hrs</span>
-        <span>min</span>
-        <span>sec</span>
-      </div>
-      <div
-        className={`
-        flex items-center gap-1
-        border border-(--border) rounded
-        overflow-hidden
-        focus-within:border-(--info)
-        ${classNames?.input}
-      `}
-      >
-        <input
-          type="number"
-          value={pad2(local.h)}
-          placeholder="hh"
-          className={inputClass}
-          onChange={(e) => update(e, { ...local, h: Number(e.target.value) })}
-          onBlur={commit}
-        />
-        :
-        <input
-          type="number"
-          value={pad2(local.m)}
-          placeholder="mm"
-          className={inputClass}
-          onChange={(e) => update(e, { ...local, m: Number(e.target.value) })}
-          onBlur={commit}
-        />{" "}
-        :
-        <input
-          type="number"
-          value={pad2(local.s)}
-          placeholder="ss"
-          className={inputClass}
-          onChange={(e) => update(e, { ...local, s: Number(e.target.value) })}
-          onBlur={commit}
-        />{" "}
-      </div>
-    </div>
+    <input
+      {...props}
+      ref={durationInput.ref}
+      className={className}
+      autoFocus
+      type="text"
+      value={durationInput.value}
+      onChange={durationInput.onChange}
+      onKeyDown={durationInput.onKeyDown}
+      onBlur={handleBlur}
+    />
   );
-}
+};

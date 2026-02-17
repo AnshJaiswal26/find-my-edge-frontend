@@ -51,9 +51,7 @@ export default function ColorRules({
               type={type}
               normalize
               placeholder={`Enter Value ${isBetween(r.operator) ? "1" : ""}`}
-              onChange={(e, parsed) =>
-                updateRule(i, { value: parsed }, onChange)
-              }
+              onChange={(parsed) => updateRule(i, { value: parsed }, onChange)}
             />
           )}
 
@@ -63,9 +61,7 @@ export default function ColorRules({
               vertical
               placeholder={"Enter Label"}
               value={r.label}
-              onChange={(e) =>
-                updateRule(i, { label: e.target.value }, onChange)
-              }
+              onChange={(v) => updateRule(i, { label: v }, onChange)}
             />
           )}
 

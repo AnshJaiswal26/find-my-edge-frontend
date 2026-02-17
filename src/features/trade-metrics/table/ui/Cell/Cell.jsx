@@ -13,7 +13,7 @@ export const Cell = memo(function Cell({
 }) {
   const [editing, setEditing] = useState(false);
 
-  const cell = useTableStore((s) => s.rowsById[rowId].cells[colId]);
+  const cell = useTableStore((s) => s.rowsById[rowId]?.cells[colId]);
   const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
   const column = useTableStore((s) => s.columnsById[colId]);
 
@@ -62,6 +62,7 @@ export const Cell = memo(function Cell({
         colId={colId}
         rowId={rowId}
         width={width}
+        display={column.display}
         setDraft={setDraft}
         setEditing={setEditing}
       />

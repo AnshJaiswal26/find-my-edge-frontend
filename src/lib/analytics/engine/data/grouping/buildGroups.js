@@ -1,32 +1,53 @@
 import { compileGroupSpec } from "./compileGroupSpec";
 
-export function buildGroups({
-  tradeOrder,
-  tradesById,
-  groupSpec,
-  getValue,
-  getFormat,
-}) {
+function getGroupKey(value) {
+  if (value == null) return "__EMPTY__";
+
+  // primitives
+  if (typeof value !== "object") {
+    return String(value);
+  }
+
+  //  date bucket
+  if (value.type === "DATE_BUCKET") {
+    return `${value.unit}_${value.key}`;
+  }
+
+  //  time bucket
+  if (value.type === "TIME_BUCKET") {
+    return `${value.unit}_${value.value}`;
+  }
+
+  //  range
+  if (value.type === "RANGE") {
+    return `${value.from}_${value.to}`;
+  }
+
+  //  fallback
+  return JSON.stringify(value);
+}
+
+export function buildGroups({ tradeOrder, tradesById, groupSpec, getValue }) {
   if (!groupSpec) return null;
 
-  const getKey = compileGroupSpec(groupSpec, getValue, getFormat);
-  const format = getFormat(groupSpec.key);
+  const getKey = compileGroupSpec(groupSpec, getValue);
   const map = new Map();
 
   for (const tradeId of tradeOrder) {
     const trade = tradesById[tradeId];
-    const label = getKey(trade, format) ?? "Empty";
+    const raw = getKey(trade);
+    const key = getGroupKey(raw);
 
-    if (!map.has(label)) {
-      map.set(label, {
-        groupId: label,
-        label,
-        value: getValue(trade, groupSpec.key),
+    if (!map.has(key)) {
+      map.set(key, {
+        groupId: key,
+        key,
+        meta: raw,
         tradeIds: [],
       });
     }
 
-    map.get(label).tradeIds.push(tradeId);
+    map.get(key).tradeIds.push(tradeId);
   }
 
   // 🔥 SORT GROUPS (KEY STEP)
@@ -40,6 +61,6 @@ export function buildGroups({
     }
 
     // fallback string sort
-    return String(a.label).localeCompare(String(b.label));
+    return String(a.key).localeCompare(String(b.key));
   });
 }

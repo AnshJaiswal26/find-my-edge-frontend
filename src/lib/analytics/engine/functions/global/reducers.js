@@ -11,7 +11,6 @@ import { COUNT_POSITIVE } from "./count_positive";
 import { STDDEV } from "./stddev";
 import { VARIANCE } from "./variance";
 
-
 import { SUM_IF } from "./sum_if";
 import { STREAK } from "./streak";
 import { MAX_DRAWDOWN } from "./max_drawdown";

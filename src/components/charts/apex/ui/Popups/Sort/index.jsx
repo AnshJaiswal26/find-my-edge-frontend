@@ -33,7 +33,9 @@ export default function SortPopup({ chartId, schemasById }) {
           />
           <Select
             label="Sort Order"
-            options={SORT_TYPE[schemasById?.[draft.key]?.type] || ["none"]}
+            options={
+              SORT_TYPE[schemasById?.[draft.key]?.semanticType] || ["none"]
+            }
             getLabel={(o) => SORT_OPTIONS[o]}
             value={draft.operator}
             onChange={(o) => setDraft((p) => ({ ...p, operator: o }))}

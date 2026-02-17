@@ -51,7 +51,7 @@ export default function FilterBuilder({
                 <>
                   <Select
                     label="Condition:"
-                    options={FILTER_TYPE[field.type]}
+                    options={FILTER_TYPE[field.semanticType]}
                     getLabel={(o) => FILTER_OPTIONS[o]}
                     value={f.operator}
                     onChange={(o) => updateFilter(index, { operator: o })}
@@ -73,7 +73,7 @@ export default function FilterBuilder({
                       placeholder="Enter value"
                       type={field.type}
                       value={f.value}
-                      onChange={(e, parsed) =>
+                      onChange={(parsed) =>
                         updateFilter(index, { value: parsed })
                       }
                     />

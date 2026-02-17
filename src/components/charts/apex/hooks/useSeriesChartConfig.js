@@ -4,6 +4,8 @@ import { configGenerator } from "../configs";
 import {
   evaluateColorRules,
   FILTER_OPERATION_MAP,
+  formatGroupValue,
+  formatValue,
   SORT_OPERATION_MAP,
 } from "@utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
@@ -12,90 +14,138 @@ import {
   computeOverSequence,
 } from "@lib/analytics/engine/execute";
 
-const buildSeries = ({
-  seriesConfig,
-  seriesById,
-  filteredOrder,
+/* =========================================================
+   🔥 CORE DATA ENGINE (Single Source of Truth)
+========================================================= */
+function useChartData({
   mode,
-  schemasById,
-  type,
+  seriesOrder,
+  groups,
+  selectedGroupIndex,
+  seriesById,
+  seriesConfig,
   groupSpec,
-}) => {
-  return seriesConfig.map((s) => {
-    /* ------------------ DATA ------------------ */
+  schemasById,
+  filters,
+  sort,
+  selection,
+  xKey,
+}) {
+  return useMemo(() => {
+    let data = [];
 
-    const data =
-      mode === "GROUP_AGGREGATE"
-        ? filteredOrder.map((group) =>
-            computeOverSequence({
-              schema: { ast: groupSpec.ast },
-
-              getTradeAt: (index) => {
-                const id = group.tradeIds[index];
-                return id ? seriesById[id] : null;
-              },
-
-              getTradeCount: () => group.tradeIds.length,
-
-              getSchemaType: (key) => {
-                const schema = schemasById[key];
-                return {
-                  format: schema?.display?.format,
-                  type: schema.semanticType,
-                };
-              },
-
-              getValue: (trade, key) => trade[key] ?? null,
-              setValue: () => null,
-
-              mode: COMPUTATION_MODE.AGGREGATE,
-            }),
-          )
-        : filteredOrder.map((id) => seriesById[id]?.[s.key]);
-
-    /* ------------------ COLOR ------------------ */
-
-    // 🔥 LINE → fixed color
-    if (type === "line") {
-      return {
-        name: s.name,
-        data,
-        color: s.color,
-      };
+    /* ------------------ NORMALIZE ------------------ */
+    if (mode === "SERIES") {
+      data = seriesOrder.map((id) => ({
+        id,
+        source: [id],
+      }));
     }
 
-    // 🔥 BAR → dynamic color rules
-    return {
-      name: s.name,
-      data,
-      color: ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
-    };
-  });
-};
+    if (mode === "GROUP_SELECT") {
+      const ids = groups?.[selectedGroupIndex ?? 0]?.tradeIds ?? [];
+      data = ids.map((id) => ({
+        id,
+        source: [id],
+      }));
+    }
 
-export const seriesGenerator = {
-  bar: (args) => buildSeries({ ...args, type: "bar" }),
-  line: (args) => buildSeries({ ...args, type: "line" }),
-};
+    if (mode === "GROUP_AGGREGATE") {
+      data =
+        groups?.map((g) => ({
+          meta: g.meta,
+          source: g.tradeIds,
+        })) ?? [];
+    }
 
-// const seriesGenerator = {
-//   bar: ({ seriesConfig, seriesById, filteredOrder }) => {
-//     return seriesConfig.map((s) => ({
-//       name: s.name,
-//       data: filteredOrder.map((id) => seriesById[id]?.[s.key]),
-//       color: ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
-//     }));
-//   },
+    const keys = Array.from(new Set([...seriesConfig.map((s) => s.key), xKey]));
 
-//   line: ({ seriesConfig, seriesById, filteredOrder }) => {
-//     return seriesConfig.map((s) => ({
-//       name: s.name,
-//       data: filteredOrder.map((id) => seriesById[id]?.[s.key]),
-//       color: s.color,
-//     }));
-//   },
-// };
+    data = data.map((item) => {
+      const values = {};
 
+      if (mode === "GROUP_AGGREGATE") {
+        // compute once
+        const computed = computeOverSequence({
+          schema: { ast: groupSpec?.ast },
+
+          getTradeAt: (index) => {
+            const id = item.source[index];
+            return id ? seriesById[id] : null;
+          },
+
+          getTradeCount: () => item.source.length,
+
+          getSchemaType: (k) => {
+            const schema = schemasById?.[k];
+            return {
+              format: schema?.display?.format,
+              type: schema?.semanticType,
+            };
+          },
+
+          getValue: (trade, k) => trade?.[k] ?? null,
+          setValue: () => null,
+
+          mode: COMPUTATION_MODE.AGGREGATE,
+        });
+
+        keys.forEach((key) => {
+          values[key] = computed;
+        });
+      } else {
+        const trade = seriesById[item.id];
+
+        keys.forEach((key) => {
+          values[key] = trade?.[key];
+        });
+      }
+
+      return { ...item, values };
+    });
+
+    /* ------------------ SELECTION ------------------ */
+    if (selection.from !== null && selection.to !== null) {
+      data = data.slice(selection.from, selection.to);
+    }
+
+    /* ------------------ FILTER ------------------ */
+    if (filters?.length) {
+      data = data.filter((item) =>
+        filters.some((f) => {
+          const fn = FILTER_OPERATION_MAP[f.operator];
+          return fn?.(item.values[f.key], f.value, f.value2);
+        }),
+      );
+    }
+
+    /* ------------------ SORT ------------------ */
+    if (sort?.key && sort.operator !== "none") {
+      const fn = SORT_OPERATION_MAP[sort.operator];
+      data = [...data].sort((a, b) => {
+        return fn?.(a.values[sort.key], b.values[sort.key]) ?? 0;
+      });
+    }
+
+    return data;
+  }, [
+    mode,
+    seriesOrder,
+    groups,
+    selectedGroupIndex,
+    seriesById,
+    seriesConfig,
+    groupSpec,
+    schemasById,
+    filters,
+    sort,
+    selection,
+    xKey,
+  ]);
+}
+
+/* =========================================================
+   MAIN HOOK
+========================================================= */
 export default function useSeriesChartConfig({
   chartId,
   layout,
@@ -106,158 +156,57 @@ export default function useSeriesChartConfig({
   seriesById,
   seriesConfig,
   selectedSeriesKeys,
+  schemasById,
 }) {
   const type = useChartStore((s) => s[chartId].meta.type);
 
   const filters = useChartStore((s) => s[chartId].filters);
   const sort = useChartStore((s) => s[chartId].sort);
   const selection = useChartStore((s) => s[chartId].selection);
+  const xKey = useChartStore((s) => s[chartId].xSeriesConfig.key);
 
+  /* ------------------ MODE ------------------ */
   const mode = useMemo(() => {
     if (!groups) return "SERIES";
     if (groupSpec?.ast) return "GROUP_AGGREGATE";
     return "GROUP_SELECT";
   }, [groups, groupSpec]);
 
-  // const finalOrder = useMemo(() => {
-  //   let order = groups
-  //     ? (groups[selectedGroupIndex ?? 0]?.tradeIds ?? seriesOrder)
-  //     : seriesOrder;
-
-  //   /* SELECTION */
-  //   if (selection.from !== null && selection.to !== null) {
-  //     order = order.slice(selection.from, selection.to);
-  //   }
-
-  //   /* FILTER */
-  //   if (filters.length) {
-  //     order = order.filter((id) =>
-  //       filters.some((f) => {
-  //         const fn = FILTER_OPERATION_MAP[f.operator];
-  //         return fn?.(seriesById[id][f.key], f.value, f.value2);
-  //       }),
-  //     );
-  //   }
-
-  //   /* SORT */
-  //   if (sort.key && sort.operator !== "none") {
-  //     const fn = SORT_OPERATION_MAP[sort.operator];
-  //     order = [...order].sort((a, b) => {
-  //       return fn?.(seriesById[a][sort.key], seriesById[b][sort.key]) ?? 0;
-  //     });
-  //   }
-
-  //   return order;
-  // }, [
-  //   seriesOrder,
-  //   seriesById,
-  //   filters,
-  //   sort.key,
-  //   sort.operator,
-  //   selection.from,
-  //   selection.to,
-  //   selectedGroupIndex,
-  //   groups,
-  // ]);
-
-  const finalOrder = useMemo(() => {
-    /* ------------------ MODE: SERIES ------------------ */
-    if (mode === "SERIES") {
-      let order = seriesOrder;
-
-      if (selection.from !== null && selection.to !== null) {
-        order = order.slice(selection.from, selection.to);
-      }
-
-      if (filters.length) {
-        order = order.filter((id) =>
-          filters.some((f) => {
-            const fn = FILTER_OPERATION_MAP[f.operator];
-            return fn?.(seriesById[id][f.key], f.value, f.value2);
-          }),
-        );
-      }
-
-      if (sort.key && sort.operator !== "none") {
-        const fn = SORT_OPERATION_MAP[sort.operator];
-        order = [...order].sort((a, b) => {
-          return fn?.(seriesById[a][sort.key], seriesById[b][sort.key]) ?? 0;
-        });
-      }
-
-      return order;
-    }
-
-    /* ------------------ MODE: GROUP_SELECT ------------------ */
-    if (mode === "GROUP_SELECT") {
-      let order = groups[selectedGroupIndex ?? 0]?.tradeIds ?? [];
-
-      if (selection.from !== null && selection.to !== null) {
-        order = order.slice(selection.from, selection.to);
-      }
-
-      if (filters.length) {
-        order = order.filter((id) =>
-          filters.some((f) => {
-            const fn = FILTER_OPERATION_MAP[f.operator];
-            return fn?.(seriesById[id][f.key], f.value, f.value2);
-          }),
-        );
-      }
-
-      if (sort.key && sort.operator !== "none") {
-        const fn = SORT_OPERATION_MAP[sort.operator];
-        order = [...order].sort((a, b) => {
-          return fn?.(seriesById[a][sort.key], seriesById[b][sort.key]) ?? 0;
-        });
-      }
-
-      return order;
-    }
-
-    /* ------------------ MODE: GROUP_AGGREGATE ------------------ */
-    if (mode === "GROUP_AGGREGATE") {
-      // ❗ No flattening → return groups directly
-      return groups.map((g) => ({
-        label: g.label,
-        tradeIds: g.tradeIds,
-      }));
-    }
-
-    return [];
-  }, [
+  /* ------------------ CORE DATA ------------------ */
+  const finalData = useChartData({
     mode,
     seriesOrder,
-    seriesById,
-    filters,
-    sort.key,
-    sort.operator,
-    selection.from,
-    selection.to,
-    selectedGroupIndex,
     groups,
-  ]);
-
-  const computedSeries = useMemo(() => {
-    return seriesGenerator[type]({
-      seriesConfig: selectedSeriesKeys
-        ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-        : seriesConfig,
-      filteredOrder: finalOrder,
-      seriesById,
-      mode,
-      groupSpec,
-    });
-  }, [
-    type,
-    seriesConfig,
-    selectedSeriesKeys,
-    finalOrder,
-    mode,
-    groupSpec,
+    selectedGroupIndex,
     seriesById,
-  ]);
+    seriesConfig: selectedSeriesKeys?.length
+      ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+      : seriesConfig,
+    groupSpec,
+    schemasById,
+    filters,
+    sort,
+    selection,
+    xKey,
+  });
 
+  /* ------------------ SERIES ------------------ */
+  const computedSeries = useMemo(() => {
+    return (
+      selectedSeriesKeys?.length
+        ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+        : seriesConfig
+    ).map((s) => ({
+      name: s.name,
+      data: finalData.map((item) => item.values[s.key]),
+      color:
+        type === "line"
+          ? s.color
+          : ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
+    }));
+  }, [finalData, seriesConfig, selectedSeriesKeys, type]);
+
+  /* ------------------ TOOLTIP ------------------ */
   const tooltipCallback = useCallback(
     (seriesValue, index, seriesIndex) =>
       seriesTooltipCallback({
@@ -265,30 +214,25 @@ export default function useSeriesChartConfig({
         index,
         seriesIndex,
         chartId,
-
         getTitle: (i, key) => {
-          const item = finalOrder[i];
-
-          // 🔥 GROUP AGGREGATE
-          if (mode === "GROUP_AGGREGATE") {
-            return item?.label; // show group name (Jan, Feb, etc.)
-          }
-
-          // 🔥 SERIES / GROUP_SELECT
-          return seriesById?.[item]?.[key];
+          const item = finalData[i];
+          return mode === "GROUP_AGGREGATE" ? item.meta : item.values[key];
         },
-
         selectedSeriesKeys,
+        mode,
       }),
-    [chartId, seriesById, finalOrder, selectedSeriesKeys, mode],
+    [chartId, finalData, selectedSeriesKeys, mode],
   );
 
+  /* ------------------ OPTIONS ------------------ */
   const options = useMemo(() => {
     return configGenerator?.[type]?.({
       chart: useChartStore.getState()[chartId],
       chartId,
-      order: finalOrder,
       seriesById,
+
+      data: finalData,
+
       selectedSeriesKeys,
       tooltipCallback,
       mode,
@@ -296,14 +240,14 @@ export default function useSeriesChartConfig({
   }, [
     type,
     chartId,
-    finalOrder,
+    finalData,
     seriesById,
     selectedSeriesKeys,
-    layout, // if config depends on layout
+    layout,
     layout?.area,
     mode,
+    tooltipCallback,
   ]);
-  console.log(computedSeries, groups, groupSpec);
 
   return { options, series: computedSeries, type };
 }

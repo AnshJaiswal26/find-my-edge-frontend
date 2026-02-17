@@ -8,6 +8,7 @@ export { default as ValidationTooltip } from "./ValidationTooltip";
 export { default as StatCard } from "./StatCard";
 export { default as ColorPicker } from "./ColorPicker";
 export { default as Input } from "./Input/Input";
+export { DurationInput } from "./Input/DurationInput";
 export { default as Select } from "./Select";
 export { default as Toast } from "./Toast";
 export { default as SelectOptionsEditor } from "./SelectOptionsEditor";

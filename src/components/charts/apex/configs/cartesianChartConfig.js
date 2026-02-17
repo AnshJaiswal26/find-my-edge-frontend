@@ -1,13 +1,12 @@
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { customTooltip } from "../tooltip/customTooltip";
-import { formatValue } from "@utils";
+import { formatGroupValue, formatValue } from "@utils";
 
 export const cartesianChartConfig = ({
   chart,
   chartId,
-  order,
+  data,
   seriesById,
-  selectedSeriesKeys,
   tooltipCallback,
   mode,
 }) => {
@@ -18,22 +17,26 @@ export const cartesianChartConfig = ({
 
   const axisX = {
     tooltip: { enabled: !config.horizontal && config.xTooltip },
-    tickPlacement: "on",
+    ...(!config.horizontal && { tickPlacement: "on" }),
     labels: {
       show: config.xLabels,
-      formatter: (v) => {
-        const item = order[v - 1];
+      formatter: (v, d) => {
+        if (v < 0) return;
+        const item = data[v];
+        if (!item) return;
 
-        // 🔥 GROUP AGGREGATE
+        const format = { format: config.xFormat, decimals: config.xDecimals };
+
+        //  GROUP AGGREGATE
         if (mode === "GROUP_AGGREGATE") {
-          return item?.label ?? "";
+          return formatGroupValue(item.meta, chart.xSeriesConfig.type, format);
         }
-
-        // 🔥 SERIES / GROUP_SELECT
-        return formatValue(seriesById[item]?.[xKey], chart.xSeriesConfig.type, {
-          format: config.xFormat,
-          decimals: config.xDecimals,
-        });
+        //  SERIES / GROUP_SELECT
+        return formatValue(
+          item.values?.[xKey],
+          chart.xSeriesConfig.type,
+          format,
+        );
       },
 
       style: { fontSize: style.fontSize, colors: config.xLabelsColor },
@@ -47,6 +50,8 @@ export const cartesianChartConfig = ({
   };
 
   const axisY = {
+    ...(config.horizontal && { categories: data.map((_, i) => i) }),
+
     labels: {
       show: config.yLabels,
       offsetY: 4,

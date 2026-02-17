@@ -4,6 +4,7 @@ import { WINDOW_FUNCTIONS } from "./window/registry";
 import { CONDITION_FUNCTIONS } from "./condition/registry";
 import { RATIO_FUNCTIONS } from "./ratio";
 import { GLOBAL_FUNCTIONS } from "./global/registry";
+import { DURATION_FUNCTIONS } from "./duration/registry";
 
 export const FUNCTION_REGISTRY = {
   /* ---------- BASE / ROW ---------- */
@@ -21,6 +22,8 @@ export const FUNCTION_REGISTRY = {
   ...CONDITION_FUNCTIONS,
 
   ...GLOBAL_FUNCTIONS,
+
+  ...DURATION_FUNCTIONS,
 };
 
 export const FUNCTION_ALLOW_BY_MODE = {
@@ -30,6 +33,8 @@ export const FUNCTION_ALLOW_BY_MODE = {
   BASE: new Set([
     ...Object.keys(BASE_FUNCTIONS),
     ...Object.keys(CONDITION_FUNCTIONS),
+    ...Object.keys(DURATION_FUNCTIONS),
+    "COUNT_ALL",
   ]),
 
   /* ---------------------------------- */
@@ -40,6 +45,7 @@ export const FUNCTION_ALLOW_BY_MODE = {
     ...Object.keys(SCHEMA_FUNCTIONS),
     ...Object.keys(CONDITION_FUNCTIONS),
     ...Object.keys(WINDOW_FUNCTIONS),
+    ...Object.keys(DURATION_FUNCTIONS),
     "COUNT_ALL",
   ]),
 
@@ -50,6 +56,8 @@ export const FUNCTION_ALLOW_BY_MODE = {
     ...Object.keys(BASE_FUNCTIONS),
     ...Object.keys(CONDITION_FUNCTIONS),
     ...Object.keys(RATIO_FUNCTIONS),
+    ...Object.keys(DURATION_FUNCTIONS),
+    "COUNT_ALL",
   ]),
 
   /* ---------------------------------- */
@@ -60,5 +68,6 @@ export const FUNCTION_ALLOW_BY_MODE = {
     ...Object.keys(CONDITION_FUNCTIONS),
     ...Object.keys(RATIO_FUNCTIONS),
     ...Object.keys(GLOBAL_FUNCTIONS),
+    ...Object.keys(DURATION_FUNCTIONS),
   ]),
 };

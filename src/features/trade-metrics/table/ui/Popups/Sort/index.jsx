@@ -31,7 +31,9 @@ export default function SortPopup() {
           {/* Sort type */}
           <Select
             label="Sort Order"
-            options={SORT_TYPE[columnsById[draft?.columnId]?.type] ?? ["none"]}
+            options={
+              SORT_TYPE[columnsById[draft?.columnId]?.semanticType] ?? ["none"]
+            }
             getLabel={(o) => SORT_OPTIONS[o]}
             value={draft.operator}
             onChange={(o) =>

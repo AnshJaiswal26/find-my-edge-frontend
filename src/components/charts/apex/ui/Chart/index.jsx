@@ -7,6 +7,41 @@ import styles from "./CustomApexChart.module.css";
 import { buildGroups } from "@lib/analytics/engine/data";
 import { Select } from "@ui";
 import { useMemo, useState } from "react";
+import { formatGroupValue } from "@utils";
+
+const GroupOptionSelect = ({
+  chartId,
+  groups,
+  groupSpec,
+  schemasById,
+  category,
+  selectedGroupIndex,
+  setSelectedGroupIndex,
+}) => {
+  const format = useChartStore((s) => s[chartId].layout.xFormat);
+  const decimals = useChartStore((s) => s[chartId].layout.xDecimals);
+
+  if (!groups || groupSpec?.ast || category === "grouped") return null;
+
+  return (
+    <Select
+      classNames={{ button: "py-1.5!" }}
+      options={groups}
+      value={groups[selectedGroupIndex]}
+      getLabel={(g) => {
+        return formatGroupValue(
+          g.meta,
+          schemasById[groupSpec.key].semanticType,
+          {
+            format,
+            decimals,
+          },
+        );
+      }}
+      onChange={(_, i) => setSelectedGroupIndex(i)}
+    />
+  );
+};
 
 export default function CustomApexChart({
   chartId,
@@ -29,26 +64,22 @@ export default function CustomApexChart({
       tradesById: seriesById,
       groupSpec,
       getValue: (trade, key) => trade[key],
-      getFormat: (key) => ({
-        type: schemasById[key].type,
-        display: schemasById[key]?.display,
-      }),
     });
-  }, [seriesOrder, seriesById, schemasById, schemasById, groupSpec]);
+  }, [seriesOrder, seriesById, groupSpec]);
 
   return (
     <ChartContainer chartId={chartId}>
       <div className="flex items-center justify-between">
         <ChartTitle chartId={chartId} />
-        {groups && !groupSpec?.ast && category !== "grouped" && (
-          <Select
-            classNames={{ button: "py-1.5!" }}
-            options={groups}
-            value={groups[selectedGroupIndex]}
-            getLabel={(g) => g.label}
-            onChange={(_, i) => setSelectedGroupIndex(i)}
-          />
-        )}
+        <GroupOptionSelect
+          chartId={chartId}
+          category={category}
+          groups={groups}
+          groupSpec={groupSpec}
+          schemasById={schemasById}
+          selectedGroupIndex={selectedGroupIndex}
+          setSelectedGroupIndex={setSelectedGroupIndex}
+        />
       </div>
       <div className={styles.chartWrapper}>
         <ChartWithConfig

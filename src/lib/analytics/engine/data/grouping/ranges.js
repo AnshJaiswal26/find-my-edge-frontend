@@ -1,16 +1,15 @@
-import { formatValue } from "@utils";
-
-export function matchRange(value, ranges, labelFormatter, { type, display }) {
-  if (value == null) return "Empty";
+export function matchRange(value, ranges) {
+  if (value == null) return { type: "EMPTY" };
 
   for (const r of ranges) {
     if (value >= r.from && value <= r.to) {
-      return labelFormatter(
-        formatValue(r.from, type, display),
-        formatValue(r.to, type, display),
-      );
+      return {
+        type: "RANGE",
+        from: r.from,
+        to: r.to,
+      };
     }
   }
 
-  return "Other";
+  return { type: "OTHER" };
 }

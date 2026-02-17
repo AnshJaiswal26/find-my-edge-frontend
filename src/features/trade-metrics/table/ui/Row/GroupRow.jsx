@@ -1,14 +1,41 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import { useTableStore } from "@table/store/useTableStore";
+import { formatGroupValue } from "@utils";
 
-export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
+export const GroupCell = memo(function GroupCell({
+  colId,
+  groupedColId,
+  meta,
+}) {
+  const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
+  const column = useTableStore((s) => s.columnsById[colId]);
+
+  const isGroupColumn = colId === groupedColId;
+
+  const displayValue = useMemo(
+    () => formatGroupValue(meta, column.semanticType, column.display),
+    [meta?.value, column.semanticType, column.display],
+  );
+
+  return (
+    <div
+      style={{ width }}
+      className={`
+        px-2 py-1 font-bold border border-(--border)
+        overflow-hidden text-nowrap text-(--text-muted)
+        ${isGroupColumn ? "stick-left bg-(--surface-muted)" : ""}
+      `}
+    >
+      {isGroupColumn ? displayValue || "EMPTY" : ""}
+    </div>
+  );
+});
+
+export const GroupRow = memo(function GroupRow({ groupId, meta, groupBy }) {
   const columnOrder = useTableStore((s) => s.columnOrder);
-  const columnWidths = useTableStore((s) => s.columnWidths);
   const expanded = useTableStore((s) => !!s.expandedGroups[groupId]);
   const toggleGroup = useTableStore((s) => s.toggleGroup);
-
-  const groupedColId = groupBy?.key;
 
   return (
     <div
@@ -31,22 +58,14 @@ export const GroupRow = memo(function GroupRow({ groupId, label, groupBy }) {
         />
       </div>
 
-      {columnOrder.map((colId) => {
-        const isGroupColumn = colId === groupedColId;
-
-        return (
-          <div
-            key={colId}
-            style={{ width: columnWidths[colId] ?? 150 }}
-            className={`
-              px-2 py-1 font-bold border border-(--border)
-              overflow-hidden text-nowrap text-(--text-muted)
-              ${isGroupColumn ? "stick-left text-(--text-muted) bg-(--surface-muted)" : ""}`}
-          >
-            {isGroupColumn ? label : ""}
-          </div>
-        );
-      })}
+      {columnOrder.map((colId, i) => (
+        <GroupCell
+          key={i}
+          colId={colId}
+          groupedColId={groupBy?.key}
+          meta={meta}
+        />
+      ))}
     </div>
   );
 });

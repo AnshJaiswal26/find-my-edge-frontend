@@ -61,13 +61,13 @@ export const GroupedChartForm = forwardRef(({ type, schemasById }, ref) => {
                 vertical
                 value={s.key}
                 placeholder="Enter Label"
-                onChange={(e) => {
+                onChange={(v) => {
                   setSeriesConfig((p) => {
                     const next = [...p];
                     next[i] = {
                       ...next[i],
-                      key: e.target.value,
-                      name: e.target.value,
+                      key: v,
+                      name: v,
                     };
                     return next;
                   });
@@ -89,16 +89,14 @@ export const GroupedChartForm = forwardRef(({ type, schemasById }, ref) => {
               schemasById={schemasById}
               mode={"GLOBAL"}
               semanticMode={"AGGREGATE"}
-              onCommit={(expr, ast, dependencies) => {
+              onCommit={(expr, ast, dependencies, semanticType) => {
                 setExpr(expr);
                 setSeriesConfig((s) => {
                   const next = [...s];
                   next[i] = {
                     ...next[i],
                     ast,
-                    type: dependencies.length
-                      ? schemasById[dependencies[0]].type
-                      : "number",
+                    type: semanticType,
                   };
                   return next;
                 });

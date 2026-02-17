@@ -30,7 +30,7 @@ export {
   evaluateColorRules,
 } from "./colorUtils";
 
-export { parseInputValue, pad2, formatForInput } from "./input";
+export { parseInputValue, pad2, formatForInput, INPUT_TYPES } from "./input";
 
 export {
   DATE_FORMATS,
@@ -42,6 +42,7 @@ export {
   formatValue,
   FORMATS,
   DEFAULT_FORMATS,
+  formatGroupValue,
 } from "./format";
 
 export {

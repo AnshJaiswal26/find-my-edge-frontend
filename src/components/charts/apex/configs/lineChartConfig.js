@@ -3,7 +3,7 @@ import { cartesianChartConfig } from "./cartesianChartConfig";
 export const getLineChartConfig = ({
   chart,
   chartId,
-  order,
+  data,
   seriesById,
   tooltipCallback,
   selectedSeriesKeys,
@@ -18,7 +18,7 @@ export const getLineChartConfig = ({
   const base = cartesianChartConfig({
     chart,
     chartId,
-    order,
+    data,
     seriesById,
     tooltipCallback,
     mode,
@@ -32,7 +32,7 @@ export const getLineChartConfig = ({
       stacked: false,
       toolbar: {
         ...base.chart.toolbar,
-        tools: { ...base.chart.toolbar.tools, selection: order.length > 1 },
+        tools: { ...base.chart.toolbar.tools, selection: data.length > 1 },
       },
     },
     stroke: { curve: config.curve || "smooth", width: config.strokeWidth || 2 },

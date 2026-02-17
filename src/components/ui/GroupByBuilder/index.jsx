@@ -1,14 +1,9 @@
-import { Select, Input, RangeInput, ExpressionBuilder } from "@ui";
+import { Select, Input, RangeInput } from "@ui";
 import { FILTER_OPTIONS, isBetween } from "@utils";
 import { GROUPING_OPTIONS, GROUPING_SCHEMA } from "@lib/analytics/config";
 import { RangeBucket } from "./RangeBucket";
 
-export default function GroupByBuilder({
-  schemasById,
-  groupBy,
-  onChange,
-  ast,
-}) {
+export default function GroupByBuilder({ schemasById, groupBy, onChange }) {
   const draft = groupBy ?? {};
 
   const field = draft.key ? schemasById[draft.key] : null;
@@ -92,7 +87,7 @@ export default function GroupByBuilder({
               type={schema.input}
               normalize
               value={draft.value ?? ""}
-              onChange={(e, parsed) => update({ value: parsed })}
+              onCommit={(v) => update({ value: v })}
             />
           ) : (
             <RangeInput
@@ -109,9 +104,9 @@ export default function GroupByBuilder({
             label="Match Group Name"
             placeholder="Group 1 Name"
             value={draft.labels?.match ?? ""}
-            onChange={(e) =>
+            onCommit={(v) =>
               update({
-                labels: { ...draft.labels, match: e.target.value },
+                labels: { ...draft.labels, match: v },
               })
             }
           />
@@ -120,9 +115,9 @@ export default function GroupByBuilder({
             label="Non-Match Group Name"
             placeholder="Group 2 Name"
             value={draft.labels?.nonMatch ?? ""}
-            onChange={(e) =>
+            onCommit={(v) =>
               update({
-                labels: { ...draft.labels, nonMatch: e.target.value },
+                labels: { ...draft.labels, mnonMatchh: v },
               })
             }
           />

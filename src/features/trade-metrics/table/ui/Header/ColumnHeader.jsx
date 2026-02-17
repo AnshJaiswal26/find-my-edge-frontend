@@ -105,22 +105,18 @@ export function ColumnHeader({ colId, index, tableRef, isGroupColumn }) {
       }}
     >
       {!isGroupColumn && (
-        <>
-          {/* DRAG */}
-          <div
-            onPointerDown={(e) => handlePointerDown(e, "drag")}
-            className="opacity-0 group-hover:opacity-60 absolute -bottom-1 left-1/2 -translate-x-1/2 cursor-grab"
-          >
-            <GripHorizontal size={18} />
-          </div>
-
-          {/* RESIZE */}
-          <div
-            onPointerDown={(e) => handlePointerDown(e, "resize")}
-            className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-(--cyan)"
-          />
-        </>
+        <div
+          onPointerDown={(e) => handlePointerDown(e, "drag")}
+          className="opacity-0 group-hover:opacity-60 absolute -bottom-1 left-1/2 -translate-x-1/2 cursor-grab"
+        >
+          <GripHorizontal size={18} />
+        </div>
       )}
+
+      <div
+        onPointerDown={(e) => handlePointerDown(e, "resize")}
+        className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-(--cyan)"
+      />
 
       <div
         className={`flex font-bold items-center px-2 py-1 border-r border-(--border) justify-between`}

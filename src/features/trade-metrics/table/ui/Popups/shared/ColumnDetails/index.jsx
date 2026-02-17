@@ -100,8 +100,8 @@ export default function ColumnDetails({
           vertical
           placeholder="Enter Column Name"
           value={draft.label}
-          onChange={(e) => {
-            onDraftChange((p) => ({ ...p, label: e.target.value }));
+          onChange={(v) => {
+            onDraftChange((p) => ({ ...p, label: v }));
           }}
         />
         {error?.input && <ErrorText text={error.input} />}
@@ -116,10 +116,10 @@ export default function ColumnDetails({
               type="number"
               placeholder="Enter initial value"
               value={draft.initialValue}
-              onChange={(e) => {
+              onChange={(v) => {
                 onDraftChange((p) => ({
                   ...p,
-                  initialValue: Number(e.target.value),
+                  initialValue: Number(v),
                 }));
               }}
             />

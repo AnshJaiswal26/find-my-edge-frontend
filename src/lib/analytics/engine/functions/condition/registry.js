@@ -9,6 +9,10 @@ export const CONDITION_FUNCTIONS = {
     signature: "IF(cond, yes, no)",
     argTypes: ["boolean", "number", "number"],
     returnType: "number",
+    semantic: {
+      args: ["boolean", "number", "number"],
+      return: "number",
+    },
     description: "Conditional expression",
   },
 };

@@ -54,7 +54,7 @@ export const GROUPING_SCHEMA = {
 
   duration: {
     kinds: ["value", "bucket", "condition"],
-    buckets: ["range"], // 🔥 important
+    buckets: ["range"],
     input: "duration",
     operators: FILTER_TYPE.duration,
   },

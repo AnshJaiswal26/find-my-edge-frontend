@@ -137,8 +137,8 @@ export default function ColorPicker({
   );
 
   const handleInputChange = useCallback(
-    (e) => {
-      const resolved = normalizeInputColor(e.target.value);
+    (v) => {
+      const resolved = normalizeInputColor(v);
 
       if (resolved) {
         setColor(resolved);
@@ -146,7 +146,7 @@ export default function ColorPicker({
         markCommitted(resolved);
       }
 
-      setInput(e.target.value);
+      setInput(v);
     },
     [onCommit, markCommitted],
   );

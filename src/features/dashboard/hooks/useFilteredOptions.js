@@ -10,7 +10,7 @@ export default function useFilteredOptions({ series, options, setSeries }) {
   const baseOptions = useMemo(() => {
     return options.filter((o) => {
       const group = SCHEMA_TYPES_GROUP[o.type];
-      return group && group !== "text"; // allow all numeric/date/time
+      return group && group !== "string"; // allow all numeric/date/time
     });
   }, [options]);
 

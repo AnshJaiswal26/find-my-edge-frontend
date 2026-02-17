@@ -29,11 +29,11 @@ export const CellDisplay = memo(function CellDisplay({
   colId,
   width,
   type,
+  display,
   setDraft,
   setEditing,
 }) {
   const colorRules = useTableStore((s) => s.columnsById[colId].colorRules);
-  const display = useTableStore((s) => s.columnsById[colId].display);
   const editable = useTableStore((s) => isColumnEditable(colId, s));
 
   const unselectColumn = useTableStore((s) => s.unselectColumn);

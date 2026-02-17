@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Button, ExpressionBuilder, GroupByBuilder, Input, Select } from "@ui";
 import { Section } from "@layout";
 import { Trash2 } from "lucide-react";
@@ -55,31 +49,11 @@ export const CartesianChartForm = forwardRef(
         addChart(type, {
           layout,
           groupSpec: draftToSpec(groupBy),
-          x: aggregation
-            ? {
-                key: groupBy.key,
-                name: groupBy.label,
-              }
-            : seriesX,
+          x: seriesX,
           y: seriesY,
         });
       },
     }));
-
-    useEffect(() => {
-      if (aggregation && groupBy?.key) {
-        setSeriesX({
-          key: groupBy.key,
-          name: groupBy.label,
-          type: "text",
-        });
-
-        setLayout((p) => ({
-          ...p,
-          xTitleText: groupBy.label,
-        }));
-      }
-    }, [aggregation, groupBy]);
 
     return (
       <>
@@ -121,9 +95,36 @@ export const CartesianChartForm = forwardRef(
                 schemasById={schemasById}
                 mode={"GLOBAL"}
                 semanticMode={"AGGREGATE"}
-                onCommit={(expr, ast, dependencies) => {
+                onCommit={(expr, ast, dependencies, semanticType) => {
                   setExpr(expr);
-                  setGroupBy((p) => ({ ...p, ast, dependencies }));
+
+                  if (dependencies.length && groupBy?.key) {
+                    setSeriesX({
+                      key: groupBy.key,
+                      name: schemasById[groupBy.key].label,
+                      type: schemasById[groupBy.key].semanticType,
+                    });
+
+                    setSeriesY([
+                      {
+                        key: dependencies[0],
+                        name: schemasById[dependencies[0]].label,
+                        type: semanticType,
+                      },
+                    ]);
+
+                    setLayout((p) => ({
+                      ...p,
+                      xTitleText: schemasById[groupBy.key].label,
+                      yTitleText: schemasById[dependencies[0]].label,
+                    }));
+                  }
+
+                  setGroupBy((p) => ({
+                    ...p,
+                    ast,
+                    type: semanticType,
+                  }));
                 }}
               />
             )}
@@ -161,7 +162,7 @@ export const CartesianChartForm = forwardRef(
                         next[i] = {
                           key: o.id,
                           name: o.label,
-                          type: o.type,
+                          type: o.semanticType,
                         };
                         return next;
                       });
