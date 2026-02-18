@@ -120,11 +120,7 @@ export const CartesianChartForm = forwardRef(
                     }));
                   }
 
-                  setGroupBy((p) => ({
-                    ...p,
-                    ast,
-                    type: semanticType,
-                  }));
+                  setGroupBy((p) => ({ ...p, ast }));
                 }}
               />
             )}

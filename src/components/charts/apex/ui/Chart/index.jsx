@@ -20,8 +20,9 @@ const GroupOptionSelect = ({
 }) => {
   const format = useChartStore((s) => s[chartId].layout.xFormat);
   const decimals = useChartStore((s) => s[chartId].layout.xDecimals);
-
-  if (!groups || groupSpec?.ast || category === "grouped") return null;
+  const isKeySame = useChartStore(
+    (s) => s[chartId].xSeriesConfig.key === groupSpec.key,
+  );
 
   return (
     <Select
@@ -29,13 +30,17 @@ const GroupOptionSelect = ({
       options={groups}
       value={groups[selectedGroupIndex]}
       getLabel={(g) => {
+        const display = isKeySame
+          ? {
+              format,
+              decimals,
+            }
+          : schemasById[groupSpec.key].display;
+
         return formatGroupValue(
           g.meta,
           schemasById[groupSpec.key].semanticType,
-          {
-            format,
-            decimals,
-          },
+          display,
         );
       }}
       onChange={(_, i) => setSelectedGroupIndex(i)}
@@ -71,15 +76,17 @@ export default function CustomApexChart({
     <ChartContainer chartId={chartId}>
       <div className="flex items-center justify-between">
         <ChartTitle chartId={chartId} />
-        <GroupOptionSelect
-          chartId={chartId}
-          category={category}
-          groups={groups}
-          groupSpec={groupSpec}
-          schemasById={schemasById}
-          selectedGroupIndex={selectedGroupIndex}
-          setSelectedGroupIndex={setSelectedGroupIndex}
-        />
+        {groups && !groupSpec?.ast && category !== "grouped" && (
+          <GroupOptionSelect
+            chartId={chartId}
+            category={category}
+            groups={groups}
+            groupSpec={groupSpec}
+            schemasById={schemasById}
+            selectedGroupIndex={selectedGroupIndex}
+            setSelectedGroupIndex={setSelectedGroupIndex}
+          />
+        )}
       </div>
       <div className={styles.chartWrapper}>
         <ChartWithConfig

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ColumnDetails } from "../shared";
 import { useTableStore } from "@table/store/useTableStore";
 import { Popup } from "@layout";
@@ -6,16 +6,13 @@ import { createSchema, SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { isValid } from "@table/validation";
 
 export default function AddColumnPopup() {
+  const loading = useTableStore((s) => s.loading.createSchema);
   const { addColumn, closePopup, columnsById, columnOrder } =
     useTableStore.getState();
 
   const builderRef = useRef();
 
-  const [draft, setDraft] = useState(
-    createSchema({
-      id: "id",
-    }),
-  );
+  const [draft, setDraft] = useState(createSchema({}));
 
   const [error, setError] = useState(null);
 
@@ -29,15 +26,10 @@ export default function AddColumnPopup() {
 
     if (!isValid(draft, setError, { columnsById, columnOrder })) return;
 
-    // console.time("save");
     addColumn({
       ...draft,
-      id: crypto.randomUUID(),
       editable: draft.source !== SCHEMA_SOURCE.COMPUTED,
     });
-    // console.log(draft);
-    closePopup();
-    // console.timeEnd("save");
   };
 
   return (
@@ -58,6 +50,8 @@ export default function AddColumnPopup() {
         text={["Cancel", "Add Column"]}
         onCancel={closePopup}
         onApply={save}
+        disableCancel={loading}
+        loading={{ apply: loading }}
       />
     </Popup.Container>
   );

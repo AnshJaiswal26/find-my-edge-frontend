@@ -1,15 +1,11 @@
 const createSchema = (partial) => {
-  if (!partial.id) {
-    throw new Error("createSchema: id is required");
-  }
-
   return {
-    id: partial.id,
+    id: partial.id ?? null,
     label: partial.label ?? "",
 
     /* ------------------ TYPE SYSTEM ------------------ */
     type: partial.type ?? "text", // base type
-    semanticType: partial.semanticType ?? "number", // 🔥 NEW (optional override)
+    semanticType: partial.semanticType ?? "string", //  NEW (optional override)
 
     /* ------------------ COMPUTATION ------------------ */
     mode: partial.mode ?? "row", // row | cumulative | grouped

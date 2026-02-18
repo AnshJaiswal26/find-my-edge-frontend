@@ -116,14 +116,18 @@ export const useDashboardStore = create(
     },
 
     recomputeStats() {
-      const { tradeOrder, tradesById } = useTradeStore.getState();
+      const { tradeOrder, tradesById, computedById } = useTradeStore.getState();
+
       set((s) => {
         s.stats.forEach((stat) => {
           const reducer = FUNCTION_REGISTRY[stat.aggregate].reducer;
           const acc = reducer.init(tradeOrder.length);
 
           tradeOrder.forEach((id) => {
-            reducer.step(acc, tradesById[id][stat.key]);
+            const value =
+              computedById?.[id]?.[stat.key] ?? tradesById?.[id]?.[stat.key];
+
+            reducer.step(acc, value);
           });
 
           stat.value = reducer.result(acc);

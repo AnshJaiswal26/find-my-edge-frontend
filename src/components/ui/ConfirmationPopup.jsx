@@ -25,6 +25,8 @@ export default function ConfirmationPopup({
           onCancel={onCancel}
           onApply={onConfirm}
           disableApply={loading}
+          disableCancel={loading}
+          loading={{ apply: loading }}
           classNames={{
             applyBtn: "!bg-(--error) border !border-(--error)",
           }}

@@ -87,7 +87,7 @@ export function buildAST(postfix, type) {
 
       stack.push({
         type: "function",
-        name,
+        fn: name,
         args,
       });
 

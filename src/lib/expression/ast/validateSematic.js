@@ -91,8 +91,8 @@ export function validateSemantic(node, schemasById) {
 
   /* ------------------ FUNCTION ------------------ */
   if (node.type === "function") {
-    const def = FUNCTION_REGISTRY[node.name];
-    if (!def) throw new Error(`Unknown function ${node.name}`);
+    const def = FUNCTION_REGISTRY[node.fn];
+    if (!def) throw new Error(`Unknown function ${node.fn}`);
 
     const args = node.args || [];
 
@@ -106,13 +106,13 @@ export function validateSemantic(node, schemasById) {
         if (Array.isArray(expected)) {
           if (!expected.includes(actual)) {
             throw new Error(
-              `Function ${node.name} argument ${i + 1} must be ${expected.join(" or ")}, got ${actual}`,
+              `Function ${node.fn} argument ${i + 1} must be ${expected.join(" or ")}, got ${actual}`,
             );
           }
         } else {
           if (actual !== expected) {
             throw new Error(
-              `Function ${node.name} argument ${i + 1} must be ${expected}, got ${actual}`,
+              `Function ${node.fn} argument ${i + 1} must be ${expected}, got ${actual}`,
             );
           }
         }

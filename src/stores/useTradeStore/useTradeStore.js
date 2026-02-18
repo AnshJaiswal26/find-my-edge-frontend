@@ -1,54 +1,81 @@
 import { tradeData } from "@data";
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { schemaApi } from "@lib/api/schema.api";
 import { columnsById } from "@table/data";
-import { parseInputValue } from "@utils";
+import { formatForInput, parseInputValue } from "@utils";
+import { useUIStore } from "@stores";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { tradeApi } from "@lib/api/trade.api";
+import { debounce } from "lodash";
 
 export const useTradeStore = create(
   immer((set, get) => ({
     tradesById: {},
+    computedById: {},
     tradeOrder: [],
     isLoading: false,
 
-    schemasById: { ...columnsById },
-    schemaOrder: Object.keys(columnsById),
+    schemasById: {},
+    schemaOrder: [],
 
-    async fetchTrades() {
-      const { schemasById, schemaOrder } = get();
+    pendingUpdates: {}, // { tradeId: { col: value } }
+    isSaving: false,
 
+    /* ---------------- FETCH ALL ---------------- */
+
+    async fetchAll() {
       set({ isLoading: true });
 
-      // const res = await fetch("http://localhost:8080/api/trades");
+      try {
+        /* ---------------- 1. FETCH SCHEMAS ---------------- */
 
-      // if (!res.ok) {
-      //   throw new Error("Failed to fetch trades");
-      // }
+        const schemaRes = await schemaApi.getAll();
+        // already parsed + returns data
 
-      // const trades = await res.json();
+        const schemasById = schemaRes.schemasById || {};
+        const schemaOrder = schemaRes.order || [];
 
-      const tradesById = {};
-      const tradeOrder = [];
+        // store schemas first
+        set({ schemasById, schemaOrder });
 
-      tradeData.forEach((t) => {
-        const id = crypto.randomUUID();
-        const trade = {};
+        /* ---------------- 2. FETCH TRADES ---------------- */
 
-        schemaOrder.forEach((schemaId) => {
-          const schema = schemasById[schemaId];
+        const trades = await tradeApi.getAll();
 
-          if (schema.source !== SCHEMA_SOURCE.COMPUTED)
-            trade[schema.id] = parseInputValue(
-              t[schema.id],
-              schema.semanticType,
-            );
+        console.log(trades);
+        //  already parsed
+
+        const tradesById = {};
+        const tradeOrder = [];
+
+        trades.forEach((t) => {
+          const id = t.id || crypto.randomUUID();
+          const trade = {};
+
+          schemaOrder.forEach((schemaId) => {
+            const schema = schemasById[schemaId];
+
+            if (!schema) return;
+
+            // skip computed
+            if (schema.source !== SCHEMA_SOURCE.COMPUTED) {
+              trade[schema.id] = parseInputValue(
+                t[schema.id],
+                schema.semanticType,
+              );
+            }
+          });
+
+          tradesById[id] = { id, ...trade };
+          tradeOrder.push(id);
         });
 
-        tradesById[id] = { id, ...trade };
-        tradeOrder.push(id);
-      });
-
-      set({ tradesById, tradeOrder, isLoading: false });
+        set({ tradesById, tradeOrder, isLoading: false });
+      } catch (err) {
+        useUIStore.getState().showToast("ERROR", err.message);
+        set({ isLoading: false });
+      }
     },
 
     addTrade(trade, id) {
@@ -71,20 +98,75 @@ export const useTradeStore = create(
       });
     },
 
+    queueTradeUpdate: (id, patch) => {
+      set((s) => {
+        if (!s.pendingUpdates[id]) {
+          s.pendingUpdates[id] = {};
+        }
+        Object.assign(s.pendingUpdates[id], patch);
+      });
+
+      get().debouncedSync(); // trigger background sync
+    },
+
+    debouncedSync: debounce(async () => {
+      const { pendingUpdates, tradesById, schemasById } = get();
+
+      if (!Object.keys(pendingUpdates).length) return;
+
+      set({ isSaving: true });
+
+      try {
+        const updates = { ...pendingUpdates };
+
+        // clear queue optimistically
+        set({ pendingUpdates: {} });
+
+        await Promise.all(
+          Object.keys(updates).map((id) => {
+            const trade = tradesById[id];
+
+            // 🔥 filter ONLY non-computed fields
+            const cleanTrade = {};
+
+            Object.keys(trade).forEach((key) => {
+              if (key === "id") return;
+
+              const schema = schemasById[key];
+
+              if (schema?.source !== SCHEMA_SOURCE.COMPUTED) {
+                cleanTrade[key] = formatForInput(
+                  trade[key],
+                  schema.semanticType,
+                );
+              }
+            });
+
+            return tradeApi.update(id, cleanTrade); // full object
+          }),
+        );
+      } catch (err) {
+        useUIStore.getState().showToast("ERROR", err.message);
+      } finally {
+        set({ isSaving: false });
+      }
+    }, 800),
+    // debounce like Google Sheets
+
     updateSchemaOrder(order) {
       set((s) => {
         s.schemaOrder = order;
       });
     },
 
-    addSchema(schema) {
+    addSchema(schema, order) {
       set((s) => {
         s.schemasById[schema.id] = schema;
-        s.schemaOrder.push(schema.id);
+        s.schemaOrder = order;
       });
     },
 
-    updateSchema(id, draft) {
+    updateSchema(id, draft, order) {
       set((s) => {
         Object.assign(s.schemasById[id], draft);
       });

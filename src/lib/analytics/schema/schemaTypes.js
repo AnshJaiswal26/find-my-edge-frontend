@@ -5,6 +5,12 @@ const SCHEMA_SOURCE = {
   COMPUTED: "computed",
 };
 
+const SCHEMA_COMPUTE_MODE = {
+  ROW: "row",
+  CUMULATIVE: "cumulative",
+  GROUPED: "grouped",
+};
+
 /* ------------------ SEMANTIC TYPES ------------------ */
 const SEMANTIC_TYPES = {
   NUMBER: "number",
@@ -21,32 +27,19 @@ const SEMANTIC_TYPES = {
 };
 
 /* ------------------ SCHEMA TYPES ------------------ */
-const SCHEMA_TYPES = [
-  // 🔢 Numeric
-  "number",
-  "number computed",
+const SCHEMA_TYPES = {
+  NUMBER: "number",
+  DURATION: "duration",
 
-  // ⏳ Duration (🔥 FIXED — separate from time)
-  "duration",
-  "duration computed",
+  DATE: "date",
+  TIME: "time",
+  DATETIME: "datetime",
 
-  // 📅 Temporal
-  "date",
-  "date computed",
+  TEXT: "text",
+  SELECT: "select",
 
-  "time",
-  "time computed",
-
-  "datetime",
-  "datetime computed",
-
-  // 📝 Categorical
-  "text",
-  "select",
-
-  // ✅ Logical
-  "boolean",
-];
+  BOOLEAN: "boolean",
+};
 
 /* ------------------ LABELS (UI PURPOSE) ------------------ */
 const BASE_TYPES = [
@@ -64,21 +57,16 @@ const BASE_TYPES = [
 const SCHEMA_TYPES_GROUP = {
   // 🔢 Numeric
   number: SEMANTIC_TYPES.NUMBER,
-  "number computed": SEMANTIC_TYPES.NUMBER,
 
   // ⏳ Duration
   duration: SEMANTIC_TYPES.DURATION,
-  "duration computed": SEMANTIC_TYPES.DURATION,
 
   // 📅 Temporal
   date: SEMANTIC_TYPES.DATE,
-  "date computed": SEMANTIC_TYPES.DATE,
 
   time: SEMANTIC_TYPES.TIME,
-  "time computed": SEMANTIC_TYPES.TIME,
 
   datetime: SEMANTIC_TYPES.DATETIME,
-  "datetime computed": SEMANTIC_TYPES.DATETIME,
 
   // 📝 Categorical
   text: SEMANTIC_TYPES.STRING,
@@ -92,6 +80,7 @@ export {
   SCHEMA_SOURCE,
   SEMANTIC_TYPES,
   SCHEMA_TYPES,
+  SCHEMA_COMPUTE_MODE,
   BASE_TYPES,
   SCHEMA_TYPES_GROUP,
 };

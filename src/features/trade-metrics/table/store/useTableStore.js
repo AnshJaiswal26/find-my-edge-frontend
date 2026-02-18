@@ -12,6 +12,7 @@ import { createGroupSlice } from "./group.slice";
 import { createRow } from "@table/model";
 import { useTradeStore } from "@stores";
 import { buildAffectedMap } from "@table/dependency";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 
 /* ----------------------------------------------- */
 /*                     STORE                       */
@@ -55,18 +56,34 @@ export const useTableStore = create(
       const { hydrateSchema, recompute } = get();
       hydrateSchema();
 
-      const { tradesById, tradeOrder, schemasById, schemaOrder } =
-        useTradeStore.getState();
+      const {
+        tradesById,
+        computedById, // 🔥 NEW
+        tradeOrder,
+        schemasById,
+        schemaOrder,
+      } = useTradeStore.getState();
 
       const rowsById = {};
       const rowOrder = [];
 
       tradeOrder.forEach((tradeId) => {
-        const trade = tradesById[tradeId];
+        const trade = tradesById[tradeId] || {};
+        const computed = computedById?.[tradeId] || {}; // 🔥 NEW
+
         const { row } = createRow(schemasById, tradeId);
 
         schemaOrder.forEach((schemaId) => {
-          row.cells[schemaId].value = trade[schemaId];
+          const schema = schemasById[schemaId];
+
+          if (!schema) return;
+
+          //  merge logic
+          if (schema.source === SCHEMA_SOURCE.COMPUTED) {
+            row.cells[schemaId].value = computed[schemaId] ?? null;
+          } else {
+            row.cells[schemaId].value = trade[schemaId] ?? null;
+          }
         });
 
         rowsById[row.id] = row;
@@ -75,6 +92,7 @@ export const useTableStore = create(
 
       set({ rowsById, rowOrder });
 
+      // 🔥 recompute ensures correctness
       recompute({ reason: "all" });
     },
   })),

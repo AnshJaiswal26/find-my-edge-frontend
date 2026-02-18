@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { ChartPopups, CustomApexChart } from "@charts/index";
 
@@ -22,9 +22,24 @@ const getColumnCount = () => {
 
 export default function Dashboard() {
   const seriesOrder = useTradeStore((s) => s.tradeOrder);
-  const seriesById = useTradeStore((s) => s.tradesById);
+  const tradesById = useTradeStore((s) => s.tradesById);
+  const computedById = useTradeStore((s) => s.computedById);
+
   const schemasById = useTradeStore((s) => s.schemasById);
-  const schemasOrder = useTradeStore((s) => s.schemasOrder);
+  const schemasOrder = useTradeStore((s) => s.schemaOrder);
+
+  const seriesById = useMemo(() => {
+    const result = {};
+
+    seriesOrder.forEach((id) => {
+      result[id] = {
+        ...tradesById[id],
+        ...(computedById[id] || {}),
+      };
+    });
+
+    return result;
+  }, [seriesOrder, tradesById, computedById]);
 
   return (
     <>

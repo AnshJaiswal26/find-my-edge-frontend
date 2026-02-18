@@ -43,8 +43,11 @@ function App() {
   useEffect(() => {
     const { setSelect, setColorPicker } = useUIStore.getState();
 
-    useTradeStore.getState().fetchTrades();
-    useTableStore.getState().hydrateFromTrades();
+    const fetchTrades = async () => {
+      await useTradeStore.getState().fetchAll();
+      useTableStore.getState().hydrateFromTrades();
+    };
+    fetchTrades();
 
     const close = () => {
       setSelect(null);

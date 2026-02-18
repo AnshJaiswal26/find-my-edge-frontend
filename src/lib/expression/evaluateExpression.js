@@ -1,6 +1,4 @@
-import { COMPUTATION_MODE } from "@lib/analytics/engine/execute";
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
-import { FUNCTION_TYPE } from "@lib/analytics/engine/functions/type";
 import {
   runWindowReducer,
   runBaseReducer,
@@ -64,23 +62,23 @@ function getOperandSchemaType(node, ctx) {
 /* MAIN EVALUATOR                                     */
 /* -------------------------------------------------- */
 
-export function evaluateExpression(expr, ctx = {}) {
-  // console.log({ ...expr }, ctx);
-  if (!expr || typeof expr !== "object") return null;
+export function evaluateExpression(ast, ctx = {}) {
+  // console.log({ ...ast }, ctx);
+  if (!ast || typeof ast !== "object") return null;
 
-  switch (expr.type) {
+  switch (ast.type) {
     case "constant":
-      return expr.value;
+      return ast.value;
 
     case "key": {
-      return ctx.getValue(expr.key);
+      return ctx.getValue(ast.key);
     }
 
     case "unary": {
-      const value = evaluateExpression(expr.arg, ctx);
+      const value = evaluateExpression(ast.arg, ctx);
       if (value == null) return null;
 
-      switch (expr.op) {
+      switch (ast.op) {
         case "-":
           return -value;
         default:
@@ -89,12 +87,12 @@ export function evaluateExpression(expr, ctx = {}) {
     }
 
     case "binary": {
-      const left = evaluateExpression(expr.left, ctx);
-      const right = evaluateExpression(expr.right, ctx);
+      const left = evaluateExpression(ast.left, ctx);
+      const right = evaluateExpression(ast.right, ctx);
 
       if (left == null || right == null) return null;
 
-      switch (expr.op) {
+      switch (ast.op) {
         case "+":
           return left + right;
         case "-":
@@ -116,21 +114,26 @@ export function evaluateExpression(expr, ctx = {}) {
         case "<=":
         case "==":
         case "!=": {
-          let l = evaluateExpression(expr.left, ctx);
-          let r = evaluateExpression(expr.right, ctx);
+          let l = evaluateExpression(ast.left, ctx);
+          let r = evaluateExpression(ast.right, ctx);
 
           if (l == null || r == null) return null;
 
-          const leftType = getOperandSchemaType(expr.left, ctx);
-          const rightType = getOperandSchemaType(expr.right, ctx);
+          const leftType = getOperandSchemaType(ast.left, ctx);
+          const rightType = getOperandSchemaType(ast.right, ctx);
 
           const schemaType = leftType || rightType; // whichever is a column
 
           if (schemaType) {
-            [l, r] = normalizeInput(l, r, schemaType.format, schemaType.type);
+            [l, r] = normalizeInput(
+              l,
+              r,
+              schemaType.format,
+              schemaType.semanticType,
+            );
           }
 
-          switch (expr.op) {
+          switch (ast.op) {
             case "==":
               return l === r ? 1 : 0;
             case "!=":
@@ -152,7 +155,7 @@ export function evaluateExpression(expr, ctx = {}) {
     }
 
     case "function": {
-      const entry = FUNCTION_REGISTRY[expr.name.toUpperCase()];
+      const entry = FUNCTION_REGISTRY[ast.fn.toUpperCase()];
       if (!entry?.exec && !entry?.reducer) return null;
 
       // Prevent aggregate reducers from running in row mode
@@ -166,8 +169,8 @@ export function evaluateExpression(expr, ctx = {}) {
       // }
 
       return entry?.reducer
-        ? runReducers[entry.type](entry.reducer, expr, ctx)
-        : entry.exec(expr, ctx);
+        ? runReducers[entry.type](entry.reducer, ast, ctx)
+        : entry.exec(ast, ctx);
     }
 
     default:

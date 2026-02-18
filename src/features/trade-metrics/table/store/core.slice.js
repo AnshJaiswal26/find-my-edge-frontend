@@ -1,7 +1,8 @@
 import { createCell, createRow } from "../model";
 import { buildAffectedMap } from "../dependency";
-import { useTradeStore } from "@stores";
+import { useTradeStore, useUIStore } from "@stores";
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { schemaApi } from "@lib/api/schema.api";
 
 export const createCoreSlice = (set, get) => ({
   rowsById: {},
@@ -11,6 +12,11 @@ export const createCoreSlice = (set, get) => ({
   columnOrder: [],
   columnWidths: {},
   affectedMap: {},
+
+  loading: {
+    createSchema: false,
+    deleteSchema: false,
+  },
 
   /* ----------------------------------------------- */
   /*                  DATA ACTIONS                   */
@@ -64,68 +70,153 @@ export const createCoreSlice = (set, get) => ({
   /*               COLUMN ACTIONS                      */
   /* ------------------------------------------------- */
 
-  addColumn(metric) {
-    const state = get();
-    console.log(metric);
-
-    set((s) => {
-      s.columnsById[metric.id] = metric;
-      s.columnOrder.push(metric.id);
-
-      s.affectedMap = buildAffectedMap(s.columnsById, s.columnOrder);
-
-      s.rowOrder.forEach((rowId) => {
-        const row = s.rowsById[rowId];
-        if (!row) return;
-
-        const { value } = createCell(metric);
-        row.cells[metric.id] = { value, meta: {} };
+  addColumn: async (metric) => {
+    try {
+      set((s) => {
+        s.loading.createSchema = true;
       });
-    });
 
-    useTradeStore.getState().addSchema(metric);
+      // 1. Call API (clean)
+      const { schema: savedSchema, order } = await schemaApi.create(metric);
 
-    if (metric.source === SCHEMA_SOURCE.COMPUTED) {
-      state.recompute({
-        reason: "column",
-        colId: metric.id,
+      console.log("Frontend", metric);
+      console.log("Backend", savedSchema);
+
+      // 2. Update column store
+      set((s) => {
+        s.columnsById[savedSchema.id] = savedSchema;
+        s.columnOrder = order;
+
+        s.affectedMap = buildAffectedMap(s.columnsById, s.columnOrder);
+
+        s.rowOrder.forEach((rowId) => {
+          const row = s.rowsById[rowId];
+          if (!row) return;
+
+          const { value } = createCell(savedSchema);
+          row.cells[savedSchema.id] = { value, meta: {} };
+        });
+      });
+
+      // 3. Update trade store
+      useTradeStore.getState().addSchema(savedSchema, order);
+
+      // 4. Recompute
+      if (savedSchema.source === SCHEMA_SOURCE.COMPUTED) {
+        get().recompute({
+          reason: "column",
+          colId: savedSchema.id,
+        });
+      }
+
+      get().closePopup();
+
+      useUIStore.getState().showToast("SUCCESS", "Column added");
+    } catch (err) {
+      useUIStore.getState().showToast("ERROR", err.message);
+    } finally {
+      set((s) => {
+        s.loading.createSchema = false;
       });
     }
-
-    state.closePopup();
   },
 
-  deleteColumn(colId) {
+  deleteColumn: async (colId) => {
     if (!colId) return;
 
-    set((s) => {
-      s.columnOrder = s.columnOrder.filter((id) => id !== colId);
-      s.rowOrder.forEach((id) => delete s.rowsById[id].cells[colId]);
+    try {
+      set((s) => {
+        s.loading.deleteSchema = true;
+      });
 
-      delete s.columnsById[colId];
-      s.selectedColumn = null;
-      delete s.affectedMap[colId];
-      delete s.columnWidths[colId];
-    });
+      // 🔥 1. Call backend
+      const { order } = await schemaApi.delete(colId);
 
-    useTradeStore.getState().deleteSchema(colId);
+      // 🔥 2. Update column store (use backend order)
+      set((s) => {
+        // remove column
+        delete s.columnsById[colId];
 
-    get().closePopup();
+        // update order from backend
+        s.columnOrder = order;
+
+        // remove cells
+        s.rowOrder.forEach((rowId) => {
+          const row = s.rowsById[rowId];
+          if (!row) return;
+          delete row.cells[colId];
+        });
+
+        // cleanup
+        s.selectedColumn = null;
+        delete s.affectedMap[colId];
+        delete s.columnWidths[colId];
+
+        // rebuild affected map (IMPORTANT 🔥)
+        s.affectedMap = buildAffectedMap(s.columnsById, s.columnOrder);
+      });
+
+      // 🔥 3. Sync trade store
+      useTradeStore.getState().deleteSchema(colId, order);
+
+      get().closePopup();
+
+      useUIStore.getState().showToast("SUCCESS", "Column deleted");
+    } catch (err) {
+      useUIStore.getState().showToast("ERROR", err.message);
+    } finally {
+      set((s) => {
+        s.loading.deleteSchema = false;
+      });
+    }
   },
 
-  updateColumn(colId, draft) {
+  updateColumn: async (colId, draft) => {
     const state = get();
-    // console.log(draft);
 
-    set((s) => {
-      Object.assign(s.columnsById[colId], draft);
-      s.affectedMap = buildAffectedMap(s.columnsById, s.columnOrder);
-    });
+    try {
+      set((s) => {
+        s.loading.updateSchema = true;
+      });
 
-    useTradeStore.getState().updateSchema(colId, draft);
+      // 🔥 1. Call backend
+      const { schema: updatedSchema, order } = await schemaApi.update(
+        colId,
+        draft,
+      );
 
-    state.recompute({ reason: "column", colId });
+      // 🔥 2. Update column store
+      set((s) => {
+        // replace with backend schema (IMPORTANT 🔥)
+        s.columnsById[colId] = updatedSchema;
 
-    state.closePopup();
+        // sync order (in case backend changed)
+        s.columnOrder = order;
+
+        // rebuild dependency graph
+        s.affectedMap = buildAffectedMap(s.columnsById, s.columnOrder);
+      });
+
+      // 🔥 3. Sync trade store
+      useTradeStore.getState().updateSchema(colId, updatedSchema, order);
+
+      // 🔥 4. Recompute (if needed)
+      if (updatedSchema.source === SCHEMA_SOURCE.COMPUTED) {
+        state.recompute({
+          reason: "column",
+          colId,
+        });
+      }
+
+      state.closePopup();
+
+      useUIStore.getState().showToast("SUCCESS", "Column updated");
+    } catch (err) {
+      useUIStore.getState().showToast("ERROR", err.message);
+    } finally {
+      set((s) => {
+        s.loading.updateSchema = false;
+      });
+    }
   },
 });

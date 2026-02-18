@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 
 import { evaluateColorRules, formatForInput } from "@utils";
 import { tooltipApi } from "@ui";

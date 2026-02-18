@@ -1,25 +1,20 @@
-import { SCHEMA_TYPES_GROUP } from "@lib/analytics/schema";
+import { SEMANTIC_TYPES } from "@lib/analytics/schema";
 import { useEffect, useMemo } from "react";
 
 export default function useFilteredOptions({ series, options, setSeries }) {
   const optionsGroup = useMemo(() => {
     const first = series[0];
-    return first?.type ? SCHEMA_TYPES_GROUP[first.type] : null;
+    return first?.type ? first.type : null;
   }, [series]);
 
   const baseOptions = useMemo(() => {
-    return options.filter((o) => {
-      const group = SCHEMA_TYPES_GROUP[o.type];
-      return group && group !== "string"; // allow all numeric/date/time
-    });
+    return options.filter((o) => o.semanticType !== SEMANTIC_TYPES.STRING);
   }, [options]);
 
   const filteredOptions = useMemo(() => {
     if (!optionsGroup) return baseOptions;
 
-    return baseOptions.filter(
-      (o) => SCHEMA_TYPES_GROUP[o.type] === optionsGroup,
-    );
+    return baseOptions.filter((o) => o.semanticType === optionsGroup);
   }, [baseOptions, optionsGroup]);
 
   useEffect(() => {
@@ -28,10 +23,7 @@ export default function useFilteredOptions({ series, options, setSeries }) {
     setSeries((prev) =>
       prev.map((s, i) => {
         if (i === 0 || !s.type) return s;
-
-        return SCHEMA_TYPES_GROUP[s.type] === optionsGroup
-          ? s
-          : { key: "", name: "", type: "" };
+        return s.type === optionsGroup ? s : { key: "", name: "", type: "" };
       }),
     );
   }, [optionsGroup]);

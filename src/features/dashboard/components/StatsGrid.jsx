@@ -4,7 +4,6 @@ import { useDashboardStore } from "../store";
 
 function StatCards() {
   const stats = useDashboardStore((s) => s.stats);
-  console.log(stats);
   return (
     <div className="my-5 grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
       {stats.map((stat, index) => (

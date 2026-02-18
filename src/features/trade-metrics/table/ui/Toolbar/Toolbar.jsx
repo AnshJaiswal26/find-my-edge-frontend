@@ -9,11 +9,41 @@ import {
   Rows3,
   Columns3,
   Group,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@ui";
 import { Divider } from "@layout";
 import { useTableStore } from "@table/store/useTableStore";
 import { ColumnInspector } from "../Column/ColumnInspector";
+import { useTradeStore } from "@stores";
+
+const SavingStatus = () => {
+  const isSaving = useTradeStore((s) => s.isSaving);
+  const pendingUpdates = useTradeStore((s) => s.pendingUpdates);
+
+  const pending = Object.keys(pendingUpdates).length;
+  return (
+    <div className="flex items-center gap-2 text-xs text-(--text-muted)">
+      {isSaving ? (
+        <>
+          <Loader2 size={14} className="animate-spin" />
+          <span>Saving…</span>
+        </>
+      ) : pending > 0 ? (
+        <>
+          <span className="w-2 h-2 rounded-full bg-yellow-500" />
+          <span>Unsaved changes</span>
+        </>
+      ) : (
+        <>
+          <CheckCircle2 size={14} className="text-green-500" />
+          <span>All changes saved</span>
+        </>
+      )}
+    </div>
+  );
+};
 
 export function Toolbar({
   onAddTrade,
@@ -138,8 +168,11 @@ export function Toolbar({
           </div>
         </div>
 
-        {/* INSPECTOR SLOT */}
-        <div className="flex items-center justify-end min-w-[260px]">
+        <div className="flex items-center justify-end gap-3 min-w-[260px]">
+          {/*  SAVE STATUS */}
+          <SavingStatus />
+
+          {/* INSPECTOR */}
           <ColumnInspector />
         </div>
       </div>

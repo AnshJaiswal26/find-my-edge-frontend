@@ -23,19 +23,10 @@ function getNodeType(node, mode, schemasById) {
 
     switch (schema.type) {
       case "number":
-      case "number computed":
-
       case "duration":
-      case "duration computed":
-
       case "time":
-      case "time computed":
-
       case "date":
-      case "date computed":
-
       case "datetime":
-      case "datetime computed":
         return "number";
 
       case "select":
@@ -84,15 +75,15 @@ function getNodeType(node, mode, schemasById) {
   }
 
   if (node.type === "function") {
-    const def = FUNCTION_REGISTRY[node.name];
-    if (!def) throw new Error(`Unknown function ${node.name}`);
+    const def = FUNCTION_REGISTRY[node.fn];
+    if (!def) throw new Error(`Unknown function ${node.fn}`);
 
     // Mode permission check
     if (mode) {
       const allowed = FUNCTION_ALLOW_BY_MODE[mode];
-      if (!allowed?.has(node.name)) {
+      if (!allowed?.has(node.fn)) {
         throw new Error(
-          `Function ${node.name} is not allowed in ${mode} computation`,
+          `Function ${node.fn} is not allowed in ${mode} computation`,
         );
       }
     }
@@ -109,7 +100,7 @@ function getNodeType(node, mode, schemasById) {
       if (typeof expected === "object" && expected.key) {
         if (args[i]?.type !== "key") {
           throw new Error(
-            `Function ${node.name} argument ${i + 1} must be a field reference`,
+            `Function ${node.fn} argument ${i + 1} must be a field reference`,
           );
         }
 
@@ -117,7 +108,7 @@ function getNodeType(node, mode, schemasById) {
 
         if (expected.key !== "any" && keyType !== expected.key) {
           throw new Error(
-            `Function ${node.name} argument ${i + 1} must reference a ${expected.key} field`,
+            `Function ${node.fn} argument ${i + 1} must reference a ${expected.key} field`,
           );
         }
         continue;
@@ -127,13 +118,13 @@ function getNodeType(node, mode, schemasById) {
       if (Array.isArray(expected)) {
         if (!expected.includes(actual)) {
           throw new Error(
-            `Function ${node.name} argument ${i + 1} must be ${expected.join(" or ")}`,
+            `Function ${node.fn} argument ${i + 1} must be ${expected.join(" or ")}`,
           );
         }
       } else {
         if (expected !== actual) {
           throw new Error(
-            `Function ${node.name} argument ${i + 1} must be ${expected}`,
+            `Function ${node.fn} argument ${i + 1} must be ${expected}`,
           );
         }
       }

@@ -1,7 +1,6 @@
 import Input from "./Input/Input";
 
 export default function RangeInput({ type, value = {}, onChange }) {
-  console.log(value);
   return (
     <>
       <div className="flex gap-4">

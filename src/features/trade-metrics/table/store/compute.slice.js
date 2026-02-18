@@ -6,19 +6,32 @@ import {
 } from "@lib/analytics/engine/execute";
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 
-function syncRowsToTradeStore(rowsById, changedRowIds) {
+function syncRowsToTradeStore(rowsById, changedRowIds, columnsById) {
   if (!changedRowIds.size) return;
 
   useTradeStore.setState((state) => {
     changedRowIds.forEach((id) => {
       const row = rowsById[id];
-      const trade = {};
+
+      const raw = {};
+      const computed = {};
 
       Object.entries(row.cells).forEach(([colId, cell]) => {
-        trade[colId] = cell.value;
+        const schema = columnsById[colId];
+
+        if (!schema) return;
+
+        if (schema.source === SCHEMA_SOURCE.COMPUTED) {
+          // 🔥 computed goes here
+          computed[colId] = cell.value;
+        } else {
+          // ✅ raw goes here
+          raw[colId] = cell.value;
+        }
       });
 
-      state.tradesById[id] = { id, ...trade };
+      state.tradesById[id] = { id, ...raw };
+      state.computedById[id] = computed;
     });
   });
 }
@@ -49,6 +62,10 @@ export const createComputeSlice = (set, get) => ({
     }
 
     useTradeStore.getState().updateTrade(rowId, {
+      [colId]: value,
+    });
+
+    useTradeStore.getState().queueTradeUpdate(rowId, {
       [colId]: value,
     });
   },
@@ -252,7 +269,7 @@ export const createComputeSlice = (set, get) => ({
               : COMPUTATION_MODE.BASE,
         });
       }
-      syncRowsToTradeStore(tradesById, changedRowIds);
+      syncRowsToTradeStore(tradesById, changedRowIds, columnsById);
     });
   },
 });

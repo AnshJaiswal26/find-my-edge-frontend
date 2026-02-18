@@ -15,7 +15,7 @@ function hasInvalidFieldUsage(node, insideAggregate) {
 
   // If it's a function → check if it's aggregate
   if (node.type === "function") {
-    const fnType = FUNCTION_REGISTRY[node.name]?.type;
+    const fnType = FUNCTION_REGISTRY[node.fn]?.type;
     const isAggregate =
       fnType === "GLOBAL" || fnType === "NATIVE_AGG" || fnType === "RATIO";
 

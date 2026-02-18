@@ -22,7 +22,7 @@ export const cartesianChartConfig = ({
       show: config.xLabels,
       formatter: (v, d) => {
         if (v < 0) return;
-        const item = data[v];
+        const item = data[v - 1];
         if (!item) return;
 
         const format = { format: config.xFormat, decimals: config.xDecimals };

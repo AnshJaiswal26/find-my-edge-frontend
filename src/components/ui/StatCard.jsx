@@ -74,7 +74,6 @@ export const FORMAT_VARIANTS = {
 };
 
 function resolveFormatGroup(format, type) {
-  console.log(format, type);
   if (!format) return "NUMBER";
 
   if (type.includes("date")) {

@@ -275,6 +275,7 @@ Popup.Footer = ({
   onApply,
   disableCancel = false,
   disableApply = false,
+  loading = { cancel: false, apply: false },
   classNames,
 }) => {
   return (
@@ -291,7 +292,8 @@ Popup.Footer = ({
           text={text[0]}
           onClick={onCancel}
           hollow
-          disabled={disableCancel}
+          loading={loading.cancel}
+          disabled={disableCancel || loading?.cancel}
           classNames={{ button: classNames?.cancelBtn }}
         />
       )}
@@ -299,7 +301,8 @@ Popup.Footer = ({
         <Button
           text={text[1]}
           onClick={onApply}
-          disabled={disableApply}
+          loading={loading.apply}
+          disabled={disableApply || loading?.apply}
           classNames={{ button: classNames?.applyBtn }}
         />
       )}
@@ -326,6 +329,7 @@ Popup.MultiButtonFooter = ({ fnMap = {}, className = "" }) => {
           text={label}
           onClick={p?.fn}
           disabled={p?.disabled}
+          loading={p?.loading}
           classNames={{
             wrapper:
               p?.align === "right" && idx === firstRightIndex
@@ -411,10 +415,10 @@ export const ChartPopup = ({
   );
 };
 
-export function Loader() {
+export function Loader({ size = 60 }) {
   return (
     <div className="flex h-[80vh] items-center justify-center">
-      <Loader2 size={60} className="animate-spin" color="var(--text)" />
+      <Loader2 size={size} className="animate-spin" color="var(--text)" />
     </div>
   );
 }

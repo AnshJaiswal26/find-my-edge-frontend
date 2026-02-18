@@ -32,7 +32,7 @@ export function formatAST(node, indent = 2, schemasById) {
     }
 
     case "identifier": {
-      return node.name;
+      return node.key;
     }
 
     case "unary":
@@ -57,10 +57,16 @@ export function formatAST(node, indent = 2, schemasById) {
     }
 
     case "function": {
+      // 🔥 handle empty args (single line)
+      if (!node.args || node.args.length === 0) {
+        return `${node.fn}()`;
+      }
+
       const args = node.args.map((arg) =>
         formatAST(arg, indent + 1, schemasById),
       );
-      return `${node.name}(\n${pad}  ${args.join(",\n" + pad + "  ")}\n${pad})`;
+
+      return `${node.fn}(\n${pad}  ${args.join(",\n" + pad + "  ")}\n${pad})`;
     }
 
     default:

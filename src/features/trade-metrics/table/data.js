@@ -1,12 +1,17 @@
-import { createSchema, SCHEMA_SOURCE } from "@lib/analytics/schema";
+import {
+  createSchema,
+  SCHEMA_SOURCE,
+  SCHEMA_TYPES,
+  SEMANTIC_TYPES,
+} from "@lib/analytics/schema";
 
 export const columnsById = {
   date: createSchema({
     id: "date",
     label: "Date",
-    type: "date",
+    type: SCHEMA_TYPES.DATE,
+    semanticType: SEMANTIC_TYPES.DATE,
     source: SCHEMA_SOURCE.SYSTEM,
-    semanticType: "date",
     editable: true,
     display: { format: "YYYY-MM-DD" },
   }),
@@ -14,9 +19,9 @@ export const columnsById = {
   entryTime: createSchema({
     id: "entryTime",
     label: "Entry Time",
-    type: "time",
+    type: SCHEMA_TYPES.TIME,
+    semanticType: SEMANTIC_TYPES.TIME,
     source: SCHEMA_SOURCE.SYSTEM,
-    semanticType: "time",
     editable: true,
     display: { format: "hh:mm:ss A" },
   }),
@@ -24,9 +29,9 @@ export const columnsById = {
   exitTime: createSchema({
     id: "exitTime",
     label: "Exit Time",
-    type: "time",
+    type: SCHEMA_TYPES.TIME,
+    semanticType: SEMANTIC_TYPES.TIME,
     source: SCHEMA_SOURCE.SYSTEM,
-    semanticType: "time",
     editable: true,
     display: { format: "hh:mm:ss A" },
   }),
@@ -34,8 +39,8 @@ export const columnsById = {
   duration: createSchema({
     id: "duration",
     label: "Duration",
-    type: "time computed",
-    semanticType: "duration", // important
+    type: SCHEMA_TYPES.DURATION,
+    semanticType: SEMANTIC_TYPES.DURATION, // important
     source: SCHEMA_SOURCE.COMPUTED,
     editable: false,
     dependencies: ["entryTime", "exitTime"],
@@ -56,17 +61,17 @@ export const columnsById = {
   symbol: createSchema({
     id: "symbol",
     label: "Symbol",
+    type: SCHEMA_TYPES.TEXT,
+    semanticType: SEMANTIC_TYPES.STRING,
     source: SCHEMA_SOURCE.SYSTEM,
-    type: "text",
-    semanticType: "string",
     editable: true,
   }),
 
   entry: createSchema({
     id: "entry",
     label: "Entry",
-    type: "number",
-    semanticType: "number",
+    type: SCHEMA_TYPES.NUMBER,
+    semanticType: SEMANTIC_TYPES.NUMBER,
     source: SCHEMA_SOURCE.SYSTEM,
     editable: true,
     display: { format: "NUMBER", decimals: 2 },
@@ -75,8 +80,8 @@ export const columnsById = {
   exit: createSchema({
     id: "exit",
     label: "Exit",
-    type: "number",
-    semanticType: "number",
+    type: SCHEMA_TYPES.NUMBER,
+    semanticType: SEMANTIC_TYPES.NUMBER,
     source: SCHEMA_SOURCE.SYSTEM,
     editable: true,
     display: { format: "NUMBER", decimals: 2 },
@@ -95,8 +100,8 @@ export const columnsById = {
   targetAndSl: createSchema({
     id: "targetAndSl",
     label: "Traget/SL",
-    type: "number computed",
-    semanticType: "number",
+    type: SCHEMA_TYPES.NUMBER,
+    semanticType: SEMANTIC_TYPES.NUMBER,
     source: SCHEMA_SOURCE.COMPUTED,
     editable: false,
     dependencies: ["entry", "exit"],
@@ -113,8 +118,8 @@ export const columnsById = {
   pnl: createSchema({
     id: "pnl",
     label: "PnL",
-    type: "number computed",
-    semanticType: "number",
+    type: SCHEMA_TYPES.NUMBER,
+    semanticType: SEMANTIC_TYPES.NUMBER,
     source: SCHEMA_SOURCE.COMPUTED,
     editable: false,
     dependencies: ["exit", "entry", "qty"],
@@ -140,8 +145,8 @@ export const columnsById = {
   riskReward: createSchema({
     id: "riskReward",
     label: "Risk-Reward",
-    type: "number computed",
-    semanticType: "number",
+    type: SCHEMA_TYPES.NUMBER,
+    semanticType: SEMANTIC_TYPES.NUMBER,
     source: SCHEMA_SOURCE.COMPUTED,
     editable: false,
     dependencies: ["pnl"],
@@ -162,8 +167,8 @@ export const columnsById = {
   emotion: createSchema({
     id: "emotion",
     label: "Emotion",
-    type: "select",
-    semanticType: "string",
+    type: SCHEMA_TYPES.SELECT,
+    semanticType: SEMANTIC_TYPES.STRING,
     editable: true,
     options: ["Calm", "Fear", "Greed"],
     display: { format: "badge" },

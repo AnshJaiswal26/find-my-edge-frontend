@@ -1,16 +1,15 @@
 import { Section } from "@layout";
+import { SEMANTIC_TYPES } from "@lib/analytics/schema";
 import { Input, Select } from "@ui";
 import { DEFAULT_FORMATS, FORMATS } from "@utils";
 
 export function DisplaySection({ display, onChange, type }) {
-  console.log(type);
-  const semanticType = type === "text" || type === "select" ? "string" : type;
   return (
     <Section title={"Display"}>
       <Select
         label="Format"
-        value={display.format || DEFAULT_FORMATS[semanticType]}
-        options={FORMATS[semanticType]}
+        value={display.format || DEFAULT_FORMATS[type]}
+        options={FORMATS[type]}
         onChange={(f) =>
           onChange((p) => ({
             ...p,
@@ -19,7 +18,7 @@ export function DisplaySection({ display, onChange, type }) {
         }
       />
 
-      {type === "number" && (
+      {type === SEMANTIC_TYPES.NUMBER && (
         <Input
           label="Decimals"
           type="range"

@@ -4,13 +4,14 @@ import { formatDate } from "@utils";
 
 export const useCalendarTrades = (year, month) => {
   const tradesById = useTradeStore((s) => s.tradesById);
+  const computedById = useTradeStore((s) => s.computedById);
   const tradeOrder = useTradeStore((s) => s.tradeOrder);
 
   return useMemo(() => {
     const daily = {};
 
     tradeOrder.forEach((id) => {
-      const trade = tradesById[id];
+      const trade = { ...tradesById[id], ...(computedById[id] || {}) };
       if (!trade?.date) return;
 
       const date = formatDate(trade.date, "YYYY-MM-DD");

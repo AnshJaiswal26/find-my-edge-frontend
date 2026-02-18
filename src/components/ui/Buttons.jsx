@@ -1,3 +1,5 @@
+import { Loader } from "@layout";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const sizeClasses = {
@@ -26,6 +28,7 @@ export const Button = ({
   variant = "cyan",
   classNames = {},
   disabled = false,
+  loading = false,
   ...props
 }) => {
   return (
@@ -43,8 +46,12 @@ export const Button = ({
           ${variantClasses[variant]}
           ${disabled ? "opacity-40 pointer-events-none" : ""}
           ${classNames?.button || ""}
+          ${loading ? "flex items-center gap-2" : ""}
         `}
       >
+        {loading && (
+          <Loader2 size={18} className="animate-spin" color="var(--text)" />
+        )}
         <span>{text}</span>
       </button>
     </div>

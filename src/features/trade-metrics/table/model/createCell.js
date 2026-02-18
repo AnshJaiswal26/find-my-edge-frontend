@@ -1,33 +1,22 @@
+const DEFAULT_VALUE_MAP = {
+  number: () => 0,
+  duration: () => 0,
+  time: () => 0,
+
+  date: () => new Date().toISOString().slice(0, 10),
+  datetime: () => new Date().toISOString(),
+
+  text: () => "—",
+
+  select: (column) => column?.options?.[0] ?? "—",
+
+  boolean: () => 0,
+};
+
 export function createCell(column) {
-  let value = null;
+  const resolver = DEFAULT_VALUE_MAP[column.type];
 
-  switch (column.type) {
-    case "number":
-    case "number computed":
-      value = 0;
-      break;
-
-    case "time":
-    case "time computed":
-      value = 0;
-      break;
-
-    case "date":
-      value = new Date().toISOString().slice(0, 10);
-      break;
-
-    case "text":
-      value = "-";
-      break;
-
-    case "select": {
-      value = column?.options?.[0] ?? "-";
-      break;
-    }
-
-    default:
-      value = null;
-  }
+  const value = resolver ? resolver(column) : null;
 
   return {
     value,
