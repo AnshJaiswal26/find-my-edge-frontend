@@ -1,4 +1,4 @@
-import { useTableStore } from "@table/store/useTableStore";
+import { useTradeStore } from "@stores";
 
 export const CellSelect = ({
   rowId,
@@ -8,7 +8,7 @@ export const CellSelect = ({
   onCommit,
   setEditing,
 }) => {
-  const options = useTableStore((s) => s.columnsById[colId].options);
+  const options = useTradeStore((s) => s.schemasById[colId].options);
 
   return (
     <select

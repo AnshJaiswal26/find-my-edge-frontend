@@ -3,3 +3,4 @@ export { toPostfix } from "./toPostfix";
 export { tokenize } from "./tokenize";
 export { validateTypes } from "./validateTypes";
 export { validateSemantic } from "./validateSematic";
+export { makeAST } from "./makeAst";

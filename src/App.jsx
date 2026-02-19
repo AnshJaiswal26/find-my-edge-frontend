@@ -45,7 +45,7 @@ function App() {
 
     const fetchTrades = async () => {
       await useTradeStore.getState().fetchAll();
-      useTableStore.getState().hydrateFromTrades();
+      useTableStore.getState().hydrateSchema();
     };
     fetchTrades();
 

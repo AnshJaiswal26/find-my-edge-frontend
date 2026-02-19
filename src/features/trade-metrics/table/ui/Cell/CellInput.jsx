@@ -1,9 +1,10 @@
-import { DurationInput } from "@ui";
+// import { DurationInput } from "@ui";
+
 import { formatForInput, parseInputValue, INPUT_TYPES } from "@utils";
-import { useTableStore } from "@table/store/useTableStore";
+import { useTradeStore } from "@stores";
 
 export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
-  const type = useTableStore((s) => s.columnsById[colId].semanticType);
+  const type = useTradeStore((s) => s.schemasById[colId].semanticType);
 
   const onBlur = () => {
     const normalized = parseInputValue(draft, type);

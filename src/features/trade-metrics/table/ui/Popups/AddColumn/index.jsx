@@ -4,11 +4,13 @@ import { useTableStore } from "@table/store/useTableStore";
 import { Popup } from "@layout";
 import { createSchema, SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { isValid } from "@table/validation";
+import { useTradeStore } from "@stores";
 
 export default function AddColumnPopup() {
   const loading = useTableStore((s) => s.loading.createSchema);
-  const { addColumn, closePopup, columnsById, columnOrder } =
-    useTableStore.getState();
+  const { addColumn, closePopup } = useTableStore.getState();
+  const { schemasById: columnsById, schemaOrder: columnOrder } =
+    useTradeStore.getState();
 
   const builderRef = useRef();
 

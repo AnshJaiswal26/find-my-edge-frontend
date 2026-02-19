@@ -9,10 +9,9 @@ import { createDragSlice } from "./drag.slice";
 import { createCoreSlice } from "./core.slice";
 import { createComputeSlice } from "./compute.slice";
 import { createGroupSlice } from "./group.slice";
-import { createRow } from "@table/model";
 import { useTradeStore } from "@stores";
-import { buildAffectedMap } from "@table/dependency";
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+
+import { getLockedColumnsMap } from "@table/view";
 
 /* ----------------------------------------------- */
 /*                     STORE                       */
@@ -42,58 +41,21 @@ export const useTableStore = create(
 
     ...createComputeSlice(set, get),
 
+    updateLockedColumns: () => {
+      const tableState = get();
+      const { schemasById } = useTradeStore.getState();
+
+      set((state) => {
+        state.lockedColumnsMap = getLockedColumnsMap(tableState, schemasById);
+      });
+    },
+
     hydrateSchema() {
       const { schemasById, schemaOrder } = useTradeStore.getState();
 
       set({
-        columnsById: schemasById,
         columnOrder: schemaOrder,
-        affectedMap: buildAffectedMap(schemasById, schemaOrder),
       });
-    },
-
-    hydrateFromTrades() {
-      const { hydrateSchema, recompute } = get();
-      hydrateSchema();
-
-      const {
-        tradesById,
-        computedById, // 🔥 NEW
-        tradeOrder,
-        schemasById,
-        schemaOrder,
-      } = useTradeStore.getState();
-
-      const rowsById = {};
-      const rowOrder = [];
-
-      tradeOrder.forEach((tradeId) => {
-        const trade = tradesById[tradeId] || {};
-        const computed = computedById?.[tradeId] || {}; // 🔥 NEW
-
-        const { row } = createRow(schemasById, tradeId);
-
-        schemaOrder.forEach((schemaId) => {
-          const schema = schemasById[schemaId];
-
-          if (!schema) return;
-
-          //  merge logic
-          if (schema.source === SCHEMA_SOURCE.COMPUTED) {
-            row.cells[schemaId].value = computed[schemaId] ?? null;
-          } else {
-            row.cells[schemaId].value = trade[schemaId] ?? null;
-          }
-        });
-
-        rowsById[row.id] = row;
-        rowOrder.push(row.id);
-      });
-
-      set({ rowsById, rowOrder });
-
-      // 🔥 recompute ensures correctness
-      recompute({ reason: "all" });
     },
   })),
 );

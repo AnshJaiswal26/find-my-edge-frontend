@@ -39,30 +39,52 @@ export const createFilterSlice = (set, get) => ({
       s.filteredRowOrder = [];
     });
 
-    const { closePopup, groupBy, buildGroups } = get();
+    const { closePopup, groupBy, buildGroups, updateLockedColumns } = get();
 
     if (groupBy) buildGroups();
+    else updateLockedColumns();
+
     closePopup();
   },
 
   applyFilters() {
-    const { filters, closePopup, groupBy, buildGroups } = get();
+    const {
+      filters,
+      closePopup,
+      groupBy,
+      buildGroups,
+      derivedViewByTradeId,
+      updateLockedColumns,
+    } = get();
+
+    const { tradesById, tradeOrder, derivedByTradeId } =
+      useTradeStore.getState();
+
+    // 🔥 unified value resolver
+    const getValue = (tradeId, colId) => {
+      return (
+        derivedByTradeId?.[tradeId]?.[colId] ?? // computed
+        tradesById?.[tradeId]?.[colId] ?? // raw
+        null
+      );
+    };
 
     if (!filters.length) {
       set({ filteredRowOrder: [] });
     } else {
       set((s) => {
-        s.filteredRowOrder = s.rowOrder.filter((rowId) => {
-          const row = s.rowsById[rowId];
-          return s.filters.some((f) => {
+        s.filteredRowOrder = tradeOrder.filter((tradeId) => {
+          return filters.some((f) => {
             const fn = FILTER_OPERATION_MAP[f.operator];
-            return fn?.(row.cells[f.key]?.value, f.value, f.value2);
+            const value = getValue(tradeId, f.key);
+            return fn?.(value, f.value, f.value2);
           });
         });
       });
     }
 
     if (groupBy) buildGroups();
+    else updateLockedColumns();
 
     closePopup();
   },

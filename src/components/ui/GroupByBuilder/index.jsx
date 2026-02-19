@@ -3,7 +3,12 @@ import { FILTER_OPTIONS, isBetween } from "@utils";
 import { GROUPING_OPTIONS, GROUPING_SCHEMA } from "@lib/analytics/config";
 import { RangeBucket } from "./RangeBucket";
 
-export default function GroupByBuilder({ schemasById, groupBy, onChange }) {
+export default function GroupByBuilder({
+  schemaOrder,
+  schemasById,
+  groupBy,
+  onChange,
+}) {
   const draft = groupBy ?? {};
 
   const field = draft.key ? schemasById[draft.key] : null;
@@ -12,10 +17,11 @@ export default function GroupByBuilder({ schemasById, groupBy, onChange }) {
   const update = (patch) => onChange?.({ ...draft, ...patch });
 
   const onFieldChange = (f) => {
+    const schema = schemaOrder ? schemasById[f] : f;
     update({
-      key: f.id,
-      schemaType: f.semanticType,
-      kind: GROUPING_SCHEMA[f.semanticType].kinds[0],
+      key: schema.id,
+      schemaType: schema.semanticType,
+      kind: GROUPING_SCHEMA[schema.semanticType].kinds[0],
       ranges: [],
       bucket: undefined,
       operator: undefined,
@@ -30,9 +36,9 @@ export default function GroupByBuilder({ schemasById, groupBy, onChange }) {
       {/* FIELD */}
       <Select
         label="Field"
-        options={Object.values(schemasById)}
-        getLabel={(f) => f.label}
-        getKey={(f) => f.id}
+        options={schemaOrder ? schemaOrder : Object.values(schemasById)}
+        getLabel={(f) => (schemaOrder ? schemasById[f].label : f.label)}
+        getKey={(f) => (schemaOrder ? schemasById[f].id : f.id)}
         value={draft.key}
         onChange={onFieldChange}
       />

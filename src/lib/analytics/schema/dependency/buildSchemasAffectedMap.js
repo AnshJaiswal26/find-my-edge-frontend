@@ -1,4 +1,4 @@
-export function buildAffectedMap(schemasById, schemaOrder) {
+export function buildSchemasAffectedMap(schemasById, schemaOrder) {
   const affected = {};
 
   schemaOrder.forEach((id) => {

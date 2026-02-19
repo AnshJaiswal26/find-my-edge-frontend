@@ -3,6 +3,8 @@ import { useTableStore } from "@table/store/useTableStore";
 import { CellInput } from "./CellInput";
 import { CellSelect } from "./CellSelect";
 import { CellDisplay } from "./CellDisplay";
+import { useCellValue } from "@table/hooks";
+import { useTradeStore } from "@stores";
 
 export const Cell = memo(function Cell({
   rowId,
@@ -13,20 +15,21 @@ export const Cell = memo(function Cell({
 }) {
   const [editing, setEditing] = useState(false);
 
-  const cell = useTableStore((s) => s.rowsById[rowId]?.cells[colId]);
+  const value = useCellValue(rowId, colId);
+  // console.log(value, colId);
   const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
-  const column = useTableStore((s) => s.columnsById[colId]);
+  const column = useTradeStore((s) => s.schemasById[colId]);
 
   const type = column.semanticType;
 
   /* ---------- Keep draft synced with store value ---------- */
-  const [draft, setDraft] = useState(cell.value);
+  const [draft, setDraft] = useState(value);
 
   useEffect(() => {
     if (!editing) {
-      setDraft(cell.value);
+      setDraft(value);
     }
-  }, [cell.value, editing]);
+  }, [value, editing]);
 
   /* ================= EDIT MODE ================= */
   if (editing) {
@@ -58,7 +61,7 @@ export const Cell = memo(function Cell({
     >
       <CellDisplay
         type={type}
-        cell={cell}
+        value={value}
         colId={colId}
         rowId={rowId}
         width={width}

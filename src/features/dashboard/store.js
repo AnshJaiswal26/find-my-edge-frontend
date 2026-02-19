@@ -1,15 +1,10 @@
 import { createChart } from "@charts/apex/model/factory";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
-import { buildAST, tokenize, toPostfix } from "@lib/expression";
+import { makeAST } from "@lib/expression";
 import { useTradeStore, useUIStore } from "@stores";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-
-function makeAST(expr) {
-  const ast = buildAST(toPostfix(tokenize(expr)), "GLOBAL").ast;
-  return ast;
-}
 
 const stats = [
   {
@@ -116,7 +111,8 @@ export const useDashboardStore = create(
     },
 
     recomputeStats() {
-      const { tradeOrder, tradesById, computedById } = useTradeStore.getState();
+      const { tradeOrder, tradesById, derivedByTradeId } =
+        useTradeStore.getState();
 
       set((s) => {
         s.stats.forEach((stat) => {
@@ -125,7 +121,8 @@ export const useDashboardStore = create(
 
           tradeOrder.forEach((id) => {
             const value =
-              computedById?.[id]?.[stat.key] ?? tradesById?.[id]?.[stat.key];
+              derivedByTradeId?.[id]?.[stat.key] ??
+              tradesById?.[id]?.[stat.key];
 
             reducer.step(acc, value);
           });
@@ -145,7 +142,7 @@ export const useDashboardStore = create(
           key: "WIN_RATE",
           name: "Win Rate",
           type: "number",
-          ast: makeAST("WIN_RATE()"), // ✅ AST
+          ast: makeAST("WIN_RATE()"), // AST
           exprString: "RATE(pnl > 0) * 100", // optional UI
           tooltipLabel: "Wins",
           color: "var(--info)",

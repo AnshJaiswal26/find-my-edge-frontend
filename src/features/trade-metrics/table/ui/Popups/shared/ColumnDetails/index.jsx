@@ -86,7 +86,7 @@ export default function ColumnDetails({
         <Select
           label={"Computation Mode"}
           value={draft.mode}
-          options={["row", "cumulative", "grouped"]}
+          options={["row", "cumulative"]}
           getLabel={(v) => v.toUpperCase()}
           onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
         />

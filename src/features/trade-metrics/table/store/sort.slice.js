@@ -1,3 +1,4 @@
+import { useTradeStore } from "@stores";
 import { SORT_OPERATION_MAP } from "@utils";
 
 export const createSortSlice = (set, get) => ({
@@ -20,7 +21,7 @@ export const createSortSlice = (set, get) => ({
   },
 
   clearSort() {
-    const { buildGroups, groupBy, closePopup } = get();
+    const { buildGroups, groupBy, closePopup, updateLockedColumns } = get();
     set((s) => {
       s.sort.columnId = null;
       s.sort.operator = "none";
@@ -28,12 +29,24 @@ export const createSortSlice = (set, get) => ({
     });
 
     if (groupBy) buildGroups();
+    else updateLockedColumns();
 
     closePopup();
   },
 
   applySort() {
-    const { sort, rowsById, groupBy, closePopup, buildGroups } = get();
+    const {
+      sort,
+      groupBy,
+      closePopup,
+      buildGroups,
+      updateLockedColumns,
+      filteredRowOrder,
+      rowOrder,
+      derivedViewByTradeId,
+    } = get();
+
+    const { tradesById, derivedByTradeId } = useTradeStore.getState();
 
     if (!sort.columnId || sort.operator === "none") {
       set({ sortedRowOrder: [] });
@@ -43,17 +56,27 @@ export const createSortSlice = (set, get) => ({
 
     const fn = SORT_OPERATION_MAP[sort.operator];
 
-    set((s) => {
-      const order = s.filteredRowOrder.length ? s.filteredRowOrder : s.rowOrder;
+    //  unified value resolver
+    const getValue = (tradeId, colId) => {
+      return (
+        derivedByTradeId?.[tradeId]?.[colId] ?? // computed
+        tradesById?.[tradeId]?.[colId] ?? // raw
+        null
+      );
+    };
 
+    const order = filteredRowOrder.length ? filteredRowOrder : rowOrder;
+
+    set((s) => {
       s.sortedRowOrder = [...order].sort((a, b) => {
-        const va = rowsById[a].cells[sort.columnId]?.value;
-        const vb = rowsById[b].cells[sort.columnId]?.value;
+        const va = getValue(a, sort.columnId);
+        const vb = getValue(b, sort.columnId);
         return fn?.(va, vb) ?? 0;
       });
     });
 
     if (groupBy) buildGroups();
+    else updateLockedColumns();
 
     closePopup();
   },

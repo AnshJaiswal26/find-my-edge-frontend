@@ -5,6 +5,7 @@
     "paths": {
       "@icons/*": ["assets/icons/*"],
       "@ui": ["components/ui"],
+      "@ui/*": ["components/ui/*"],
       "@layout": ["components/layout"],
 
       "@charts/*": ["components/charts/*"],

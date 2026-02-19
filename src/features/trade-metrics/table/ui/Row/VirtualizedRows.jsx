@@ -4,14 +4,16 @@ import { useTableStore } from "@table/store/useTableStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { GroupRow } from "./GroupRow";
 import { Row } from "./Row";
+import { useTradeStore } from "@stores";
 
 export default function VirtualizedRow({ scrollRef }) {
+  const rowOrder = useTradeStore((s) => s.tradeOrder);
   const effectiveRowOrder = useTableStore((s) =>
     s.sortedRowOrder.length
       ? s.sortedRowOrder
       : s.filteredRowOrder.length
         ? s.filteredRowOrder
-        : s.rowOrder,
+        : rowOrder,
   );
 
   const groupBy = useTableStore((s) => s.groupBy);

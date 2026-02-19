@@ -1,8 +1,9 @@
-import { GripHorizontal, LockKeyholeIcon } from "lucide-react";
+import { GripHorizontal, LockKeyholeIcon, RefreshCcwDot } from "lucide-react";
 import { useRef } from "react";
 import { useTableStore } from "@table/store/useTableStore";
 import { createColumnDragController } from "@table/interaction/columnDragController";
-import { isColumnEditable } from "@table/dependency";
+import { useTradeStore } from "@stores";
+import { showTooltip, hideTooltip } from "@ui/tooltip";
 
 const controller = createColumnDragController();
 
@@ -18,9 +19,16 @@ function getColumnRects(tableEl) {
 export function ColumnHeader({ colId, index, tableRef, isGroupColumn }) {
   const headerRef = useRef(null);
 
-  const column = useTableStore((s) => s.columnsById[colId]);
+  const column = useTradeStore((s) => s.schemasById[colId]);
   const width = useTableStore((s) => s.columnWidths?.[colId] ?? 150);
-  const editable = useTableStore((s) => isColumnEditable(colId, s));
+  const isColEditable = useTradeStore(
+    (s) => s.schemasById[colId].editable === true,
+  );
+  const isColUnlocked = useTableStore(
+    (s) => s.lockedColumnsMap?.[colId] !== true,
+  );
+
+  const editable = isColUnlocked && isColEditable;
 
   const {
     startColumnDrag,
@@ -121,7 +129,20 @@ export function ColumnHeader({ colId, index, tableRef, isGroupColumn }) {
       <div
         className={`flex font-bold items-center px-2 py-1 border-r border-(--border) justify-between`}
       >
-        {column.label} {!editable && <LockKeyholeIcon size={12} />}
+        {column.label}
+        <div className="flex gap-2">
+          {column.mode === "cumulative" && (
+            <RefreshCcwDot
+              size={13}
+              className="hover:cursor-pointer hover:text-(--info)"
+              onMouseEnter={(e) =>
+                showTooltip(e, "Recompute Over Current View")
+              }
+              onMouseLeave={hideTooltip}
+            />
+          )}
+          {!editable && <LockKeyholeIcon size={13} />}
+        </div>
       </div>
     </div>
   );

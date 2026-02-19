@@ -3,6 +3,7 @@ import { useTableStore } from "@table/store/useTableStore";
 
 export function TableHeader({ tableRef }) {
   const columnOrder = useTableStore((s) => s.columnOrder);
+  console.log(columnOrder);
   const groupBy = useTableStore((s) => s.groupBy?.key);
   const scrollEdge = useTableStore((s) => s.scrollEdge);
 

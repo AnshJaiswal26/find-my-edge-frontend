@@ -5,11 +5,13 @@ import { ColumnDetails } from "../shared";
 import { Popup } from "@layout";
 import { isValid } from "@table/validation";
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { useTradeStore } from "@stores";
 
 export default function ColumnSettingsPopup() {
   const builderRef = useRef();
 
-  const columnsById = useTableStore((s) => s.columnsById);
+  const columnsById = useTradeStore((s) => s.schemasById);
+
   const columnOrder = useTableStore((s) => s.columnOrder);
   const updateLoading = useTableStore((s) => s.loading.updateSchema);
   const deleteLoading = useTableStore((s) => s.loading.deleteSchema);
@@ -29,8 +31,13 @@ export default function ColumnSettingsPopup() {
     if (activeColumn) setDraft(activeColumn);
   }, [activeColumn]);
 
+  useEffect(() => {
+    if (!columnOrder.length || !activeColumn) {
+      closePopup();
+    }
+  }, [columnOrder.length, activeColumn, closePopup]);
+
   if (!columnOrder.length || !activeColumn || !draft) {
-    closePopup();
     return null;
   }
 

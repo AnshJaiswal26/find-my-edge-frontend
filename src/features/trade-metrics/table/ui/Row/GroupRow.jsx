@@ -2,6 +2,7 @@ import { memo, useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import { useTableStore } from "@table/store/useTableStore";
 import { formatGroupValue } from "@utils";
+import { useTradeStore } from "@stores";
 
 export const GroupCell = memo(function GroupCell({
   colId,
@@ -9,7 +10,7 @@ export const GroupCell = memo(function GroupCell({
   meta,
 }) {
   const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
-  const column = useTableStore((s) => s.columnsById[colId]);
+  const column = useTradeStore((s) => s.schemasById[colId]);
 
   const isGroupColumn = colId === groupedColId;
 

@@ -4,6 +4,8 @@ import { MetricStatsRow } from "./MetricStatsRow";
 import { KpiGrid } from "./KpiGrid";
 import { MetricTableHeader } from "./MetricTableHeader";
 import { formatValue } from "@utils";
+import { useTradeStore } from "@stores";
+import { SCHEMA_TYPES, SEMANTIC_TYPES } from "@lib/analytics/schema";
 
 function Divider() {
   return <div className="h-px bg-(--border)" />;
@@ -18,10 +20,15 @@ function SectionTitle({ children }) {
 }
 
 function computeSummary() {
-  const { rowsById, rowOrder, columnsById } = useTableStore.getState();
+  const {
+    tradesById: rowsById,
+    derivedByTradeId,
+    tradeOrder: rowOrder,
+    schemasById: columnsById,
+  } = useTradeStore.getState();
 
   const numericColumns = Object.values(columnsById).filter(
-    (col) => col.type !== "text" && col.type !== "select",
+    (col) => col.semanticType !== SEMANTIC_TYPES.STRING,
   );
 
   const rows = rowOrder.map((id) => rowsById[id]);
@@ -39,9 +46,11 @@ function computeSummary() {
   let wins = 0;
   let losses = 0;
 
-  rows.forEach((row) => {
+  rowOrder.forEach((rowId) => {
+    const row = { ...rowsById[rowId], ...(derivedByTradeId[rowId] || {}) };
+
     numericColumns.forEach((col) => {
-      const value = Number(row.cells[col.id]?.value);
+      const value = Number(row[col.id]);
       if (!Number.isFinite(value)) return;
 
       const s = stats[col.id];

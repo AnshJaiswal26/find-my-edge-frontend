@@ -24,13 +24,18 @@ import { FunctionDocsPanel } from "./FunctionDocPanel";
 import { formatAST } from "./formatAst";
 import { validateExpression } from "./semanticModeValidators";
 
-function labelsToIds(expr, usedSchemas) {
+function labelToIdExpr(expr, usedSchemas) {
   let result = expr;
+
   for (const sch of usedSchemas) {
     const safeLabel = sch.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(`\\b${safeLabel}\\b`, "g");
-    result = result.replace(regex, `@{${sch.id}}`);
+
+    // ✅ ONLY replace full bracketed identifiers
+    const bracketRegex = new RegExp(`\\[\\s*${safeLabel}\\s*\\]`, "g");
+
+    result = result.replace(bracketRegex, `@{${sch.id}}`);
   }
+
   return result;
 }
 
@@ -67,7 +72,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
 
   // ---------- ID EXPRESSION ----------
   const idExpr = useMemo(
-    () => labelsToIds(labelExpr, usedSchemas),
+    () => labelToIdExpr(labelExpr, usedSchemas),
     [labelExpr, usedSchemas],
   );
 
@@ -145,8 +150,11 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   const applySuggestion = useCallback(
     (item) => {
       let insert = "";
+      let cursorOffset = null;
+
       if (item.type === "schema") {
-        insert = item.label;
+        insert = item.label.includes(" ") ? `[${item.label}]` : item.label;
+
         setUsedSchemas((prev) =>
           prev.some((c) => c.id === item.id)
             ? prev
@@ -155,6 +163,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       }
       if (item.type === "function") {
         insert = `${item.name}()`;
+        cursorOffset = insert.length - 1; // inside ()
       }
 
       const before = labelExpr.slice(0, cursor).replace(/[a-zA-Z_]+$/, "");
@@ -162,7 +171,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       const next = `${before}${insert}${after}`;
       setLabelExpr(next);
 
-      const newCursor = before.length + insert.length;
+      const newCursor = before.length + cursorOffset ?? insert.length;
       setCursor(newCursor);
       setOpen(false);
 

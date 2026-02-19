@@ -1,4 +1,5 @@
 import { buildGroups, draftToSpec } from "@lib/analytics/engine/data";
+import { useTradeStore } from "@stores";
 
 export const createGroupSlice = (set, get) => ({
   groupBy: null,
@@ -19,15 +20,15 @@ export const createGroupSlice = (set, get) => ({
   },
 
   clearGroupBy: () => {
-    const { closePopup, recompute } = get();
+    const { closePopup, updateLockedColumns } = get();
 
     set(() => ({
       groupBy: null,
       groups: null,
       expandedGroups: {},
     }));
+    updateLockedColumns();
 
-    recompute({ reason: "grouping" });
     closePopup();
   },
 
@@ -50,26 +51,32 @@ export const createGroupSlice = (set, get) => ({
 
   buildGroups: (spec) => {
     const {
-      rowsById,
       sortedRowOrder,
       filteredRowOrder,
-      rowOrder,
       columnsById,
       groupBy,
-      recompute,
+      derivedViewByTradeId,
+      updateLockedColumns,
     } = get();
+
+    const { tradeOrder, tradesById, derivedByTradeId } =
+      useTradeStore.getState();
 
     const effectiveOrder = sortedRowOrder.length
       ? sortedRowOrder
       : filteredRowOrder.length
         ? filteredRowOrder
-        : rowOrder;
+        : tradeOrder;
+
+    const getValue = (trade, key) => {
+      return derivedByTradeId?.[trade.id]?.[key] ?? trade?.[key] ?? null;
+    };
 
     const groups = buildGroups({
       tradeOrder: effectiveOrder,
-      tradesById: rowsById,
+      tradesById: tradesById,
       groupSpec: draftToSpec(spec ?? groupBy),
-      getValue: (row, key) => row.cells[key]?.value ?? null,
+      getValue,
       getFormat: (key) => ({
         type: columnsById[key].semanticType,
         display: columnsById[key]?.display,
@@ -83,6 +90,7 @@ export const createGroupSlice = (set, get) => ({
         ...s.columnOrder.filter((id) => id !== groupBy.key),
       ];
     });
-    recompute({ reason: "grouping", groups });
+
+    updateLockedColumns();
   },
 });

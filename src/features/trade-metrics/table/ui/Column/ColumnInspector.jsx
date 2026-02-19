@@ -2,18 +2,19 @@ import { useMemo, useState } from "react";
 import { useTableStore } from "@table/store/useTableStore";
 import { ChevronLeft } from "lucide-react";
 import { Divider } from "@layout";
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { SCHEMA_SOURCE, SCHEMA_TYPES } from "@lib/analytics/schema";
+import { useTradeStore } from "@stores";
 
 export function ColumnInspector() {
   const selectedColId = useTableStore((s) => s.selectedColumn?.id);
-  const columnsById = useTableStore((s) => s.columnsById);
+  const columnsById = useTradeStore((s) => s.schemasById);
 
   if (!selectedColId) return null;
 
   const column = columnsById[selectedColId];
+
   if (!column) return null;
-  if (column.type !== "number" && column.source !== SCHEMA_SOURCE.COMPUTED)
-    return null;
+  if (column.source !== SCHEMA_SOURCE.COMPUTED) return null;
 
   return (
     <ColumnInspectorContent column={column} selectedColId={selectedColId} />
@@ -21,15 +22,29 @@ export function ColumnInspector() {
 }
 
 function ColumnInspectorContent({ column, selectedColId }) {
-  const rowsById = useTableStore((s) => s.rowsById);
-  const rowOrder = useTableStore((s) => s.rowOrder);
+  const tradesById = useTradeStore((s) => s.tradesById);
+  const derivedByTradeId = useTradeStore((s) => s.derivedByTradeId);
+  const rowOrder = useTradeStore((s) => s.tradeOrder);
+
+  const rowsById = useMemo(() => {
+    const result = {};
+
+    rowOrder.forEach((id) => {
+      result[id] = {
+        ...tradesById[id],
+        ...(derivedByTradeId[id] || {}),
+      };
+    });
+
+    return result;
+  }, [rowOrder, tradesById, derivedByTradeId]);
 
   const [open, setOpen] = useState(false);
 
   const values = useMemo(() => {
     const nums = [];
     rowOrder.forEach((id) => {
-      const v = Number(rowsById[id]?.cells[selectedColId]?.value);
+      const v = Number(rowsById?.[id]?.[selectedColId]);
       if (Number.isFinite(v)) nums.push(v);
     });
     return nums;

@@ -9,7 +9,7 @@ const INPUT_TYPES = {
 };
 
 function parseInputValue(raw, semantic) {
-  // if (typeof raw === "number") return raw;
+  if (typeof raw === "number") return raw;
   if (raw == null || raw === "") return null;
 
   switch (semantic) {

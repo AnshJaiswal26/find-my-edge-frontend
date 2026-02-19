@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Popup, ErrorText } from "@layout";
 import { GroupByBuilder } from "@ui";
 import { useTableStore } from "@table/store/useTableStore";
+import { useTradeStore } from "@stores";
 
 export default function GroupByPopup() {
-  const columnsById = useTableStore((s) => s.columnsById);
+  const columnsById = useTradeStore((s) => s.schemasById);
+  const columnOrder = useTableStore((s) => s.columnOrder);
+
   const groupBy = useTableStore((s) => s.groupBy);
   const { setGroupBy, clearGroupBy, closePopup } = useTableStore.getState();
 
@@ -17,6 +20,7 @@ export default function GroupByPopup() {
 
         <Popup.Body className="flex flex-col gap-4 p-5!">
           <GroupByBuilder
+            schemaOrder={columnOrder}
             schemasById={columnsById}
             groupBy={draft}
             onChange={setDraft}

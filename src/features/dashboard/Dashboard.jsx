@@ -23,7 +23,7 @@ const getColumnCount = () => {
 export default function Dashboard() {
   const seriesOrder = useTradeStore((s) => s.tradeOrder);
   const tradesById = useTradeStore((s) => s.tradesById);
-  const computedById = useTradeStore((s) => s.computedById);
+  const derivedByTradeId = useTradeStore((s) => s.derivedByTradeId);
 
   const schemasById = useTradeStore((s) => s.schemasById);
   const schemasOrder = useTradeStore((s) => s.schemaOrder);
@@ -34,12 +34,14 @@ export default function Dashboard() {
     seriesOrder.forEach((id) => {
       result[id] = {
         ...tradesById[id],
-        ...(computedById[id] || {}),
+        ...(derivedByTradeId[id] || {}),
       };
     });
 
     return result;
-  }, [seriesOrder, tradesById, computedById]);
+  }, [seriesOrder, tradesById, derivedByTradeId]);
+
+  console.log(seriesById);
 
   return (
     <>

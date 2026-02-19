@@ -8,7 +8,6 @@ const SCHEMA_SOURCE = {
 const SCHEMA_COMPUTE_MODE = {
   ROW: "row",
   CUMULATIVE: "cumulative",
-  GROUPED: "grouped",
 };
 
 /* ------------------ SEMANTIC TYPES ------------------ */

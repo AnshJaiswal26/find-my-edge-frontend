@@ -1,4 +1,4 @@
-export function collectAffectedColumns(startColId, affectedMap) {
+export function collectAffectedSchemas(startColId, affectedMap) {
   const visited = new Set();
   const ordered = [];
 

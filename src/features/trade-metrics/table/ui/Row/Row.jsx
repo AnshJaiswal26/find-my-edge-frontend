@@ -2,13 +2,16 @@ import { memo, useState } from "react";
 import { useTableStore } from "@table/store/useTableStore";
 import { Cell } from "../Cell/Cell";
 import { HighlighterIcon, Trash2 } from "lucide-react";
+import { useTradeStore } from "@stores";
 
 export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
+  const updateTradeValue = useTradeStore((s) => s.updateTradeValue);
+
   const columnOrder = useTableStore((s) => s.columnOrder);
-  const updateCell = useTableStore((s) => s.updateCell);
   const deleteRow = useTableStore((s) => s.deleteRow);
+
   const toggleHighlightRow = useTableStore((s) => s.toggleHighlightRow);
-  const highlight = useTableStore((s) => s.rowsById[rowId]?.highlight);
+  const highlight = useTableStore((s) => s.highlightedRows[rowId]);
 
   const [hover, setHover] = useState(false);
 
@@ -83,7 +86,7 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
           highlight={highlight}
           isGroupColumn={colId === groupBy?.key}
           onCommit={(value) => {
-            updateCell(rowId, colId, value, groupId);
+            updateTradeValue(rowId, colId, value, groupId);
           }}
         />
       ))}
