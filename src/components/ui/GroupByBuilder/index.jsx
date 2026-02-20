@@ -4,7 +4,7 @@ import { GROUPING_OPTIONS, GROUPING_SCHEMA } from "@lib/analytics/config";
 import { RangeBucket } from "./RangeBucket";
 
 export default function GroupByBuilder({
-  schemaOrder,
+  schemasOrder,
   schemasById,
   groupBy,
   onChange,
@@ -17,7 +17,7 @@ export default function GroupByBuilder({
   const update = (patch) => onChange?.({ ...draft, ...patch });
 
   const onFieldChange = (f) => {
-    const schema = schemaOrder ? schemasById[f] : f;
+    const schema = schemasOrder ? schemasById[f] : f;
     update({
       key: schema.id,
       schemaType: schema.semanticType,
@@ -36,9 +36,9 @@ export default function GroupByBuilder({
       {/* FIELD */}
       <Select
         label="Field"
-        options={schemaOrder ? schemaOrder : Object.values(schemasById)}
-        getLabel={(f) => (schemaOrder ? schemasById[f].label : f.label)}
-        getKey={(f) => (schemaOrder ? schemasById[f].id : f.id)}
+        options={schemasOrder ? schemasOrder : Object.values(schemasById)}
+        getLabel={(f) => (schemasOrder ? schemasById[f].label : f.label)}
+        getKey={(f) => (schemasOrder ? schemasById[f].id : f.id)}
         value={draft.key}
         onChange={onFieldChange}
       />

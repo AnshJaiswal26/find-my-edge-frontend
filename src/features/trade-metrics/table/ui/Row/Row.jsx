@@ -7,7 +7,7 @@ import { useTradeStore } from "@stores";
 export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
   const updateTradeValue = useTradeStore((s) => s.updateTradeValue);
 
-  const columnOrder = useTableStore((s) => s.columnOrder);
+  const columnsOrder = useTableStore((s) => s.columnsOrder);
   const deleteRow = useTableStore((s) => s.deleteRow);
 
   const toggleHighlightRow = useTableStore((s) => s.toggleHighlightRow);
@@ -78,7 +78,7 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
 
       {/* CELLS */}
 
-      {columnOrder.map((colId) => (
+      {columnsOrder.map((colId) => (
         <Cell
           key={colId}
           rowId={rowId}

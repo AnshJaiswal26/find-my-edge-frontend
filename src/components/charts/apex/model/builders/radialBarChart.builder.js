@@ -8,7 +8,7 @@ export const buildRadialSeriesConfig = (s) => ({
   format: s.format ?? DEFAULT_FORMATS[s.type || "number"],
   decimals: s.decimals ?? 2,
   ast: s.ast ?? null,
-  tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
+  label: s.label ?? s.name ?? s.key,
   color: s.color ?? "var(--info)",
 });
 

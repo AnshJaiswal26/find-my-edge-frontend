@@ -6,7 +6,7 @@ export const buildDonutSeriesConfig = (s) => ({
   name: s.name ?? s.key,
   type: s.type ?? "number",
   ast: s.ast ?? null,
-  tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
+  label: s.label ?? s.name ?? s.key,
   color: s.color ?? "var(--info)",
 });
 

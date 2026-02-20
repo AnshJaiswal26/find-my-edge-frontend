@@ -12,14 +12,14 @@ export default function ColumnSettingsPopup() {
 
   const columnsById = useTradeStore((s) => s.schemasById);
 
-  const columnOrder = useTableStore((s) => s.columnOrder);
+  const columnsOrder = useTableStore((s) => s.columnsOrder);
   const updateLoading = useTableStore((s) => s.loading.updateSchema);
   const deleteLoading = useTableStore((s) => s.loading.deleteSchema);
 
   const { closePopup, updateColumn, deleteColumn } = useTableStore.getState();
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeColumn = columnsById[columnOrder[activeIndex]];
+  const activeColumn = columnsById[columnsOrder[activeIndex]];
 
   const [draft, setDraft] = useState(activeColumn);
   const [error, setError] = useState("");
@@ -32,12 +32,12 @@ export default function ColumnSettingsPopup() {
   }, [activeColumn]);
 
   useEffect(() => {
-    if (!columnOrder.length || !activeColumn) {
+    if (!columnsOrder.length || !activeColumn) {
       closePopup();
     }
-  }, [columnOrder.length, activeColumn, closePopup]);
+  }, [columnsOrder.length, activeColumn, closePopup]);
 
-  if (!columnOrder.length || !activeColumn || !draft) {
+  if (!columnsOrder.length || !activeColumn || !draft) {
     return null;
   }
 
@@ -49,7 +49,7 @@ export default function ColumnSettingsPopup() {
       return;
     }
 
-    if (!isValid(draft, setError, { activeColumn, columnsById, columnOrder }))
+    if (!isValid(draft, setError, { activeColumn, columnsById, columnsOrder }))
       return;
     updateColumn(activeColumn.id, draft);
   }
@@ -70,7 +70,7 @@ export default function ColumnSettingsPopup() {
       <Popup.Header title={"Column Settings"} onClose={closePopup} />
       <Popup.Body>
         <SidePanelPopup
-          items={columnOrder}
+          items={columnsOrder}
           activeIndex={activeIndex}
           onSelectIndex={setActiveIndex}
           getLabel={(id) => columnsById[id].label}

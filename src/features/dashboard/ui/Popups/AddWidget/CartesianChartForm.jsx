@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Button, ExpressionBuilder, GroupByBuilder, Input, Select } from "@ui";
 import { Section } from "@layout";
 import { Trash2 } from "lucide-react";
-import { useDashboardStore } from "@features/dashboard/store";
+import { useDashboardStore } from "@features/dashboard/store/useDashboardStore";
 import { useFilteredOptions } from "@features/dashboard/hooks";
 import { draftToSpec } from "@lib/analytics/engine/data";
 

@@ -1,27 +1,28 @@
-import { useDashboardStore } from "@features/dashboard/store";
-import { Popup } from "@layout";
-import { WINDOW_FUNCTIONS } from "@lib/analytics/engine/functions/window/registry";
-import { ColorRules, Input, Select } from "@ui";
+import { useDashboardStore } from "@features/dashboard/store/useDashboardStore";
+
+import { ColorRules, ExpressionBuilder, Input, Select } from "@ui";
 import { DEFAULT_FORMATS, FORMATS } from "@utils";
 import { forwardRef, useImperativeHandle, useState } from "react";
 
-export const AddStatsForm = forwardRef(({ options, schemasById }, ref) => {
+export const AddStatsForm = forwardRef(({ schemasById }, ref) => {
   const addStats = useDashboardStore((s) => s.addStats);
 
+  console.log(schemasById);
   const [stat, setStat] = useState({
-    key: options[0].id ?? "date",
     title: "",
-    aggregate: "",
-    format: options[0].display?.format ?? "NUMBER",
-    type: options[0].type ?? "number",
+    ast: null,
+    format: "",
+    type: "number",
     colorRules: [],
   });
+
+  const [expr, setExpr] = useState("");
 
   console.log(stat);
 
   useImperativeHandle(ref, () => ({
     submit() {
-      addStats(stat);
+      addStats({ id: crypto.randomUUID(), ...stat });
     },
   }));
 
@@ -35,38 +36,22 @@ export const AddStatsForm = forwardRef(({ options, schemasById }, ref) => {
         onCommit={(v) => setStat((s) => ({ ...s, title: v }))}
         classNames={{ input: "max-w-full!" }}
       />
-      <Select
-        label="Metric"
-        options={options}
-        value={stat.key}
-        getLabel={(s) => s.label}
-        getKey={(s) => s.id}
-        onChange={(o) =>
-          setStat((s) => ({
-            ...s,
-            key: o.id,
-            type: o.type,
-            format: o.display?.format ?? "NUMBER",
-          }))
-        }
-      />
 
-      <Select
-        label="Aggregate"
-        value={stat.aggregate.replace("_N", "")}
-        options={Object.keys(WINDOW_FUNCTIONS).map((k) => k.replace("_N", ""))}
-        onChange={(o) =>
-          setStat((s) => ({
-            ...s,
-            aggregate: `${o}_N`,
-          }))
-        }
+      <ExpressionBuilder
+        value={expr}
+        schemasById={schemasById}
+        onCommit={(expr, ast, _, semanticType) => {
+          setStat((p) => ({ ...p, ast, type: semanticType }));
+          setExpr(expr);
+        }}
+        mode={"GLOBAL"}
+        semanticMode="AGGREGATE"
       />
 
       <Select
         label="Format"
-        value={stat.format || DEFAULT_FORMATS[schemasById[stat.key].type]}
-        options={FORMATS[schemasById[stat.key].type]}
+        value={stat.format || DEFAULT_FORMATS[stat.type]}
+        options={FORMATS[stat.type]}
         onChange={(o) => setStat((s) => ({ ...s, format: o }))}
       />
 

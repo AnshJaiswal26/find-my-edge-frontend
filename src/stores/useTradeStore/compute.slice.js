@@ -1,6 +1,6 @@
 import {
   COMPUTATION_MODE,
-  computeOverSequence,
+  computeRowSequence,
 } from "@lib/analytics/engine/execute";
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { collectAffectedSchemas } from "@lib/analytics/schema/dependency";
@@ -11,61 +11,67 @@ export const createComputeSlice = (set, get) => ({
       const {
         tradesById,
         derivedByTradeId,
-        tradeOrder,
+        tradesOrder,
         schemasById,
-        schemaOrder,
+        schemasOrder,
         affectedMap,
       } = state;
 
       /* ================================
        * Helpers
        * ================================ */
-      const getValue = (trade, key) => {
-        return (
-          derivedByTradeId?.[trade.id]?.[key] ??
-          tradesById?.[trade.id]?.[key] ??
-          null
-        );
+
+      let seqIds = [];
+
+      const getTradeValue = (index, key) => {
+        if (index < 0) return null;
+        const id = seqIds[index];
+
+        if (!id) return null;
+
+        return derivedByTradeId?.[id]?.[key] ?? tradesById?.[id]?.[key];
       };
 
-      const setValue = (trade, schema, value) => {
-        const { derivedByTradeId, tradesById } = state; // from closure
+      const setTradeValue = (index, schemaId, value) => {
+        if (index < 0) return null;
+        const id = seqIds[index];
+        if (!id) return null;
 
-        if (schema.source === SCHEMA_SOURCE.COMPUTED) {
+        if (schemasById[schemaId].source === SCHEMA_SOURCE.COMPUTED) {
           // write to derived layer
-          if (!derivedByTradeId[trade.id]) {
-            derivedByTradeId[trade.id] = {};
+          if (!derivedByTradeId[id]) {
+            derivedByTradeId[id] = {};
           }
 
-          if (derivedByTradeId[trade.id][schema.id] === value) return;
+          if (derivedByTradeId[id][schemaId] === value) return;
 
-          derivedByTradeId[trade.id][schema.id] = value;
+          derivedByTradeId[id][schemaId] = value;
         } else {
           //  write to raw layer
-          if (tradesById[trade.id][schema.id] === value) return;
+          if (tradesById[id][schemaId] === value) return;
 
-          tradesById[trade.id][schema.id] = value;
+          tradesById[id][schemaId] = value;
         }
       };
 
+      const getSchemaType = (key) => {
+        const schema = schemasById[key];
+        return { format: schema?.display?.format, type: schema.semanticType };
+      };
+
+      const getTradeCount = () => seqIds.length;
+
       const compute = ({ sequenceIds, schema, startIndex = 0, mode }) => {
-        computeOverSequence({
-          schema,
-          getTradeAt: (index) => {
-            if (index < 0) return null;
-            const id = sequenceIds[index];
-            return id ? tradesById[id] : null;
-          },
-          getTradeCount: () => sequenceIds.length,
-          getSchemaType: (key) => {
-            const schema = schemasById[key];
-            return {
-              format: schema?.display?.format,
-              type: schema.semanticType,
-            };
-          },
-          getValue,
-          setValue,
+        seqIds = sequenceIds;
+
+        computeRowSequence({
+          ast: schema.ast,
+          schemaKey: schema.id,
+          initialValue: schema.initialValue,
+          getTradeCount,
+          getSchemaType,
+          getTradeValue,
+          setTradeValue,
           startIndex,
           mode,
         });
@@ -77,14 +83,14 @@ export const createComputeSlice = (set, get) => ({
        * FULL RECOMPUTE
        * ================================ */
       if (!payload || payload.reason === "all") {
-        schemaOrder.forEach((id) => {
+        schemasOrder.forEach((id) => {
           const schema = schemasById[id];
 
           if (!isComputed(schema)) return;
 
           compute({
             schema,
-            sequenceIds: tradeOrder,
+            sequenceIds: tradesOrder,
             mode:
               schema.mode !== "row"
                 ? COMPUTATION_MODE.WINDOW
@@ -92,13 +98,13 @@ export const createComputeSlice = (set, get) => ({
           });
         });
       } else if (payload.reason === "trade-delete") {
-        schemaOrder.forEach((id) => {
+        schemasOrder.forEach((id) => {
           const schema = schemasById[id];
           if (!schema || schema?.mode !== "cumulative") return;
 
           compute({
             schema: schema,
-            sequenceIds: tradeOrder,
+            sequenceIds: tradesOrder,
             startIndex: Math.max(payload.tradeIndex - 1, 0),
             mode: COMPUTATION_MODE.WINDOW,
           });
@@ -125,13 +131,13 @@ export const createComputeSlice = (set, get) => ({
             return;
           }
 
-          const changedIndex = tradeOrder.indexOf(tradeId);
+          const changedIndex = tradesOrder.indexOf(tradeId);
           if (changedIndex === -1) return;
 
           // Cumulative
           compute({
             schema,
-            sequenceIds: tradeOrder,
+            sequenceIds: tradesOrder,
             startIndex: changedIndex,
             mode: COMPUTATION_MODE.WINDOW,
           });
@@ -146,7 +152,7 @@ export const createComputeSlice = (set, get) => ({
         // Normal
         compute({
           schema,
-          sequenceIds: tradeOrder,
+          sequenceIds: tradesOrder,
           mode:
             schema.mode !== "row"
               ? COMPUTATION_MODE.WINDOW

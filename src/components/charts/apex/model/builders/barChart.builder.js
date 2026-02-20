@@ -43,7 +43,6 @@ export function buildBarChart({
     },
 
     groupSpec: groupSpec ?? null,
-    selectedGroupIndex: groupSpec ? 0 : null,
 
     filters: [],
 

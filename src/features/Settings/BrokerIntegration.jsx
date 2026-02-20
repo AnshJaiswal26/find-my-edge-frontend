@@ -1,163 +1,74 @@
-import { ErrorText, Section, SuccessText } from "@layout";
+import { Section } from "@layout";
 
-export function BrokerIntegeration({
-  brokers,
-  apiKeys,
-  showVerification,
-  apiMessage,
-  setApiKeys,
-  setShowVerification,
-}) {
+export function BrokerIntegration({ brokers }) {
   return (
-    <Section title="Broker Integrations">
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {brokers.map((broker) => {
-          const brokerKey = apiKeys.find((key) => key.broker === broker.name);
-          const isConnected = brokerKey?.status === "verified";
-          const isVerifying =
-            brokerKey && !isConnected && showVerification[broker.name];
+    <div className="w-full flex justify-center">
+      <Section title="Broker Integrations" className="w-full max-w-5xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {brokers.map((broker) => {
+            const isDhan = broker.name.toLowerCase() === "dhan";
 
-          return (
-            <div
-              key={broker.name}
-              className="group relative p-5 rounded-2xl border border-(--border) bg-(--surface-light)
-                     hover:shadow-(--shadow-hover) transition-all duration-300"
-            >
-              {/* HEADER */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+            return (
+              <div
+                key={broker.name}
+                className={`flex flex-col min-h-[140px] p-4 rounded-xl border border-(--border) bg-(--surface-light)
+                hover:shadow-(--shadow-hover) transition-all duration-300
+                ${isDhan ? "" : "opacity-60 pointer-events-none"}`}
+              >
+                {/* TOP */}
+                <div className="flex items-center gap-3">
                   <img
                     src={broker.logo}
                     alt={broker.name}
-                    className="w-10 h-10 rounded-lg object-contain bg-white p-1 border"
+                    className="w-9 h-9 rounded-md object-contain bg-white p-1 border"
                   />
-                  <div>
-                    <p className="font-semibold text-(--text)">{broker.name}</p>
+
+                  <div className="flex flex-col">
+                    <p className="font-medium text-(--text) text-sm">
+                      {broker.name}
+                    </p>
+
                     <p
-                      className={`text-sm font-medium ${
-                        isConnected
-                          ? "text-(--success)"
-                          : brokerKey
-                            ? "text-(--warning)"
-                            : "text-(--text-muted)"
+                      className={`text-xs font-medium ${
+                        isDhan ? "text-(--info)" : "text-(--text-muted)"
                       }`}
                     >
-                      {isConnected
-                        ? "Connected"
-                        : brokerKey
-                          ? "Verification Required"
-                          : "Not Connected"}
+                      {isDhan ? "Integration in Progress" : "Coming Soon"}
                     </p>
                   </div>
                 </div>
 
-                <button
-                  className={`px-4 py-1.5 text-sm rounded-lg font-medium transition
-                        ${
-                          isConnected
-                            ? "bg-(--error-soft) text-(--error) hover:opacity-80"
-                            : "bg-(--info-soft) text-(--info) hover:opacity-80"
-                        }`}
-                >
-                  {isConnected ? "Disconnect" : "Connect"}
-                </button>
-              </div>
-
-              {/* MESSAGE */}
-              {apiMessage && apiMessage.includes(broker.name) && (
-                <div className="mt-4">
-                  {apiMessage.includes("failed") ? (
-                    <ErrorText text={apiMessage} />
+                {/* MIDDLE */}
+                <div className="mt-3">
+                  {isDhan ? (
+                    <div className="inline-block px-2.5 py-1 text-[11px] font-medium rounded-full bg-(--info-soft) text-(--info)">
+                      In Development
+                    </div>
                   ) : (
-                    <SuccessText text={apiMessage} />
+                    <div className="inline-block px-2.5 py-1 text-[11px] font-medium rounded-full bg-(--surface-muted) text-(--text-muted)">
+                      Coming Soon
+                    </div>
                   )}
                 </div>
-              )}
 
-              {/* VERIFICATION PANEL */}
-              {isVerifying && (
-                <div className="mt-5 p-4 rounded-xl bg-(--surface-muted) border space-y-3">
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm font-medium text-(--text)">
-                      Enter API Credentials
-                    </p>
-                    <button
-                      onClick={() => {
-                        setShowVerification((prev) => ({
-                          ...prev,
-                          [broker.name]: false,
-                        }));
-                        setApiKeys(
-                          apiKeys.filter((key) => key.broker !== broker.name),
-                        );
-                      }}
-                      className="text-(--text-muted) hover:text-(--error)"
-                    >
-                      ✕
-                    </button>
+                {/* FUTURE SPACE (IMPORTANT) */}
+                {isDhan && (
+                  <div className="mt-3 flex-1 rounded-lg border border-dashed border-(--border) bg-(--surface-muted) flex items-center justify-center text-xs text-(--text-muted)">
+                    API Integration UI (Coming Next)
                   </div>
+                )}
 
-                  <Input
-                    label="API Key"
-                    placeholder={`Paste ${broker.name} API key`}
-                    value={brokerKey.apiKey}
-                    onCommit={(v) => {
-                      const updated = apiKeys.map((key) =>
-                        key.broker === broker.name
-                          ? { ...key, apiKey: v }
-                          : key,
-                      );
-                      setApiKeys(updated);
-                    }}
-                    classNames={{ input: "max-w-full!" }}
-                  />
-
-                  <button
-                    onClick={() =>
-                      handleApiVerification(
-                        apiKeys.findIndex((key) => key.broker === broker.name),
-                        brokerKey.apiKey,
-                      )
-                    }
-                    className={`w-full py-2 rounded-lg font-medium text-sm transition
-                  ${
-                    brokerKey.status === "error"
-                      ? "bg-(--error-soft) text-(--error)"
-                      : "bg-(--info) text-white hover:opacity-90"
-                  }`}
-                  >
-                    {brokerKey.status === "error"
-                      ? "Re-authenticate"
-                      : "Verify Connection"}
-                  </button>
+                {/* BOTTOM */}
+                <div className="mt-auto pt-3 text-[11px] text-(--text-muted)">
+                  {isDhan
+                    ? "Backend integration with Dhan will be available soon."
+                    : "Support coming soon."}
                 </div>
-              )}
-
-              {/* CONNECTED DETAILS */}
-              {brokerKey && isConnected && (
-                <div className="mt-5 border-t pt-4 text-sm space-y-2 text-(--text-muted)">
-                  <p>
-                    API Key:{" "}
-                    <span className="font-medium text-(--text)">
-                      ••••••••{brokerKey.apiKey.slice(-4)}
-                    </span>
-                  </p>
-                  <p>
-                    Connected On:{" "}
-                    <span className="text-(--text)">
-                      {new Date().toLocaleString()}
-                    </span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-(--success)"></span>
-                    Active & Syncing
-                  </p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </Section>
+              </div>
+            );
+          })}
+        </div>
+      </Section>
+    </div>
   );
 }

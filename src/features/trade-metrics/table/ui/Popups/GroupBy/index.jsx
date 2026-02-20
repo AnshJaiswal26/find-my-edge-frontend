@@ -6,7 +6,7 @@ import { useTradeStore } from "@stores";
 
 export default function GroupByPopup() {
   const columnsById = useTradeStore((s) => s.schemasById);
-  const columnOrder = useTableStore((s) => s.columnOrder);
+  const columnsOrder = useTableStore((s) => s.columnsOrder);
 
   const groupBy = useTableStore((s) => s.groupBy);
   const { setGroupBy, clearGroupBy, closePopup } = useTableStore.getState();
@@ -20,7 +20,7 @@ export default function GroupByPopup() {
 
         <Popup.Body className="flex flex-col gap-4 p-5!">
           <GroupByBuilder
-            schemaOrder={columnOrder}
+            schemasOrder={columnsOrder}
             schemasById={columnsById}
             groupBy={draft}
             onChange={setDraft}

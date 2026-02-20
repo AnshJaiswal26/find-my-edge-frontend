@@ -1,3 +1,4 @@
+import { useDashboardStore } from "@features/dashboard/store/useDashboardStore";
 import { evaluateColorRules, FORMATS, formatValue } from "@utils";
 import {
   IndianRupee,
@@ -60,6 +61,11 @@ export const FORMAT_VARIANTS = {
     icon: BarChart3,
   },
 
+  COMPACT_SIGNED: {
+    variant: "success",
+    icon: Coins,
+  },
+
   // ---------- TIME ----------
   TIME: {
     variant: "neutral",
@@ -118,7 +124,9 @@ const VARIANTS = {
   },
 };
 
-export default function StatCard({ stat }) {
+export default function StatCard({ statId }) {
+  const stat = useDashboardStore((s) => s.statsById[statId]);
+
   const formatGroup = resolveFormatGroup(stat.format, stat.type);
   const ui = FORMAT_VARIANTS[formatGroup] ?? FORMAT_VARIANTS.NUMBER;
 

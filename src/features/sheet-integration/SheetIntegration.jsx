@@ -106,7 +106,7 @@ export default function SheetIntegration() {
       tradeFields.forEach((f) => {
         const pretty = prettyFieldName(f);
         const found = mockColumns.find((c) =>
-          c.toLowerCase().includes(pretty.toLowerCase())
+          c.toLowerCase().includes(pretty.toLowerCase()),
         );
         initial[f] = found || "";
       });
@@ -164,7 +164,6 @@ export default function SheetIntegration() {
 
           <div>
             <Input
-              labelPosition="top"
               label={"Sheet Name"}
               value={""}
               placeholder="Sheet name"
@@ -304,8 +303,8 @@ export default function SheetIntegration() {
                         onChange={(e) =>
                           setColumns((cols) =>
                             cols.map((col, idx) =>
-                              idx === i ? e.target.value : col
-                            )
+                              idx === i ? e.target.value : col,
+                            ),
                           )
                         }
                       />

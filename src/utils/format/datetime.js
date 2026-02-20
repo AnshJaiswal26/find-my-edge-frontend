@@ -11,6 +11,17 @@ const DATETIME_FORMATS = [
 
 const DATETIME_FORMAT_KEYS = DATETIME_FORMATS.map(({ key }) => key);
 
+const DATETIME_FORMAT = {
+  YYYY_MM_DD_HH_MM: "YYYY-MM-DD HH:mm",
+  YYYY_MM_DD_HH_MM_SS: "YYYY-MM-DD HH:mm:ss",
+
+  YYYY_MM_DD_hh_mm_A: "YYYY-MM-DD hh:mm A",
+  YYYY_MM_DD_hh_mm_ss_A: "YYYY-MM-DD hh:mm:ss A",
+
+  DD_MM_YYYY_HH_MM: "DD/MM/YYYY HH:mm",
+  DD_MM_YYYY_hh_mm_A: "DD/MM/YYYY hh:mm A",
+};
+
 function formatDateTime(value, format) {
   if (typeof value !== "number") return "—";
 
@@ -47,4 +58,9 @@ function formatDateTime(value, format) {
   return format.replace(/YYYY|MM|DD|HH|hh|mm|ss|A/g, (k) => map[k]);
 }
 
-export { DATETIME_FORMATS, DATETIME_FORMAT_KEYS, formatDateTime };
+export {
+  DATETIME_FORMATS,
+  DATETIME_FORMAT,
+  DATETIME_FORMAT_KEYS,
+  formatDateTime,
+};

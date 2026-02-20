@@ -175,7 +175,7 @@ export const columnsById = {
   }),
 };
 
-export const columnOrder = [
+export const columnsOrder = [
   "date",
   "symbol",
   "entry",

@@ -18,10 +18,10 @@ const GroupOptionSelect = ({
   selectedGroupIndex,
   setSelectedGroupIndex,
 }) => {
-  const format = useChartStore((s) => s[chartId].layout.xFormat);
-  const decimals = useChartStore((s) => s[chartId].layout.xDecimals);
+  const format = useChartStore((s) => s.charts[chartId].layout.xFormat);
+  const decimals = useChartStore((s) => s.charts[chartId].layout.xDecimals);
   const isKeySame = useChartStore(
-    (s) => s[chartId].xSeriesConfig.key === groupSpec.key,
+    (s) => s.charts[chartId].xSeriesConfig.key === groupSpec.key,
   );
 
   return (
@@ -58,14 +58,14 @@ export default function CustomApexChart({
   schemasOrder,
   onRemove,
 }) {
-  const groupSpec = useChartStore((s) => s[chartId]?.groupSpec);
+  const groupSpec = useChartStore((s) => s.charts[chartId]?.groupSpec);
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
 
   const groups = useMemo(() => {
     if (!groupSpec) return null;
 
     return buildGroups({
-      tradeOrder: seriesOrder,
+      tradesOrder: seriesOrder,
       tradesById: seriesById,
       groupSpec,
       getValue: (trade, key) => trade[key],

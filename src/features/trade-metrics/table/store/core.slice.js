@@ -2,7 +2,7 @@ import { useTradeStore, useUIStore } from "@stores";
 
 export const createCoreSlice = (set, get) => ({
   columnsById: {},
-  columnOrder: [],
+  columnsOrder: [],
   columnWidths: {},
   lockedColumnsMap: {},
   highlightedRows: {},
@@ -22,12 +22,6 @@ export const createCoreSlice = (set, get) => ({
 
   addRow() {
     const id = crypto.randomUUID();
-    // const { row, trade } = createRow(get().columnsById, id);
-
-    // set((s) => {
-    //   s.rowsById[row.id] = row;
-    //   s.rowOrder.push(row.id);
-    // });
 
     useTradeStore.getState().addTrade(id);
   },
@@ -65,7 +59,7 @@ export const createCoreSlice = (set, get) => ({
       const { savedSchema } = await useTradeStore.getState().addSchema(metric);
 
       set((s) => {
-        s.columnOrder.push(savedSchema.id);
+        s.columnsOrder.push(savedSchema.id);
       });
 
       get().closePopup();
@@ -107,7 +101,7 @@ export const createCoreSlice = (set, get) => ({
     try {
       set((s) => {
         s.loading.deleteSchema = true;
-        s.columnOrder = s.columnOrder.filter((id) => id !== colId);
+        s.columnsOrder = s.columnsOrder.filter((id) => id !== colId);
       });
 
       // 🔥 call trade store only

@@ -62,7 +62,7 @@ const commonActions = [
 ];
 
 export default function Toolbar({ chartId, onRemove }) {
-  const chart = useChartStore.getState()[chartId];
+  const chart = useChartStore.getState().charts[chartId];
 
   const isGroupType =
     chart.meta.category === "group" || chart.meta.category === "axis-series";

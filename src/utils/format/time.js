@@ -7,6 +7,13 @@ const TIME_FORMATS = [
 
 const TIME_FORMAT_KEYS = TIME_FORMATS.map(({ key }) => key);
 
+const TIME_FORMAT = {
+  HH_MM: "HH:mm",
+  HH_MM_SS: "HH:mm:ss",
+  hh_mm_A: "hh:mm A",
+  hh_mm_ss_A: "hh:mm:ss A",
+};
+
 function formatTime(value, format) {
   if (typeof value !== "number") return "—";
 
@@ -30,4 +37,4 @@ function formatTime(value, format) {
 
   return format.replace(/HH|hh|mm|ss|A/g, (k) => map[k]);
 }
-export { TIME_FORMATS, TIME_FORMAT_KEYS, formatTime };
+export { TIME_FORMATS, TIME_FORMAT, TIME_FORMAT_KEYS, formatTime };

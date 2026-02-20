@@ -42,7 +42,7 @@ export const createSortSlice = (set, get) => ({
       buildGroups,
       updateLockedColumns,
       filteredRowOrder,
-      rowOrder,
+      rowsOrder,
       derivedViewByTradeId,
     } = get();
 
@@ -65,7 +65,7 @@ export const createSortSlice = (set, get) => ({
       );
     };
 
-    const order = filteredRowOrder.length ? filteredRowOrder : rowOrder;
+    const order = filteredRowOrder.length ? filteredRowOrder : rowsOrder;
 
     set((s) => {
       s.sortedRowOrder = [...order].sort((a, b) => {

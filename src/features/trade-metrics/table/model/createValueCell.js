@@ -13,13 +13,8 @@ const DEFAULT_VALUE_MAP = {
   boolean: () => 0,
 };
 
-export function createCell(column) {
+export function createCellValue(column) {
   const resolver = DEFAULT_VALUE_MAP[column.type];
 
-  const value = resolver ? resolver(column) : null;
-
-  return {
-    value,
-    meta: {},
-  };
+  return resolver ? resolver(column) : null;
 }

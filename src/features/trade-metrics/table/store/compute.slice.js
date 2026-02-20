@@ -1,7 +1,7 @@
 import { useTradeStore } from "@stores";
 import {
   COMPUTATION_MODE,
-  computeOverSequence,
+  computeRowSequence,
 } from "@lib/analytics/engine/execute";
 
 export const createComputeSlice = (set, get) => ({
@@ -19,7 +19,7 @@ export const createComputeSlice = (set, get) => ({
       derivedByTradeId,
       tradeOder,
       schemasById,
-      schemaOrder,
+      schemasOrder,
     } = useTradeStore.getState();
 
     const { derivedViewByTradeId, sortedRowOrder, filteredRowOrder, groups } =
@@ -31,43 +31,57 @@ export const createComputeSlice = (set, get) => ({
         ? filteredRowOrder
         : tradeOder;
 
-    const getValue = (trade, key) => {
+    let seqIds = [];
+
+    const getTradeValue = (index, key) => {
+      if (index < 0) return null;
+      const id = seqIds[index];
+
+      if (!id) return null;
+
       return (
-        derivedViewByTradeId?.[trade.id]?.[key] ??
-        derivedByTradeId?.[trade.id]?.[key] ??
-        tradesById?.[trade.id]?.[key] ??
-        null
+        derivedViewByTradeId?.[id]?.[key] ??
+        derivedByTradeId?.[id]?.[key] ??
+        tradesById?.[id]?.[key]
       );
     };
 
-    const setValue = (trade, schema, value) => {
-      if (!viewValues[trade.id]) {
-        viewValues[trade.id] = {};
+    const setTradeValue = (index, schemaId, value) => {
+      if (index < 0) return null;
+      const id = seqIds[index];
+
+      if (!id) return null;
+
+      if (!viewValues[id]) {
+        viewValues[id] = {};
       }
-      viewValues[trade.id][schema.id] = value;
+      viewValues[id][schemaId] = value;
     };
 
+    const getSchemaType = (key) => {
+      const col = schemasById[key];
+      return { format: col?.display?.format, type: col.semanticType };
+    };
+
+    const getTradeCount = () => seqIds.length;
+
     const compute = ({ sequenceIds, schema, startIndex = 0 }) => {
-      computeOverSequence({
-        schema,
-        getTradeAt: (index) => {
-          if (index < 0) return null;
-          const id = sequenceIds[index];
-          return id ? tradesById[id] : null;
-        },
-        getTradeCount: () => sequenceIds.length,
-        getSchemaType: (key) => {
-          const col = schemasById[key];
-          return { format: col?.display?.format, type: col.semanticType };
-        },
-        getValue,
-        setValue,
+      seqIds = sequenceIds;
+
+      computeRowSequence({
+        ast: schema.ast,
+        schemaKey: schema.id,
+        initialValue: schema.initialValue,
+        getTradeCount,
+        getTradeValue,
+        setTradeValue,
+        getSchemaType,
         startIndex,
         mode: COMPUTATION_MODE.WINDOW,
       });
     };
 
-    schemaOrder.forEach((id) => {
+    schemasOrder.forEach((id) => {
       const schema = schemasById[id];
 
       if (schema.computationMode !== "window") return;

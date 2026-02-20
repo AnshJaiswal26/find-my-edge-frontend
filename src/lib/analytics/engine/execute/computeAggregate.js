@@ -2,33 +2,27 @@ import { evaluateExpression } from "@lib/expression";
 import { assertFn } from "./asserFn";
 
 export function computedAggregate({
-  schema,
-  getValue,
-  getTradeAt,
+  ast,
+  getTradeValue,
   getTradeCount,
   getSchemaType,
 }) {
-  assertFn("getTradeAt", getTradeAt);
   assertFn("getTradeCount", getTradeCount);
-  assertFn("getValue", getValue);
+  assertFn("getTradeValue", getTradeValue);
   assertFn("getSchemaType", getSchemaType);
 
   const ctx = {
     evaluate: evaluateExpression,
-    getTradeAt,
     getTradeCount,
-    getValueFromTrade: getValue,
+    getTradeValue,
     getSchemaType,
 
     tradeIndex: 0,
-    prevTrade: null,
-    prevValue: null,
-    currentTrade: null,
 
-    getValue(key) {
-      return getValue(this.currentTrade, key);
+    getKeyValue(key) {
+      return getTradeValue(this.tradeIndex, key);
     },
   };
 
-  return evaluateExpression(schema.ast, ctx);
+  return evaluateExpression(ast, ctx);
 }

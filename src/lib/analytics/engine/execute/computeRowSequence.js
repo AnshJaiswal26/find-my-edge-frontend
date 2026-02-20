@@ -3,69 +3,55 @@ import { assertFn } from "./asserFn";
 import { COMPUTATION_MODE } from "./computionModes";
 
 export function computeRowSequence({
-  schema,
-  getValue,
-  setValue,
+  ast,
+  schemaKey,
   startIndex = 0,
-  getTradeAt,
+  initialValue = 0,
+  setTradeValue,
+  getTradeValue,
   getTradeCount,
   getSchemaType,
   mode,
 }) {
-  // console.log("computeRowSequence");
-  assertFn("getTradeAt", getTradeAt);
   assertFn("getTradeCount", getTradeCount);
-  assertFn("getValue", getValue);
-  assertFn("setValue", setValue);
+  assertFn("getTradeValue", getTradeValue);
+  assertFn("setTradeValue", setTradeValue);
+  assertFn("getSchemaType", getSchemaType);
 
-  let prevValue = schema.initialValue ?? 0;
-  let prevTrade = null;
-
-  if (mode === COMPUTATION_MODE.WINDOW && startIndex > 0) {
-    prevTrade = getTradeAt(startIndex - 1);
-    prevValue = getValue(prevTrade, schema.id) ?? prevValue;
-  }
+  assertFn("setTradeValue", setTradeValue);
+  assertFn("getTradeValue", getTradeValue);
 
   const ctx = {
     evaluate: evaluateExpression,
-    getTradeAt,
     getTradeCount,
-    getValueFromTrade: getValue,
     getSchemaType,
 
     tradeIndex: 0,
-    prevTrade: null,
-    prevValue: null,
-    currentTrade: null,
+    windowStartIndex: startIndex,
+    prevValue: initialValue,
+    startIndex,
 
-    getValue(key) {
-      return getValue(this.currentTrade, key);
+    getKeyValue(key) {
+      return getTradeValue(this.tradeIndex, key);
     },
   };
+  const isWindow = mode === COMPUTATION_MODE.WINDOW;
+
+  if (isWindow && startIndex > 0) {
+    ctx.prevValue = getTradeValue(startIndex - 1, schemaKey) ?? initialValue;
+  }
 
   const seqLength = getTradeCount();
 
   for (let i = startIndex; i < seqLength; i++) {
-    const trade = getTradeAt(i);
-    if (!trade) continue;
-
     ctx.tradeIndex = i;
-    ctx.currentTrade = trade;
+    ctx.windowStartIndex = i; // for window
 
-    if (mode === COMPUTATION_MODE.WINDOW) {
-      ctx.prevTrade = prevTrade;
-      ctx.prevValue = prevValue;
-    }
-    // console.log({ ...schema.ast });
+    const value = evaluateExpression(ast, ctx);
+    setTradeValue(i, schemaKey, value);
 
-    const value = evaluateExpression(schema.ast, ctx);
-    setValue(trade, schema, value);
-
-    if (mode === COMPUTATION_MODE.WINDOW) {
-      prevValue = value;
-      prevTrade = trade;
-    }
+    if (isWindow) ctx.prevValue = value;
   }
 
-  return prevValue;
+  return ctx.prevValue;
 }

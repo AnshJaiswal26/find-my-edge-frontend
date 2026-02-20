@@ -2,32 +2,32 @@ export const createCoreSlice = (set, get) => ({
   deleteChart(chartId) {
     console.log(chartId);
     set((s) => {
-      delete s[chartId];
+      delete s.charts[chartId];
       s.order = s.order.filter(({ id }) => id !== chartId);
     });
   },
 
   zoomInChart(chartId) {
-    const prev = get()[chartId].layout.chartWidth;
+    const prev = get().charts[chartId].layout.chartWidth;
     if (prev === 1000) return;
 
     set((s) => {
-      s[chartId].layout.chartWidth =
+      s.charts[chartId].layout.chartWidth =
         typeof prev === "string" ? 200 : prev + 100;
     });
   },
 
   zoomOutChart(chartId) {
-    const prev = get()[chartId].layout.chartWidth;
+    const prev = get().charts[chartId].layout.chartWidth;
     if (prev === 100 || typeof prev === "string") return;
 
     set((s) => {
-      s[chartId].layout.chartWidth = prev - 100;
+      s.charts[chartId].layout.chartWidth = prev - 100;
     });
   },
 
   downloadCSV(chartId) {
-    const chart = get()[chartId];
+    const chart = get().charts[chartId];
     const { filteredSeries, seriesConfig, xLabelsKey } = chart;
 
     // Build CSV header

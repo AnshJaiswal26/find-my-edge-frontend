@@ -7,7 +7,7 @@ export const groupedTooltipCallback = ({
   filteredConfig, // ✅ now source of truth
   series, // ✅ computedSeries from chart
 }) => {
-  const chart = useChartStore.getState()[chartId];
+  const chart = useChartStore.getState().charts[chartId];
   const { layout } = chart;
 
   // safety
@@ -26,7 +26,7 @@ export const groupedTooltipCallback = ({
             format: layout.format,
             decimals: layout.decimals,
           }),
-          label: config?.tooltipLabel || config.label,
+          label: config?.label || config.label,
           color: config?.color || "var(--info)",
         },
       ],
@@ -40,7 +40,7 @@ export const groupedTooltipCallback = ({
           format: config.format,
           decimals: config.decimals,
         }),
-        label: config?.tooltipLabel || config.label,
+        label: config?.label || config.label,
         color: config?.color || "var(--info)",
       },
     ],

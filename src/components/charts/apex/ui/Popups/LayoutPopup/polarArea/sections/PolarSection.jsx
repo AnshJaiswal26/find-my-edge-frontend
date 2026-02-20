@@ -91,7 +91,7 @@ function PolarSeries({ seriesDraft, setSeriesDraft }) {
         { label: "Name", key: "name", placeholder: "Enter Name" },
         {
           label: "Tooltip Label",
-          key: "tooltipLabel",
+          key: "label",
           placeholder: "Enter Label",
         },
         { label: "Value Prefix", key: "prefix", placeholder: "Enter Prefix" },

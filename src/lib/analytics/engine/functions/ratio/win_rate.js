@@ -1,12 +1,13 @@
 export const WIN_RATE = {
+  key: "pnl",
   init() {
     return { total: 0, wins: 0 };
   },
 
-  step(state, trade) {
-    if (trade?.pnl == null) return;
+  step(state, pnl) {
+    if (pnl == null) return null;
     state.total++;
-    if (trade.pnl > 0) state.wins++;
+    if (pnl > 0) state.wins++;
   },
 
   result(state) {

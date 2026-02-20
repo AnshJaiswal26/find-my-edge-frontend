@@ -12,7 +12,7 @@ export const tooltipCallback = (
   chartId,
   selectedSeriesKeys,
 ) => {
-  const { [chartId]: chart } = useChartStore.getState();
+  const { [chartId]: chart } = useChartStore.getState().charts;
 
   const { series, meta, seriesConfig, layout } = chart;
 
@@ -31,7 +31,7 @@ export const tooltipCallback = (
               series.filtered[index][config.key],
               config.suffix,
             ),
-            label: config.tooltipLabel,
+            label: config.label,
             color: config.color,
           },
         ],
@@ -52,7 +52,7 @@ export const tooltipCallback = (
               series.filtered[legendIndex][config.key],
               config.suffix,
             ),
-            label: config.tooltipLabel,
+            label: config.label,
             color: config.color,
           },
         ],

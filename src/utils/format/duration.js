@@ -12,6 +12,17 @@ const DURATION_FORMATS = [
 
 const DURATION_FORMAT_KEYS = DURATION_FORMATS.map(({ key }) => key);
 
+const DURATION_FORMAT = {
+  HH_MM_SS: "HH:mm:ss",
+  MM_SS: "mm:ss",
+  SS: "ss",
+  DD_HH_MM_SS: "DD:HH:mm:ss",
+
+  HUMAN: "human",
+  HUMAN_SHORT: "human-short",
+  HUMAN_MIN: "human-min",
+};
+
 function formatDuration(value, format) {
   if (typeof value !== "number") return "—";
 
@@ -68,4 +79,9 @@ function formatDuration(value, format) {
   return sign + format.replace(/DD|HH|hh|mm|ss/g, (k) => map[k]);
 }
 
-export { DURATION_FORMATS, DURATION_FORMAT_KEYS, formatDuration };
+export {
+  DURATION_FORMATS,
+  DURATION_FORMAT,
+  DURATION_FORMAT_KEYS,
+  formatDuration,
+};

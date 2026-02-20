@@ -4,6 +4,10 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import "./styles/index.css";
 
+import { enableMapSet } from "immer";
+
+enableMapSet();
+
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <BrowserRouter>

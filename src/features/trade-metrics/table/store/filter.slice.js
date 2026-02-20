@@ -14,8 +14,9 @@ export const createFilterSlice = (set, get) => ({
         id: crypto.randomUUID(),
         key: Object.keys(s.columnsById)[0],
         operator: "none",
-        value: "",
-        value2: "",
+        value: 0,
+        from: 0,
+        to: 0,
       });
     });
   },
@@ -57,7 +58,7 @@ export const createFilterSlice = (set, get) => ({
       updateLockedColumns,
     } = get();
 
-    const { tradesById, tradeOrder, derivedByTradeId } =
+    const { tradesById, tradesOrder, derivedByTradeId } =
       useTradeStore.getState();
 
     // 🔥 unified value resolver
@@ -73,11 +74,11 @@ export const createFilterSlice = (set, get) => ({
       set({ filteredRowOrder: [] });
     } else {
       set((s) => {
-        s.filteredRowOrder = tradeOrder.filter((tradeId) => {
+        s.filteredRowOrder = tradesOrder.filter((tradeId) => {
           return filters.some((f) => {
             const fn = FILTER_OPERATION_MAP[f.operator];
             const value = getValue(tradeId, f.key);
-            return fn?.(value, f.value, f.value2);
+            return fn?.(value, f.value ?? f.from, f.to);
           });
         });
       });

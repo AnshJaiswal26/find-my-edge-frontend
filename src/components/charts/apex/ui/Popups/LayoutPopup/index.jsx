@@ -28,11 +28,10 @@ function PopupContent(props) {
 }
 
 export default function ChartLayoutPopup({ chartId }) {
-  const {
-    closePopup,
-    updateLayout,
-    [chartId]: chart,
-  } = useChartStore.getState();
+  const state = useChartStore.getState();
+  const { closePopup, updateLayout } = state;
+
+  const chart = state.charts[chartId];
 
   const type = chart.meta.type;
 

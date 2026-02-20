@@ -7,25 +7,10 @@ export function runAggregateReducer(reducer, fn, ctx) {
   const total = ctx.getTradeCount?.();
   if (total == null) return null;
 
-  // Reusable evaluation context
-  const rowCtx = {
-    ...ctx,
-    tradeIndex: 0,
-    currentTrade: null,
-
-    getValue(key) {
-      return ctx.getValueFromTrade(this.currentTrade, key);
-    },
-  };
-
   for (let i = 0; i < total; i++) {
-    const trade = ctx.getTradeAt(i);
-    if (!trade) continue;
+    ctx.tradeIndex = i;
 
-    rowCtx.tradeIndex = i;
-    rowCtx.currentTrade = trade;
-
-    const evaluated = args.map((expr) => ctx.evaluate(expr, rowCtx));
+    const evaluated = args.map((expr) => ctx.evaluate(expr, ctx));
 
     reducer.step(state, ...evaluated);
   }

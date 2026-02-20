@@ -16,9 +16,9 @@ export function ChartWithConfig({
   schemasById,
   schemasOrder,
 }) {
-  const layout = useChartStore((s) => s[chartId].layout);
+  const layout = useChartStore((s) => s.charts[chartId].layout);
   const seriesConfig = useChartStore(
-    (s) => s[chartId].ySeriesConfig ?? s[chartId].seriesConfig,
+    (s) => s.charts[chartId].ySeriesConfig ?? s.charts[chartId].seriesConfig,
   );
 
   const [selectedSeriesKeys, setSelectedSeriesKeys] = useState(null);

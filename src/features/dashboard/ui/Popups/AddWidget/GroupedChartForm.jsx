@@ -8,7 +8,7 @@ import {
 import { Button, ExpressionBuilder, Input } from "@ui";
 import { Divider, Section } from "@layout";
 import { Trash2 } from "lucide-react";
-import { useDashboardStore } from "@features/dashboard/store";
+import { useDashboardStore } from "@features/dashboard/store/useDashboardStore";
 
 export const GroupedChartForm = forwardRef(({ type, schemasById }, ref) => {
   const addChart = useDashboardStore((s) => s.addChart);

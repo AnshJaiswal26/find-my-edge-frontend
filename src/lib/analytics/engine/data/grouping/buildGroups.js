@@ -27,13 +27,13 @@ function getGroupKey(value) {
   return JSON.stringify(value);
 }
 
-export function buildGroups({ tradeOrder, tradesById, groupSpec, getValue }) {
+export function buildGroups({ tradesOrder, tradesById, groupSpec, getValue }) {
   if (!groupSpec) return null;
 
   const getKey = compileGroupSpec(groupSpec, getValue);
   const map = new Map();
 
-  for (const tradeId of tradeOrder) {
+  for (const tradeId of tradesOrder) {
     const trade = tradesById[tradeId];
     const raw = getKey(trade);
     const key = getGroupKey(raw);

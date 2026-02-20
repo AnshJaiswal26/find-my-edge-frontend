@@ -1,6 +1,11 @@
 export function runNativeWindowReducer(reducer, fn, ctx) {
   const args = fn.args;
 
+  if (!reducer?.key)
+    throw new Error(
+      `runNativeWindowReducer: key not found in reducer '${fn.name}'`,
+    );
+
   // Last argument = window size
   const nExpr = args[0];
   const windowSize = Math.floor(ctx.evaluate(nExpr, ctx) ?? 0);
@@ -8,11 +13,10 @@ export function runNativeWindowReducer(reducer, fn, ctx) {
   const state = reducer.init(windowSize);
   if (!state) return null;
 
-  for (let i = ctx.tradeIndex; i >= 0; i--) {
-    const trade = ctx.getTradeAt(i);
-    if (!trade) break;
+  for (let i = ctx.windowStartIndex; i >= 0; i--) {
+    const value = ctx.getTradeValue(i, reducer.key);
 
-    const cont = reducer.step(state, trade);
+    const cont = reducer.step(state, value);
     if (cont === false) break;
   }
 

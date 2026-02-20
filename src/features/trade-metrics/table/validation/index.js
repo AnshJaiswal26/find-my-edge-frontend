@@ -4,7 +4,7 @@ const isDuplicateLabel = (draft, ctx) => {
   const newLabel = draft.label?.trim().toLowerCase();
   if (!newLabel) return false;
 
-  return ctx.columnOrder.some((id) => {
+  return ctx.columnsOrder.some((id) => {
     const col = ctx.columnsById[id];
     if (ctx?.activeColumn && col.id === ctx.activeColumn.id) return false;
 

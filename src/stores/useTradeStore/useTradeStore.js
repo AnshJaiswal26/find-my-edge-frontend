@@ -12,21 +12,21 @@ import { tradeApi } from "@lib/api/trade.api";
 import { schemaApi } from "@lib/api/schema.api";
 
 import { createSchemaSlice } from "./schema.slice";
+import { useDashboardStore } from "@features/dashboard/store/useDashboardStore";
 
 export const useTradeStore = create(
   immer((set, get) => ({
     tradesById: {},
     derivedByTradeId: {},
-    tradeOrder: [],
+    tradesOrder: [],
 
     isLoading: false,
 
     schemasById: {},
-    schemaOrder: [],
+    schemasOrder: [],
 
     affectedMap: {},
 
-    pendingUpdates: {},
     isSaving: false,
 
     ...createComputeSlice(set, get),
@@ -41,7 +41,7 @@ export const useTradeStore = create(
       set({
         tradesById: {},
         derivedByTradeId: {},
-        tradeOrder: [],
+        tradesOrder: [],
       });
 
       try {
@@ -51,11 +51,11 @@ export const useTradeStore = create(
         // already parsed + returns data
 
         const schemasById = schemaRes.schemasById || {};
-        const schemaOrder = schemaRes.order || [];
-        const affectedMap = buildSchemasAffectedMap(schemasById, schemaOrder);
+        const schemasOrder = schemaRes.order || [];
+        const affectedMap = buildSchemasAffectedMap(schemasById, schemasOrder);
 
         // store schemas first
-        set({ schemasById, schemaOrder, affectedMap });
+        set({ schemasById, schemasOrder, affectedMap });
 
         /* ---------------- 2. FETCH TRADES ---------------- */
 
@@ -65,14 +65,14 @@ export const useTradeStore = create(
 
         const tradesById = {};
         const derivedByTradeId = {};
-        const tradeOrder = [];
+        const tradesOrder = [];
 
         trades.forEach((t) => {
           const id = t.id || crypto.randomUUID();
           const trade = {};
           const derived = {};
 
-          schemaOrder.forEach((schemaId) => {
+          schemasOrder.forEach((schemaId) => {
             const schema = schemasById[schemaId];
             if (!schema) return;
 
@@ -90,13 +90,16 @@ export const useTradeStore = create(
           tradesById[id] = { id, ...trade };
           derivedByTradeId[id] = derived;
 
-          tradeOrder.push(id);
+          tradesOrder.push(id);
         });
 
-        set({ tradesById, derivedByTradeId, tradeOrder, isLoading: false });
+        set({ tradesById, derivedByTradeId, tradesOrder, isLoading: false });
 
         get().recompute({ reason: "all" });
+
+        useDashboardStore.getState().loadInitialCharts();
       } catch (err) {
+        console.error(err);
         useUIStore.getState().showToast("ERROR", err.message);
         set({ isLoading: false });
       }

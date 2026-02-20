@@ -9,7 +9,7 @@ export const seriesTooltipCallback = ({
   selectedSeriesKeys,
   mode,
 }) => {
-  const chart = useChartStore.getState()[chartId];
+  const chart = useChartStore.getState().charts[chartId];
 
   const { meta, xSeriesConfig, ySeriesConfig, layout } = chart;
   const title = getTitle(index, xSeriesConfig.key);

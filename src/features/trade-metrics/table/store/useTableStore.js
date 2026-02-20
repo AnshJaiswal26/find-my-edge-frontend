@@ -51,10 +51,10 @@ export const useTableStore = create(
     },
 
     hydrateSchema() {
-      const { schemasById, schemaOrder } = useTradeStore.getState();
+      const { schemasById, schemasOrder } = useTradeStore.getState();
 
       set({
-        columnOrder: schemaOrder,
+        columnsOrder: schemasOrder,
       });
     },
   })),

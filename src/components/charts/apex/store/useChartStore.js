@@ -10,8 +10,8 @@ import { createPopupSlice } from "./popup.slice";
 
 export const useChartStore = create(
   immer((set, get) => ({
-    chartGridLayout: null,
     activeChart: { id: "", type: "", activePopup: null },
+    charts: {},
 
     ...createCoreSlice(set, get),
     ...createPopupSlice(set, get),
@@ -24,7 +24,7 @@ export const useChartStore = create(
       set((s) => {
         if (typeof chartId === "function") {
           chartId(s);
-        } else callback(s[chartId], s);
+        } else callback(s.charts[chartId], s);
       });
     },
   })),

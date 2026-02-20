@@ -18,8 +18,8 @@ export default function RadialBarSeriesSection({ seriesDraft, updateSeries }) {
             <Input
               vertical
               label="Tooltip Label"
-              value={series.tooltipLabel}
-              onCommit={(v) => updateSeries(index, { tooltipLabel: v })}
+              value={series.label}
+              onCommit={(v) => updateSeries(index, { label: v })}
             />
 
             {/* ---------- Formatting ---------- */}

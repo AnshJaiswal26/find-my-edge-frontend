@@ -34,7 +34,7 @@ export const GroupCell = memo(function GroupCell({
 });
 
 export const GroupRow = memo(function GroupRow({ groupId, meta, groupBy }) {
-  const columnOrder = useTableStore((s) => s.columnOrder);
+  const columnsOrder = useTableStore((s) => s.columnsOrder);
   const expanded = useTableStore((s) => !!s.expandedGroups[groupId]);
   const toggleGroup = useTableStore((s) => s.toggleGroup);
 
@@ -59,7 +59,7 @@ export const GroupRow = memo(function GroupRow({ groupId, meta, groupBy }) {
         />
       </div>
 
-      {columnOrder.map((colId, i) => (
+      {columnsOrder.map((colId, i) => (
         <GroupCell
           key={i}
           colId={colId}

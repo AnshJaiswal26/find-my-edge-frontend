@@ -60,9 +60,9 @@ export default function FilterBuilder({
                   {isBetween(f.operator) ? (
                     <RangeInput
                       type={field.type}
-                      value={{ from: f.value, to: f.value2 }}
+                      value={{ from: f.from, to: f.to }}
                       onChange={({ from, to }) =>
-                        updateFilter(index, { value: from, value2: to })
+                        updateFilter(index, { from, to, value: null })
                       }
                     />
                   ) : (

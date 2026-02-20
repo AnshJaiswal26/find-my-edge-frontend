@@ -5,10 +5,11 @@ import { ChartPopups, CustomApexChart } from "@charts/index";
 import { GridStack } from "gridstack";
 import "gridstack/dist/gridstack.min.css";
 import "gridstack/dist/gridstack.min.css";
+
 import { Button } from "@ui";
 import StatCards from "./components/StatsGrid";
-import { Container, Loader } from "@layout";
-import { useDashboardStore } from "./store";
+import { Container } from "@layout";
+import { useDashboardStore } from "./store/useDashboardStore";
 import { AddWidget } from "./ui/Popups";
 import { useTradeStore } from "@stores";
 
@@ -21,12 +22,12 @@ const getColumnCount = () => {
 };
 
 export default function Dashboard() {
-  const seriesOrder = useTradeStore((s) => s.tradeOrder);
+  const seriesOrder = useTradeStore((s) => s.tradesOrder);
   const tradesById = useTradeStore((s) => s.tradesById);
   const derivedByTradeId = useTradeStore((s) => s.derivedByTradeId);
 
   const schemasById = useTradeStore((s) => s.schemasById);
-  const schemasOrder = useTradeStore((s) => s.schemaOrder);
+  const schemasOrder = useTradeStore((s) => s.schemasOrder);
 
   const seriesById = useMemo(() => {
     const result = {};
@@ -121,7 +122,7 @@ function ChartDashboard({
   const order = useDashboardStore((s) => s.order);
   const deleteChart = useDashboardStore((s) => s.deleteChart);
 
-  const savedLayout = useChartStore((s) => s.chartGridLayout);
+  const savedLayout = useDashboardStore((s) => s.chartGridLayout);
 
   useEffect(() => {
     if (grid.current) return;
@@ -148,13 +149,17 @@ function ChartDashboard({
     grid.current.on("change", () => {
       if (isResponsiveChange.current) return;
 
-      const safeLayout = grid.current
-        .save()
-        .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+      const safeLayout = Object.fromEntries(
+        grid.current
+          .save()
+          .map(({ id, x, y, w, h }) => {
+            if (!id) return null;
+            return [id, { x, y, w, h }];
+          })
+          .filter(Boolean),
+      );
 
-      useChartStore.getState().updateChart((s) => {
-        s.chartGridLayout = safeLayout;
-      });
+      useDashboardStore.getState().setLayout(safeLayout);
     });
 
     const updateColumns = () => {
@@ -192,14 +197,14 @@ function ChartDashboard({
   }, [order]);
 
   useEffect(() => {
-    useDashboardStore.getState().loadInitialCharts();
+    // useDashboardStore.getState().loadInitialCharts();
     window.dispatchEvent(new Event("resize"));
   }, []);
 
   return (
     <div className="grid-stack" ref={gridRef}>
       {order.map(({ id, type, category }) => {
-        const layout = savedLayout?.find((l) => l.id === id);
+        const layout = savedLayout?.[id];
 
         return (
           <div

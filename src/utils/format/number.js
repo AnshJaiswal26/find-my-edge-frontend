@@ -14,7 +14,27 @@ const NUMBER_FORMATS = [
   { key: "RATIO_X", label: "2.5x" },
 
   { key: "COMPACT", label: "1.2L / 120K" },
+  { key: "COMPACT_SIGNED", label: "+1.2L / -120K" },
 ];
+
+const NUMBER_FORMAT = {
+  NUMBER: "NUMBER",
+  NUMBER_SIGNED: "NUMBER_SIGNED",
+
+  INTEGER: "INTEGER",
+
+  CURRENCY: "CURRENCY",
+  CURRENCY_SIGNED: "CURRENCY_SIGNED",
+
+  PERCENT: "PERCENT",
+  PERCENT_SIGNED: "PERCENT_SIGNED",
+
+  RATIO: "RATIO",
+  RATIO_X: "RATIO_X",
+
+  COMPACT: "COMPACT",
+  COMPACT_SIGNED: "COMPACT_SIGNED",
+};
 
 const NUMBER_FORMAT_KEYS = NUMBER_FORMATS.map(({ key }) => key);
 
@@ -68,6 +88,16 @@ const numberFormatters = {
 
     return formatNumber(v, 0);
   },
+
+  COMPACT_SIGNED: (v) => {
+    const abs = Math.abs(v);
+
+    if (abs >= 1e7) return `${formatNumber(v / 1e7, 1)}Cr`;
+    if (abs >= 1e5) return `${formatNumber(v / 1e5, 1)}L`;
+    if (abs >= 1e3) return `${formatNumber(v / 1e3, 1)}K`;
+
+    return `${v < 0 ? "-" : "+"}${formatNumber(v, 0)}`;
+  },
 };
 
-export { NUMBER_FORMATS, NUMBER_FORMAT_KEYS, numberFormatters };
+export { NUMBER_FORMATS, NUMBER_FORMAT, NUMBER_FORMAT_KEYS, numberFormatters };

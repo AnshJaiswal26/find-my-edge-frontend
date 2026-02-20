@@ -4,7 +4,7 @@ import { pageRoute } from "@data";
 import { Loader, PageContainer } from "@layout";
 import { useTradeStore, useUIStore } from "@stores";
 import { useTableStore } from "@table/store/useTableStore";
-import { useDashboardStore } from "@features/dashboard/store";
+import { useDashboardStore } from "@features/dashboard/store/useDashboardStore";
 
 // Lazy import each page
 const Dashboard = lazy(() => import("./features/dashboard/Dashboard"));
@@ -47,7 +47,7 @@ function App() {
       await useTradeStore.getState().fetchAll();
       useTableStore.getState().hydrateSchema();
     };
-    fetchTrades();
+    setTimeout(() => fetchTrades(), 300);
 
     const close = () => {
       setSelect(null);

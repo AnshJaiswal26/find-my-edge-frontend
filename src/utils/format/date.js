@@ -12,6 +12,18 @@ const DATE_FORMATS = [
 
 const DATE_FORMAT_KEYS = DATE_FORMATS.map(({ key }) => key);
 
+const DATE_FORMAT = {
+  DD_MMM_YYYY: "DD MMM YYYY",
+  DD_MM_YYYY_SLASH: "DD/MM/YYYY",
+  MM_DD_YYYY_SLASH: "MM/DD/YYYY",
+  YYYY_MM_DD: "YYYY-MM-DD",
+  DD_MM_YY_DASH: "DD-MM-YY",
+  DD_MM_YYYY_DASH: "DD-MM-YYYY",
+  MMM_DD_YYYY: "MMM DD, YYYY",
+  DD_MMM: "DD MMM",
+  MMM_YYYY: "MMM YYYY",
+};
+
 const formatDate = (value, format) => {
   if (typeof value !== "number") return "—";
 
@@ -49,4 +61,4 @@ const formatDate = (value, format) => {
   return format.replace(/YYYY|YY|MMMM|MMM|MM|DD|dddd|ddd/g, (k) => map[k]);
 };
 
-export { DATE_FORMATS, DATE_FORMAT_KEYS, formatDate };
+export { DATE_FORMATS, DATE_FORMAT, DATE_FORMAT_KEYS, formatDate };

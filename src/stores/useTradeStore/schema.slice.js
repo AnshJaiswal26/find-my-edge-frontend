@@ -1,12 +1,12 @@
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { schemaApi } from "@lib/api/schema.api";
 import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
-import { createCell } from "@table/model";
+import { createCellValue } from "@table/model";
 
 export const createSchemaSlice = (set, get) => ({
   updateSchemaOrder(order) {
     set((s) => {
-      s.schemaOrder = order;
+      s.schemasOrder = order;
     });
   },
 
@@ -17,12 +17,12 @@ export const createSchemaSlice = (set, get) => ({
     // 2. Update store
     set((s) => {
       s.schemasById[savedSchema.id] = savedSchema;
-      s.schemaOrder = order;
+      s.schemasOrder = order;
 
-      s.affectedMap = buildSchemasAffectedMap(s.schemasById, s.schemaOrder);
+      s.affectedMap = buildSchemasAffectedMap(s.schemasById, s.schemasOrder);
 
       // 🔥 IMPORTANT: separate layers
-      s.tradeOrder.forEach((tradeId) => {
+      s.tradesOrder.forEach((tradeId) => {
         const trade = s.tradesById[tradeId];
         if (!trade) return;
 
@@ -35,13 +35,11 @@ export const createSchemaSlice = (set, get) => ({
           s.derivedByTradeId[tradeId][savedSchema.id] = null; // placeholder
         } else {
           // 👉 raw goes to trades
-          const { value } = createCell(savedSchema);
+          const value = createCellValue(savedSchema);
           trade[savedSchema.id] = value;
         }
       });
     });
-
-    console.log(savedSchema);
 
     // 3. Recompute ONLY for computed
     if (savedSchema.source === SCHEMA_SOURCE.COMPUTED) {
@@ -63,13 +61,13 @@ export const createSchemaSlice = (set, get) => ({
     set((s) => {
       // 2. Replace schema (NOT merge)
       s.schemasById[id] = updatedSchema;
-      s.schemaOrder = order;
+      s.schemasOrder = order;
 
       // 3. Rebuild dependency graph
-      s.affectedMap = buildSchemasAffectedMap(s.schemasById, s.schemaOrder);
+      s.affectedMap = buildSchemasAffectedMap(s.schemasById, s.schemasOrder);
 
       // 🔥 4. HANDLE SOURCE CHANGE (VERY IMPORTANT)
-      s.tradeOrder.forEach((tradeId) => {
+      s.tradesOrder.forEach((tradeId) => {
         const trade = s.tradesById[tradeId];
 
         if (!trade) return;
@@ -92,7 +90,7 @@ export const createSchemaSlice = (set, get) => ({
         else if (wasComputed && !isComputed) {
           delete s.derivedByTradeId[tradeId][id];
 
-          const { value } = createCell(updatedSchema);
+          const value = createCellValue(updatedSchema);
           trade[id] = value;
         }
 
@@ -123,10 +121,10 @@ export const createSchemaSlice = (set, get) => ({
 
       // 2. Remove schema
       delete s.schemasById[id];
-      s.schemaOrder = order;
+      s.schemasOrder = order;
 
       // 3. Remove values from trades
-      s.tradeOrder.forEach((tradeId) => {
+      s.tradesOrder.forEach((tradeId) => {
         const trade = s.tradesById[tradeId];
 
         if (!trade) return;
@@ -139,7 +137,7 @@ export const createSchemaSlice = (set, get) => ({
       });
 
       // 4. Rebuild dependency graph
-      s.affectedMap = buildSchemasAffectedMap(s.schemasById, s.schemaOrder);
+      s.affectedMap = buildSchemasAffectedMap(s.schemasById, s.schemasOrder);
     });
 
     // 5. Recompute affected columns (VERY IMPORTANT 🔥)

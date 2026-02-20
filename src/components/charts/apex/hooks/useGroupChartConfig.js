@@ -2,29 +2,22 @@ import { useCallback, useMemo } from "react";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 import { configGenerator } from "../configs";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
-
-import {
-  COMPUTATION_MODE,
-  computeOverSequence,
-} from "@lib/analytics/engine/execute";
+import { computedAggregate } from "@lib/analytics/engine/execute";
 
 const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
   const series = seriesConfig.map((s) => {
-    const value = computeOverSequence({
-      schema: { ast: s.ast },
-      getTradeAt: (index) => {
+    const value = computedAggregate({
+      ast: s.ast,
+      getTradeCount: () => seriesOrder.length,
+      getTradeValue: (index, key) => {
         if (index < 0) return null;
         const id = seriesOrder[index];
-        return id ? seriesById[id] : null;
+        return id ? seriesById[id]?.[key] : null;
       },
-      getTradeCount: () => seriesOrder.length,
       getSchemaType: (key) => {
         const schema = schemasById[key];
         return { format: schema?.display?.format, type: schema.semanticType };
       },
-      getValue: (trade, key) => trade[key] ?? null,
-      setValue: () => null,
-      mode: COMPUTATION_MODE.AGGREGATE,
     });
     return value;
   });
@@ -45,7 +38,7 @@ export default function useGroupChartConfig({
   schemasById,
   selectedSeriesKeys,
 }) {
-  const type = useChartStore((s) => s[chartId].meta.type);
+  const type = useChartStore((s) => s.charts[chartId].meta.type);
 
   const filteredConfig = useMemo(
     () =>
@@ -79,7 +72,7 @@ export default function useGroupChartConfig({
 
   const options = useMemo(() => {
     return configGenerator?.[type]?.({
-      chart: useChartStore.getState()[chartId],
+      chart: useChartStore.getState().charts[chartId],
       chartId,
       seriesById,
       filteredConfig,

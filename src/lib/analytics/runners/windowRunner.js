@@ -8,24 +8,10 @@ export function runWindowReducer(reducer, fn, ctx) {
 
   const valueExprs = args.slice(0, -1); // all other args go to reducer.step
 
-  const rowCtx = {
-    ...ctx,
-    tradeIndex: 0,
-    prevTrade: null,
-    currentTrade: null,
-    getValue(key) {
-      return ctx.getValueFromTrade(this.currentTrade, key);
-    },
-  };
+  for (let i = ctx.windowStartIndex; i >= 0; i--) {
+    ctx.tradeIndex = i;
 
-  for (let i = ctx.tradeIndex; i >= 0; i--) {
-    const trade = ctx.getTradeAt(i);
-    if (!trade) break;
-
-    rowCtx.tradeIndex = i;
-    rowCtx.currentTrade = trade;
-
-    const evaluated = valueExprs.map((expr) => ctx.evaluate(expr, rowCtx));
+    const evaluated = valueExprs.map((expr) => ctx.evaluate(expr, ctx));
 
     const cont = reducer.step(state, ...evaluated);
 

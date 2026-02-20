@@ -59,21 +59,21 @@ export const createGroupSlice = (set, get) => ({
       updateLockedColumns,
     } = get();
 
-    const { tradeOrder, tradesById, derivedByTradeId } =
+    const { tradesOrder, tradesById, derivedByTradeId } =
       useTradeStore.getState();
 
     const effectiveOrder = sortedRowOrder.length
       ? sortedRowOrder
       : filteredRowOrder.length
         ? filteredRowOrder
-        : tradeOrder;
+        : tradesOrder;
 
     const getValue = (trade, key) => {
       return derivedByTradeId?.[trade.id]?.[key] ?? trade?.[key] ?? null;
     };
 
     const groups = buildGroups({
-      tradeOrder: effectiveOrder,
+      tradesOrder: effectiveOrder,
       tradesById: tradesById,
       groupSpec: draftToSpec(spec ?? groupBy),
       getValue,
@@ -85,9 +85,9 @@ export const createGroupSlice = (set, get) => ({
 
     set((s) => {
       s.groups = groups;
-      s.columnOrder = [
+      s.columnsOrder = [
         groupBy.key,
-        ...s.columnOrder.filter((id) => id !== groupBy.key),
+        ...s.columnsOrder.filter((id) => id !== groupBy.key),
       ];
     });
 

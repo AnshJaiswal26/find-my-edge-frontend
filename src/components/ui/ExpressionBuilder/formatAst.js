@@ -28,7 +28,7 @@ export function formatAST(node, indent = 2, schemasById) {
         : String(node.value);
 
     case "key": {
-      return schemasById[node.key]?.label ?? "KEY";
+      return `[${schemasById[node.key]?.label}]` ?? "KEY";
     }
 
     case "identifier": {

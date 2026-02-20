@@ -44,7 +44,7 @@ export default function usePolarAreaChartConfig({
   const options = useMemo(
     () =>
       configGenerator?.polarArea?.({
-        chart: useChartStore.getState()[chartId],
+        chart: useChartStore.getState().charts[chartId],
         chartId,
         labels,
         layout,

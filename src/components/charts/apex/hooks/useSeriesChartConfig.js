@@ -4,15 +4,11 @@ import { configGenerator } from "../configs";
 import {
   evaluateColorRules,
   FILTER_OPERATION_MAP,
-  formatGroupValue,
-  formatValue,
+  isBetween,
   SORT_OPERATION_MAP,
 } from "@utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
-import {
-  COMPUTATION_MODE,
-  computeOverSequence,
-} from "@lib/analytics/engine/execute";
+import { computedAggregate } from "@lib/analytics/engine/execute";
 
 /* =========================================================
    🔥 CORE DATA ENGINE (Single Source of Truth)
@@ -65,16 +61,13 @@ function useChartData({
 
       if (mode === "GROUP_AGGREGATE") {
         // compute once
-        const computed = computeOverSequence({
-          schema: { ast: groupSpec?.ast },
-
-          getTradeAt: (index) => {
-            const id = item.source[index];
-            return id ? seriesById[id] : null;
-          },
-
+        const computed = computedAggregate({
+          ast: groupSpec?.ast,
           getTradeCount: () => item.source.length,
-
+          getTradeValue: (index, key) => {
+            const id = item.source[index];
+            return id ? seriesById[id]?.[key] : null;
+          },
           getSchemaType: (k) => {
             const schema = schemasById?.[k];
             return {
@@ -82,11 +75,6 @@ function useChartData({
               type: schema?.semanticType,
             };
           },
-
-          getValue: (trade, k) => trade?.[k] ?? null,
-          setValue: () => null,
-
-          mode: COMPUTATION_MODE.AGGREGATE,
         });
 
         keys.forEach((key) => {
@@ -113,7 +101,7 @@ function useChartData({
       data = data.filter((item) =>
         filters.some((f) => {
           const fn = FILTER_OPERATION_MAP[f.operator];
-          return fn?.(item.values[f.key], f.value, f.value2);
+          return fn?.(item.values[f.key], f.value ?? f.from, f.to);
         }),
       );
     }
@@ -158,12 +146,12 @@ export default function useSeriesChartConfig({
   selectedSeriesKeys,
   schemasById,
 }) {
-  const type = useChartStore((s) => s[chartId].meta.type);
+  const type = useChartStore((s) => s.charts[chartId].meta.type);
 
-  const filters = useChartStore((s) => s[chartId].filters);
-  const sort = useChartStore((s) => s[chartId].sort);
-  const selection = useChartStore((s) => s[chartId].selection);
-  const xKey = useChartStore((s) => s[chartId].xSeriesConfig.key);
+  const filters = useChartStore((s) => s.charts[chartId].filters);
+  const sort = useChartStore((s) => s.charts[chartId].sort);
+  const selection = useChartStore((s) => s.charts[chartId].selection);
+  const xKey = useChartStore((s) => s.charts[chartId].xSeriesConfig.key);
 
   /* ------------------ MODE ------------------ */
   const mode = useMemo(() => {
@@ -227,7 +215,7 @@ export default function useSeriesChartConfig({
   /* ------------------ OPTIONS ------------------ */
   const options = useMemo(() => {
     return configGenerator?.[type]?.({
-      chart: useChartStore.getState()[chartId],
+      chart: useChartStore.getState().charts[chartId],
       chartId,
       seriesById,
 

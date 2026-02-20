@@ -7,13 +7,13 @@ import { Row } from "./Row";
 import { useTradeStore } from "@stores";
 
 export default function VirtualizedRow({ scrollRef }) {
-  const rowOrder = useTradeStore((s) => s.tradeOrder);
+  const rowsOrder = useTradeStore((s) => s.tradesOrder);
   const effectiveRowOrder = useTableStore((s) =>
     s.sortedRowOrder.length
       ? s.sortedRowOrder
       : s.filteredRowOrder.length
         ? s.filteredRowOrder
-        : rowOrder,
+        : rowsOrder,
   );
 
   const groupBy = useTableStore((s) => s.groupBy);

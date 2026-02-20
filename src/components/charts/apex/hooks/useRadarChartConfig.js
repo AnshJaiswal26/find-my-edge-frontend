@@ -24,7 +24,7 @@ const tooltipCallback = ({
   chartId,
   filteredConfig,
 }) => {
-  // const { layout } = useChartStore.getState()[chartId];
+  // const { layout } = useChartStore.getState().charts[chartId];
   const config = filteredConfig;
   // console.log({ seriesIndex, seriesValue, index });
 
@@ -33,7 +33,7 @@ const tooltipCallback = ({
     dataArray: [
       {
         value: seriesValue[seriesIndex],
-        label: config[seriesIndex].tooltipLabel,
+        label: config[seriesIndex].label,
         color: config[seriesIndex].color,
       },
     ],
@@ -72,7 +72,7 @@ export default function useRadarChartConfig({
   const options = useMemo(
     () =>
       configGenerator?.radar?.({
-        chart: useChartStore.getState()[chartId],
+        chart: useChartStore.getState().charts[chartId],
         chartId,
         categories,
         layout,

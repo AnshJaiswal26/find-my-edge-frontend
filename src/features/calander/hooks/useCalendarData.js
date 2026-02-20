@@ -5,12 +5,12 @@ import { formatDate } from "@utils";
 export const useCalendarTrades = (year, month) => {
   const tradesById = useTradeStore((s) => s.tradesById);
   const derivedByTradeId = useTradeStore((s) => s.derivedByTradeId);
-  const tradeOrder = useTradeStore((s) => s.tradeOrder);
+  const tradesOrder = useTradeStore((s) => s.tradesOrder);
 
   return useMemo(() => {
     const daily = {};
 
-    tradeOrder.forEach((id) => {
+    tradesOrder.forEach((id) => {
       const trade = { ...tradesById[id], ...(derivedByTradeId[id] || {}) };
       if (!trade?.date) return;
 
@@ -37,5 +37,5 @@ export const useCalendarTrades = (year, month) => {
       trades: info.trades,
       type: info.amount > 0 ? "profit" : info.amount < 0 ? "loss" : "no-trade",
     }));
-  }, [tradesById, tradeOrder, year, month]);
+  }, [tradesById, tradesOrder, year, month]);
 };

@@ -1,10 +1,11 @@
 export const EXPECTANCY = {
+  key: "pnl",
+
   init() {
     return { wins: 0, losses: 0, winSum: 0, lossSum: 0 };
   },
 
-  step(state, trade) {
-    const pnl = trade?.pnl;
+  step(state, pnl) {
     if (pnl == null) return;
 
     if (pnl > 0) {

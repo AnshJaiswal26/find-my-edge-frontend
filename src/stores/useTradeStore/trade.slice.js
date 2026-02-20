@@ -5,6 +5,10 @@ import { createRow } from "@table/model";
 import { tradeApi } from "@lib/api/trade.api";
 
 export const createTradeSlice = (set, get) => ({
+  pendingUpdates: {},
+  pendingCreates: {},
+  pendingDeletes: new Set(),
+
   updateTradeValue(rowId, colId, value) {
     const { tradesById, schemasById, affectedMap } = get();
 
@@ -38,12 +42,16 @@ export const createTradeSlice = (set, get) => ({
 
   addTrade() {
     const id = crypto.randomUUID();
-    const { row, trade } = createRow(get().schemasById, id);
+    const trade = createRow(get().schemasById);
 
     set((s) => {
       s.tradesById[id] = { id, ...trade };
-      s.tradeOrder.push(id);
+      s.tradesOrder.push(id);
+
+      s.pendingCreates[id] = { id, ...trade };
     });
+
+    get().debouncedSync();
   },
 
   updateTrade(id, patch) {
@@ -57,13 +65,21 @@ export const createTradeSlice = (set, get) => ({
 
     set((s) => {
       delete s.tradesById[tradeId];
-      s.tradeOrder = s.tradeOrder.filter((id, i) => {
+
+      s.tradesOrder = s.tradesOrder.filter((id, i) => {
         if (id === tradeId) tradeIndex = i;
         return id !== tradeId;
       });
+
+      // track delete
+      s.pendingDeletes.add(tradeId);
+
+      // remove if it was just created
+      delete s.pendingCreates[tradeId];
     });
 
     get().recompute({ reason: "trade-delete", tradeIndex });
+    get().debouncedSync();
   },
 
   queueTradeUpdate: (id, patch) => {
@@ -78,36 +94,58 @@ export const createTradeSlice = (set, get) => ({
   },
 
   debouncedSync: debounce(async () => {
-    const { pendingUpdates, tradesById, schemasById } = get();
+    const {
+      pendingUpdates,
+      pendingCreates,
+      pendingDeletes,
+      tradesById,
+      schemasById,
+    } = get();
 
-    if (!Object.keys(pendingUpdates).length) return;
+    if (
+      !Object.keys(pendingUpdates).length &&
+      !Object.keys(pendingCreates).length &&
+      !pendingDeletes.size
+    )
+      return;
 
     set({ isSaving: true });
 
     try {
       const updates = { ...pendingUpdates };
+      const creates = { ...pendingCreates };
+      const deletes = new Set(pendingDeletes);
 
-      // clear queue optimistically
-      set({ pendingUpdates: {} });
+      // clear optimistically
+      set({
+        pendingUpdates: {},
+        pendingCreates: {},
+        pendingDeletes: new Set(),
+      });
 
+      // 🔹 CREATE
+      await Promise.all(
+        Object.values(creates).map((trade) => tradeApi.create(trade)),
+      );
+
+      // 🔹 UPDATE
       await Promise.all(
         Object.keys(updates).map((id) => {
           const trade = tradesById[id];
-
-          // filter ONLY non-computed fields
           const cleanTrade = {};
 
           Object.keys(trade).forEach((key) => {
             if (key === "id") return;
-
             const schema = schemasById[key];
-
             cleanTrade[key] = formatForInput(trade[key], schema.semanticType);
           });
 
-          return tradeApi.update(id, cleanTrade); // full object
+          return tradeApi.update(id, cleanTrade);
         }),
       );
+
+      // 🔹 DELETE
+      await Promise.all(Array.from(deletes).map((id) => tradeApi.delete(id)));
     } catch (err) {
       useUIStore.getState().showToast("ERROR", err.message);
     } finally {

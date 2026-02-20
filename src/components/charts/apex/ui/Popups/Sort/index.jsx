@@ -5,10 +5,10 @@ import { SORT_OPTIONS, SORT_TYPE } from "@utils";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 
 export default function SortPopup({ chartId, schemasById }) {
-  const sort = useChartStore((s) => s[chartId].sort);
+  const sort = useChartStore((s) => s.charts[chartId].sort);
 
-  const ySeriesConfig = useChartStore((s) => s[chartId].ySeriesConfig);
-  const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);
+  const ySeriesConfig = useChartStore((s) => s.charts[chartId].ySeriesConfig);
+  const xSeriesConfig = useChartStore((s) => s.charts[chartId].xSeriesConfig);
 
   const [draft, setDraft] = useState(sort);
 

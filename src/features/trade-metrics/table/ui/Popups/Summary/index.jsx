@@ -23,7 +23,7 @@ function computeSummary() {
   const {
     tradesById: rowsById,
     derivedByTradeId,
-    tradeOrder: rowOrder,
+    tradesOrder: rowsOrder,
     schemasById: columnsById,
   } = useTradeStore.getState();
 
@@ -31,7 +31,7 @@ function computeSummary() {
     (col) => col.semanticType !== SEMANTIC_TYPES.STRING,
   );
 
-  const rows = rowOrder.map((id) => rowsById[id]);
+  const rows = rowsOrder.map((id) => rowsById[id]);
 
   const stats = {};
   numericColumns.forEach((col) => {
@@ -46,7 +46,7 @@ function computeSummary() {
   let wins = 0;
   let losses = 0;
 
-  rowOrder.forEach((rowId) => {
+  rowsOrder.forEach((rowId) => {
     const row = { ...rowsById[rowId], ...(derivedByTradeId[rowId] || {}) };
 
     numericColumns.forEach((col) => {

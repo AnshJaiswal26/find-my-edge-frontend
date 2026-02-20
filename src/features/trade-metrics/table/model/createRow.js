@@ -1,14 +1,12 @@
-import { createCell } from "./createCell";
+import { createCellValue } from "./createValueCell";
 
-export function createRow(columnsById, id) {
-  const cells = {};
+export function createRow(columnsById) {
   const trade = {};
 
   Object.values(columnsById).forEach((column) => {
-    const cell = createCell(column);
-    cells[column.id] = cell;
-    trade[column.id] = cell.value;
+    const value = createCellValue(column);
+    trade[column.id] = value;
   });
 
-  return { row: { id, highlight: false, cells }, trade };
+  return trade;
 }

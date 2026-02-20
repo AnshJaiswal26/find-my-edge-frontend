@@ -1,11 +1,11 @@
 export const createLayoutSlice = (set, get) => ({
   updateLayout(chartId, layoutDraft, seriesDraft) {
     set((s) => {
-      Object.assign(s[chartId].layout, layoutDraft);
-      if (s[chartId].ySeriesConfig) {
-        s[chartId].ySeriesConfig = seriesDraft;
+      Object.assign(s.charts[chartId].layout, layoutDraft);
+      if (s.charts[chartId].ySeriesConfig) {
+        s.charts[chartId].ySeriesConfig = seriesDraft;
       } else {
-        s[chartId].seriesConfig = seriesDraft;
+        s.charts[chartId].seriesConfig = seriesDraft;
       }
     });
 
@@ -14,7 +14,7 @@ export const createLayoutSlice = (set, get) => ({
 
   toggleLayout(chartId, key) {
     set((s) => {
-      s[chartId].layout[key] = !s[chartId].layout[key];
+      s.charts[chartId].layout[key] = !s.charts[chartId].layout[key];
     });
   },
 });

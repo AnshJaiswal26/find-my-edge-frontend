@@ -197,19 +197,19 @@ export const DEFAULT_CHARTS = {
               from: 0.61,
               to: Number.MAX_SAFE_INTEGER,
               color: "var(--success)",
-              tooltipLabel: "Reward Taken",
+              label: "Reward Taken",
             },
             {
               from: 0,
               to: 0.6,
               color: "var(--warning)",
-              tooltipLabel: "Breakeven",
+              label: "Breakeven",
             },
             {
               from: Number.MIN_SAFE_INTEGER,
               to: -0.01,
               color: "var(--error)",
-              tooltipLabel: "Risk Taken",
+              label: "Risk Taken",
             },
           ],
         },
@@ -251,7 +251,7 @@ export const DEFAULT_CHARTS = {
               from: 0,
               to: Number.MAX_SAFE_INTEGER,
               color: "var(--success)",
-              tooltipLabel: "Win Rate",
+              label: "Win Rate",
             },
           ],
         },
@@ -263,7 +263,7 @@ export const DEFAULT_CHARTS = {
               from: 0,
               to: Number.MAX_SAFE_INTEGER,
               color: "var(--error)",
-              tooltipLabel: "Lose Rate",
+              label: "Lose Rate",
             },
           ],
         },
@@ -292,7 +292,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "Pnl",
           name: "Pnl",
-          tooltipLabel: "Pnl",
+          label: "Pnl",
           color: "var(--cyan)",
           markerColor: "var(--cyan)",
           areaColor: "var(--cyan)",
@@ -300,7 +300,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "Cummulative Pnl",
           name: "Cummulative Pnl",
-          tooltipLabel: "Cummulative Pnl",
+          label: "Cummulative Pnl",
           color: "var(--warning)",
           markerColor: "var(--warning)",
           areaColor: "var(--warning)",
@@ -325,7 +325,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "Capital",
           name: "Captial",
-          tooltipLabel: "Capital",
+          label: "Capital",
           color: "var(--warning)",
           markerColor: "var(--warning)",
           areaColor: "var(--warning)",
@@ -351,7 +351,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "Profit",
           name: "Profit",
-          tooltipLabel: "Profit",
+          label: "Profit",
           color: "var(--success)",
           markerColor: "var(--success)",
           areaColor: "var(--success)",
@@ -359,7 +359,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "Loss",
           name: "Loss",
-          tooltipLabel: "Loss",
+          label: "Loss",
           color: "var(--error)",
           markerColor: "var(--error)",
           areaColor: "var(--error)",
@@ -374,14 +374,14 @@ export const DEFAULT_CHARTS = {
           parseFloat(
             (tradeData.filter((d) => d.Profit !== 0).length /
               tradeData.length) *
-              100
-          ).toFixed(2)
+              100,
+          ).toFixed(2),
         ),
         Number(
           parseFloat(
             (tradeData.filter((d) => d.Loss !== 0).length / tradeData.length) *
-              100
-          ).toFixed(2)
+              100,
+          ).toFixed(2),
         ),
       ],
       meta: {
@@ -394,13 +394,13 @@ export const DEFAULT_CHARTS = {
         {
           key: "Wins",
           name: "Wins",
-          tooltipLabel: "Wins",
+          label: "Wins",
           color: "var(--success)",
         },
         {
           key: "Loses",
           name: "Loses",
-          tooltipLabel: "Loses",
+          label: "Loses",
           color: "var(--error)",
         },
       ],
@@ -413,14 +413,14 @@ export const DEFAULT_CHARTS = {
           parseFloat(
             (tradeData.filter((d) => d.Profit !== 0).length /
               tradeData.length) *
-              100
-          ).toFixed(2)
+              100,
+          ).toFixed(2),
         ),
         Number(
           parseFloat(
             (tradeData.filter((d) => d.Loss !== 0).length / tradeData.length) *
-              100
-          ).toFixed(2)
+              100,
+          ).toFixed(2),
         ),
       ],
       meta: {
@@ -433,13 +433,13 @@ export const DEFAULT_CHARTS = {
         {
           key: "Wins",
           name: "Wins",
-          tooltipLabel: "Wins",
+          label: "Wins",
           color: "var(--info)",
         },
         {
           key: "Loses",
           name: "Loses",
-          tooltipLabel: "Loses",
+          label: "Loses",
           color: "var(--warning)",
         },
       ],
@@ -462,7 +462,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "Reward",
           name: "Reward",
-          tooltipLabel: "Reward",
+          label: "Reward",
           color: "var(--success)",
           prefix: "1:",
           suffix: "",
@@ -470,7 +470,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "Risk",
           name: "Risk",
-          tooltipLabel: "Risk",
+          label: "Risk",
           color: "var(--error)",
           prefix: "1:",
           suffix: "",
@@ -478,7 +478,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "Gain",
           name: "Gain",
-          tooltipLabel: "Gain",
+          label: "Gain",
           color: "var(--info)",
           prefix: "",
           suffix: "%",
@@ -509,7 +509,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "data",
           name: "Momentum",
-          tooltipLabel: "Momentum",
+          label: "Momentum",
           color: "var(--info)",
           prefix: "",
           suffix: "%",
@@ -517,7 +517,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "data",
           name: "Volume",
-          tooltipLabel: "Volume",
+          label: "Volume",
           color: "var(--warning)",
           prefix: "",
           suffix: "%",
@@ -525,7 +525,7 @@ export const DEFAULT_CHARTS = {
         {
           key: "data",
           name: "Volatility",
-          tooltipLabel: "Volatility",
+          label: "Volatility",
           color: "var(--error)",
           prefix: "",
           suffix: "%",

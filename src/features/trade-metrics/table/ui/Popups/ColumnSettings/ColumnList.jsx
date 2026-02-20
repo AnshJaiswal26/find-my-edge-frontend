@@ -1,12 +1,12 @@
 export function ColumnList({
   columnsById,
-  columnOrder,
+  columnsOrder,
   activeColId,
   onSelect,
 }) {
   return (
     <div className="w-44 border-r border-(--border) overflow-auto">
-      {columnOrder.map((id) => {
+      {columnsOrder.map((id) => {
         const col = columnsById[id];
         return (
           <div

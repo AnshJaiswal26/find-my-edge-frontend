@@ -1,19 +1,27 @@
-import { DATE_FORMAT_KEYS, formatDate } from "./date";
-import { NUMBER_FORMAT_KEYS, numberFormatters } from "./number";
-import { formatTime, TIME_FORMAT_KEYS } from "./time";
-import { formatDuration, DURATION_FORMAT_KEYS } from "./duration";
-import { DATETIME_FORMAT_KEYS, formatDateTime } from "./datetime";
+import { DATE_FORMAT, DATE_FORMAT_KEYS, formatDate } from "./date";
+import { NUMBER_FORMAT, NUMBER_FORMAT_KEYS, numberFormatters } from "./number";
+import { formatTime, TIME_FORMAT, TIME_FORMAT_KEYS } from "./time";
+import {
+  formatDuration,
+  DURATION_FORMAT_KEYS,
+  DURATION_FORMAT,
+} from "./duration";
+import {
+  DATETIME_FORMAT,
+  DATETIME_FORMAT_KEYS,
+  formatDateTime,
+} from "./datetime";
 
 const DEFAULT_FORMATS = {
-  number: "NUMBER",
+  number: NUMBER_FORMAT.NUMBER,
   string: "TEXT",
   boolean: "TRUE_FALSE",
 
-  date: "YYYY-MM-DD",
-  time: "hh:mm:ss A",
-  datetime: "YYYY-MM-DD hh:mm:ss A",
+  date: DATE_FORMAT.YYYY_MM_DD,
+  time: TIME_FORMAT.hh_mm_ss_A,
+  datetime: DATETIME_FORMAT.YYYY_MM_DD_hh_mm_ss_A,
 
-  duration: "HH:mm:ss",
+  duration: DURATION_FORMAT.HH_MM_SS,
 };
 
 const FORMATS = {

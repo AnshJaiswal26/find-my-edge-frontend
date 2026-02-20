@@ -23,21 +23,8 @@ import { highlightFormula } from "./highlightFormula";
 import { FunctionDocsPanel } from "./FunctionDocPanel";
 import { formatAST } from "./formatAst";
 import { validateExpression } from "./semanticModeValidators";
-
-function labelToIdExpr(expr, usedSchemas) {
-  let result = expr;
-
-  for (const sch of usedSchemas) {
-    const safeLabel = sch.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    // ✅ ONLY replace full bracketed identifiers
-    const bracketRegex = new RegExp(`\\[\\s*${safeLabel}\\s*\\]`, "g");
-
-    result = result.replace(bracketRegex, `@{${sch.id}}`);
-  }
-
-  return result;
-}
+import { CopyButton } from "./CopyButton";
+import { labelToIdExpr } from "./labelToIdExpr";
 
 export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   {
@@ -57,7 +44,6 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   const [open, setOpen] = useState(true);
   const [usedSchemas, setUsedSchemas] = useState([]);
   const [error, setError] = useState(null);
-  const [copy, setCopy] = useState(false);
 
   const textareaRef = useRef(null);
   const highlightRef = useRef(null);
@@ -115,7 +101,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
         error: err.message,
       };
     }
-  }, [idExpr, mode]);
+  }, [idExpr, mode, schemasById]);
 
   const validSchemaIds = useMemo(
     () => new Set(schemas?.map((s) => String(s.id))),
@@ -153,7 +139,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       let cursorOffset = null;
 
       if (item.type === "schema") {
-        insert = item.label.includes(" ") ? `[${item.label}]` : item.label;
+        insert = `[${item.label}]`;
 
         setUsedSchemas((prev) =>
           prev.some((c) => c.id === item.id)
@@ -365,16 +351,7 @@ export const ExpressionBuilder = forwardRef(function ExpressionBuilder(
             placeholder:text-(--text-muted)
           `}
           />
-          <div
-            className="absolute top-1 right-3 text-(--text-muted) rounded py-1 px-2 hover:bg-(--hover) cursor-pointer z-200"
-            onClick={() => {
-              setCopy(true);
-              navigator.clipboard.writeText(labelExpr);
-              setTimeout(() => setCopy(false), 2000);
-            }}
-          >
-            <span>{copy ? "✓" : ""} Copy </span>
-          </div>
+          <CopyButton labelExpr={labelExpr} />
         </div>
 
         {open && suggestions.length > 0 && (

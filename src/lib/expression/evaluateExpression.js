@@ -71,7 +71,7 @@ export function evaluateExpression(ast, ctx = {}) {
       return ast.value;
 
     case "key": {
-      return ctx.getValue(ast.key);
+      return ctx.getKeyValue(ast.key);
     }
 
     case "unary": {

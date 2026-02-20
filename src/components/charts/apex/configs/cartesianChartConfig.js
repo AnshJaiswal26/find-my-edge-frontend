@@ -82,7 +82,7 @@ export const cartesianChartConfig = ({
       events: {
         click: (e, t, { dataPointIndex }) => {
           const state = useChartStore.getState();
-          const chart = state[chartId];
+          const chart = state.charts[chartId];
           const isSelecting = chart.layout.selection;
           if (!isSelecting) return;
 
@@ -158,7 +158,7 @@ export const cartesianChartConfig = ({
           if (!selection) return;
           const svgRect = t.el.getBoundingClientRect();
 
-          const chart = useChartStore.getState()[chartId];
+          const chart = useChartStore.getState().charts[chartId];
           const isSelecting = chart.layout.selection;
           if (!isSelecting) return;
 

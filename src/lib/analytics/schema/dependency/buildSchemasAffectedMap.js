@@ -1,7 +1,7 @@
-export function buildSchemasAffectedMap(schemasById, schemaOrder) {
+export function buildSchemasAffectedMap(schemasById, schemasOrder) {
   const affected = {};
 
-  schemaOrder.forEach((id) => {
+  schemasOrder.forEach((id) => {
     const schema = schemasById[id];
 
     schema.dependencies?.forEach((dep) => {

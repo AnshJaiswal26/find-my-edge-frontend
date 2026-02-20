@@ -9,7 +9,7 @@ import { useTradeStore } from "@stores";
 export default function AddColumnPopup() {
   const loading = useTableStore((s) => s.loading.createSchema);
   const { addColumn, closePopup } = useTableStore.getState();
-  const { schemasById: columnsById, schemaOrder: columnOrder } =
+  const { schemasById: columnsById, schemasOrder: columnsOrder } =
     useTradeStore.getState();
 
   const builderRef = useRef();
@@ -26,7 +26,7 @@ export default function AddColumnPopup() {
       return;
     }
 
-    if (!isValid(draft, setError, { columnsById, columnOrder })) return;
+    if (!isValid(draft, setError, { columnsById, columnsOrder })) return;
 
     addColumn({
       ...draft,

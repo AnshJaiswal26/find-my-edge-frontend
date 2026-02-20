@@ -5,12 +5,14 @@ import { FilterBuilder } from "@ui";
 import { useChartStore } from "@charts/apex/store/useChartStore";
 
 export default function FilterPopup({ chartId, schemasById }) {
-  const appliedfilters = useChartStore((s) => s[chartId].filters);
+  const appliedfilters = useChartStore((s) => s.charts[chartId].filters);
+
+  console.log(appliedfilters);
 
   const [filters, setFilters] = useState([...appliedfilters]);
 
-  const ySeriesConfig = useChartStore((s) => s[chartId].ySeriesConfig);
-  const xSeriesConfig = useChartStore((s) => s[chartId].xSeriesConfig);
+  const ySeriesConfig = useChartStore((s) => s.charts[chartId].ySeriesConfig);
+  const xSeriesConfig = useChartStore((s) => s.charts[chartId].xSeriesConfig);
 
   const seriesConfig = [...ySeriesConfig, xSeriesConfig];
 
@@ -19,7 +21,7 @@ export default function FilterPopup({ chartId, schemasById }) {
   const addFilter = () => {
     setFilters((f) => [
       ...f,
-      { key: "", operator: "none", value: "", value2: "" },
+      { key: "", operator: "none", value: 0, from: 0, to: 0 },
     ]);
   };
 

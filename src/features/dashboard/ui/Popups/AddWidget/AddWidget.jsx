@@ -1,7 +1,7 @@
 import { Popup } from "@layout";
 import { SidePanelPopup } from "@ui";
 import { useMemo, useRef, useState } from "react";
-import { useDashboardStore } from "@features/dashboard/store";
+import { useDashboardStore } from "@features/dashboard/store/useDashboardStore";
 import AddChartForm from "./AddChartForm";
 import { AddStatsForm } from "./AddStatsForm";
 

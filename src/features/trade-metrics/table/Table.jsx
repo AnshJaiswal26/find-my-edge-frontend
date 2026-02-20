@@ -19,7 +19,7 @@ export function Table() {
   if (isDataLoading) return <Loader />;
 
   return (
-    <div className="flex flex-col flex-1 gap-4 relative">
+    <div className="flex flex-col flex-1 gap-4 relative -m-3">
       <Popups />
 
       <Toolbar
@@ -42,8 +42,7 @@ export function Table() {
           rounded
           text-(--text)
           text-sm
-          max-h-[430px]
-          -mb-4
+          max-h-[440px]
           w-full
           overflow-auto
         "

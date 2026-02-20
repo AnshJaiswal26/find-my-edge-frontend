@@ -82,24 +82,24 @@ export default function useChartCfgGenerator({
   seriesConfig,
   selectedSeries,
 }) {
-  const type = useChartStore((s) => s[chartId].meta.type);
+  const type = useChartStore((s) => s.charts[chartId].meta.type);
 
   const seriesById = useChartStore((s) => s.seriesById);
 
-  // const filteredSeries = useChartStore((s) => s[chartId].series.filtered);
+  // const filteredSeries = useChartStore((s) => s.charts[chartId].series.filtered);
 
   const filteredOrder = useChartStore((s) =>
-    s[chartId].sortedOrder.length !== 0
-      ? s[chartId].sortedOrder
-      : s[chartId].filteredOrder.length !== 0
-        ? s[chartId].filteredOrder
+    s.charts[chartId].sortedOrder.length !== 0
+      ? s.charts[chartId].sortedOrder
+      : s.charts[chartId].filteredOrder.length !== 0
+        ? s.charts[chartId].filteredOrder
         : s.seriesOrder,
   );
 
   const { options, computedSeries } = useMemo(
     () => ({
       options: configGenerator?.[type]({
-        chart: useChartStore.getState()[chartId],
+        chart: useChartStore.getState().charts[chartId],
         chartId,
         order: filteredOrder,
         seriesById,

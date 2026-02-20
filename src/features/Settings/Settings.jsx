@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TabSelector } from "@ui";
 import "./Settings.css";
-import { BrokerIntegeration } from "./BrokerIntegration";
+import { BrokerIntegration } from "./BrokerIntegration";
 import { PerformaceGoalTracking } from "./PerformanceGoalTracking";
 import { RiskTracking } from "./RiskTracking";
 import { ThemeSettings } from "./ThemeSettings";
@@ -27,11 +27,11 @@ function Settings() {
   }, [apiMessage]);
 
   const brokers = [
-    { name: "Zerodha Kite", logo: "Icons/broker/zerodha kite.png" },
-    { name: "Upstox", logo: "Icons/broker/upstox.png" },
+    { name: "Dhan", logo: "Icons/broker/dhan.png" },
     { name: "Angel One", logo: "Icons/broker/angel one.png" },
     { name: "Groww", logo: "Icons/broker/groww.png" },
-    { name: "Dhan", logo: "Icons/broker/dhan.png" },
+    { name: "Upstox", logo: "Icons/broker/upstox.png" },
+    { name: "Zerodha Kite", logo: "Icons/broker/zerodha kite.png" },
   ];
 
   const resetGoals = () => {
@@ -76,7 +76,7 @@ function Settings() {
               resetGoals={resetGoals}
             />
           ) : currentTab === "brokerIntegrations" ? (
-            <BrokerIntegeration
+            <BrokerIntegration
               brokers={brokers}
               apiKeys={apiKeys}
               showVerification={showVerification}

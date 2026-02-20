@@ -1,10 +1,11 @@
 export const PROFIT_FACTOR = {
+  key: "pnl",
+
   init() {
     return { grossProfit: 0, grossLoss: 0 };
   },
 
-  step(state, trade) {
-    const pnl = trade?.pnl;
+  step(state, pnl) {
     if (pnl == null) return;
 
     if (pnl > 0) state.grossProfit += pnl;

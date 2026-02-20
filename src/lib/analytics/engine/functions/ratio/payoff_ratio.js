@@ -1,10 +1,11 @@
 export const PAYOFF_RATIO = {
+  key: "pnl",
+
   init() {
     return { winSum: 0, winCount: 0, lossSum: 0, lossCount: 0 };
   },
 
-  step(state, trade) {
-    const pnl = trade?.pnl;
+  step(state, pnl) {
     if (pnl == null) return;
 
     if (pnl > 0) {

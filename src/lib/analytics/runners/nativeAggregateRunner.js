@@ -6,10 +6,10 @@ export function runNativeAggregateReducer(reducer, fn, ctx) {
   if (total == null) return null;
 
   for (let i = 0; i < total; i++) {
-    const trade = ctx.getTradeAt(i);
-    if (!trade) continue;
+    const value = ctx.getTradeValue(i, reducer.key);
+    if (!value) continue;
 
-    const cont = reducer.step(state, trade);
+    const cont = reducer.step(state, value);
     if (cont === false) break;
   }
 

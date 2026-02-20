@@ -1,2 +1,2 @@
-export { createCell } from "./createCell";
+export { createCellValue } from "./createValueCell";
 export { createRow } from "./createRow";

@@ -4,7 +4,7 @@ export const buildPolarSeriesConfig = (s) => ({
   key: s.key,
   name: s.name ?? s.key,
   type: s.type ?? "number",
-  tooltipLabel: s.tooltipLabel ?? s.name ?? s.key,
+  label: s.label ?? s.name ?? s.key,
   color: s.color,
   prefix: s.prefix ?? "",
   suffix: s.suffix ?? "",
