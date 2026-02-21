@@ -1,4 +1,4 @@
-import { ButtonSelector, Overview } from "@ui";
+import { ButtonSelector, Overview } from "@shared/components/ui";
 import { qtyRoundModePoints } from "@features/risk-management/data";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 

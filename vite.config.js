@@ -14,28 +14,15 @@ export default defineConfig({
   resolve: {
     alias: {
       "@icons": path.resolve(__dirname, "src/assets/icons"),
+      "@shared": path.resolve(__dirname, "src/shared"),
+      "@modules": path.resolve(__dirname, "src/modules"),
 
-      // --- UI Layer ---
-      "@charts": path.resolve(__dirname, "src/components/charts"),
-      "@ui": path.resolve(__dirname, "src/components/ui"),
-      "@layout": path.resolve(__dirname, "src/components/layout"),
-      "@table": path.resolve(__dirname, "src/features/trade-metrics/table"),
-
-      // --- Stores ---
-      "@stores": path.resolve(__dirname, "src/stores"),
-
-      // --- Features / Pages ---
       "@features": path.resolve(__dirname, "src/features"),
+      
+      "@lib": path.resolve(__dirname, "src/lib"),
 
       // --- Data ---
       "@data": path.resolve(__dirname, "src/data"),
-
-      // --- Utils and Helpers ---
-      "@utils": path.resolve(__dirname, "src/utils"),
-      "@lib": path.resolve(__dirname, "src/lib"),
-
-      // --- Hooks ---
-      "@hooks": path.resolve(__dirname, "src/hooks"),
 
       "@Profiler": path.resolve(__dirname, "src/RenderLogger"),
       "@RM": path.resolve(__dirname, "src/pages/RiskManagement"),

@@ -4,23 +4,14 @@
     "baseUrl": "src",
     "paths": {
       "@icons/*": ["assets/icons/*"],
-      "@ui": ["components/ui"],
-      "@ui/*": ["components/ui/*"],
-      "@layout": ["components/layout"],
-
-      "@charts/*": ["components/charts/*"],
-      "@table/*": ["features/trade-metrics/table/*"],
-
-      "@stores": ["stores"],
+      "@shared/*": ["shared/*"],
+      "@modules/*": ["modules/*"],
 
       "@features/*": ["features/*"],
 
       "@data": ["data"],
 
-      "@utils": ["utils"],
       "@lib/*": ["lib/*"],
-
-      "@hooks": ["hooks"],
 
       "@Profiler": ["RenderLogger"]
     }

@@ -1,4 +1,4 @@
-import { Container } from "@layout";
+import { Container } from "@shared/components/layout";
 import {
   ChargesSummarySection,
   TransactionSummarySection,

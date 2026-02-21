@@ -1,4 +1,4 @@
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 import {
   COMPUTATION_MODE,
   computeRowSequence,

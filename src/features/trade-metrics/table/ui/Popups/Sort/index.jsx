@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Popup } from "@layout";
-import { Select } from "@ui";
-import { SORT_TYPE, SORT_OPTIONS } from "@utils";
-import { useTableStore } from "@table/store/useTableStore";
+import { Popup } from "@shared/components/layout";
+import { Select } from "@shared/components/ui";
+import { SORT_TYPE, SORT_OPTIONS } from "@shared/utils";
+import { useTableStore } from "@features/trade-metrics/table/store";
 
 export default function SortPopup() {
   const columnsById = useTableStore((s) => s.columnsById);

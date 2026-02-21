@@ -1,11 +1,11 @@
-import { useEffect, useRef } from "react";
-import { useTableStore } from "./store/useTableStore";
+import { useRef } from "react";
+import { useTableStore } from "./store";
 
 import { Toolbar } from "./ui/Toolbar/Toolbar";
 import { TableHeader } from "./ui/Header/TableHeader";
 import VirtualizedRow from "./ui/Row/VirtualizedRows";
 import Popups from "./ui/Popups";
-import { Loader } from "@layout";
+import { Loader } from "@shared/components/ui";
 
 export function Table() {
   const tableRef = useRef(null);

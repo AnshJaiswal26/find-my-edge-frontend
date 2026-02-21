@@ -14,5 +14,5 @@ export async function apiFetch(url, options = {}) {
     throw new Error(json.message);
   }
 
-  return json.data; //  directly return data
+  return json.data || json; //  directly return data
 }

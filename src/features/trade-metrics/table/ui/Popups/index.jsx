@@ -4,8 +4,8 @@ import FilterPopup from "./Filter";
 import SortPopup from "./Sort";
 import SummaryPopup from "./Summary";
 import GroupByPopup from "./GroupBy";
-import { useTableStore } from "@table/store/useTableStore";
-import { Popup } from "@layout";
+import { useTableStore } from "@features/trade-metrics/table/store";
+import { Popup } from "@shared/components/layout";
 
 const PopupContents = {
   "add-column": AddColumnPopup,

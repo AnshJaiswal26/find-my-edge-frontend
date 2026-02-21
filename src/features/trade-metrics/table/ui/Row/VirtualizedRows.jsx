@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from "react";
-import { buildVisibleRows } from "@table/grouping";
-import { useTableStore } from "@table/store/useTableStore";
+import { buildVisibleRows } from "@features/trade-metrics/table/grouping";
+import { useTableStore } from "@features/trade-metrics/table/store";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { GroupRow } from "./GroupRow";
 import { Row } from "./Row";
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 
 export default function VirtualizedRow({ scrollRef }) {
   const rowsOrder = useTradeStore((s) => s.tradesOrder);

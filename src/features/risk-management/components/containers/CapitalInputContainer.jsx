@@ -1,5 +1,5 @@
-import { Button } from "@ui";
-import { Container } from "@layout";
+import { Button } from "@shared/components/ui";
+import { Container } from "@shared/components/layout";
 import RenderLogger from "@Profiler";
 import { Input } from "@features/risk-management/components";
 import { useRiskManagementStore } from "@features/risk-management/stores";

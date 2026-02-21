@@ -1,5 +1,5 @@
-import { Button, ValidationTooltip } from "@ui";
-import { Container } from "@layout";
+import { Button, ValidationTooltip } from "@shared/components/ui";
+import { Container } from "@shared/components/layout";
 import {
   Input,
   CalculatorSection,

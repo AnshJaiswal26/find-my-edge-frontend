@@ -12,12 +12,12 @@ import {
   Loader2,
   CheckCircle2,
 } from "lucide-react";
-import { Button } from "@ui";
-import { useTableStore } from "@table/store/useTableStore";
+import { Button } from "@shared/components/ui";
+import { useTableStore } from "@features/trade-metrics/table/store";
 import { ColumnInspector } from "../Column/ColumnInspector";
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 import { useState } from "react";
-import { hideTooltip, showTooltip } from "@ui/tooltip";
+import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
 
 export function Toolbar({
   onAddTrade,

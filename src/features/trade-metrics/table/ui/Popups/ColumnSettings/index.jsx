@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTableStore } from "@table/store/useTableStore";
-import { ConfirmationPopup, SidePanelPopup } from "@ui";
+import { useTableStore } from "@features/trade-metrics/table/store";
+import { ConfirmationPopup, PopupSideList } from "@shared/components/ui";
 import { ColumnDetails } from "../shared";
-import { Popup } from "@layout";
-import { isValid } from "@table/validation";
+import { Popup } from "@shared/components/layout";
+import { isValid } from "@features/trade-metrics/table/validation";
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 
 export default function ColumnSettingsPopup() {
   const builderRef = useRef();
@@ -69,7 +69,7 @@ export default function ColumnSettingsPopup() {
       )}
       <Popup.Header title={"Column Settings"} onClose={closePopup} />
       <Popup.Body>
-        <SidePanelPopup
+        <PopupSideList
           items={columnsOrder}
           activeIndex={activeIndex}
           onSelectIndex={setActiveIndex}
@@ -87,7 +87,7 @@ export default function ColumnSettingsPopup() {
           )}
         />
       </Popup.Body>
-      <Popup.MultiButtonFooter
+      <Popup.ActionsFooter
         fnMap={{
           ...(activeColumn.source !== SCHEMA_SOURCE.SYSTEM && {
             Delete: {

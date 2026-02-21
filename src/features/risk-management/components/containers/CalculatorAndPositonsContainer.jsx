@@ -5,8 +5,8 @@ import {
   NormalCalculatorContainer,
 } from "@features/risk-management/components";
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import { Container } from "@layout";
-import { TabSelector } from "@ui";
+import { Container } from "@shared/components/layout";
+import { TabSelector } from "@shared/components/ui";
 
 export function CalculatorAndPositionsContainer() {
   const updateTab = useRiskManagementStore((s) => s.updater.tab);
@@ -18,7 +18,7 @@ export function CalculatorAndPositionsContainer() {
       { key: "risk-management", label: "Risk Management & Pyramiding" },
       { key: "positions", label: "Current Positions" },
     ],
-    []
+    [],
   );
 
   return (

@@ -1,5 +1,5 @@
-import { Section } from "@layout";
-import { useUIStore } from "@stores";
+import { Section } from "@shared/components/layout";
+import { useUIStore } from "@shared/stores";
 
 const THEMES = [
   {

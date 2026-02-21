@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Popup, ErrorText } from "@layout";
-import { GroupByBuilder } from "@ui";
-import { useTableStore } from "@table/store/useTableStore";
-import { useTradeStore } from "@stores";
+import { Popup } from "@shared/components/layout";
+import { GroupByBuilder, ErrorText } from "@shared/components/ui";
+import { useTableStore } from "@features/trade-metrics/table/store";
+import { useTradeStore } from "@shared/stores";
 
 export default function GroupByPopup() {
   const columnsById = useTradeStore((s) => s.schemasById);

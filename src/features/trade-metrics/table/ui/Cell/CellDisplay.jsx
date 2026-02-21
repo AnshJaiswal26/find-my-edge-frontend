@@ -1,11 +1,11 @@
 import { memo, useMemo } from "react";
 
-import { evaluateColorRules, formatForInput } from "@utils";
+import { evaluateColorRules, formatForInput } from "@shared/utils";
 
-import { useTableStore } from "@table/store/useTableStore";
-import { formatValue } from "@utils";
+import { useTableStore } from "@features/trade-metrics/table/store";
+import { formatValue } from "@shared/utils";
 import { explainFormulaFromColumn } from "./cellUtils";
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 
 // const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
 //   if (!type.includes("computed")) return;

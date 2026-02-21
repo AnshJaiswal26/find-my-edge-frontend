@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { debounce } from "lodash";
-import { Button } from "@ui";
+import { Button } from "@shared/components/ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { useClearLogic } from "@features/risk-management/hooks";
 import { CalculatorSectionLayout } from "@features/risk-management/layout";
 
 export default function CalculatorSection({ sectionName }) {
   const updateTransaction = useRiskManagementStore(
-    (s) => s.updater.transaction
+    (s) => s.updater.transaction,
   );
 
   const debouncedsetHoveredSection = useMemo(() => {

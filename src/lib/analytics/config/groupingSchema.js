@@ -1,4 +1,4 @@
-import { FILTER_TYPE } from "@utils";
+import { FILTER_TYPE } from "@shared/utils";
 
 export const GROUPING_OPTIONS = {
   value: "Value",

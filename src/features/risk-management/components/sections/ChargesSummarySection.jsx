@@ -1,12 +1,12 @@
-import { Button } from "@ui";
+import { Button } from "@shared/components/ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import {
   useTradeSummary,
   useChargesLogic,
 } from "@features/risk-management/hooks";
 import { formatINR } from "@features/risk-management/utils";
-import { Section } from "@layout";
-import { useUIStore } from "@stores";
+import { Section } from "@shared/components/layout";
+import { useUIStore } from "@shared/stores";
 import { useRef } from "react";
 
 export default function ChargesSummarySection() {

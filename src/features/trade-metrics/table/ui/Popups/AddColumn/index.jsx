@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import { ColumnDetails } from "../shared";
-import { useTableStore } from "@table/store/useTableStore";
-import { Popup } from "@layout";
+import { useTableStore } from "@features/trade-metrics/table/store";
+import { Popup } from "@shared/components/layout";
 import { createSchema, SCHEMA_SOURCE } from "@lib/analytics/schema";
-import { isValid } from "@table/validation";
-import { useTradeStore } from "@stores";
+import { isValid } from "@features/trade-metrics/table/validation";
+import { useTradeStore } from "@shared/stores";
 
 export default function AddColumnPopup() {
   const loading = useTableStore((s) => s.loading.createSchema);

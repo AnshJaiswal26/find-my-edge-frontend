@@ -1,5 +1,5 @@
 import { buildGroups, draftToSpec } from "@lib/analytics/engine/data";
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 
 export const createGroupSlice = (set, get) => ({
   groupBy: null,

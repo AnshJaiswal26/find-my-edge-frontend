@@ -1,4 +1,5 @@
-import { Badge, Container } from "@layout";
+import { Container } from "@shared/components/layout";
+import { Badge } from "@shared/components/ui";
 import { useEffect, useState } from "react";
 
 export default function CapturedStrategies() {

@@ -1,12 +1,13 @@
-import { createChart } from "@charts/apex/model/factory";
-import { useChartStore } from "@charts/apex/store/useChartStore";
+import { createChart } from "@modules/charts/apex/model/factory";
+import { useChartStore } from "@modules/charts/apex/store";
 import { makeAST } from "@lib/expression";
 
 export const createChartsSlice = (set, get) => ({
   order: [],
 
   loadInitialCharts() {
-    const { order, recomputeStats } = get();
+    const { order, recomputeStats, fetchStats } = get();
+    fetchStats();
     recomputeStats();
     if (order.length > 0) return;
 
@@ -194,11 +195,7 @@ export const createChartsSlice = (set, get) => ({
     });
     set((s) => {
       ["bar", "line", "donut1", "donut2", "radialBar", "radar"].map((ch) => {
-        s.order.push({
-          id: map[ch].meta.id,
-          category: map[ch].meta.category,
-          type: map[ch].meta.type,
-        });
+        s.order.push(map[ch].meta.id);
       });
     });
   },
@@ -212,11 +209,7 @@ export const createChartsSlice = (set, get) => ({
     });
 
     set((s) => {
-      s.order.push({
-        id: chart.meta.id,
-        category: chart.meta.category,
-        type: chart.meta.type,
-      });
+      s.order.push(chart.meta.id);
     });
     closePopup();
   },

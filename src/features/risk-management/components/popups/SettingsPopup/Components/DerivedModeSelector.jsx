@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { ButtonSelector, Overview } from "@ui";
+import { ButtonSelector, Overview } from "@shared/components/ui";
 import { fieldLabels } from "../../../../data/calculatorsData";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { derivedInputPoints } from "@features/risk-management/data/settingsData";
@@ -34,7 +34,7 @@ export default function DerivedModeSelector({ updateSettings }) {
         ? ["tooltip", sec.name + "Tooltip", updates]
         : [];
     },
-    [adjust]
+    [adjust],
   );
 
   const handleDependencyChange = useCallback(
@@ -46,7 +46,7 @@ export default function DerivedModeSelector({ updateSettings }) {
         .filter((sec) => sec.buyPrice < 0 || sec.sellPrice < 0);
 
       const sectionUpdates = invalids.map((sec) =>
-        showTooltipForInvalids(sec, mode, track)
+        showTooltipForInvalids(sec, mode, track),
       );
 
       sectionUpdates.push(["settings", "settings", { [track]: mode }]);
@@ -54,7 +54,7 @@ export default function DerivedModeSelector({ updateSettings }) {
 
       logResult("handleDependencyChange", "Changes Done for " + mode);
     },
-    [showTooltipForInvalids, updateSections]
+    [showTooltipForInvalids, updateSections],
   );
 
   return (

@@ -3,8 +3,8 @@ import { useCalendarTrades } from "./hooks/useCalendarData";
 import CalendarHeader from "./CalendarHeader";
 import CalendarGrid from "./CalendarGrid";
 import PopupSummary from "./PopupSummary";
-import { Container } from "@layout";
-import { Select } from "@ui";
+import { Container } from "@shared/components/layout";
+import { Select } from "@shared/components/ui";
 import { YearMonthBlock } from "./YearlyMonthBlock";
 import { useCalendarStore } from "./store/uesCalendarStore";
 

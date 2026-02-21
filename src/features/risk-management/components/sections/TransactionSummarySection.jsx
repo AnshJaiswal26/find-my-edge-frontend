@@ -2,7 +2,7 @@ import { useRiskManagementStore } from "@features/risk-management/stores";
 import { sectionColor, sectionLabels } from "@features/risk-management/data";
 import { useTradeSummary } from "@features/risk-management/hooks";
 import { formatINR, safe } from "@features/risk-management/utils";
-import { Section } from "@layout";
+import { Section } from "@shared/components/layout";
 
 export default function TransactionSummarySection() {
   return (

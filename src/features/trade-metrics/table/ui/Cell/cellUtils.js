@@ -1,6 +1,6 @@
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
-import { useTableStore } from "@table/store/useTableStore";
-import { formatValue } from "@utils";
+import { useTableStore } from "@features/trade-metrics/table/store";
+import { formatValue } from "@shared/utils";
 
 function isSafeIdentifier(label) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(label);

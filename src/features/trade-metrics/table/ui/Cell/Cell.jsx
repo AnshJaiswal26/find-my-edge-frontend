@@ -1,10 +1,10 @@
 import { memo, useEffect, useState } from "react";
-import { useTableStore } from "@table/store/useTableStore";
+import { useTableStore } from "@features/trade-metrics/table/store";
 import { CellInput } from "./CellInput";
 import { CellSelect } from "./CellSelect";
 import { CellDisplay } from "./CellDisplay";
-import { useCellValue } from "@table/hooks";
-import { useTradeStore } from "@stores";
+import { useCellValue } from "@features/trade-metrics/table/hooks";
+import { useTradeStore } from "@shared/stores";
 
 export const Cell = memo(function Cell({
   rowId,

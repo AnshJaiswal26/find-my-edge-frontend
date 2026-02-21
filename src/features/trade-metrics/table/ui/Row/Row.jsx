@@ -1,8 +1,8 @@
 import { memo, useState } from "react";
-import { useTableStore } from "@table/store/useTableStore";
+import { useTableStore } from "@features/trade-metrics/table/store";
 import { Cell } from "../Cell/Cell";
 import { HighlighterIcon, Trash2 } from "lucide-react";
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 
 export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
   const updateTradeValue = useTradeStore((s) => s.updateTradeValue);

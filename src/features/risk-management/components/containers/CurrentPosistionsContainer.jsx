@@ -1,4 +1,4 @@
-import { Container } from "@layout";
+import { Container } from "@shared/components/layout";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { useClearLogic } from "@features/risk-management/hooks";
 

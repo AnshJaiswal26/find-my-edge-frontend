@@ -1,4 +1,4 @@
-import { useTradeStore, useUIStore } from "@stores";
+import { useTradeStore, useUIStore } from "@shared/stores";
 
 export const createCoreSlice = (set, get) => ({
   columnsById: {},

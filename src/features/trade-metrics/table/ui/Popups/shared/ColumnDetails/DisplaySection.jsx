@@ -1,7 +1,7 @@
-import { Section } from "@layout";
+import { Section } from "@shared/components/layout";
 import { SEMANTIC_TYPES } from "@lib/analytics/schema";
-import { Input, Select } from "@ui";
-import { DEFAULT_FORMATS, FORMATS } from "@utils";
+import { Input, Select } from "@shared/components/ui";
+import { DEFAULT_FORMATS, FORMATS } from "@shared/utils";
 
 export function DisplaySection({ display, onChange, type }) {
   return (

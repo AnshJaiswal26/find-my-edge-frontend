@@ -1,4 +1,4 @@
-import { FILTER_OPERATION_MAP } from "@utils";
+import { FILTER_OPERATION_MAP } from "@shared/utils";
 import { getDateBucket, getTimeBucket } from "./buckets";
 import { matchRange } from "./ranges";
 

@@ -1,4 +1,4 @@
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 import { moveItem } from "../interaction";
 
 export const createDragSlice = (set, get) => ({

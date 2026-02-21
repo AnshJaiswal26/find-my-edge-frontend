@@ -1,30 +1,21 @@
-import React, { Suspense, lazy, useEffect } from "react";
+import { useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
+
 import { pageRoute } from "@data";
-import { Loader, PageContainer } from "@layout";
-import { useTradeStore, useUIStore } from "@stores";
-import { useTableStore } from "@table/store/useTableStore";
-import { useDashboardStore } from "@features/dashboard/store/useDashboardStore";
+import { PageContainer } from "@shared/components/layout";
 
-// Lazy import each page
-const Dashboard = lazy(() => import("./features/dashboard/Dashboard"));
-const TradeMetrics = lazy(
-  () => import("./features/trade-metrics/TradeMetrics"),
-);
-const SheetIntegration = lazy(
-  () => import("./features/sheet-integration/SheetIntegration"),
-);
+import { useTradeStore, useUIStore } from "@shared/stores";
 
-const YearlyCalendar = lazy(() => import("./features/calander/YearlyCalendar"));
-const CapturedStrategies = lazy(
-  () => import("./features/captured-strategies/CapturedStrategies"),
-);
-const SetupRules = lazy(() => import("./features/setups-rules/SetupRules"));
-const Settings = lazy(() => import("./features/settings/Settings"));
-const Mistakes = lazy(() => import("./features/mistakes/Mistakes"));
-const RiskManagement = lazy(
-  () => import("./features/risk-management/RiskManagement"),
-);
+// ✅ Direct imports (no lazy)
+import Dashboard from "./features/dashboard/Dashboard";
+import TradeMetrics from "./features/trade-metrics/TradeMetrics";
+import SheetIntegration from "./features/sheet-integration/SheetIntegration";
+import YearlyCalendar from "./features/calander/YearlyCalendar";
+import CapturedStrategies from "./features/captured-strategies/CapturedStrategies";
+import SetupRules from "./features/setups-rules/SetupRules";
+import Settings from "./features/settings/Settings";
+import Mistakes from "./features/mistakes/Mistakes";
+import RiskManagement from "./features/risk-management/RiskManagement";
 
 function Layout() {
   return (
@@ -33,21 +24,17 @@ function Layout() {
     </PageContainer>
   );
 }
-const suspense = (Component) => (
-  <Suspense fallback={<Loader />}>
-    <Component />
-  </Suspense>
-);
 
 function App() {
   useEffect(() => {
     const { setSelect, setColorPicker } = useUIStore.getState();
 
-    const fetchTrades = async () => {
+    // ✅ Fetch immediately (no artificial delay)
+    const init = async () => {
       await useTradeStore.getState().fetchAll();
-      useTableStore.getState().hydrateSchema();
     };
-    setTimeout(() => fetchTrades(), 300);
+
+    init();
 
     const close = () => {
       setSelect(null);
@@ -62,13 +49,13 @@ function App() {
       const buttonEl = document.getElementById(activeSelect?.buttonId);
       const listEl = document.getElementById(activeSelect?.listId);
       const triggerEl = document.getElementById(activeColorPicker?.triggerId);
-      const palleteEl = document.getElementById(activeColorPicker?.paletteId);
+      const paletteEl = document.getElementById(activeColorPicker?.paletteId);
 
       if (
         buttonEl?.contains(e.target) ||
         listEl?.contains(e.target) ||
         triggerEl?.contains(e.target) ||
-        palleteEl?.contains(e.target)
+        paletteEl?.contains(e.target)
       ) {
         return;
       }
@@ -92,38 +79,30 @@ function App() {
       window.removeEventListener("mousedown", handlePointerDown);
       window.removeEventListener("resize", close);
       document.removeEventListener("visibilitychange", handleVisibility);
-      window.addEventListener("scroll", handlePointerDown);
+      window.removeEventListener("scroll", handlePointerDown); // ✅ FIXED
     };
   }, []);
 
   return (
-    <Suspense fallback={<Loader />}>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path={pageRoute.dashboard} element={suspense(Dashboard)} />
-          <Route
-            path={pageRoute.tradeMetrics}
-            element={suspense(TradeMetrics)}
-          />
-          <Route
-            path={pageRoute.sheetIntegration}
-            element={suspense(SheetIntegration)}
-          />
-          <Route path={pageRoute.calendar} element={suspense(YearlyCalendar)} />
-          <Route path={pageRoute.setupRules} element={suspense(SetupRules)} />
-          <Route
-            path={pageRoute.capturedStrategies}
-            element={suspense(CapturedStrategies)}
-          />
-          <Route path={pageRoute.settings} element={suspense(Settings)} />
-          <Route path={pageRoute.mistakes} element={suspense(Mistakes)} />
-          <Route
-            path={pageRoute.riskManagement}
-            element={suspense(RiskManagement)}
-          />
-        </Route>
-      </Routes>
-    </Suspense>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path={pageRoute.dashboard} element={<Dashboard />} />
+        <Route path={pageRoute.tradeMetrics} element={<TradeMetrics />} />
+        <Route
+          path={pageRoute.sheetIntegration}
+          element={<SheetIntegration />}
+        />
+        <Route path={pageRoute.calendar} element={<YearlyCalendar />} />
+        <Route path={pageRoute.setupRules} element={<SetupRules />} />
+        <Route
+          path={pageRoute.capturedStrategies}
+          element={<CapturedStrategies />}
+        />
+        <Route path={pageRoute.settings} element={<Settings />} />
+        <Route path={pageRoute.mistakes} element={<Mistakes />} />
+        <Route path={pageRoute.riskManagement} element={<RiskManagement />} />
+      </Route>
+    </Routes>
   );
 }
 

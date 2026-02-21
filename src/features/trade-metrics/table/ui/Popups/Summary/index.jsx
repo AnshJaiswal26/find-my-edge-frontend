@@ -1,10 +1,10 @@
-import { Popup } from "@layout";
-import { useTableStore } from "@table/store/useTableStore";
+import { Popup } from "@shared/components/layout";
+import { useTableStore } from "@features/trade-metrics/table/store";
 import { MetricStatsRow } from "./MetricStatsRow";
 import { KpiGrid } from "./KpiGrid";
 import { MetricTableHeader } from "./MetricTableHeader";
-import { formatValue } from "@utils";
-import { useTradeStore } from "@stores";
+import { formatValue } from "@shared/utils";
+import { useTradeStore } from "@shared/stores";
 import { SCHEMA_TYPES, SEMANTIC_TYPES } from "@lib/analytics/schema";
 
 function Divider() {

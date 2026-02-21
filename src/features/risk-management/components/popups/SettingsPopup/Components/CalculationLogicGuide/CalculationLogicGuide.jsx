@@ -1,4 +1,4 @@
-import { TabSelector } from "@ui";
+import { TabSelector } from "@shared/components/ui";
 import {
   Arrow,
   CalculatedFields,
@@ -17,12 +17,12 @@ export default function CalculationLogicGuide({ updateSettings }) {
     useCalculationGuide();
 
   const selectedSection = useRiskManagementStore(
-    (s) => s.settings.selectedSection
+    (s) => s.settings.selectedSection,
   );
 
   const isTargetOrSl = useMemo(
     () => selectedSection === "Target" || selectedSection === "Stop-Loss",
-    [selectedSection]
+    [selectedSection],
   );
 
   const tabs = [

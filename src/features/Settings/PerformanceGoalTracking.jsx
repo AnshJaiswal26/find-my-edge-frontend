@@ -1,5 +1,5 @@
-import { Section } from "@layout";
-import { Input } from "@ui";
+import { Section } from "@shared/components/layout";
+import { Input } from "@shared/components/ui";
 
 export function PerformaceGoalTracking({
   dayProfitTarget,

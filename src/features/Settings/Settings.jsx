@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TabSelector } from "@ui";
+import { TabSelector } from "@shared/components/ui";
 import "./Settings.css";
 import { BrokerIntegration } from "./BrokerIntegration";
 import { PerformaceGoalTracking } from "./PerformanceGoalTracking";

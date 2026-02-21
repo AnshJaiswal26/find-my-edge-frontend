@@ -3,7 +3,7 @@ import { debounce } from "lodash";
 import "./Inputs.css";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 
-import { ValidationTooltip } from "@ui";
+import { ValidationTooltip } from "@shared/components/ui";
 import {
   checkSpecialCase,
   handleChange,
@@ -56,7 +56,7 @@ function NormalInput({
   const showTooltip = useRiskManagementStore((s) => s.updater.tooltip);
 
   const tooltip = useRiskManagementStore(
-    (s) => s?.[sectionName + "Tooltip"]?.[field]
+    (s) => s?.[sectionName + "Tooltip"]?.[field],
   );
 
   const derivedInput = useRiskManagementStore((s) => s.settings.derivedInput);
@@ -105,8 +105,8 @@ function NormalInput({
     ? currentVal < 0
       ? "text-[#fe5a5a]"
       : currentVal > 0
-      ? "text-[#05ab72]"
-      : "text-[#5d5d5d] dark:text-white"
+        ? "text-[#05ab72]"
+        : "text-[#5d5d5d] dark:text-white"
     : fieldColors[field];
 
   const debouncedChange = useMemo(
@@ -116,10 +116,10 @@ function NormalInput({
           sectionName,
           field,
           val,
-          useRiskManagementStore.getState()
+          useRiskManagementStore.getState(),
         );
       }, 20),
-    [handleChange]
+    [handleChange],
   );
 
   return (
@@ -140,13 +140,13 @@ function NormalInput({
               sectionName,
               field,
               e.target.value,
-              state.inputPrev
+              state.inputPrev,
             );
             if (caseValue !== null)
               state.updater.section(
                 sectionName,
                 { [field]: caseValue },
-                { round: false }
+                { round: false },
               );
           }}
           readOnly={readOnly}

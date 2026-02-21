@@ -1,5 +1,5 @@
-import { Section } from "@layout";
-import { Button, Input } from "@ui";
+import { Section } from "@shared/components/layout";
+import { Button, Input } from "@shared/components/ui";
 
 export function RiskTracking({
   riskPerTrade,

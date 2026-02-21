@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useTradeStore } from "@stores";
-import { formatDate } from "@utils";
+import { useTradeStore } from "@shared/stores";
+import { formatDate } from "@shared/utils";
 
 export const useCalendarTrades = (year, month) => {
   const tradesById = useTradeStore((s) => s.tradesById);

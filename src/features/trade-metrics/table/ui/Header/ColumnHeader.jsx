@@ -1,9 +1,9 @@
 import { GripHorizontal, LockKeyholeIcon, RefreshCcwDot } from "lucide-react";
 import { useRef } from "react";
-import { useTableStore } from "@table/store/useTableStore";
-import { createColumnDragController } from "@table/interaction/columnDragController";
-import { useTradeStore } from "@stores";
-import { showTooltip, hideTooltip } from "@ui/tooltip";
+import { useTableStore } from "@features/trade-metrics/table/store";
+import { createColumnDragController } from "@features/trade-metrics/table/interaction/columnDragController";
+import { useTradeStore } from "@shared/stores";
+import { showTooltip, hideTooltip } from "@shared/components/ui/tooltip";
 
 const controller = createColumnDragController();
 

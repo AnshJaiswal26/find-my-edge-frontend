@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./SheetIntegration.module.css";
-import { Button, Input, Select } from "@ui";
+import { Button, Input, Select } from "@shared/components/ui";
 
 // Small UI helpers
 function Card({ children, className = "" }) {

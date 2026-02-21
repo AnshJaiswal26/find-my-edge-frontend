@@ -1,5 +1,5 @@
-import { useTradeStore } from "@stores";
-import { SORT_OPERATION_MAP } from "@utils";
+import { useTradeStore } from "@shared/stores";
+import { SORT_OPERATION_MAP } from "@shared/utils";
 
 export const createSortSlice = (set, get) => ({
   sort: {

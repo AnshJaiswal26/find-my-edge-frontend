@@ -1,4 +1,4 @@
-import { FILTER_OPERATION_MAP } from "@utils";
+import { FILTER_OPERATION_MAP } from "@shared/utils";
 
 export const createFilterSlice = (set, get) => ({
   filters: [],

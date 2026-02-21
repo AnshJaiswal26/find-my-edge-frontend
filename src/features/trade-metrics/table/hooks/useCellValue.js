@@ -1,4 +1,4 @@
-import { useTradeStore } from "@stores";
+import { useTradeStore } from "@shared/stores";
 
 export const useCellValue = (rowId, colId) =>
   useTradeStore((s) => {

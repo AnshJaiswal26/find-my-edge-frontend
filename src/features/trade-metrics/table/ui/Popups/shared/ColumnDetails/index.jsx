@@ -6,11 +6,12 @@ import {
   Input,
   Select,
   SelectOptionsEditor,
-} from "@ui";
+  ErrorText,
+} from "@shared/components/ui";
 import { DisplaySection } from "./DisplaySection";
-import { ErrorText, Section } from "@layout";
+import { Section } from "@shared/components/layout";
 
-import { DEFAULT_FORMATS } from "@utils";
+import { DEFAULT_FORMATS } from "@shared/utils";
 import {
   BASE_TYPES,
   SCHEMA_COMPUTE_MODE,

@@ -1,7 +1,5 @@
-// import { DurationInput } from "@ui";
-
-import { formatForInput, parseInputValue, INPUT_TYPES } from "@utils";
-import { useTradeStore } from "@stores";
+import { formatForInput, parseInputValue, INPUT_TYPES } from "@shared/utils";
+import { useTradeStore } from "@shared/stores";
 
 export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
   const type = useTradeStore((s) => s.schemasById[colId].semanticType);

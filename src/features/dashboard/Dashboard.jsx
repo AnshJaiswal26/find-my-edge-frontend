@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useRef } from "react";
-import { useChartStore } from "@charts/apex/store/useChartStore";
-import { ChartPopups, CustomApexChart } from "@charts/index";
-
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GridStack } from "gridstack";
-import "gridstack/dist/gridstack.min.css";
+
+import { ChartPopups } from "@modules/charts";
+
 import "gridstack/dist/gridstack.min.css";
 
-import { Button } from "@ui";
-import StatCards from "./components/StatsGrid";
-import { Container } from "@layout";
-import { useDashboardStore } from "./store/useDashboardStore";
-import { AddWidget } from "./ui/Popups";
-import { useTradeStore } from "@stores";
+import { Button } from "@shared/components/ui";
+import { Container } from "@shared/components/layout";
+
+import { useDashboardStore } from "./store";
+import { AddWidgetPopup } from "./components/ui/Popups";
+import { ChartGridItem, StatsGrid } from "./components/feature";
+import { useTradeStore } from "@shared/stores";
+import DashboardSkeleton from "./components/ui/DashboardSkeleton";
 
 const getColumnCount = () => {
   const w = document.innerWidth;
@@ -29,6 +30,8 @@ export default function Dashboard() {
   const schemasById = useTradeStore((s) => s.schemasById);
   const schemasOrder = useTradeStore((s) => s.schemasOrder);
 
+  const [loading, setLoading] = useState(true);
+
   const seriesById = useMemo(() => {
     const result = {};
 
@@ -42,7 +45,13 @@ export default function Dashboard() {
     return result;
   }, [seriesOrder, tradesById, derivedByTradeId]);
 
-  console.log(seriesById);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  if (loading) return <DashboardSkeleton />;
 
   return (
     <>
@@ -52,7 +61,7 @@ export default function Dashboard() {
         schemasById={schemasById}
         schemasOrder={schemasOrder}
       />
-      <AddWidget
+      <AddWidgetPopup
         seriesById={seriesById}
         seriesOrder={seriesOrder}
         schemasById={schemasById}
@@ -90,7 +99,7 @@ export default function Dashboard() {
         </div>
       </Container>
 
-      <StatCards />
+      <StatsGrid />
 
       {/* <TopPieCharts
         data={"demo"}
@@ -120,9 +129,6 @@ function ChartDashboard({
   const isResponsiveChange = useRef(false);
 
   const order = useDashboardStore((s) => s.order);
-  const deleteChart = useDashboardStore((s) => s.deleteChart);
-
-  const savedLayout = useDashboardStore((s) => s.chartGridLayout);
 
   useEffect(() => {
     if (grid.current) return;
@@ -187,7 +193,7 @@ function ChartDashboard({
     if (!grid.current) return;
 
     requestAnimationFrame(() => {
-      order.forEach(({ id }) => {
+      order.forEach((id) => {
         const el = gridRef.current.querySelector(`[gs-id="${id}"]`);
         if (el && !el.gridstackNode) {
           grid.current.makeWidget(el);
@@ -203,39 +209,16 @@ function ChartDashboard({
 
   return (
     <div className="grid-stack" ref={gridRef}>
-      {order.map(({ id, type, category }) => {
-        const layout = savedLayout?.[id];
-
-        return (
-          <div
-            key={id}
-            className="grid-stack-item"
-            gs-id={id}
-            gs-x={layout?.x}
-            gs-y={layout?.y}
-            gs-w={layout?.w ?? (category === "group" ? 10 : 16)}
-            gs-h={layout?.h ?? 10}
-            gs-min-w={category === "group" ? 8 : 12}
-            gs-min-h={8}
-            gs-max-h={100}
-          >
-            <div className="grid-stack-item-content rounded-[8px] shadow-xl">
-              <div className="h-full relative">
-                <CustomApexChart
-                  chartId={id}
-                  type={type}
-                  category={category}
-                  seriesById={seriesById}
-                  seriesOrder={seriesOrder}
-                  schemasById={schemasById}
-                  schemasOrder={schemasOrder}
-                  onRemove={deleteChart}
-                />
-              </div>
-            </div>
-          </div>
-        );
-      })}
+      {order.map((id, index) => (
+        <ChartGridItem
+          key={index}
+          id={id}
+          seriesById={seriesById}
+          seriesOrder={seriesOrder}
+          schemasById={schemasById}
+          schemasOrder={schemasOrder}
+        />
+      ))}
     </div>
   );
 }

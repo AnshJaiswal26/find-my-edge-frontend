@@ -6,7 +6,7 @@ import {
   runNativeWindowReducer,
   runNativeAggregateReducer,
 } from "@lib/analytics/runners";
-import { deformatValue } from "@utils";
+import { deformatValue } from "@shared/utils";
 
 const runReducers = {
   BASE: runBaseReducer,

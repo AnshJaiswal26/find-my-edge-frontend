@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@ui";
+import { Button } from "@shared/components/ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 
 import { CalculatorSectionLayout } from "@features/risk-management/layout";

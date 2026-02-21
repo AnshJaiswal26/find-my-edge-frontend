@@ -1,0 +1,66 @@
+import { schemaApi } from "@lib/api/schema.api";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+
+/* ---------------- HELPERS ---------------- */
+
+const validateSchema = (schema) => {
+  if (!schema) throw new Error("Schema is required");
+  if (!schema.label) throw new Error("Schema must have a label");
+  if (!schema.semanticType) throw new Error("Schema must have a semantic type");
+
+  if (schema.source === SCHEMA_SOURCE.COMPUTED && !schema.ast) {
+    throw new Error("Computed schema must have AST");
+  }
+};
+
+/* ---------------- SERVICE ---------------- */
+
+export const schemaService = {
+  /* -------- CREATE -------- */
+  async create(schema) {
+    validateSchema(schema);
+
+    const res = await schemaApi.create(schema);
+
+    // normalize response
+    return {
+      schema: res?.schema,
+      order: res?.order || [],
+    };
+  },
+
+  /* -------- GET ALL -------- */
+  async getAll() {
+    const res = await schemaApi.getAll();
+
+    return {
+      schemasById: res?.schemasById || {},
+      order: res?.order || [],
+    };
+  },
+
+  /* -------- UPDATE -------- */
+  async update(id, updates) {
+    if (!id) throw new Error("Schema id is required");
+
+    validateSchema(updates);
+
+    const res = await schemaApi.update(id, updates);
+
+    return {
+      schema: res?.schema,
+      order: res?.order || [],
+    };
+  },
+
+  /* -------- DELETE -------- */
+  async delete(id) {
+    if (!id) throw new Error("Schema id is required");
+
+    const res = await schemaApi.delete(id);
+
+    return {
+      order: res?.order || [],
+    };
+  },
+};

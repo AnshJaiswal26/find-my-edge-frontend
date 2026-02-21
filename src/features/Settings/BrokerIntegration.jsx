@@ -1,4 +1,4 @@
-import { Section } from "@layout";
+import { Section } from "@shared/components/layout";
 
 export function BrokerIntegration({ brokers }) {
   return (

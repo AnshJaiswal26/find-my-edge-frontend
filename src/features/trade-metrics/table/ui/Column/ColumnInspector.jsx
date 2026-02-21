@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
-import { useTableStore } from "@table/store/useTableStore";
+import { useTableStore } from "@features/trade-metrics/table/store";
 import { ChevronLeft } from "lucide-react";
-import { Divider } from "@layout";
-import { SCHEMA_SOURCE, SCHEMA_TYPES } from "@lib/analytics/schema";
-import { useTradeStore } from "@stores";
+import { Divider } from "@shared/components/ui";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { useTradeStore } from "@shared/stores";
 
 export function ColumnInspector() {
   const selectedColId = useTableStore((s) => s.selectedColumn?.id);

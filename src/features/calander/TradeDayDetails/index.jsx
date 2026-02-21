@@ -1,4 +1,4 @@
-import { Container } from "@layout";
+import { Container } from "@shared/components/layout";
 import { useCalendarStore } from "../store/uesCalendarStore";
 import { Cell } from "./Cell";
 import { Card } from "./Card";

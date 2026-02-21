@@ -1,5 +1,5 @@
 import { ColumnHeader } from "./ColumnHeader";
-import { useTableStore } from "@table/store/useTableStore";
+import { useTableStore } from "@features/trade-metrics/table/store";
 
 export function TableHeader({ tableRef }) {
   const columnsOrder = useTableStore((s) => s.columnsOrder);

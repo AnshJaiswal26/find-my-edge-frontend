@@ -1,6 +1,6 @@
-import { Popup } from "@layout";
-import { useTableStore } from "@table/store/useTableStore";
-import { FilterBuilder } from "@ui";
+import { Popup } from "@shared/components/layout";
+import { useTableStore } from "@features/trade-metrics/table/store";
+import { FilterBuilder } from "@shared/components/ui";
 
 export default function FilterPopup() {
   const filters = useTableStore((s) => s.filters);
