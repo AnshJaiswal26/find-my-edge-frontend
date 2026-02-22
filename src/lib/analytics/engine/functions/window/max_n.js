@@ -1,4 +1,11 @@
 export const MAX_N = {
+  arity: 2,
+  argTypes: ["number", "number"],
+  returnType: "number",
+  semantic: { args: [["number", "duration"], "number"], return: "same" },
+  signature: "MAX_N(expr, n)",
+  description: "Rolling max over N rows",
+
   init(n) {
     if (n <= 0) return null;
     return { n, seen: 0, max: null };

@@ -84,7 +84,7 @@ export const createComputeSlice = (set, get) => ({
     schemasOrder.forEach((id) => {
       const schema = schemasById[id];
 
-      if (schema.computationMode !== "window") return;
+      if (schema.mode !== "cumulative") return;
 
       // 🔥 grouped view (optional)
       if (groups) {

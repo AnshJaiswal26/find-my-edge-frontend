@@ -1,4 +1,11 @@
 export const STDDEV = {
+  arity: 1,
+  argTypes: ["number"],
+  returnType: "number",
+  semantic: { args: ["number"], return: "number" },
+  signature: "STDDEV(expr)",
+  description: "Standard deviation of values",
+
   init: () => ({ n: 0, mean: 0, M2: 0 }),
   step: (s, x) => {
     if (x == null) return;

@@ -1,4 +1,15 @@
 export const DAYS = {
+  arity: 1,
+  argTypes: ["number"],
+  returnType: "number",
+
+  semantic: {
+    args: ["number"],
+    return: "duration",
+  },
+  signature: "DAYS(n)",
+  description: "Convert days to duration",
+
   init() {
     return { value: null };
   },

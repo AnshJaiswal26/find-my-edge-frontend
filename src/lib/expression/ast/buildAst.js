@@ -1,14 +1,15 @@
 import {
   FUNCTION_REGISTRY,
   FUNCTION_ALLOW_BY_MODE,
-} from "@lib/analytics/engine/functions/registry";
+} from "@lib/analytics/engine/functions";
+import { FUNCTION_TYPE } from "@lib/analytics/engine/functions/type";
 
 function containsWindowFunction(node) {
   if (!node) return false;
 
   if (node.type === "function") {
     const def = FUNCTION_REGISTRY[node.name];
-    if (def?.type === "WINDOW") return true;
+    if (def?.type === FUNCTION_TYPE.WINDOW) return true;
 
     return node.args.some(containsWindowFunction);
   }
@@ -106,13 +107,13 @@ export function buildAST(postfix, type) {
 
     /* ---------- STRING ---------- */
     if (t.type === "string") {
-      stack.push({ type: "constant", value: t.value });
+      stack.push({ type: "constant", value: t.value, valueType: "string" });
       continue;
     }
 
     /* ---------- NUMBER ---------- */
     if (t.type === "number") {
-      stack.push({ type: "constant", value: t.value });
+      stack.push({ type: "constant", value: t.value, valueType: "number" });
       continue;
     }
 

@@ -1,4 +1,4 @@
-import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
 
 export function validateExpression(ast) {
   if (!ast) throw new Error("Expression is empty");

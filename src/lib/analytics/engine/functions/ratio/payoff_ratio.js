@@ -1,6 +1,13 @@
 export const PAYOFF_RATIO = {
   key: "pnl",
 
+  arity: 0,
+  argTypes: [],
+  returnType: "number",
+  semantic: { args: [], return: "number" },
+  signature: "PAYOFF_RATIO()",
+  description: "Average win divided by average loss",
+
   init() {
     return { winSum: 0, winCount: 0, lossSum: 0, lossCount: 0 };
   },

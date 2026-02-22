@@ -1,6 +1,13 @@
 export const LOSS_FACTOR = {
   key: "pnl",
 
+  arity: 0,
+  argTypes: [],
+  returnType: "number",
+  semantic: { args: [], return: "number" },
+  signature: "LOSS_FACTOR()",
+  description: "Gross loss divided by gross profit",
+
   init() {
     return { grossProfit: 0, grossLoss: 0 };
   },

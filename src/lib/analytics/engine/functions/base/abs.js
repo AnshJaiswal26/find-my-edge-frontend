@@ -1,4 +1,11 @@
 export const ABS = {
+  arity: 1,
+  argTypes: ["number"],
+  returnType: "number",
+  semantic: { args: ["number"], return: "number" },
+  signature: "ABS(expr)",
+  description: "Absolute value",
+
   init() {
     return { value: null };
   },

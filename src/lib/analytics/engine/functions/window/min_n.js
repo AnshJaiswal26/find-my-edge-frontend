@@ -1,4 +1,11 @@
 export const MIN_N = {
+  arity: 2,
+  argTypes: ["number", "number"],
+  returnType: "number",
+  semantic: { args: [["number", "duration"], "number"], return: "same" },
+  signature: "MIN_N(expr, n)",
+  description: "Rolling min over N rows",
+
   init(n) {
     if (n <= 0) return null;
     return {

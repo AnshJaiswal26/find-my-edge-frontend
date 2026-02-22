@@ -1,4 +1,11 @@
 export const PERCENT_OF = {
+  arity: 2,
+  argTypes: ["number", "number"],
+  returnType: "number",
+  semantic: { args: ["number", "number"], return: "number" },
+  signature: "PERCENT_OF(part, total)",
+  description: "What percent one value is of another",
+
   init: () => ({ part: 0, total: 0 }),
 
   step: (s, part, total) => {

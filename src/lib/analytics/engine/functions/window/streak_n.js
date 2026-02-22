@@ -1,4 +1,11 @@
 export const STREAK_N = {
+  arity: 2,
+  argTypes: ["boolean", "number"],
+  returnType: "number",
+  semantic: { args: ["boolean", "number"], return: "number" },
+  signature: "STREAK_N(condition, n)",
+  description: "Longest consecutive TRUE streak within last N rows",
+
   init(n) {
     if (n <= 0) return null;
     return {

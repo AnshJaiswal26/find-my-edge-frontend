@@ -174,7 +174,7 @@ export const createStatsSlice = (set, get) => ({
       if (updates.ast) {
         stat.value = computeStat(stat.ast, tradeStore);
       }
-    });
+  });
 
     try {
       await statService.update(page, id, updates); //  UPDATED

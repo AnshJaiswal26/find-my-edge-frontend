@@ -1,4 +1,14 @@
 export const SECONDS = {
+  arity: 1,
+  argTypes: ["number"],
+  returnType: "number",
+  semantic: {
+    args: ["number"],
+    return: "duration",
+  },
+  signature: "SECONDS(n)",
+  description: "Convert seconds to duration",
+
   init() {
     return { value: null };
   },

@@ -1,4 +1,11 @@
 export const CLAMP = {
+  arity: 3,
+  argTypes: ["number", "number", "number"], // value, min, max
+  returnType: "number",
+  semantic: { args: ["number", "number", "number"], return: "number" },
+  signature: "CLAMP(expr, min, max)",
+  description: "Clamp value to range",
+
   init() {
     return { value: null };
   },

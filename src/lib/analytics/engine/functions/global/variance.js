@@ -1,4 +1,11 @@
 export const VARIANCE = {
+  arity: 1,
+  argTypes: ["number"],
+  returnType: "number",
+  semantic: { args: ["number"], return: "number" },
+  signature: "VARIANCE(expr)",
+  description: "Variance of values",
+
   init: () => ({ n: 0, mean: 0, M2: 0 }),
   step: (s, x) => {
     if (x == null) return;

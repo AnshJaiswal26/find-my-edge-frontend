@@ -1,4 +1,11 @@
 export const LOSS_RATE = {
+  arity: 0,
+  argTypes: [],
+  returnType: "number",
+  semantic: { args: [], return: "number" },
+  signature: "LOSS_RATE()",
+  description: "Losing trades divided by total trades",
+
   key: "pnl",
 
   init() {

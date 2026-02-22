@@ -1,4 +1,11 @@
 export const ROUND = {
+  arity: 2,
+  argTypes: ["number", "number"], // value, digits
+  returnType: "number",
+  semantic: { args: ["number", "number"], return: "number" },
+  signature: "ROUND(expr, digits)",
+  description: "Round to N decimal places",
+
   init() {
     return { value: null };
   },

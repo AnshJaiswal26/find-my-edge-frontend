@@ -1,7 +1,7 @@
 import {
   FUNCTION_REGISTRY,
   FUNCTION_ALLOW_BY_MODE,
-} from "@lib/analytics/engine/functions/registry";
+} from "@lib/analytics/engine/functions";
 
 function getNodeType(node, mode, schemasById) {
   if (!node) return "any";

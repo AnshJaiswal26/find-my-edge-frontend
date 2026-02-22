@@ -1,4 +1,11 @@
 export const FACTOR = {
+  arity: 2,
+  argTypes: ["number", "number"],
+  returnType: "number",
+  semantic: { args: ["number", "number"], return: "number" },
+  signature: "FACTOR(a, b)",
+  description: "Magnitude comparison between two values (a / b)",
+
   init: () => ({ a: 0, b: 0 }),
 
   step: (s, a, b) => {

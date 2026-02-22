@@ -1,6 +1,13 @@
 export const PROFIT_FACTOR = {
   key: "pnl",
 
+  arity: 0,
+  argTypes: [],
+  returnType: "number",
+  semantic: { args: [], return: "number" },
+  signature: "PROFIT_FACTOR()",
+  description: "Gross profit divided by gross loss",
+
   init() {
     return { grossProfit: 0, grossLoss: 0 };
   },

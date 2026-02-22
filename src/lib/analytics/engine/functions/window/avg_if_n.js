@@ -1,4 +1,15 @@
 export const AVG_IF_N = {
+  arity: 3,
+  argTypes: ["number", "boolean", "number"],
+  returnType: "number",
+  semantic: {
+    args: [["number", "duration"], "boolean", "number"],
+    return: "same",
+  },
+  signature: "AVG_IF_N(expr, condition, n)",
+  description:
+    "Rolling average of expr over last N rows where condition is true",
+
   init(n) {
     if (n <= 0) return null;
     return {

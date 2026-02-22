@@ -1,4 +1,4 @@
-import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
 import {
   runWindowReducer,
   runBaseReducer,
@@ -155,8 +155,8 @@ export function evaluateExpression(ast, ctx = {}) {
     }
 
     case "function": {
-      const entry = FUNCTION_REGISTRY[ast.fn.toUpperCase()];
-      if (!entry?.exec && !entry?.reducer) return null;
+      const reducer = FUNCTION_REGISTRY[ast.fn.toUpperCase()];
+      if (!reducer?.exec && !reducer?.reducer) return null;
 
       // Prevent aggregate reducers from running in row mode
       // if (
@@ -168,9 +168,9 @@ export function evaluateExpression(ast, ctx = {}) {
       //   return null;
       // }
 
-      return entry?.reducer
-        ? runReducers[entry.type](entry.reducer, ast, ctx)
-        : entry.exec(ast, ctx);
+      return reducer?.exec
+        ? reducer.exec(ast, ctx)
+        : runReducers[reducer.type](reducer, ast, ctx);
     }
 
     default:

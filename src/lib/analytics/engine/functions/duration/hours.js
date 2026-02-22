@@ -1,4 +1,14 @@
 export const HOURS = {
+  arity: 1,
+  argTypes: ["number"],
+  returnType: "number",
+  semantic: {
+    args: ["number"],
+    return: "duration",
+  },
+  signature: "HOURS(n)",
+  description: "Convert hours to duration",
+
   init() {
     return { value: null };
   },

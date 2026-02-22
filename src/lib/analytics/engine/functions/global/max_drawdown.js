@@ -1,4 +1,11 @@
 export const MAX_DRAWDOWN = {
+  arity: 1,
+  argTypes: ["number"],
+  returnType: "number",
+  semantic: { args: ["number"], return: "number" },
+  signature: "MAX_DRAWDOWN(expr)",
+  description: "Maximum drawdown over entire sequence",
+
   init() {
     return { peak: -Infinity, equity: 0, maxDD: 0 };
   },

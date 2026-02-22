@@ -1,4 +1,11 @@
 export const EXPECTANCY_N = {
+  arity: 2,
+  argTypes: ["number", "number"],
+  returnType: "number",
+  semantic: { args: ["number", "number"], return: "number" },
+  signature: "EXPECTANCY_N(expr, n)",
+  description: "Trade expectancy (win rate × avg win − loss rate × avg loss)",
+
   init(n) {
     if (n <= 0) return null;
 

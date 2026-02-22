@@ -1,7 +1,7 @@
 import {
   FUNCTION_REGISTRY,
   FUNCTION_ALLOW_BY_MODE,
-} from "@lib/analytics/engine/functions/registry";
+} from "@lib/analytics/engine/functions";
 import { ChevronDown } from "lucide-react";
 import React, { useMemo, useState } from "react";
 

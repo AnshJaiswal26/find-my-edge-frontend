@@ -100,7 +100,8 @@ export const createComputeSlice = (set, get) => ({
       } else if (payload.reason === "trade-delete") {
         schemasOrder.forEach((id) => {
           const schema = schemasById[id];
-          if (!schema || schema?.mode !== "cumulative") return;
+          if (!schema || schema?.mode !== "cumulative" || !isComputed(schema))
+            return;
 
           compute({
             schema: schema,

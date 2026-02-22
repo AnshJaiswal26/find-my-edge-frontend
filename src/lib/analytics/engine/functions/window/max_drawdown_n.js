@@ -1,4 +1,11 @@
 export const MAX_DRAWDOWN_N = {
+  arity: 2,
+  argTypes: ["number", "number"],
+  returnType: "number",
+  semantic: { args: ["number", "number"], return: "number" },
+  signature: "MAX_DRAWDOWN_N(expr, n)",
+  description: "Maximum drawdown over last N rows",
+
   init(n) {
     if (n <= 0) return null;
 

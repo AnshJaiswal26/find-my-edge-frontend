@@ -1,6 +1,14 @@
 export const EXPECTANCY = {
   key: "pnl",
 
+  arity: 0,
+  argTypes: [],
+  returnType: "number",
+  semantic: { args: [], return: "number" },
+  signature: "EXPECTANCY()",
+  description:
+    "Expected profit per trade (win rate × avg win − loss rate × avg loss)",
+    
   init() {
     return { wins: 0, losses: 0, winSum: 0, lossSum: 0 };
   },

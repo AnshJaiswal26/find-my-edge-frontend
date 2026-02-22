@@ -1,4 +1,4 @@
-import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions/registry";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
 
 export function validateSemantic(node, schemasById) {
   if (!node) return "any";
