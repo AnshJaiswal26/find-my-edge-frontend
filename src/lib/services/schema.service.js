@@ -23,20 +23,14 @@ export const schemaService = {
     const res = await schemaApi.create(schema);
 
     // normalize response
-    return {
-      schema: res?.schema,
-      order: res?.order || [],
-    };
+    return res;
   },
 
   /* -------- GET ALL -------- */
   async getAll() {
     const res = await schemaApi.getAll();
 
-    return {
-      schemasById: res?.schemasById || {},
-      order: res?.order || [],
-    };
+    return res;
   },
 
   /* -------- UPDATE -------- */
@@ -59,8 +53,6 @@ export const schemaService = {
 
     const res = await schemaApi.delete(id);
 
-    return {
-      order: res?.order || [],
-    };
+    return res;
   },
 };

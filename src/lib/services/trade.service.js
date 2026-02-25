@@ -51,11 +51,13 @@ const parseTradesFromBackend = (trades, schemasById, schemasOrder) => {
 
 export const tradeService = {
   /* -------- GET ALL  -------- */
-  async getAll(schemasById, schemasOrder) {
+  async getAll() {
     const trades = await tradeApi.getAll();
 
-    return parseTradesFromBackend(trades, schemasById, schemasOrder);
+    return trades;
   },
+
+  parse: parseTradesFromBackend,
 
   /* -------- CREATE -------- */
   async create(trade) {

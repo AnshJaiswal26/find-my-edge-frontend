@@ -8,7 +8,7 @@ import {
   SORT_OPERATION_MAP,
 } from "@shared/utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
-import { computedAggregate } from "@lib/analytics/engine/execute";
+import { computeAggregate } from "@lib/analytics/engine/execute";
 
 /* =========================================================
    🔥 CORE DATA ENGINE (Single Source of Truth)
@@ -61,7 +61,7 @@ function useChartData({
 
       if (mode === "GROUP_AGGREGATE") {
         // compute once
-        const computed = computedAggregate({
+        const computed = computeAggregate({
           ast: groupSpec?.ast,
           getTradeCount: () => item.source.length,
           getTradeValue: (index, key) => {

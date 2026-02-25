@@ -22,7 +22,7 @@ export default function StatCard({ statId }) {
     return rule?.label === "Default" ? null : rule.color;
   }, [stat.value, stat.colorRules]);
 
-  console.log(BASE_FUNCTIONS.ABS);
+  // console.log(BASE_FUNCTIONS.ABS);
 
   return (
     <div

@@ -1,7 +1,6 @@
 import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
 
 const OPS = "+-*/()";
-const FUNCTIONS = new Set(Object.keys(FUNCTION_REGISTRY));
 const COMPARATORS = ["<=", ">=", "==", "!=", "<", ">"];
 const LOGICAL_OPS = new Set(["AND", "OR"]);
 
@@ -27,7 +26,7 @@ export function tokenize(expr) {
       return;
     }
 
-    const isFunction = FUNCTIONS.has(upper) && expr[i] === "(";
+    const isFunction = FUNCTION_REGISTRY[upper] && expr[i] === "(";
 
     const t = {
       type: isFunction ? "function" : "identifier",

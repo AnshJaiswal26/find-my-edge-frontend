@@ -2,11 +2,11 @@ import { useCallback, useMemo } from "react";
 import { useChartStore } from "@modules/charts/apex/store";
 import { configGenerator } from "../configs";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
-import { computedAggregate } from "@lib/analytics/engine/execute";
+import { computeAggregate } from "@lib/analytics/engine/execute";
 
 const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
   const series = seriesConfig.map((s) => {
-    const value = computedAggregate({
+    const value = computeAggregate({
       ast: s.ast,
       getTradeCount: () => seriesOrder.length,
       getTradeValue: (index, key) => {

@@ -5,6 +5,7 @@ export function runAggregateReducer(reducer, fn, ctx) {
   if (!state) return null;
 
   const total = ctx.getTradeCount?.();
+
   if (total == null) return null;
 
   for (let i = 0; i < total; i++) {

@@ -44,7 +44,8 @@ export const draftToSpec = (draft) => {
       key: draft.key,
       operator: draft.operator,
       value: draft.value,
-      valueTo: draft.valueTo,
+      from: draft.from,
+      to: draft.to,
       labels: draft.labels,
       ast: draft?.ast,
     };

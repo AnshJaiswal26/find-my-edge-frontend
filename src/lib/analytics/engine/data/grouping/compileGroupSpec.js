@@ -22,7 +22,11 @@ export function compileGroupSpec(spec, getValue) {
     case "condition":
       return (trade) => {
         const fn = FILTER_OPERATION_MAP[spec.operator];
-        const result = fn(getValue(trade, spec.key), spec.value, spec.valueTo);
+        const result = fn(
+          getValue(trade, spec.key),
+          spec.value ?? spec.from,
+          spec.to,
+        );
 
         return result
           ? (spec.labels?.match ?? "Match")

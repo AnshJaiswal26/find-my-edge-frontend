@@ -23,11 +23,12 @@ export default function GroupByBuilder({
       schemaType: schema.semanticType,
       kind: GROUPING_SCHEMA[schema.semanticType].kinds[0],
       ranges: [],
-      bucket: undefined,
-      operator: undefined,
-      value: undefined,
-      valueTo: undefined,
-      labels: undefined,
+      bucket: null,
+      operator: null,
+      value: null,
+      from: null,
+      to: null,
+      labels: null,
     });
   };
 
@@ -99,10 +100,10 @@ export default function GroupByBuilder({
             <RangeInput
               type={schema.input}
               value={{
-                from: draft.value,
-                to: draft.valueTo,
+                from: draft.from,
+                to: draft.to,
               }}
-              onChange={({ from, to }) => update({ value: from, valueTo: to })}
+              onChange={({ from, to }) => update({ from, to, value: null })}
             />
           )}
 
@@ -123,7 +124,7 @@ export default function GroupByBuilder({
             value={draft.labels?.nonMatch ?? ""}
             onCommit={(v) =>
               update({
-                labels: { ...draft.labels, mnonMatchh: v },
+                labels: { ...draft.labels, nonMatch: v },
               })
             }
           />

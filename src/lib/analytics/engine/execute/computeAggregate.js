@@ -1,7 +1,7 @@
 import { evaluateExpression } from "@lib/expression";
 import { assertFn } from "./asserFn";
 
-export function computedAggregate({
+export function computeAggregate({
   ast,
   getTradeValue,
   getTradeCount,

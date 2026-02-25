@@ -7,7 +7,7 @@ import {
 } from "@shared/utils";
 
 const applyReducer = (reducerName, values) => {
-  const reducer = FUNCTION_REGISTRY[reducerName].reducer;
+  const reducer = FUNCTION_REGISTRY[reducerName];
   const state = reducer.init(values.length);
   for (let i = 0; i < values.length; i++) {
     reducer.step(state, values[i]);

@@ -1,5 +1,8 @@
 import { FUNCTION_TYPE } from "../type";
-import { fnPREV, fnSELF, fnCUMSUM_RESET, fnCUMSUM } from "./index";
+import { fnCUMSUM } from "./fnCUMSUM";
+import { fnCUMSUM_RESET } from "./fnCUMSUM_RESET";
+import { fnPREV } from "./fnPREV";
+import { fnSELF } from "./fnSELF";
 
 export const SCHEMA_FUNCTIONS = {
   PREV: {

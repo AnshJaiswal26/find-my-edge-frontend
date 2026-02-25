@@ -63,7 +63,6 @@ function getOperandSchemaType(node, ctx) {
 /* -------------------------------------------------- */
 
 export function evaluateExpression(ast, ctx = {}) {
-  // console.log({ ...ast }, ctx);
   if (!ast || typeof ast !== "object") return null;
 
   switch (ast.type) {
@@ -156,17 +155,6 @@ export function evaluateExpression(ast, ctx = {}) {
 
     case "function": {
       const reducer = FUNCTION_REGISTRY[ast.fn.toUpperCase()];
-      if (!reducer?.exec && !reducer?.reducer) return null;
-
-      // Prevent aggregate reducers from running in row mode
-      // if (
-      //   entry.reducer &&
-      //   ctx.mode !== COMPUTATION_MODE.AGGREGATE &&
-      //   entry.type !== FUNCTION_TYPE.WINDOW &&
-      //   entry.type !== FUNCTION_TYPE.NATIVE_WINDOW
-      // ) {
-      //   return null;
-      // }
 
       return reducer?.exec
         ? reducer.exec(ast, ctx)

@@ -43,28 +43,36 @@ export const useTradeStore = create(
       });
 
       try {
-        /* ---------------- 1. FETCH SCHEMAS ---------------- */
+        const [schemasRes, trades] = await Promise.all([
+          schemaService.getAll(),
+          tradeService.getAll(),
+        ]);
 
-        const { schemasById, order: schemasOrder } =
-          await schemaService.getAll();
+        console.log(schemasRes, trades);
+
+        const { schemasById, schemasOrder } = schemasRes;
+
+        const { tradesById, derivedByTradeId, tradesOrder } =
+          tradeService.parse(trades, schemasById, schemasOrder);
+        /* ---------------- 1. FETCH SCHEMAS ---------------- */
 
         const affectedMap = buildSchemasAffectedMap(schemasById, schemasOrder);
 
-        set({ schemasById, schemasOrder, affectedMap });
-
-        /* ---------------- 2. FETCH TRADES ---------------- */
-
-        const { tradesById, derivedByTradeId, tradesOrder } =
-          await tradeService.getAll(schemasById, schemasOrder);
+        set({});
 
         set({
           tradesById,
           derivedByTradeId,
           tradesOrder,
+          schemasById,
+          schemasOrder,
+          affectedMap,
           isLoading: false,
         });
 
         get().recompute({ reason: "all" });
+
+        // console.log(get().derivedByTradeId);
 
         useTableStore.getState().hydrateSchema();
         useDashboardStore.getState().loadInitialCharts();

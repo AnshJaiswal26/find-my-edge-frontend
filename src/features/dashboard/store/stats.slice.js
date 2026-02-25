@@ -2,17 +2,18 @@ import { useTradeStore, useUIStore } from "@shared/stores";
 import { DURATION_FORMAT, NUMBER_FORMAT } from "@shared/utils";
 import { makeAST } from "@lib/expression";
 import { SCHEMA_TYPES } from "@lib/analytics/schema";
-import { computedAggregate } from "@lib/analytics/engine/execute";
+import { computeAggregate } from "@lib/analytics/engine/execute";
 import { statService } from "@lib/services/stat.service";
 
 const computeStat = (ast, store) => {
   const { tradesOrder, tradesById, derivedByTradeId, schemasById } = store;
 
-  return computedAggregate({
+  return computeAggregate({
     ast,
     getTradeValue: (index, key) => {
       if (index < 0) return null;
       const id = tradesOrder[index];
+      console.log(derivedByTradeId[id], tradesById[id]);
       return id ? (derivedByTradeId[id]?.[key] ?? tradesById[id]?.[key]) : null;
     },
     getTradeCount: () => tradesOrder.length,
@@ -98,6 +99,7 @@ export const createStatsSlice = (set, get) => ({
         const stat = s.statsById[id];
         if (!stat) return;
         stat.value = computeStat(stat.ast, tradeStore);
+        console.log(stat.value);
       });
     });
   },
@@ -112,8 +114,8 @@ export const createStatsSlice = (set, get) => ({
       const statsOrder = res.statsOrder || [];
 
       set((s) => {
-        s.statsById = { ...s.statsById, ...statsById };
-        s.statsOrder = [...s.statsOrder, ...statsOrder];
+        s.statsById = { ...statsById };
+        s.statsOrder = [...statsOrder];
       });
 
       get().recomputeStats();
@@ -174,7 +176,7 @@ export const createStatsSlice = (set, get) => ({
       if (updates.ast) {
         stat.value = computeStat(stat.ast, tradeStore);
       }
-  });
+    });
 
     try {
       await statService.update(page, id, updates); //  UPDATED

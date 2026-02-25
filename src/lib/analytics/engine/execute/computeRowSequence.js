@@ -29,7 +29,6 @@ export function computeRowSequence({
     tradeIndex: 0,
     windowStartIndex: startIndex,
     prevValue: initialValue,
-    startIndex,
 
     getKeyValue(key) {
       return getTradeValue(this.tradeIndex, key);

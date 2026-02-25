@@ -6,9 +6,8 @@ export const createChartsSlice = (set, get) => ({
   order: [],
 
   loadInitialCharts() {
-    const { order, recomputeStats, fetchStats } = get();
+    const { order, fetchStats } = get();
     fetchStats();
-    recomputeStats();
     if (order.length > 0) return;
 
     const seriesConfig = [
@@ -39,7 +38,6 @@ export const createChartsSlice = (set, get) => ({
           xFormat: "YYYY-MM-DD",
           yTitleText: "Risk/Reward",
           yFormat: "RATIO",
-          yLabelPrefix: "1:",
           title: "P&L Booked on Risk/Reward",
         },
         x: { key: "date", name: "Date", type: "date" },
@@ -81,7 +79,6 @@ export const createChartsSlice = (set, get) => ({
           xFormat: "hh:mm:ss A",
           yTitleText: "Pnl",
           yFormat: "CURRENCY",
-          yLabelPrefix: "₹",
           title: "P&L Over Time",
         },
         x: { key: "entryTime", name: "Entry Time", type: "time" },
