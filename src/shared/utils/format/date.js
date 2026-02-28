@@ -24,38 +24,60 @@ const DATE_FORMAT = {
   MMM_YYYY: "MMM YYYY",
 };
 
-const formatDate = (value, format) => {
+const formatDate = (value, format, options = {}) => {
   if (typeof value !== "number") return "—";
 
-  // days since epoch → ms
-  const d = new Date(value * 86400000);
+  // ✅ seconds → ms
+  const d = new Date(value * 1000);
 
   if (Number.isNaN(d.getTime())) return "—";
 
+  // 🔥 IMPORTANT:
+  // default = UTC (safe for date-only)
+  const useUTC = options.useUTC ?? true;
+
+  const timeZone = useUTC
+    ? "UTC"
+    : options.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // helper to extract parts safely
+  const getPart = (type, fallback) => {
+    const part = new Intl.DateTimeFormat("en-IN", {
+      [type]: fallback,
+      timeZone,
+    })
+      .formatToParts(d)
+      .find((p) => p.type === type);
+
+    return part ? part.value : "";
+  };
+
   const map = {
-    YYYY: d.getUTCFullYear(),
-    YY: String(d.getUTCFullYear()).slice(-2),
+    YYYY: getPart("year", "numeric"),
+    YY: getPart("year", "2-digit"),
 
-    MM: String(d.getUTCMonth() + 1).padStart(2, "0"),
-    DD: String(d.getUTCDate()).padStart(2, "0"),
+    MM: getPart("month", "2-digit"),
+    DD: getPart("day", "2-digit"),
 
-    MMM: d.toLocaleString("en-IN", {
+    MMM: new Intl.DateTimeFormat("en-IN", {
       month: "short",
-      timeZone: "UTC",
-    }),
-    MMMM: d.toLocaleString("en-IN", {
-      month: "long",
-      timeZone: "UTC",
-    }),
+      timeZone,
+    }).format(d),
 
-    ddd: d.toLocaleString("en-IN", {
+    MMMM: new Intl.DateTimeFormat("en-IN", {
+      month: "long",
+      timeZone,
+    }).format(d),
+
+    ddd: new Intl.DateTimeFormat("en-IN", {
       weekday: "short",
-      timeZone: "UTC",
-    }),
-    dddd: d.toLocaleString("en-IN", {
+      timeZone,
+    }).format(d),
+
+    dddd: new Intl.DateTimeFormat("en-IN", {
       weekday: "long",
-      timeZone: "UTC",
-    }),
+      timeZone,
+    }).format(d),
   };
 
   return format.replace(/YYYY|YY|MMMM|MMM|MM|DD|dddd|ddd/g, (k) => map[k]);

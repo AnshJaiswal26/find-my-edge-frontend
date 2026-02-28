@@ -1,3 +1,5 @@
+import { TokenType } from "./tokenType";
+
 const PRECEDENCE = {
   "u-": 4,
   "*": 3,
@@ -21,30 +23,23 @@ export function toPostfix(tokens) {
   let prevToken = null;
 
   const isValueStart = (t) =>
-    t.type === "identifier" ||
-    t.type === "number" ||
-    t.type === "string" ||
-    t.type === "function" ||
-    t.type === "lparen";
+    t.type === TokenType.IDENTIFIER ||
+    t.type === TokenType.NUMBER ||
+    t.type === TokenType.STRING ||
+    t.type === TokenType.FUNCTION ||
+    t.type === TokenType.LPAREN;
 
   for (const t of tokens) {
     const ctx = fnStack.at(-1);
 
     if (ctx && !ctx.expectingArg && prevToken) {
       const prevEndsExpr =
-        prevToken.type === "identifier" ||
-        prevToken.type === "number" ||
-        prevToken.type === "string" ||
-        prevToken.type === "rparen";
+        prevToken.type === TokenType.IDENTIFIER ||
+        prevToken.type === TokenType.NUMBER ||
+        prevToken.type === TokenType.STRING ||
+        prevToken.type === TokenType.RPAREN;
 
-      const currStartsExpr =
-        t.type === "identifier" ||
-        t.type === "number" ||
-        t.type === "string" ||
-        t.type === "function" ||
-        t.type === "lparen";
-
-      if (prevEndsExpr && currStartsExpr) {
+      if (prevEndsExpr && isValueStart(t)) {
         throw new Error("Missing operator or comma between arguments");
       }
     }
@@ -58,22 +53,26 @@ export function toPostfix(tokens) {
     }
 
     /* ---------- VALUES ---------- */
-    if (t.type === "identifier" || t.type === "number" || t.type === "string") {
+    if (
+      t.type === TokenType.IDENTIFIER ||
+      t.type === TokenType.NUMBER ||
+      t.type === TokenType.STRING
+    ) {
       out.push(t);
       prevToken = t;
       continue;
     }
 
     /* ---------- FUNCTION ---------- */
-    if (t.type === "function") {
+    if (t.type === TokenType.FUNCTION) {
       ops.push(t);
       prevToken = t;
       continue;
     }
 
     /* ---------- LEFT PAREN ---------- */
-    if (t.type === "lparen") {
-      if (ops.length && ops.at(-1).type === "function") {
+    if (t.type === TokenType.LPAREN) {
+      if (ops.length && ops.at(-1).type === TokenType.FUNCTION) {
         fnStack.push({
           argCount: 0,
           expectingArg: true,
@@ -89,13 +88,13 @@ export function toPostfix(tokens) {
     }
 
     /* ---------- COMMA ---------- */
-    if (t.type === "comma") {
+    if (t.type === TokenType.COMMA) {
       if (!ctx) throw new Error("Comma after closing parenthesis not allowed");
       if (ctx.expectingArg) throw new Error("Unexpected comma");
 
       ctx.expectingArg = true;
 
-      while (ops.length && ops.at(-1).type !== "lparen") {
+      while (ops.length && ops.at(-1).type !== TokenType.LPAREN) {
         out.push(ops.pop());
       }
       if (!ops.length) throw new Error("Misplaced comma");
@@ -105,7 +104,7 @@ export function toPostfix(tokens) {
     }
 
     /* ---------- OPERATOR ---------- */
-    if (t.type === "op") {
+    if (t.type === TokenType.OPERATOR) {
       const prec = PRECEDENCE[t.value];
       if (prec == null) throw new Error(`Unknown operator: ${t.value}`);
 
@@ -115,7 +114,7 @@ export function toPostfix(tokens) {
 
       while (
         ops.length &&
-        ops.at(-1).type === "op" &&
+        ops.at(-1).type === TokenType.OPERATOR &&
         PRECEDENCE[ops.at(-1).value] >= prec
       ) {
         out.push(ops.pop());
@@ -127,8 +126,8 @@ export function toPostfix(tokens) {
     }
 
     /* ---------- RIGHT PAREN ---------- */
-    if (t.type === "rparen") {
-      while (ops.length && ops.at(-1).type !== "lparen") {
+    if (t.type === TokenType.RPAREN) {
+      while (ops.length && ops.at(-1).type !== TokenType.LPAREN) {
         out.push(ops.pop());
       }
       if (!ops.length) throw new Error("Mismatched parentheses");
@@ -159,7 +158,7 @@ export function toPostfix(tokens) {
 
   while (ops.length) {
     const op = ops.pop();
-    if (op.type === "lparen" || op.type === "rparen") {
+    if (op.type === TokenType.LPAREN || op.type === TokenType.RPAREN) {
       throw new Error("Mismatched parentheses");
     }
     out.push(op);

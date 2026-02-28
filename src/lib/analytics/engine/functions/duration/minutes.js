@@ -1,5 +1,4 @@
 export const MINUTES = {
-  arity: 1,
   argTypes: ["number"],
   returnType: "number",
   semantic: {
@@ -9,17 +8,11 @@ export const MINUTES = {
   signature: "MINUTES(n)",
   description: "Convert minutes to duration",
 
-  init() {
-    return { value: null };
-  },
+  exec(fn, ctx) {
+    const [value] = fn.args.map((arg) => ctx.evaluate(arg, ctx));
 
-  step(state, value) {
-    if (value == null) return;
+    if (value == null) return null;
 
-    state.value = value * 60;
-  },
-
-  result(state) {
-    return state.value;
+    return value * 60;
   },
 };

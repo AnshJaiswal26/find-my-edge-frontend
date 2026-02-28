@@ -1,5 +1,3 @@
-import { FUNCTION_TYPE } from "../type";
-
 import { SUM_N } from "./sum_n";
 import { AVG_N } from "./avg_n";
 import { COUNT_N } from "./count_n";
@@ -12,6 +10,9 @@ import { MAX_DRAWDOWN_N } from "./max_drawdown_n";
 import { VOLATILITY_N } from "./volatility_n";
 import { SHARPE_N } from "./sharpe_n";
 import { EXPECTANCY_N } from "./expectancy_n";
+
+import { FunctionType } from "../funtionType";
+import { ExecutionMode } from "../executionMode";
 
 const windowFns = {
   SUM_N,
@@ -28,9 +29,9 @@ const windowFns = {
   EXPECTANCY_N,
 };
 
-export const WINDOW_FUNCTIONS = Object.fromEntries(
-  Object.entries(windowFns).map(([key, fn]) => [
-    key,
-    { ...fn, type: FUNCTION_TYPE.WINDOW },
+export const WindowFunctions = Object.fromEntries(
+  Object.entries(windowFns).map(([name, fn]) => [
+    name,
+    { ...fn, type: FunctionType.WINDOW, executionMode: ExecutionMode.AST },
   ]),
 );

@@ -1,9 +1,9 @@
 export { createSchema } from "./createSchema";
 export {
-  SCHEMA_SOURCE,
-  SEMANTIC_TYPES,
-  SCHEMA_TYPES,
-  SCHEMA_COMPUTE_MODE,
+  SchemaSource,
+  SemanticType,
+  SchemaType,
+  SchemaComputeMode,
   BASE_TYPES,
-  SCHEMA_TYPES_GROUP,
+  SchemaTypeGroup,
 } from "./schemaTypes";

@@ -3,12 +3,12 @@ import { useChartStore } from "@modules/charts/apex/store";
 import { makeAST } from "@lib/expression";
 
 export const createChartsSlice = (set, get) => ({
-  order: [],
+  chartsOrder: [],
 
   loadInitialCharts() {
-    const { order, fetchStats } = get();
+    const { chartsOrder, fetchStats } = get();
     fetchStats();
-    if (order.length > 0) return;
+    if (chartsOrder.length > 0) return;
 
     const seriesConfig = [
       {
@@ -192,7 +192,7 @@ export const createChartsSlice = (set, get) => ({
     });
     set((s) => {
       ["bar", "line", "donut1", "donut2", "radialBar", "radar"].map((ch) => {
-        s.order.push(map[ch].meta.id);
+        s.chartsOrder.push(map[ch].meta.id);
       });
     });
   },
@@ -206,7 +206,7 @@ export const createChartsSlice = (set, get) => ({
     });
 
     set((s) => {
-      s.order.push(chart.meta.id);
+      s.chartsOrder.push(chart.meta.id);
     });
     closePopup();
   },

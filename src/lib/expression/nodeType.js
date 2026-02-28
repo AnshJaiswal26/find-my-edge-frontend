@@ -1,0 +1,8 @@
+export const NodeType = {
+  FUNCTION: "FUNCTION",
+  CONSTANT: "CONSTANT",
+  BINARY: "BINARY",
+  UNARY: "UNARY",
+  IDENTIFIER: "IDENTIFIER",
+};
+

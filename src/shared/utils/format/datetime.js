@@ -22,30 +22,51 @@ const DATETIME_FORMAT = {
   DD_MM_YYYY_hh_mm_A: "DD/MM/YYYY hh:mm A",
 };
 
-function formatDateTime(value, format) {
+function formatDateTime(value, format, options = {}) {
   if (typeof value !== "number") return "—";
 
-  console.log(value * 1000);
+  // ✅ seconds → ms
   const d = new Date(value * 1000);
 
   if (Number.isNaN(d.getTime())) return "—";
 
-  const yyyy = d.getFullYear();
-  const MM = String(d.getMonth() + 1).padStart(2, "0");
-  const DD = String(d.getDate()).padStart(2, "0");
+  // 🔥 Always LOCAL by default for datetime
+  const timeZone =
+    options.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const h24 = d.getHours();
-  const mm = String(d.getMinutes()).padStart(2, "0");
-  const ss = String(d.getSeconds()).padStart(2, "0");
+  // helper to extract parts safely
+  const getPart = (type, config) => {
+    const part = new Intl.DateTimeFormat("en-IN", {
+      ...config,
+      timeZone,
+    })
+      .formatToParts(d)
+      .find((p) => p.type === type);
 
+    return part ? part.value : "";
+  };
+
+  const YYYY = getPart("year", { year: "numeric" });
+  const MM = getPart("month", { month: "2-digit" });
+  const DD = getPart("day", { day: "2-digit" });
+
+  const HH = getPart("hour", {
+    hour: "2-digit",
+    hourCycle: "h23",
+  });
+
+  const mm = getPart("minute", { minute: "2-digit" });
+  const ss = getPart("second", { second: "2-digit" });
+
+  // derive 12-hour format
+  const h24 = Number(HH);
   const h12 = h24 % 12 || 12;
   const hh = String(h12).padStart(2, "0");
-  const HH = String(h24).padStart(2, "0");
 
   const A = h24 < 12 ? "AM" : "PM";
 
   const map = {
-    YYYY: yyyy,
+    YYYY,
     MM,
     DD,
     HH,

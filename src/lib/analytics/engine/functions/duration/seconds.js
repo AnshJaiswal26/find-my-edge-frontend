@@ -1,5 +1,4 @@
 export const SECONDS = {
-  arity: 1,
   argTypes: ["number"],
   returnType: "number",
   semantic: {
@@ -9,17 +8,11 @@ export const SECONDS = {
   signature: "SECONDS(n)",
   description: "Convert seconds to duration",
 
-  init() {
-    return { value: null };
-  },
+  exec(fn, ctx) {
+    const [value] = fn.args.map((arg) => ctx.evaluate(arg, ctx));
 
-  step(state, value) {
-    if (value == null) return;
+    if (value == null) return null;
 
-    state.value = value;
-  },
-
-  result(state) {
-    return state.value;
+    return value; // already in seconds
   },
 };

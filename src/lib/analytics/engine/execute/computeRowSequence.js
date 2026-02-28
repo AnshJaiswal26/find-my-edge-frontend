@@ -30,8 +30,8 @@ export function computeRowSequence({
     windowStartIndex: startIndex,
     prevValue: initialValue,
 
-    getKeyValue(key) {
-      return getTradeValue(this.tradeIndex, key);
+    getKeyValue(field) {
+      return getTradeValue(this.tradeIndex, field);
     },
   };
   const isWindow = mode === COMPUTATION_MODE.WINDOW;

@@ -4,7 +4,7 @@ import { ConfirmationPopup, PopupSideList } from "@shared/components/ui";
 import { ColumnDetails } from "../shared";
 import { Popup } from "@shared/components/layout";
 import { isValid } from "@features/trade-metrics/table/validation";
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { SchemaSource } from "@lib/analytics/schema";
 import { useTradeStore } from "@shared/stores";
 
 export default function ColumnSettingsPopup() {
@@ -89,7 +89,7 @@ export default function ColumnSettingsPopup() {
       </Popup.Body>
       <Popup.ActionsFooter
         fnMap={{
-          ...(activeColumn.source !== SCHEMA_SOURCE.SYSTEM && {
+          ...(activeColumn.source !== SchemaSource.SYSTEM && {
             Delete: {
               fn: () => setIsDeleting(true),
               loading: deleteLoading,

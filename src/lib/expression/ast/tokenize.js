@@ -1,4 +1,5 @@
-import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
+import { FunctionRegistry } from "@lib/analytics/engine/functions";
+import { TokenType } from "./tokenType";
 
 const OPS = "+-*/()";
 const COMPARATORS = ["<=", ">=", "==", "!=", "<", ">"];
@@ -19,17 +20,17 @@ export function tokenize(expr) {
 
     // Logical operators
     if (LOGICAL_OPS.has(upper)) {
-      const t = { type: "op", value: upper };
+      const t = { type: TokenType.OPERATOR, value: upper };
       tokens.push(t);
       prevToken = t;
       buf = "";
       return;
     }
 
-    const isFunction = FUNCTION_REGISTRY[upper] && expr[i] === "(";
+    const isFunction = FunctionRegistry[upper] && expr[i] === "(";
 
     const t = {
-      type: isFunction ? "function" : "identifier",
+      type: isFunction ? TokenType.FUNCTION : TokenType.IDENTIFIER,
       value: buf,
     };
 
@@ -39,7 +40,7 @@ export function tokenize(expr) {
   };
 
   const flushNumber = (num) => {
-    const t = { type: "number", value: Number(num) };
+    const t = { type: TokenType.NUMBER, value: Number(num) };
     tokens.push(t);
     prevToken = t;
   };
@@ -70,7 +71,7 @@ export function tokenize(expr) {
 
       i++; // skip ']'
 
-      const t = { type: "identifier", value: name.trim() };
+      const t = { type: TokenType.IDENTIFIER, value: name.trim() };
       tokens.push(t);
       prevToken = t;
       continue;
@@ -89,7 +90,7 @@ export function tokenize(expr) {
 
       i++; // skip '}'
 
-      const t = { type: "identifier", value: id.trim(), isId: true };
+      const t = { type: TokenType.IDENTIFIER, value: id.trim(), isId: true };
       tokens.push(t);
       prevToken = t;
       continue;
@@ -109,7 +110,7 @@ export function tokenize(expr) {
 
       i++; // skip closing quote
 
-      const t = { type: "string", value: str };
+      const t = { type: TokenType.STRING, value: str };
       tokens.push(t);
       prevToken = t;
       continue;
@@ -121,7 +122,7 @@ export function tokenize(expr) {
     for (const op of COMPARATORS) {
       if (expr.slice(i, i + op.length) === op) {
         flushIdentifier();
-        tokens.push({ type: "op", value: op });
+        tokens.push({ type: TokenType.OPERATOR, value: op });
         prevToken = tokens.at(-1);
         i += op.length;
         matchedComparator = true;
@@ -149,12 +150,12 @@ export function tokenize(expr) {
     const isUnaryMinus =
       ch === "-" &&
       (prevToken === null ||
-        prevToken.type === "op" ||
-        prevToken.type === "lparen" ||
-        prevToken.type === "function");
+        prevToken.type === TokenType.OPERATOR ||
+        prevToken.type === TokenType.LPAREN ||
+        prevToken.type === TokenType.FUNCTION);
 
     if (isUnaryMinus) {
-      const t = { type: "op", value: "u-" };
+      const t = { type: TokenType.OPERATOR, value: "u-" };
       tokens.push(t);
       prevToken = t;
       i++;
@@ -189,7 +190,11 @@ export function tokenize(expr) {
       const next = expr[i + 1];
 
       // No leading comma or double comma
-      if (!prev || prev.type === "comma" || prev.type === "lparen") {
+      if (
+        !prev ||
+        prev.type === TokenType.COMMA ||
+        prev.type === TokenType.LPAREN
+      ) {
         throw new Error("Unexpected comma");
       }
 
@@ -198,7 +203,7 @@ export function tokenize(expr) {
         throw new Error("Comma before closing parenthesis not allowed");
       }
 
-      tokens.push({ type: "comma" });
+      tokens.push({ type: TokenType.COMMA });
       prevToken = null;
       i++;
       continue;
@@ -207,7 +212,7 @@ export function tokenize(expr) {
     /* ---------- operators & parentheses ---------- */
     if (OPS.includes(ch)) {
       if (ch === "(") {
-        const t = { type: "lparen" };
+        const t = { type: TokenType.LPAREN };
         tokens.push(t);
         prevToken = t;
         parenBalance++;
@@ -216,11 +221,11 @@ export function tokenize(expr) {
         if (parenBalance < 0) {
           throw new Error("Unmatched closing parenthesis");
         }
-        const t = { type: "rparen" };
+        const t = { type: TokenType.RPAREN };
         tokens.push(t);
         prevToken = t;
       } else {
-        const t = { type: "op", value: ch };
+        const t = { type: TokenType.OPERATOR, value: ch };
         tokens.push(t);
         prevToken = t;
       }

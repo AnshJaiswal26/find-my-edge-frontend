@@ -1,5 +1,4 @@
 export const AVG_IF_N = {
-  arity: 3,
   argTypes: ["number", "boolean", "number"],
   returnType: "number",
   semantic: {

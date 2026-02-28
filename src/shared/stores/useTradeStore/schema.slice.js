@@ -1,4 +1,4 @@
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { SchemaSource } from "@lib/analytics/schema";
 import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
 import { createCellValue } from "@features/trade-metrics/table/model";
 import { schemaService } from "@lib/services/schema.service";
@@ -26,7 +26,7 @@ export const createSchemaSlice = (set, get) => ({
         const trade = s.tradesById[tradeId];
         if (!trade) return;
 
-        if (savedSchema.source === SCHEMA_SOURCE.COMPUTED) {
+        if (savedSchema.source === SchemaSource.COMPUTED) {
           // 👉 computed goes to derived
           if (!s.derivedByTradeId[tradeId]) {
             s.derivedByTradeId[tradeId] = {};
@@ -42,7 +42,7 @@ export const createSchemaSlice = (set, get) => ({
     });
 
     // 3. Recompute ONLY for computed
-    if (savedSchema.source === SCHEMA_SOURCE.COMPUTED) {
+    if (savedSchema.source === SchemaSource.COMPUTED) {
       get().recompute({
         reason: "schema",
         schemaId: savedSchema.id,
@@ -80,8 +80,8 @@ export const createSchemaSlice = (set, get) => ({
           s.derivedByTradeId[tradeId] = {};
         }
 
-        const wasComputed = prevSchema.source === SCHEMA_SOURCE.COMPUTED;
-        const isComputed = updatedSchema.source === SCHEMA_SOURCE.COMPUTED;
+        const wasComputed = prevSchema.source === SchemaSource.COMPUTED;
+        const isComputed = updatedSchema.source === SchemaSource.COMPUTED;
 
         // RAW → COMPUTED
         if (!wasComputed && isComputed) {
@@ -102,7 +102,7 @@ export const createSchemaSlice = (set, get) => ({
     });
 
     // 5. Recompute if computed
-    if (updatedSchema.source === SCHEMA_SOURCE.COMPUTED) {
+    if (updatedSchema.source === SchemaSource.COMPUTED) {
       get().recompute({
         reason: "schema",
         schemaId: id,
@@ -120,7 +120,7 @@ export const createSchemaSlice = (set, get) => ({
       const schema = s.schemasById[id];
       if (!schema) return;
 
-      const isComputed = schema.source === SCHEMA_SOURCE.COMPUTED;
+      const isComputed = schema.source === SchemaSource.COMPUTED;
 
       // 2. Remove schema
       delete s.schemasById[id];

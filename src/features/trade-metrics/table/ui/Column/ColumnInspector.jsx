@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { ChevronLeft } from "lucide-react";
 import { Divider } from "@shared/components/ui";
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { SchemaSource } from "@lib/analytics/schema";
 import { useTradeStore } from "@shared/stores";
 
 export function ColumnInspector() {
@@ -14,7 +14,7 @@ export function ColumnInspector() {
   const column = columnsById[selectedColId];
 
   if (!column) return null;
-  if (column.source !== SCHEMA_SOURCE.COMPUTED) return null;
+  if (column.source !== SchemaSource.COMPUTED) return null;
 
   return (
     <ColumnInspectorContent column={column} selectedColId={selectedColId} />

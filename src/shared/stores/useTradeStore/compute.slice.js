@@ -2,7 +2,7 @@ import {
   COMPUTATION_MODE,
   computeRowSequence,
 } from "@lib/analytics/engine/execute";
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { SchemaSource } from "@lib/analytics/schema";
 import { collectAffectedSchemas } from "@lib/analytics/schema/dependency";
 
 export const createComputeSlice = (set, get) => ({
@@ -35,9 +35,10 @@ export const createComputeSlice = (set, get) => ({
       const setTradeValue = (index, schemaId, value) => {
         if (index < 0) return null;
         const id = seqIds[index];
+
         if (!id) return null;
 
-        if (schemasById[schemaId].source === SCHEMA_SOURCE.COMPUTED) {
+        if (schemasById[schemaId].source === SchemaSource.COMPUTED) {
           // write to derived layer
           if (!derivedByTradeId[id]) {
             derivedByTradeId[id] = {};
@@ -77,7 +78,7 @@ export const createComputeSlice = (set, get) => ({
         });
       };
 
-      const isComputed = (schema) => schema?.source === SCHEMA_SOURCE.COMPUTED;
+      const isComputed = (schema) => schema?.source === SchemaSource.COMPUTED;
 
       /* ================================
        * FULL RECOMPUTE

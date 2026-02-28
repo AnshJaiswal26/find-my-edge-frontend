@@ -128,7 +128,7 @@ function ChartDashboard({
   const grid = useRef(null);
   const isResponsiveChange = useRef(false);
 
-  const order = useDashboardStore((s) => s.order);
+  const chartsOrder = useDashboardStore((s) => s.chartsOrder);
 
   useEffect(() => {
     if (grid.current) return;
@@ -193,14 +193,14 @@ function ChartDashboard({
     if (!grid.current) return;
 
     requestAnimationFrame(() => {
-      order.forEach((id) => {
+      chartsOrder.forEach((id) => {
         const el = gridRef.current.querySelector(`[gs-id="${id}"]`);
         if (el && !el.gridstackNode) {
           grid.current.makeWidget(el);
         }
       });
     });
-  }, [order]);
+  }, [chartsOrder]);
 
   useEffect(() => {
     // useDashboardStore.getState().loadInitialCharts();
@@ -209,7 +209,7 @@ function ChartDashboard({
 
   return (
     <div className="grid-stack" ref={gridRef}>
-      {order.map((id, index) => (
+      {chartsOrder.map((id, index) => (
         <ChartGridItem
           key={index}
           id={id}

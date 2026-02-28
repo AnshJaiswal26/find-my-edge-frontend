@@ -19,8 +19,8 @@ export function computeAggregate({
 
     tradeIndex: 0,
 
-    getKeyValue(key) {
-      return getTradeValue(this.tradeIndex, key);
+    getKeyValue(field) {
+      return getTradeValue(this.tradeIndex, field);
     },
   };
 

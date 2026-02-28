@@ -1,5 +1,4 @@
 export const STREAK_N = {
-  arity: 2,
   argTypes: ["boolean", "number"],
   returnType: "number",
   semantic: { args: ["boolean", "number"], return: "number" },

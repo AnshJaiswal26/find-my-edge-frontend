@@ -1,5 +1,4 @@
 export const MIN_N = {
-  arity: 2,
   argTypes: ["number", "number"],
   returnType: "number",
   semantic: { args: [["number", "duration"], "number"], return: "same" },

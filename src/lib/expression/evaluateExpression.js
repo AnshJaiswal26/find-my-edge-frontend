@@ -1,18 +1,18 @@
-import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
+import { FunctionRegistry } from "@lib/analytics/engine/functions";
 import {
   runWindowReducer,
-  runBaseReducer,
   runAggregateReducer,
   runNativeWindowReducer,
   runNativeAggregateReducer,
 } from "@lib/analytics/runners";
 import { deformatValue } from "@shared/utils";
+import { NodeType } from "./nodeType";
+import { FunctionType } from "@lib/analytics/engine/functions/funtionType";
+import { ExecutionMode } from "@lib/analytics/engine/functions/executionMode";
 
 const runReducers = {
-  BASE: runBaseReducer,
   WINDOW: runWindowReducer,
-  GLOBAL: runAggregateReducer,
-  RATIO: runAggregateReducer,
+  AGGREGATE: runAggregateReducer,
   NATIVE_WINDOW: runNativeWindowReducer,
   NATIVE_AGG: runNativeAggregateReducer,
 };
@@ -65,15 +65,15 @@ function getOperandSchemaType(node, ctx) {
 export function evaluateExpression(ast, ctx = {}) {
   if (!ast || typeof ast !== "object") return null;
 
-  switch (ast.type) {
-    case "constant":
+  switch (ast.type.toUpperCase()) {
+    case NodeType.CONSTANT:
       return ast.value;
 
-    case "key": {
-      return ctx.getKeyValue(ast.key);
+    case NodeType.IDENTIFIER: {
+      return ctx.getKeyValue(ast.field);
     }
 
-    case "unary": {
+    case NodeType.UNARY: {
       const value = evaluateExpression(ast.arg, ctx);
       if (value == null) return null;
 
@@ -85,7 +85,7 @@ export function evaluateExpression(ast, ctx = {}) {
       }
     }
 
-    case "binary": {
+    case NodeType.BINARY: {
       const left = evaluateExpression(ast.left, ctx);
       const right = evaluateExpression(ast.right, ctx);
 
@@ -153,12 +153,26 @@ export function evaluateExpression(ast, ctx = {}) {
       }
     }
 
-    case "function": {
-      const reducer = FUNCTION_REGISTRY[ast.fn.toUpperCase()];
+    case NodeType.FUNCTION: {
+      const fn = FunctionRegistry[ast.fn.toUpperCase()];
 
-      return reducer?.exec
-        ? reducer.exec(ast, ctx)
-        : runReducers[reducer.type](reducer, ast, ctx);
+      if (fn.type == FunctionType.PURE) {
+        if (!fn.exec) return null;
+        return fn.exec(ast, ctx);
+      }
+
+      let runnerKey;
+      if (fn.type == FunctionType.AGGREGATE) {
+        runnerKey =
+          fn.executionMode == ExecutionMode.NATIVE ? "NATIVE_AGG" : "AGGREGATE";
+      } else if (fn.type == FunctionType.WINDOW) {
+        runnerKey =
+          fn.executionMode == ExecutionMode.NATIVE ? "NATIVE_WINDOW" : "WINDOW";
+      } else {
+        return null;
+      }
+
+      return runReducers[runnerKey](fn, ast, ctx);
     }
 
     default:

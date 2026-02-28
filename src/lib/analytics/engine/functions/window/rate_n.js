@@ -1,7 +1,6 @@
 import { AVG_N } from "./avg_n";
 
 export const RATE_N = {
-  arity: 2,
   argTypes: ["boolean", "number"],
   returnType: "number",
   semantic: { args: ["boolean", "number"], return: "number" },

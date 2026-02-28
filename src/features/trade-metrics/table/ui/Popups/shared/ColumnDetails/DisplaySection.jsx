@@ -1,5 +1,5 @@
 import { Section } from "@shared/components/layout";
-import { SEMANTIC_TYPES } from "@lib/analytics/schema";
+import { SemanticType } from "@lib/analytics/schema";
 import { Input, Select } from "@shared/components/ui";
 import { DEFAULT_FORMATS, FORMATS } from "@shared/utils";
 
@@ -18,7 +18,7 @@ export function DisplaySection({ display, onChange, type }) {
         }
       />
 
-      {type === SEMANTIC_TYPES.NUMBER && (
+      {type === SemanticType.NUMBER && (
         <Input
           label="Decimals"
           type="range"

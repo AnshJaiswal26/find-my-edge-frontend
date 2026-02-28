@@ -1,5 +1,5 @@
 import { schemaApi } from "@lib/api/schema.api";
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { SchemaSource } from "@lib/analytics/schema";
 
 /* ---------------- HELPERS ---------------- */
 
@@ -8,7 +8,7 @@ const validateSchema = (schema) => {
   if (!schema.label) throw new Error("Schema must have a label");
   if (!schema.semanticType) throw new Error("Schema must have a semantic type");
 
-  if (schema.source === SCHEMA_SOURCE.COMPUTED && !schema.ast) {
+  if (schema.source === SchemaSource.COMPUTED && !schema.ast) {
     throw new Error("Computed schema must have AST");
   }
 };

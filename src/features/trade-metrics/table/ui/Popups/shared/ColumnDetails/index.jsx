@@ -14,11 +14,11 @@ import { Section } from "@shared/components/layout";
 import { DEFAULT_FORMATS } from "@shared/utils";
 import {
   BASE_TYPES,
-  SCHEMA_COMPUTE_MODE,
-  SCHEMA_SOURCE,
-  SCHEMA_TYPES,
-  SCHEMA_TYPES_GROUP,
-  SEMANTIC_TYPES,
+  SchemaComputeMode,
+  SchemaSource,
+  SchemaType,
+  SchemaTypeGroup,
+  SemanticType,
 } from "@lib/analytics/schema";
 import { COMPUTATION_MODE } from "@lib/analytics/engine/execute";
 
@@ -33,22 +33,22 @@ export default function ColumnDetails({
   if (!draft) return null;
 
   const [isComputed, setIsComputed] = useState(
-    draft.source === SCHEMA_SOURCE.COMPUTED,
+    draft.source === SchemaSource.COMPUTED,
   );
   const mode = useMemo(() => {
-    return draft.mode === SCHEMA_COMPUTE_MODE.ROW
+    return draft.mode === SchemaComputeMode.ROW
       ? COMPUTATION_MODE.BASE
       : COMPUTATION_MODE.WINDOW;
   }, [draft.mode]);
 
   useEffect(() => {
-    setIsComputed(draft.source === SCHEMA_SOURCE.COMPUTED);
+    setIsComputed(draft.source === SchemaSource.COMPUTED);
   }, [draft.source]);
 
   return (
     <div className="flex-1 w-full space-y-4 overflow-auto">
       {/* ✅ TYPE (only base types) */}
-      {!isComputed && draft?.source !== SCHEMA_SOURCE.SYSTEM && (
+      {!isComputed && draft?.source !== SchemaSource.SYSTEM && (
         <Select
           label={"Column Type"}
           value={draft.type}
@@ -58,7 +58,7 @@ export default function ColumnDetails({
             onDraftChange((p) => ({
               ...p,
               type: v,
-              semanticType: SCHEMA_TYPES_GROUP[v],
+              semanticType: SchemaTypeGroup[v],
               editable: true,
               display: { format: DEFAULT_FORMATS[v], decimals: 2 },
             }))
@@ -67,7 +67,7 @@ export default function ColumnDetails({
       )}
 
       {/*  COMPUTED TOGGLE */}
-      {draft?.source !== SCHEMA_SOURCE.SYSTEM && (
+      {draft?.source !== SchemaSource.SYSTEM && (
         <Button.Toggle
           label="Derived"
           value={isComputed}
@@ -76,14 +76,14 @@ export default function ColumnDetails({
             onDraftChange((p) => ({
               ...p,
               ...(!val && { ast: null, formula: "", dependencies: [] }),
-              source: val ? SCHEMA_SOURCE.COMPUTED : SCHEMA_SOURCE.USER,
+              source: val ? SchemaSource.COMPUTED : SchemaSource.USER,
             }));
           }}
         />
       )}
 
       {/* MODE */}
-      {draft?.source !== SCHEMA_SOURCE.SYSTEM && (
+      {draft?.source !== SchemaSource.SYSTEM && (
         <Select
           label={"Computation Mode"}
           value={draft.mode}
@@ -138,8 +138,8 @@ export default function ColumnDetails({
                 dependencies,
                 semanticType,
                 type:
-                  semanticType === SEMANTIC_TYPES.STRING
-                    ? SCHEMA_TYPES.TEXT
+                  semanticType === SemanticType.STRING
+                    ? SchemaType.TEXT
                     : semanticType,
                 editable: false,
               }));
@@ -149,7 +149,7 @@ export default function ColumnDetails({
       )}
 
       {/* SELECT OPTIONS */}
-      {!isComputed && draft.type === SCHEMA_TYPES.SELECT && (
+      {!isComputed && draft.type === SchemaType.SELECT && (
         <SelectOptionsEditor
           error={error}
           options={draft?.options || []}

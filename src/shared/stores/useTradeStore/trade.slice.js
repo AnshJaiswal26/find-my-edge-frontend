@@ -93,13 +93,8 @@ export const createTradeSlice = (set, get) => ({
   },
 
   debouncedSync: debounce(async () => {
-    const {
-      pendingUpdates,
-      pendingCreates,
-      pendingDeletes,
-      tradesById,
-      schemasById,
-    } = get();
+    const { pendingUpdates, pendingCreates, pendingDeletes, tradesById } =
+      get();
 
     if (
       !Object.keys(pendingUpdates).length &&
@@ -128,7 +123,6 @@ export const createTradeSlice = (set, get) => ({
         updates,
         deletes,
         tradesById,
-        schemasById,
       });
     } catch (err) {
       useUIStore.getState().showToast("ERROR", err.message);

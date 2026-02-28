@@ -1,4 +1,4 @@
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
+import { SchemaSource } from "@lib/analytics/schema";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { formatValue } from "@shared/utils";
 
@@ -13,7 +13,7 @@ export function explainFormulaFromColumn(colId, rowId) {
   const row = rowsById[rowId];
 
   if (
-    column.source !== SCHEMA_SOURCE.COMPUTED ||
+    column.source !== SchemaSource.COMPUTED ||
     !column.formula ||
     !column.dependencies?.length
   ) {

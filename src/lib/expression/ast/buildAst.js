@@ -1,26 +1,28 @@
 import {
-  FUNCTION_REGISTRY,
-  FUNCTION_ALLOW_BY_MODE,
+  FunctionRegistry,
+  FunctionAllowByMode,
 } from "@lib/analytics/engine/functions";
-import { FUNCTION_TYPE } from "@lib/analytics/engine/functions/type";
+import { FunctionType } from "@lib/analytics/engine/functions/funtionType";
+import { NodeType } from "../nodeType";
+import { TokenType } from "./tokenType";
 
 function containsWindowFunction(node) {
   if (!node) return false;
 
-  if (node.type === "function") {
-    const def = FUNCTION_REGISTRY[node.name];
-    if (def?.type === FUNCTION_TYPE.WINDOW) return true;
+  if (node.type === NodeType.FUNCTION) {
+    const def = FunctionRegistry[node.name];
+    if (def?.type === FunctionType.WINDOW) return true;
 
     return node.args.some(containsWindowFunction);
   }
 
-  if (node.type === "binary") {
+  if (node.type === NodeType.BINARY) {
     return (
       containsWindowFunction(node.left) || containsWindowFunction(node.right)
     );
   }
 
-  if (node.type === "unary") {
+  if (node.type === NodeType.UNARY) {
     return containsWindowFunction(node.arg);
   }
 
@@ -35,18 +37,18 @@ export function buildAST(postfix, type) {
 
   for (const t of postfix) {
     /* ---------- FUNCTION ---------- */
-    if (t.type === "function") {
+    if (t.type === TokenType.FUNCTION) {
       const name = t.value.toUpperCase();
 
       // Get function definition (execution behavior)
-      const fnDef = FUNCTION_REGISTRY[name];
+      const fnDef = FunctionRegistry[name];
       if (!fnDef) {
         throw new Error(`Unknown function ${name}`);
       }
 
       // Validate function allowed in this computation mode
       if (type) {
-        const allowed = FUNCTION_ALLOW_BY_MODE[type];
+        const allowed = FunctionAllowByMode[type];
         if (!allowed?.has(name)) {
           throw new Error(
             `Function ${name} is not allowed in ${type} computation`,
@@ -54,7 +56,7 @@ export function buildAST(postfix, type) {
         }
       }
 
-      const arity = fnDef.arity;
+      const arity = fnDef.argTypes.length;
 
       if (arity == null || arity === undefined) {
         throw new Error(
@@ -76,7 +78,7 @@ export function buildAST(postfix, type) {
       }
 
       //  Prevent WINDOW inside WINDOW
-      if (fnDef?.type === "WINDOW") {
+      if (fnDef?.type === FunctionType.WINDOW) {
         for (const arg of args) {
           if (containsWindowFunction(arg)) {
             throw new Error(
@@ -87,7 +89,7 @@ export function buildAST(postfix, type) {
       }
 
       stack.push({
-        type: "function",
+        type: NodeType.FUNCTION,
         fn: name,
         args,
       });
@@ -96,40 +98,48 @@ export function buildAST(postfix, type) {
     }
 
     /* ---------- IDENTIFIER ---------- */
-    if (t.type === "identifier") {
+    if (t.type === TokenType.IDENTIFIER) {
       const id = t.value;
       if (!id) return null;
 
-      stack.push({ type: "key", key: id });
+      stack.push({ type: NodeType.IDENTIFIER, field: id });
       dependencies.add(id);
       continue;
     }
 
     /* ---------- STRING ---------- */
-    if (t.type === "string") {
-      stack.push({ type: "constant", value: t.value, valueType: "string" });
+    if (t.type === TokenType.STRING) {
+      stack.push({
+        type: NodeType.CONSTANT,
+        value: t.value,
+        valueType: "string",
+      });
       continue;
     }
 
     /* ---------- NUMBER ---------- */
-    if (t.type === "number") {
-      stack.push({ type: "constant", value: t.value, valueType: "number" });
+    if (t.type === TokenType.NUMBER) {
+      stack.push({
+        type: NodeType.CONSTANT,
+        value: t.value,
+        valueType: "number",
+      });
       continue;
     }
 
     /* ---------- OPERATOR ---------- */
-    if (t.type === "op") {
+    if (t.type === TokenType.OPERATOR) {
       if (t.value === "u-") {
         if (stack.length < 1) return null;
         const arg = stack.pop();
-        stack.push({ type: "unary", op: "-", arg });
+        stack.push({ type: NodeType.UNARY, op: "-", arg });
         continue;
       }
 
       if (stack.length < 2) return null;
       const right = stack.pop();
       const left = stack.pop();
-      stack.push({ type: "binary", op: t.value, left, right });
+      stack.push({ type: NodeType.BINARY, op: t.value, left, right });
     }
   }
 

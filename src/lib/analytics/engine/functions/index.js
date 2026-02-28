@@ -1,73 +1,52 @@
-import { SCHEMA_FUNCTIONS } from "./schema";
-import { BASE_FUNCTIONS } from "./base";
-import { WINDOW_FUNCTIONS } from "./window";
-import { CONDITION_FUNCTIONS } from "./condition";
-import { RATIO_FUNCTIONS } from "./ratio";
-import { GLOBAL_FUNCTIONS } from "./global";
-import { DURATION_FUNCTIONS } from "./duration";
+import { MathFunctions } from "./math";
+import { LogicalFunctions } from "./logical";
+import { WindowFunctions } from "./window";
+import { AggregateFunctions } from "./aggregate";
+import { SchemaFunctions } from "./schema";
+import { DurationFunctions } from "./duration";
+import { NativeAggregateFunctions } from "./native";
 
-export const FUNCTION_REGISTRY = {
-  /* ---------- BASE / ROW ---------- */
-  ...BASE_FUNCTIONS,
+export const FunctionRegistry = {
+  /* ---------- MATH ---------- */
+  ...MathFunctions,
+
+  /* ---------- LOGICAL ---------- */
+  ...LogicalFunctions,
 
   /* ---------- WINDOW / ROLLING ---------- */
-  ...WINDOW_FUNCTIONS,
+  ...WindowFunctions,
 
-  ...SCHEMA_FUNCTIONS,
+  /* ---------- AGGREGATE ---------- */
+  ...AggregateFunctions,
 
-  /* ---------- RATIO ---------- */
-  ...RATIO_FUNCTIONS,
+  ...NativeAggregateFunctions,
 
-  /* ---------- CONDITIONAL ---------- */
-  ...CONDITION_FUNCTIONS,
+  /* ---------- SCHEMA ---------- */
+  ...SchemaFunctions,
 
-  ...GLOBAL_FUNCTIONS,
-
-  ...DURATION_FUNCTIONS,
+  /* ---------- TIME ---------- */
+  ...DurationFunctions,
 };
 
-export const FUNCTION_ALLOW_BY_MODE = {
-  /* ---------------------------------- */
-  /* Row-level column                   */
-  /* ---------------------------------- */
-  BASE: new Set([
-    ...Object.keys(BASE_FUNCTIONS),
-    ...Object.keys(CONDITION_FUNCTIONS),
-    ...Object.keys(DURATION_FUNCTIONS),
-    "COUNT_ALL",
-  ]),
+const BASE_FUNCS = [
+  ...Object.keys(MathFunctions),
+  ...Object.keys(DurationFunctions),
+  ...Object.keys(LogicalFunctions),
+];
 
-  /* ---------------------------------- */
-  /* Rolling column                     */
-  /* ---------------------------------- */
+export const FunctionAllowByMode = {
+  BASE: new Set([...BASE_FUNCS, "COUNT_ALL"]),
+
   WINDOW: new Set([
-    ...Object.keys(BASE_FUNCTIONS),
-    ...Object.keys(SCHEMA_FUNCTIONS),
-    ...Object.keys(CONDITION_FUNCTIONS),
-    ...Object.keys(WINDOW_FUNCTIONS),
-    ...Object.keys(DURATION_FUNCTIONS),
+    ...BASE_FUNCS,
+    ...Object.keys(SchemaFunctions),
+    ...Object.keys(WindowFunctions),
     "COUNT_ALL",
   ]),
 
-  // /* ---------------------------------- */
-  // /* Ratio / derived row column         */
-  // /* ---------------------------------- */
-  RATIO: new Set([
-    ...Object.keys(BASE_FUNCTIONS),
-    ...Object.keys(CONDITION_FUNCTIONS),
-    ...Object.keys(RATIO_FUNCTIONS),
-    ...Object.keys(DURATION_FUNCTIONS),
-    "COUNT_ALL",
-  ]),
-
-  /* ---------------------------------- */
-  /* Full-sequence aggregate (charts)   */
-  /* ---------------------------------- */
-  GLOBAL: new Set([
-    ...Object.keys(BASE_FUNCTIONS),
-    ...Object.keys(CONDITION_FUNCTIONS),
-    ...Object.keys(RATIO_FUNCTIONS),
-    ...Object.keys(GLOBAL_FUNCTIONS),
-    ...Object.keys(DURATION_FUNCTIONS),
+  AGGREGATE: new Set([
+    ...BASE_FUNCS,
+    ...Object.keys(AggregateFunctions),
+    ...Object.keys(NativeAggregateFunctions),
   ]),
 };

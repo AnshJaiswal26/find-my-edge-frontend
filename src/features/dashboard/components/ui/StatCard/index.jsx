@@ -5,7 +5,7 @@ import { VARIANTS } from "./variants";
 import { evaluateColorRules, formatValue } from "@shared/utils";
 import { useMemo } from "react";
 import { Trash2 } from "lucide-react";
-import { BASE_FUNCTIONS } from "@lib/analytics/engine/functions/base";
+import { PureFunctions } from "@lib/analytics/engine/functions/base";
 
 export default function StatCard({ statId }) {
   const stat = useDashboardStore((s) => s.statsById[statId]);
@@ -22,7 +22,7 @@ export default function StatCard({ statId }) {
     return rule?.label === "Default" ? null : rule.color;
   }, [stat.value, stat.colorRules]);
 
-  // console.log(BASE_FUNCTIONS.ABS);
+  // console.log(PureFunctions.ABS);
 
   return (
     <div

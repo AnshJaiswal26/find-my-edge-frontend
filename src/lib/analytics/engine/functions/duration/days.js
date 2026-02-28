@@ -1,5 +1,4 @@
 export const DAYS = {
-  arity: 1,
   argTypes: ["number"],
   returnType: "number",
 
@@ -10,17 +9,12 @@ export const DAYS = {
   signature: "DAYS(n)",
   description: "Convert days to duration",
 
-  init() {
-    return { value: null };
-  },
+  exec(fn, ctx) {
+    const [valueExpr] = fn.args;
 
-  step(state, value) {
-    if (value == null) return;
+    const value = ctx.evaluate(valueExpr, ctx);
+    if (value == null) return null;
 
-    state.value = value * 24 * 60 * 60;
-  },
-
-  result(state) {
-    return state.value;
+    return value * 24 * 60 * 60;
   },
 };

@@ -1,5 +1,4 @@
 export const COUNT_N = {
-  arity: 2,
   argTypes: ["any", "number"],
   returnType: "number",
   semantic: { args: ["any", "number"], return: "number" },

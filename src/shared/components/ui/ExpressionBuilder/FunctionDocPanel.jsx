@@ -1,6 +1,6 @@
 import {
-  FUNCTION_REGISTRY,
-  FUNCTION_ALLOW_BY_MODE,
+  FunctionRegistry,
+  FunctionAllowByMode,
 } from "@lib/analytics/engine/functions";
 import { ChevronDown } from "lucide-react";
 import React, { useMemo, useState } from "react";
@@ -25,11 +25,11 @@ export function FunctionDocsPanel({ mode = "ALL" }) {
     // Decide which function names are allowed
     const allowedNames =
       mode === "ALL"
-        ? Object.keys(FUNCTION_REGISTRY)
-        : Array.from(FUNCTION_ALLOW_BY_MODE[mode] || []);
+        ? Object.keys(FunctionRegistry)
+        : Array.from(FunctionAllowByMode[mode] || []);
 
     for (const name of allowedNames) {
-      const def = FUNCTION_REGISTRY[name];
+      const def = FunctionRegistry[name];
       if (!def) continue;
 
       const key = def.type || "OTHER"; // BASE / WINDOW / GLOBAL / etc.
@@ -77,7 +77,7 @@ export function FunctionDocsPanel({ mode = "ALL" }) {
                     className="p-2 rounded bg-(--surface-disabled) border-t border-(--border) first:border-0"
                   >
                     <div className="font-mono text-(--info)">
-                      {fn.signature || `${fn.name}(${fn.arity} args)`}
+                      {fn.signature || `${fn.name}(${fn.argTypes.length} args)`}
                     </div>
                     <div className="text-(--text-muted)">{fn.description}</div>
 

@@ -21,9 +21,9 @@ function parseInputValue(raw, semantic) {
 
     /* ---------- DATE ---------- */
     case "date": {
-      // YYYY-MM-DD → days since epoch
+      // YYYY-MM-DD → epoch seconds (UTC)
       const ms = Date.parse(raw + "T00:00:00Z");
-      return Number.isFinite(ms) ? Math.floor(ms / 86400000) : null;
+      return Number.isFinite(ms) ? Math.floor(ms / 1000) : null; // seconds
     }
 
     /* ---------- TIME ---------- */
@@ -43,16 +43,11 @@ function parseInputValue(raw, semantic) {
 
     /* ---------- DATETIME ---------- */
     case "datetime": {
-      const [datePart, timePart] = raw.split("T");
+      const d = new Date(raw); // local
 
-      if (!datePart || !timePart) return null;
+      if (Number.isNaN(d.getTime())) return null;
 
-      const [y, m, d] = datePart.split("-").map(Number);
-      const [hh = 0, mm = 0, ss = 0] = timePart.split(":").map(Number);
-
-      const dt = new Date(y, m - 1, d, hh, mm, ss);
-
-      return Math.floor(dt.getTime() / 1000); //  store in seconds
+      return Math.floor(d.getTime() / 1000);
     }
 
     default:
@@ -70,15 +65,13 @@ function formatForInput(value, semantic) {
   switch (semantic) {
     /* ---------- DATE ---------- */
     case "date": {
-      // value = days since epoch → local date
-      const ms = value * 86400000;
-      const d = new Date(ms);
+      const d = new Date(value * 1000); // ✅ seconds → ms
 
-      const yyyy = d.getFullYear();
-      const mm = pad2(d.getMonth() + 1);
-      const dd = pad2(d.getDate());
+      const yyyy = d.getUTCFullYear();
+      const mm = pad2(d.getUTCMonth() + 1);
+      const dd = pad2(d.getUTCDate());
 
-      return `${yyyy}-${mm}-${dd}`; // ✅ no UTC shift
+      return `${yyyy}-${mm}-${dd}`;
     }
 
     /* ---------- TIME ---------- */

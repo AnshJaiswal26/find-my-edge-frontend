@@ -1,5 +1,4 @@
 export const VOLATILITY_N = {
-  arity: 2,
   argTypes: ["number", "number"],
   returnType: "number",
   semantic: { args: ["number", "number"], return: "number" },

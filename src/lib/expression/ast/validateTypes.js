@@ -1,18 +1,19 @@
 import {
-  FUNCTION_REGISTRY,
-  FUNCTION_ALLOW_BY_MODE,
+  FunctionRegistry,
+  FunctionAllowByMode,
 } from "@lib/analytics/engine/functions";
+import { NodeType } from "../nodeType";
 
 function getNodeType(node, mode, schemasById) {
   if (!node) return "any";
 
-  if (node.type === "constant") {
+  if (node.type === NodeType.CONSTANT) {
     if (typeof node.value === "number") return "number";
     if (typeof node.value === "string") return "string";
     return "any";
   }
 
-  if (node.type === "key") {
+  if (node.type === NodeType.IDENTIFIER) {
     if (!schemasById) return "any";
 
     const schema = schemasById[node.key];
@@ -41,7 +42,7 @@ function getNodeType(node, mode, schemasById) {
     }
   }
 
-  if (node.type === "unary") {
+  if (node.type === NodeType.UNARY) {
     const t = getNodeType(node.arg, mode, schemasById);
     if (node.op === "-" && t !== "number") {
       throw new Error("Unary minus requires a number");
@@ -49,7 +50,7 @@ function getNodeType(node, mode, schemasById) {
     return "number";
   }
 
-  if (node.type === "binary") {
+  if (node.type === NodeType.BINARY) {
     const left = getNodeType(node.left, mode, schemasById);
     const right = getNodeType(node.right, mode, schemasById);
 
@@ -74,13 +75,13 @@ function getNodeType(node, mode, schemasById) {
     }
   }
 
-  if (node.type === "function") {
-    const def = FUNCTION_REGISTRY[node.fn];
+  if (node.type === NodeType.FUNCTION) {
+    const def = FunctionRegistry[node.fn];
     if (!def) throw new Error(`Unknown function ${node.fn}`);
 
     // Mode permission check
     if (mode) {
-      const allowed = FUNCTION_ALLOW_BY_MODE[mode];
+      const allowed = FunctionAllowByMode[mode];
       if (!allowed?.has(node.fn)) {
         throw new Error(
           `Function ${node.fn} is not allowed in ${mode} computation`,
@@ -97,8 +98,8 @@ function getNodeType(node, mode, schemasById) {
 
       if (expected === "any") continue;
 
-      if (typeof expected === "object" && expected.key) {
-        if (args[i]?.type !== "key") {
+      if (typeof expected === "object" && expected.field) {
+        if (args[i]?.type !== "field") {
           throw new Error(
             `Function ${node.fn} argument ${i + 1} must be a field reference`,
           );
@@ -106,9 +107,9 @@ function getNodeType(node, mode, schemasById) {
 
         const keyType = getNodeType(args[i], mode, schemasById);
 
-        if (expected.key !== "any" && keyType !== expected.key) {
+        if (expected.field !== "any" && keyType !== expected.field) {
           throw new Error(
-            `Function ${node.fn} argument ${i + 1} must reference a ${expected.key} field`,
+            `Function ${node.fn} argument ${i + 1} must reference a ${expected.field} field`,
           );
         }
         continue;
