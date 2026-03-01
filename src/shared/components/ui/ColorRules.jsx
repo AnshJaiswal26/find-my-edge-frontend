@@ -45,9 +45,9 @@ export default function ColorRules({
           {r.operator === "always" ? null : isBetween(r.operator) ? (
             <RangeInput
               type={type}
-              value={{ from: r.value, to: r.value2 }}
+              value={{ from: r.from, to: r.to }}
               onChange={({ from, to }) =>
-                updateRule(i, { value: from, value2: to }, onChange)
+                updateRule(i, { from, to, value: null }, onChange)
               }
             />
           ) : (

@@ -16,10 +16,10 @@ function getNodeType(node, mode, schemasById) {
   if (node.type === NodeType.IDENTIFIER) {
     if (!schemasById) return "any";
 
-    const schema = schemasById[node.key];
+    const schema = schemasById[node.field];
 
     if (!schema) {
-      throw new Error(`Unknown field reference: ${node.key}`);
+      throw new Error(`Unknown field reference: ${node.field}`);
     }
 
     switch (schema.type) {

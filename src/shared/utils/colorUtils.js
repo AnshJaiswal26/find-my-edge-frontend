@@ -176,7 +176,7 @@ const evaluateColorRules = (value, rules = []) => {
     const fn = FILTER_OPERATION_MAP[rule.operator];
     if (!fn) continue;
 
-    if (fn(value, rule.value, rule?.value2)) {
+    if (fn(value, rule.value ?? rule.from, rule?.to)) {
       return rule;
     }
   }

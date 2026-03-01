@@ -4,6 +4,7 @@ import { useTableStore } from "@features/trade-metrics/table/store";
 import { createColumnDragController } from "@features/trade-metrics/table/interaction/columnDragController";
 import { useTradeStore } from "@shared/stores";
 import { showTooltip, hideTooltip } from "@shared/components/ui/tooltip";
+import { SchemaSource } from "@lib/analytics/schema";
 
 const controller = createColumnDragController();
 
@@ -15,15 +16,21 @@ function getColumnRects(tableEl) {
     },
   );
 }
+export function ColumnHeader(props) {
+  const isHidden = useTradeStore(
+    (s) => s.schemasById[props.colId].hidden === true,
+  );
+  console.log(isHidden);
+  if (isHidden) return null;
+  return <ColumnHeaderContext {...props} />;
+}
 
-export function ColumnHeader({ colId, index, tableRef, isGroupColumn }) {
+function ColumnHeaderContext({ colId, index, tableRef, isGroupColumn }) {
   const headerRef = useRef(null);
 
   const column = useTradeStore((s) => s.schemasById[colId]);
   const width = useTableStore((s) => s.columnWidths?.[colId] ?? 150);
-  const isColEditable = useTradeStore(
-    (s) => s.schemasById[colId].editable === true,
-  );
+  const isColEditable = column.source !== SchemaSource.COMPUTED;
   const isColUnlocked = useTableStore(
     (s) => s.lockedColumnsMap?.[colId] !== true,
   );

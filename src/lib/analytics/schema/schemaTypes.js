@@ -5,6 +5,12 @@ const SchemaSource = {
   COMPUTED: "computed",
 };
 
+const SchemaRole = {
+  SYSTEM_REQUIRED: "system_required",
+  USER_DEFINED: "user_defined",
+  SYSTEM_OPTIONAL: "system_optional",
+};
+
 const SchemaComputeMode = {
   ROW: "row",
   CUMULATIVE: "cumulative",
@@ -77,6 +83,7 @@ const SchemaTypeGroup = {
 
 export {
   SchemaSource,
+  SchemaRole,
   SemanticType,
   SchemaType,
   SchemaComputeMode,

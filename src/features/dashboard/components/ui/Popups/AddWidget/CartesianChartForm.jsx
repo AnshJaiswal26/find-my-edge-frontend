@@ -18,8 +18,8 @@ export const CartesianChartForm = forwardRef(
     const builderRef = useRef();
 
     const [groupBy, setGroupBy] = useState({});
-    const [grouping, setGrouping] = useState(false);
-    const [aggregation, setAggregation] = useState(false);
+
+    const [mode, setMode] = useState("SERIES");
 
     const [expr, setExpr] = useState("");
 
@@ -32,7 +32,14 @@ export const CartesianChartForm = forwardRef(
     const [seriesX, setSeriesX] = useState({ key: "", name: "", type: "" });
 
     const [seriesY, setSeriesY] = useState([
-      { key: "", name: "", type: "", ast: null },
+      {
+        key: "",
+        name: "",
+        type: "",
+        ast: null,
+        formula: null,
+        dependencies: [],
+      },
     ]);
 
     const { optionsGroup, baseOptions, filteredOptions } = useFilteredOptions({
@@ -43,16 +50,20 @@ export const CartesianChartForm = forwardRef(
 
     useImperativeHandle(ref, () => ({
       submit() {
-        console.log(groupBy);
-        if (aggregation) {
+        if (mode === "GROUP_AGGREGATE") {
+          if (!groupBy?.key || !groupBy?.ast) return;
+        }
+
+        if (mode === "SERIES") {
+          if (!seriesX.key || !seriesY[0]?.key) return;
+        }
+
+        if (mode === "GROUP_SELECT") {
           if (!groupBy?.key) return;
-          if (!groupBy?.ast) return;
-        } else {
-          if (!seriesX.key) return;
-          if (!seriesY[0]?.key) return;
         }
 
         addChart(type, {
+          mode,
           layout,
           groupSpec: draftToSpec(groupBy),
           x: seriesX,
@@ -72,14 +83,20 @@ export const CartesianChartForm = forwardRef(
           onCommit={(v) => setLayout((p) => ({ ...p, title: v }))}
         />
 
-        <Button.Toggle
-          label={"Grouping"}
-          hint={"Group chart series by metric"}
-          value={grouping}
-          onChange={setGrouping}
+        <Select
+          label="Chart Mode"
+          value={mode}
+          options={[
+            { id: "SERIES", label: "Normal Series" },
+            { id: "GROUP_SELECT", label: "Grouped (Select)" },
+            { id: "GROUP_AGGREGATE", label: "Grouped (Aggregate)" },
+          ]}
+          getKey={(o) => o.id}
+          getLabel={(o) => o.label}
+          onChange={(o) => setMode(o.id)}
         />
 
-        {grouping && (
+        {mode === "GROUP_SELECT" && (
           <Section title={"Group Chart Series"}>
             <GroupByBuilder
               schemasById={schemasById}
@@ -87,19 +104,12 @@ export const CartesianChartForm = forwardRef(
               onChange={setGroupBy}
             />
 
-            <Button.Toggle
-              label={"Aggregation"}
-              hint={"Show aggregate per group (single metric)"}
-              value={aggregation}
-              onChange={setAggregation}
-            />
-
-            {aggregation && (
+            {mode === "GROUP_AGGREGATE" && (
               <ExpressionBuilder
                 ref={builderRef}
                 value={expr}
                 schemasById={schemasById}
-                mode={"GLOBAL"}
+                mode={"AGGREGATE"}
                 semanticMode={"AGGREGATE"}
                 onCommit={(expr, ast, dependencies, semanticType) => {
                   setExpr(expr);
@@ -116,6 +126,9 @@ export const CartesianChartForm = forwardRef(
                         key: dependencies[0],
                         name: schemasById[dependencies[0]].label,
                         type: semanticType,
+                        ast,
+                        formula: expr,
+                        dependencies,
                       },
                     ]);
 
@@ -126,14 +139,14 @@ export const CartesianChartForm = forwardRef(
                     }));
                   }
 
-                  setGroupBy((p) => ({ ...p, ast }));
+                  setGroupBy((p) => ({ ...p }));
                 }}
               />
             )}
           </Section>
         )}
 
-        {!aggregation && (
+        {(mode === "SERIES" || mode === "GROUP_SELECT") && (
           <>
             <Section title={"X Axis Series"}>
               <Select

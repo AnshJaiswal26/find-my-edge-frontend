@@ -49,6 +49,8 @@ export const useTableStore = create(
     hydrateSchema() {
       const { schemasOrder } = useTradeStore.getState();
 
+      if (get().columnsOrder.length === 0) return;
+
       set({
         columnsOrder: schemasOrder,
       });

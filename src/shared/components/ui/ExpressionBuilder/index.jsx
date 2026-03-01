@@ -112,6 +112,7 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
     if (!dependencies) {
       return null;
     }
+
     for (const dep of dependencies) {
       if (!validSchemaIds.has(String(dep))) {
         setError(`Unknown reference '${dep}'`);

@@ -4,11 +4,133 @@ import { configGenerator } from "../configs";
 import {
   evaluateColorRules,
   FILTER_OPERATION_MAP,
-  isBetween,
   SORT_OPERATION_MAP,
 } from "@shared/utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
 import { computeAggregate } from "@lib/analytics/engine/execute";
+
+function useChartControls(chartId) {
+  const type = useChartStore((s) => s.charts[chartId].meta.type);
+  const filters = useChartStore((s) => s.charts[chartId].filters);
+  const sort = useChartStore((s) => s.charts[chartId].sort);
+  const selection = useChartStore((s) => s.charts[chartId].selection);
+  const xKey = useChartStore((s) => s.charts[chartId].xSeriesConfig.key);
+
+  return {
+    type,
+    filters,
+    sort,
+    selection,
+    xKey,
+  };
+}
+
+function useChartMode(groups, groupSpec) {
+  return useMemo(() => {
+    if (!groups) return "SERIES";
+    if (groupSpec?.ast) return "GROUP_AGGREGATE";
+    return "GROUP_SELECT";
+  }, [groups, groupSpec]);
+}
+
+function useChartTransformations(data, filters, sort, selection) {
+  return useMemo(() => {
+    let result = [...data];
+
+    // Selection
+    if (selection.from !== null && selection.to !== null) {
+      result = result.slice(selection.from, selection.to);
+    }
+
+    // Filter
+    if (filters?.length) {
+      result = result.filter((item) =>
+        filters.some((f) => {
+          const fn = FILTER_OPERATION_MAP[f.operator];
+          return fn?.(item.values[f.key], f.value ?? f.from, f.to);
+        }),
+      );
+    }
+
+    // Sort
+    if (sort?.key && sort.operator !== "none") {
+      const fn = SORT_OPERATION_MAP[sort.operator];
+      result = [...result].sort((a, b) => {
+        return fn?.(a.values[sort.key], b.values[sort.key]) ?? 0;
+      });
+    }
+
+    return result;
+  }, [data, filters, sort, selection]);
+}
+
+function useChartSeries(finalData, seriesConfig, selectedSeriesKeys, type) {
+  return useMemo(() => {
+    const config = selectedSeriesKeys?.length
+      ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+      : seriesConfig;
+
+    return config.map((s) => ({
+      name: s.name,
+      data: finalData.map((item) => item.values[s.key]),
+      color:
+        type === "line"
+          ? s.color
+          : ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
+    }));
+  }, [finalData, seriesConfig, selectedSeriesKeys, type]);
+}
+
+function useChartTooltip({ chartId, finalData, selectedSeriesKeys, mode }) {
+  return useCallback(
+    (seriesValue, index, seriesIndex) =>
+      seriesTooltipCallback({
+        seriesValue,
+        index,
+        seriesIndex,
+        chartId,
+        getTitle: (i, key) => {
+          const item = finalData[i];
+          return mode === "GROUP_AGGREGATE" ? item.meta : item.values[key];
+        },
+        selectedSeriesKeys,
+        mode,
+      }),
+    [chartId, finalData, selectedSeriesKeys, mode],
+  );
+}
+
+function useChartOptions({
+  type,
+  chartId,
+  chart,
+  seriesById,
+  finalData,
+  selectedSeriesKeys,
+  tooltipCallback,
+  mode,
+}) {
+  return useMemo(() => {
+    return configGenerator?.[type]?.({
+      chart,
+      chartId,
+      seriesById,
+      data: finalData,
+      selectedSeriesKeys,
+      tooltipCallback,
+      mode,
+    });
+  }, [
+    type,
+    chartId,
+    chart,
+    seriesById,
+    finalData,
+    selectedSeriesKeys,
+    tooltipCallback,
+    mode,
+  ]);
+}
 
 /* =========================================================
    🔥 CORE DATA ENGINE (Single Source of Truth)
@@ -146,19 +268,12 @@ export default function useSeriesChartConfig({
   selectedSeriesKeys,
   schemasById,
 }) {
-  const type = useChartStore((s) => s.charts[chartId].meta.type);
+  const { type, mode } = useChartStore((s) => s.charts[chartId].meta);
 
   const filters = useChartStore((s) => s.charts[chartId].filters);
   const sort = useChartStore((s) => s.charts[chartId].sort);
   const selection = useChartStore((s) => s.charts[chartId].selection);
   const xKey = useChartStore((s) => s.charts[chartId].xSeriesConfig.key);
-
-  /* ------------------ MODE ------------------ */
-  const mode = useMemo(() => {
-    if (!groups) return "SERIES";
-    if (groupSpec?.ast) return "GROUP_AGGREGATE";
-    return "GROUP_SELECT";
-  }, [groups, groupSpec]);
 
   /* ------------------ CORE DATA ------------------ */
   const finalData = useChartData({

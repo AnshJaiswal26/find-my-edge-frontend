@@ -29,12 +29,12 @@ function App() {
   useEffect(() => {
     const { setSelect, setColorPicker } = useUIStore.getState();
 
-    // ✅ Fetch immediately (no artificial delay)
-    const init = async () => {
-      await useTradeStore.getState().fetchAll();
-    };
+    // // ✅ Fetch immediately (no artificial delay)
+    // const init = async () => {
+    //   await useTradeStore.getState().fetchAll();
+    // };
 
-    init();
+    // init();
 
     const close = () => {
       setSelect(null);

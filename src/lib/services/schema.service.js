@@ -41,10 +41,7 @@ export const schemaService = {
 
     const res = await schemaApi.update(id, updates);
 
-    return {
-      schema: res?.schema,
-      order: res?.order || [],
-    };
+    return res;
   },
 
   /* -------- DELETE -------- */

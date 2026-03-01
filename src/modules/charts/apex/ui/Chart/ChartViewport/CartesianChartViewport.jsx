@@ -4,7 +4,7 @@ import {
 } from "@modules/charts/apex/hooks";
 import ReactApexChart from "react-apexcharts";
 
-export function SeriesChartViewport(props) {
+export function CartesianChartViewport(props) {
   const { options, series } = useSeriesChartConfig(props);
 
   const type = props.layout.area && props.type === "line" ? "area" : props.type;

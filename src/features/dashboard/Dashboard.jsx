@@ -13,6 +13,7 @@ import { AddWidgetPopup } from "./components/ui/Popups";
 import { ChartGridItem, StatsGrid } from "./components/feature";
 import { useTradeStore } from "@shared/stores";
 import DashboardSkeleton from "./components/ui/DashboardSkeleton";
+import { dashboardInit } from "./init/dashboard.init";
 
 const getColumnCount = () => {
   const w = document.innerWidth;
@@ -23,14 +24,28 @@ const getColumnCount = () => {
 };
 
 export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const init = async () => {
+      await dashboardInit();
+      setLoading(false);
+    };
+    init();
+  }, []);
+
+  if (loading) return <DashboardSkeleton />;
+
+  return <DashboardContext />;
+}
+
+function DashboardContext() {
   const seriesOrder = useTradeStore((s) => s.tradesOrder);
   const tradesById = useTradeStore((s) => s.tradesById);
   const derivedByTradeId = useTradeStore((s) => s.derivedByTradeId);
 
   const schemasById = useTradeStore((s) => s.schemasById);
   const schemasOrder = useTradeStore((s) => s.schemasOrder);
-
-  const [loading, setLoading] = useState(true);
 
   const seriesById = useMemo(() => {
     const result = {};
@@ -44,14 +59,6 @@ export default function Dashboard() {
 
     return result;
   }, [seriesOrder, tradesById, derivedByTradeId]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  if (loading) return <DashboardSkeleton />;
 
   return (
     <>
@@ -99,7 +106,7 @@ export default function Dashboard() {
         </div>
       </Container>
 
-      <StatsGrid />
+      {/* <StatsGrid /> */}
 
       {/* <TopPieCharts
         data={"demo"}
@@ -108,7 +115,7 @@ export default function Dashboard() {
         isSidebarOpen={isSidebarOpen}
       /> */}
 
-      <ChartDashboard
+      <ChartsWrapper
         seriesById={seriesById}
         seriesOrder={seriesOrder}
         schemasById={schemasById}
@@ -116,6 +123,13 @@ export default function Dashboard() {
       />
     </>
   );
+}
+
+function ChartsWrapper({ ...props }) {
+  if (!props.seriesById || Object.keys(props.seriesById).length === 0)
+    return null;
+
+  return <ChartDashboard {...props} />;
 }
 
 function ChartDashboard({
@@ -131,48 +145,58 @@ function ChartDashboard({
   const chartsOrder = useDashboardStore((s) => s.chartsOrder);
 
   useEffect(() => {
+    if (!gridRef.current) return;
+    if (!chartsOrder?.length) return;
     if (grid.current) return;
 
-    grid.current = GridStack.init(
+    // 🔥 INIT GRID ONLY ONCE (after items exist)
+    const instance = GridStack.init(
       {
         column: getColumnCount(),
         float: false,
         resizable: { handles: "" },
         draggable: { handle: ".chart-toolbar" },
+        animate: false, // ✅ prevent jump animations
       },
       gridRef.current,
     );
 
-    grid.current.on("resizestop", (_, el) => {
+    grid.current = instance;
+
+    /* ------------------ EVENTS ------------------ */
+
+    const handleResizeStop = (_, el) => {
       const chartId = el.getAttribute("gs-id");
       if (chartId) {
         window.dispatchEvent(
           new CustomEvent("chart-resize", { detail: { chartId } }),
         );
       }
-    });
+    };
 
-    grid.current.on("change", () => {
+    const handleChange = () => {
       if (isResponsiveChange.current) return;
 
-      const safeLayout = Object.fromEntries(
-        grid.current
+      const layout = Object.fromEntries(
+        instance
           .save()
-          .map(({ id, x, y, w, h }) => {
-            if (!id) return null;
-            return [id, { x, y, w, h }];
-          })
+          .map(({ id, x, y, w, h }) => (id ? [id, { x, y, w, h }] : null))
           .filter(Boolean),
       );
 
-      useDashboardStore.getState().setLayout(safeLayout);
-    });
+      useDashboardStore.getState().setLayout(layout);
+    };
+
+    instance.on("resizestop", handleResizeStop);
+    instance.on("change", handleChange);
+
+    /* ------------------ RESPONSIVE ------------------ */
 
     const updateColumns = () => {
       if (!grid.current) return;
 
       isResponsiveChange.current = true;
-      grid.current.column(getColumnCount(), "move");
+      instance.column(getColumnCount(), "move");
 
       requestAnimationFrame(() => {
         isResponsiveChange.current = false;
@@ -180,38 +204,45 @@ function ChartDashboard({
     };
 
     updateColumns();
-    document.addEventListener("resize", updateColumns);
+    window.addEventListener("resize", updateColumns);
+
+    /* ------------------ CLEANUP ------------------ */
 
     return () => {
-      grid.current?.destroy(false);
-      grid.current = null;
-      document.removeEventListener("resize", updateColumns);
+      window.removeEventListener("resize", updateColumns);
+
+      if (grid.current) {
+        grid.current.destroy(false);
+        grid.current = null;
+      }
     };
-  }, []);
-
-  useEffect(() => {
-    if (!grid.current) return;
-
-    requestAnimationFrame(() => {
-      chartsOrder.forEach((id) => {
-        const el = gridRef.current.querySelector(`[gs-id="${id}"]`);
-        if (el && !el.gridstackNode) {
-          grid.current.makeWidget(el);
-        }
-      });
-    });
   }, [chartsOrder]);
 
   useEffect(() => {
-    // useDashboardStore.getState().loadInitialCharts();
-    window.dispatchEvent(new Event("resize"));
-  }, []);
+    if (!grid.current || !chartsOrder?.length) return;
+
+    const instance = grid.current;
+
+    requestAnimationFrame(() => {
+      instance.batchUpdate(true); // 🔥 prevent multiple reflows
+
+      chartsOrder.forEach((id) => {
+        const el = gridRef.current?.querySelector(`[gs-id="${id}"]`);
+
+        if (el && !el.gridstackNode) {
+          instance.makeWidget(el);
+        }
+      });
+
+      instance.batchUpdate(false); // 🔥 apply once
+    });
+  }, [chartsOrder]);
 
   return (
     <div className="grid-stack" ref={gridRef}>
-      {chartsOrder.map((id, index) => (
+      {chartsOrder.map((id) => (
         <ChartGridItem
-          key={index}
+          key={id}
           id={id}
           seriesById={seriesById}
           seriesOrder={seriesOrder}

@@ -7,6 +7,8 @@ export function TableHeader({ tableRef }) {
   const groupBy = useTableStore((s) => s.groupBy?.key);
   const scrollEdge = useTableStore((s) => s.scrollEdge);
 
+  
+
   return (
     <div
       className="

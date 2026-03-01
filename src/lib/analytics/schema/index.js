@@ -1,6 +1,7 @@
 export { createSchema } from "./createSchema";
 export {
   SchemaSource,
+  SchemaRole,
   SemanticType,
   SchemaType,
   SchemaComputeMode,

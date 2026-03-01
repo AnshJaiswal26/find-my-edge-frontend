@@ -15,7 +15,7 @@ export default function ChartGridItem({ id, ...props }) {
       gs-id={id}
       gs-x={savedLayout?.x}
       gs-y={savedLayout?.y}
-      gs-w={savedLayout?.w ?? (category === "group" ? 10 : 16)}
+      gs-w={savedLayout?.w ?? (category === "group" ? 10 : 20)}
       gs-h={savedLayout?.h ?? 10}
       gs-min-w={category === "group" ? 8 : 12}
       gs-min-h={8}

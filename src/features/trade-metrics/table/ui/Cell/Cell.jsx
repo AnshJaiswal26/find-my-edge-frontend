@@ -31,6 +31,10 @@ export const Cell = memo(function Cell({
     }
   }, [value, editing]);
 
+  const isHidden = column.hidden === true;
+
+  if (isHidden) return null;
+
   /* ================= EDIT MODE ================= */
   if (editing) {
     const Editor = column.type === "select" ? CellSelect : CellInput;

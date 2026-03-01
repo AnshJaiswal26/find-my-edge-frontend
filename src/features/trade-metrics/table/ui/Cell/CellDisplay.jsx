@@ -6,6 +6,7 @@ import { useTableStore } from "@features/trade-metrics/table/store";
 import { formatValue } from "@shared/utils";
 import { explainFormulaFromColumn } from "./cellUtils";
 import { useTradeStore } from "@shared/stores";
+import { SchemaSource } from "@lib/analytics/schema";
 
 // const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
 //   if (!type.includes("computed")) return;
@@ -34,7 +35,7 @@ export const CellDisplay = memo(function CellDisplay({
 }) {
   const colorRules = useTradeStore((s) => s.schemasById[colId].colorRules);
   const isColEditable = useTradeStore(
-    (s) => s.schemasById[colId].editable === true,
+    (s) => s.schemasById[colId].source !== SchemaSource.COMPUTED,
   );
 
   const isColUnlocked = useTableStore(

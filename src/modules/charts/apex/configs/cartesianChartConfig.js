@@ -6,7 +6,6 @@ export const cartesianChartConfig = ({
   chart,
   chartId,
   data,
-  seriesById,
   tooltipCallback,
   mode,
 }) => {
@@ -20,7 +19,7 @@ export const cartesianChartConfig = ({
     ...(!config.horizontal && { tickPlacement: "on" }),
     labels: {
       show: config.xLabels,
-      formatter: (v, d) => {
+      formatter: (v) => {
         if (v < 0) return;
         const item = data[v - 1];
         if (!item) return;

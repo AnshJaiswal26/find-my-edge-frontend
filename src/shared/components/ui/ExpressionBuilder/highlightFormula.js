@@ -1,4 +1,5 @@
 import { tokenize } from "@lib/expression";
+import { TokenType } from "@lib/expression/ast/tokenType";
 
 export function highlightFormula(text) {
   if (!text) return "";
@@ -23,36 +24,37 @@ export function highlightFormula(text) {
       result += escape(text.slice(index, start));
 
       // Normalize display value (hide internal u-)
-      const displayValue = t.type === "op" && t.value === "u-" ? "-" : raw;
+      const displayValue =
+        t.type === TokenType.OPERATOR && t.value === "u-" ? "-" : raw;
 
       let className = "";
       switch (t.type) {
-        case "number":
+        case TokenType.NUMBER:
           className = "text-[#f78c6c]";
           break;
 
-        case "string":
+        case TokenType.STRING:
           className = "text-[#c3e88d]";
           break;
 
-        case "identifier":
+        case TokenType.IDENTIFIER:
           className = "text-[#ff79c6]";
           break;
 
-        case "function":
+        case TokenType.FUNCTION:
           className = "text-[#82aaff]";
           break;
 
-        case "op":
+        case TokenType.OPERATOR:
           className = "text-[#ffcb6b]";
           break;
 
-        case "comma":
+        case TokenType.COMMA:
           className = "text-[#ffcb6b]";
           break;
 
-        case "lparen":
-        case "rparen":
+        case TokenType.LPAREN:
+        case TokenType.RPAREN:
           className = "text-[#89ddff]";
           break;
 

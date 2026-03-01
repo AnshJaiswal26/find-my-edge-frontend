@@ -4,7 +4,7 @@ export const draftToSpec = (draft) => {
   if (!draft) return null;
 
   if (draft.kind === "value") {
-    return { type: "value", key: draft.key, ast: draft?.ast };
+    return { type: "value", key: draft.key };
   }
 
   if (draft.kind === "bucket") {
@@ -13,7 +13,6 @@ export const draftToSpec = (draft) => {
         type: "dateBucket",
         key: draft.key,
         unit: draft.bucket,
-        ast: draft?.ast,
       };
     }
 
@@ -22,7 +21,6 @@ export const draftToSpec = (draft) => {
         type: "timeBucket",
         key: draft.key,
         unit: "hour",
-        ast: draft?.ast,
       };
     }
 
@@ -32,9 +30,9 @@ export const draftToSpec = (draft) => {
         : splitIntoBuckets(draft.ranges);
 
       if (draft.schemaType.includes("time")) {
-        return { type: "timeRange", key: draft.key, ranges, ast: draft?.ast };
+        return { type: "timeRange", key: draft.key, ranges };
       }
-      return { type: "numberRange", key: draft.key, ranges, ast: draft?.ast };
+      return { type: "numberRange", key: draft.key, ranges };
     }
   }
 
@@ -47,7 +45,6 @@ export const draftToSpec = (draft) => {
       from: draft.from,
       to: draft.to,
       labels: draft.labels,
-      ast: draft?.ast,
     };
   }
 };

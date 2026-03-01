@@ -18,7 +18,7 @@ export const isValid = (draft, setError, ctx) => {
     return false;
   }
 
-  if (draft.source === SchemaSource.COMPUTEDs && !draft.ast) {
+  if (draft.source === SchemaSource.COMPUTED && !draft.ast) {
     setError({ ast: "Expression is required" });
     return false;
   }

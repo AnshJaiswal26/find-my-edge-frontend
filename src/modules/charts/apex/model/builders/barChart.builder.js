@@ -6,11 +6,14 @@ export const buildBarSeriesConfig = (s) => ({
   name: s.name ?? s.key,
   type: s.type ?? "number",
   ast: s.ast ?? null,
+  formula: s.formula ?? null,
+  dependencies: s.dependencies ?? [],
   colorRules: s.colorRules ?? [
     {
       operator: "always",
       value: 0,
-      value2: 0,
+      from: 0,
+      to: 0,
       color: "var(--info)",
     },
   ],
@@ -19,6 +22,7 @@ export const buildBarSeriesConfig = (s) => ({
 export function buildBarChart({
   x,
   y,
+  mode = "SERIES",
   groupSpec,
   layout = {},
   category = "series",
@@ -28,6 +32,7 @@ export function buildBarChart({
       id: crypto.randomUUID(),
       type: "bar",
       category,
+      mode,
     },
 
     layout: {

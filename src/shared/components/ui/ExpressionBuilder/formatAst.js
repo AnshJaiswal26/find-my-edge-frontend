@@ -1,3 +1,5 @@
+import { NodeType } from "@lib/expression/nodeType";
+
 const PRECEDENCE = {
   OR: 1,
   AND: 2,
@@ -14,7 +16,7 @@ const PRECEDENCE = {
 };
 
 function needsParens(parentOp, childNode) {
-  if (childNode.type !== "binary") return false;
+  if (childNode.type !== NodeType.BINARY) return false;
   return PRECEDENCE[childNode.op] < PRECEDENCE[parentOp];
 }
 
@@ -22,23 +24,19 @@ export function formatAST(node, indent = 2, schemasById) {
   const pad = "  ".repeat(indent);
 
   switch (node.type) {
-    case "constant":
+    case NodeType.CONSTANT:
       return typeof node.value === "string"
         ? `"${node.value}"`
         : String(node.value);
 
-    case "key": {
-      return `[${schemasById[node.key]?.label}]` ?? "KEY";
+    case NodeType.IDENTIFIER: {
+      return `[${schemasById[node.field]?.label}]` ?? "KEY";
     }
 
-    case "identifier": {
-      return node.key;
-    }
-
-    case "unary":
+    case NodeType.UNARY:
       return node.op + formatAST(node.argument, indent, schemasById);
 
-    case "binary": {
+    case NodeType.BINARY: {
       let left = formatAST(node.left, indent, schemasById);
       let right = formatAST(node.right, indent, schemasById);
 
@@ -56,7 +54,7 @@ export function formatAST(node, indent = 2, schemasById) {
       return `${left} ${node.op} ${right}`;
     }
 
-    case "function": {
+    case NodeType.FUNCTION: {
       // 🔥 handle empty args (single line)
       if (!node.args || node.args.length === 0) {
         return `${node.fn}()`;

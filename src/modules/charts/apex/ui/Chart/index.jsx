@@ -5,8 +5,8 @@ import { ChartTitle } from "./ChartTitle";
 import { ChartWithConfig } from "./ChartWithConfig";
 import styles from "./CustomApexChart.module.css";
 import { buildGroups } from "@lib/analytics/engine/data";
-import { Select } from "@shared/components/ui";
-import { useMemo, useState } from "react";
+import { Select, Skeleton } from "@shared/components/ui";
+import { useEffect, useMemo, useState } from "react";
 import { formatGroupValue } from "@shared/utils";
 
 const GroupOptionSelect = ({
@@ -60,6 +60,7 @@ export default function CustomApexChart({
 }) {
   const groupSpec = useChartStore((s) => s.charts[chartId]?.groupSpec);
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
+  const [ready, setReady] = useState(false);
 
   const groups = useMemo(() => {
     if (!groupSpec) return null;
@@ -71,6 +72,11 @@ export default function CustomApexChart({
       getValue: (trade, key) => trade[key],
     });
   }, [seriesOrder, seriesById, groupSpec]);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   return (
     <ChartContainer chartId={chartId}>
@@ -88,19 +94,24 @@ export default function CustomApexChart({
           />
         )}
       </div>
+
       <div className={styles.chartWrapper}>
-        <ChartWithConfig
-          chartId={chartId}
-          type={type}
-          category={category}
-          groups={groups}
-          groupSpec={groupSpec}
-          selectedGroupIndex={selectedGroupIndex}
-          seriesOrder={seriesOrder}
-          seriesById={seriesById}
-          schemasById={schemasById}
-          schemasOrder={schemasOrder}
-        />
+        {!ready ? (
+          <div className="w-full h-full" />
+        ) : (
+          <ChartWithConfig
+            chartId={chartId}
+            type={type}
+            category={category}
+            groups={groups}
+            groupSpec={groupSpec}
+            selectedGroupIndex={selectedGroupIndex}
+            seriesOrder={seriesOrder}
+            seriesById={seriesById}
+            schemasById={schemasById}
+            schemasOrder={schemasOrder}
+          />
+        )}
         <Toolbar
           type={type}
           chartId={chartId}

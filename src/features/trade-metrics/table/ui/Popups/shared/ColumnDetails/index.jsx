@@ -66,6 +66,17 @@ export default function ColumnDetails({
         />
       )}
 
+      {/* MODE */}
+      {draft?.source !== SchemaSource.SYSTEM && (
+        <Select
+          label={"Computation Mode"}
+          value={draft.mode}
+          options={["row", "cumulative"]}
+          getLabel={(v) => v.toUpperCase()}
+          onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
+        />
+      )}
+
       {/*  COMPUTED TOGGLE */}
       {draft?.source !== SchemaSource.SYSTEM && (
         <Button.Toggle
@@ -82,29 +93,33 @@ export default function ColumnDetails({
         />
       )}
 
-      {/* MODE */}
-      {draft?.source !== SchemaSource.SYSTEM && (
-        <Select
-          label={"Computation Mode"}
-          value={draft.mode}
-          options={["row", "cumulative"]}
-          getLabel={(v) => v.toUpperCase()}
-          onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
+      {settings && (
+        <Button.Toggle
+          label="Hidden"
+          value={draft.hidden}
+          onChange={(val) => {
+            onDraftChange((p) => ({
+              ...p,
+              hidden: val,
+            }));
+          }}
         />
       )}
 
       {/* LABEL */}
-      <Section title={"Label"}>
-        <Input
-          vertical
-          placeholder="Enter Column Name"
-          value={draft.label}
-          onChange={(v) => {
-            onDraftChange((p) => ({ ...p, label: v }));
-          }}
-        />
-        {error?.input && <ErrorText text={error.input} />}
-      </Section>
+      {draft?.source !== SchemaSource.SYSTEM && (
+        <Section title={"Label"}>
+          <Input
+            vertical
+            placeholder="Enter Column Name"
+            value={draft.label}
+            onChange={(v) => {
+              onDraftChange((p) => ({ ...p, label: v }));
+            }}
+          />
+          {error?.input && <ErrorText text={error.input} />}
+        </Section>
+      )}
 
       {/* 🔥 EXPRESSION BUILDER */}
       {isComputed && (

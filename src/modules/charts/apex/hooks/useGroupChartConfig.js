@@ -12,6 +12,7 @@ const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
       getTradeValue: (index, key) => {
         if (index < 0) return null;
         const id = seriesOrder[index];
+        
         return id ? seriesById[id]?.[key] : null;
       },
       getSchemaType: (key) => {
@@ -21,6 +22,7 @@ const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
     });
     return value;
   });
+  console.log(series, seriesConfig);
   return series;
 };
 
@@ -38,6 +40,7 @@ export default function useGroupChartConfig({
   schemasById,
   selectedSeriesKeys,
 }) {
+  console.log(seriesConfig);
   const type = useChartStore((s) => s.charts[chartId].meta.type);
 
   const filteredConfig = useMemo(

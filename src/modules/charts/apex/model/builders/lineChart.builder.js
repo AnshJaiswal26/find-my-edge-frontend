@@ -5,7 +5,10 @@ export const buildLineSeriesConfig = (s) => ({
   key: s.key,
   name: s.name ?? s.key,
   type: s.type ?? "number",
+
   ast: s.ast ?? null,
+  formula: s.formula ?? null,
+  dependencies: s.dependencies ?? [],
 
   label: s.label ?? s.name ?? s.key,
 
@@ -17,6 +20,7 @@ export const buildLineSeriesConfig = (s) => ({
 export function buildLineChart({
   x,
   y,
+  mode = "SERIES",
   groupSpec,
   layout = {},
   category = "series",
@@ -26,6 +30,7 @@ export function buildLineChart({
       id: crypto.randomUUID(),
       type: "line",
       category,
+      mode,
     },
 
     layout: {

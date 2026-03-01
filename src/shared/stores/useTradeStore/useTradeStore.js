@@ -58,8 +58,6 @@ export const useTradeStore = create(
 
         const affectedMap = buildSchemasAffectedMap(schemasById, schemasOrder);
 
-        set({});
-
         set({
           tradesById,
           derivedByTradeId,

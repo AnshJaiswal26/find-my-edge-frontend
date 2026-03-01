@@ -47,14 +47,14 @@ const normalizeInput = (left, right, format, kind) => {
 const SCHEMA_TYPE_CACHE = new Map(); // key → schema key
 
 function getOperandSchemaType(node, ctx) {
-  if (node.type !== "key") return null;
+  if (node.type !== NodeType.IDENTIFIER) return null;
 
-  if (SCHEMA_TYPE_CACHE.has(node.key)) {
-    return SCHEMA_TYPE_CACHE.get(node.key);
+  if (SCHEMA_TYPE_CACHE.has(node.field)) {
+    return SCHEMA_TYPE_CACHE.get(node.field);
   }
 
-  const type = ctx.getSchemaType(node.key);
-  SCHEMA_TYPE_CACHE.set(node.key, type);
+  const type = ctx.getSchemaType(node.field);
+  SCHEMA_TYPE_CACHE.set(node.field, type);
   return type;
 }
 

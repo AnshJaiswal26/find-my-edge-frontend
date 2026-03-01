@@ -36,3 +36,11 @@
 [data-theme^="dark-"] input[type="time"] {
   color-scheme: dark;
 }
+
+.apexcharts-canvas {
+  height: 100% !important;
+}
+
+.apexcharts-inner {
+  height: 100% !important;
+}

@@ -1,42 +1,79 @@
 function getDateBucket(value, unit) {
   if (value == null) return null;
 
-  const d = new Date(value * 86400000);
+  // ✅ value is now epoch seconds
+  const d = new Date(value * 1000);
 
   const year = d.getUTCFullYear();
-  const month = d.getUTCMonth();
+  const month = d.getUTCMonth(); // 0-based
 
   switch (unit) {
-    case "day":
+    case "day": {
+      const dayStartSec = Math.floor(
+        Date.UTC(year, month, d.getUTCDate()) / 1000,
+      );
+
       return {
         type: "DATE_BUCKET",
         unit,
-        key: value, // grouping
-        value, // ✅ days (correct)
+        key: dayStartSec, // grouping key
+        value: dayStartSec, // actual value
       };
+    }
 
     case "month": {
-      const monthStartDays = Math.floor(Date.UTC(year, month, 1) / 86400000);
+      const monthStartSec = Math.floor(Date.UTC(year, month, 1) / 1000);
 
       return {
         type: "DATE_BUCKET",
         unit,
-        key: year * 12 + month, // grouping key
-        value: monthStartDays, // ✅ real date (days)
+        key: year * 12 + month, // same logic
+        value: monthStartSec,
         year,
         month,
       };
     }
 
     case "year": {
-      const yearStartDays = Math.floor(Date.UTC(year, 0, 1) / 86400000);
+      const yearStartSec = Math.floor(Date.UTC(year, 0, 1) / 1000);
 
       return {
         type: "DATE_BUCKET",
         unit,
         key: year,
-        value: yearStartDays, // ✅ real date (days)
+        value: yearStartSec,
         year,
+      };
+    }
+
+    case "week": {
+      // ISO-like week (Monday start)
+
+      const day = d.getUTCDay() || 7; // Sunday=0 → 7
+      const monday = new Date(d);
+      monday.setUTCDate(d.getUTCDate() - day + 1);
+
+      const weekStartSec = Math.floor(
+        Date.UTC(
+          monday.getUTCFullYear(),
+          monday.getUTCMonth(),
+          monday.getUTCDate(),
+        ) / 1000,
+      );
+
+      // calculate week number
+      const yearStart = new Date(Date.UTC(monday.getUTCFullYear(), 0, 1));
+      const week = Math.ceil(((monday - yearStart) / 86400000 + 1) / 7);
+
+      const weekYear = monday.getUTCFullYear();
+
+      return {
+        type: "DATE_BUCKET",
+        unit,
+        key: weekYear * 100 + week,
+        value: weekStartSec,
+        year: weekYear,
+        week,
       };
     }
 

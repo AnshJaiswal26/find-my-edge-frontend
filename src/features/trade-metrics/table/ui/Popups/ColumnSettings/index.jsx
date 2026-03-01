@@ -16,7 +16,9 @@ export default function ColumnSettingsPopup() {
   const updateLoading = useTableStore((s) => s.loading.updateSchema);
   const deleteLoading = useTableStore((s) => s.loading.deleteSchema);
 
-  const { closePopup, updateColumn, deleteColumn } = useTableStore.getState();
+  const closePopup = useTableStore((s) => s.closePopup);
+  const updateColumn = useTableStore((s) => s.updateColumn);
+  const deleteColumn = useTableStore((s) => s.deleteColumn);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const activeColumn = columnsById[columnsOrder[activeIndex]];
@@ -28,7 +30,13 @@ export default function ColumnSettingsPopup() {
   console.log(draft);
 
   useEffect(() => {
-    if (activeColumn) setDraft(activeColumn);
+    if (activeColumn) {
+      setDraft((prev) => {
+        // prevent overwrite if same id
+        if (prev?.id === activeColumn.id) return prev;
+        return { ...activeColumn };
+      });
+    }
   }, [activeColumn]);
 
   useEffect(() => {
@@ -51,6 +59,7 @@ export default function ColumnSettingsPopup() {
 
     if (!isValid(draft, setError, { activeColumn, columnsById, columnsOrder }))
       return;
+
     updateColumn(activeColumn.id, draft);
   }
 

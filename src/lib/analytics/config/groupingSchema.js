@@ -9,6 +9,7 @@ export const GROUPING_OPTIONS = {
   month: "Month",
   year: "Year",
   hour: "Hour",
+  week: "Week",
 };
 
 export const GROUPING_SCHEMA = {
@@ -33,7 +34,7 @@ export const GROUPING_SCHEMA = {
 
   date: {
     kinds: ["value", "bucket", "condition"],
-    buckets: ["day", "month", "year"],
+    buckets: ["day", "month", "week", "year"],
     input: "date",
     operators: FILTER_TYPE.date,
   },

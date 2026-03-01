@@ -17,6 +17,8 @@ export const useUIStore = create((set) => ({
   activeColorPicker: false,
   toasts: [],
 
+  loading: false,
+
   recentColors: [],
 
   tooltip: {
@@ -25,6 +27,10 @@ export const useUIStore = create((set) => ({
     rect: null,
     content: null,
     placement: null,
+  },
+
+  setLoading(loading) {
+    set({ loading });
   },
 
   setPageName(pageName) {

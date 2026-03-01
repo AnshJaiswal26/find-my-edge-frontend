@@ -54,17 +54,14 @@ export const createSchemaSlice = (set, get) => ({
 
   updateSchema: async (id, draft) => {
     // 1. API call
-    const { schema: updatedSchema, order } = await schemaService.update(
-      id,
-      draft,
-    );
+    const updatedSchema = await schemaService.update(id, draft);
 
+    console.log(updatedSchema);
     const prevSchema = get().schemasById[id];
 
     set((s) => {
       // 2. Replace schema (NOT merge)
       s.schemasById[id] = updatedSchema;
-      s.schemasOrder = order;
 
       // 3. Rebuild dependency graph
       s.affectedMap = buildSchemasAffectedMap(s.schemasById, s.schemasOrder);

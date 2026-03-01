@@ -1,18 +1,5 @@
 import styles from "../CustomApexChart.module.css";
-import { AxisSeriesChartViewport } from "./AxisSeriesChartViewport";
-import { GroupChartViewport } from "./GroupChartViewport";
-import { SeriesChartViewport } from "./SeriesChartViewport";
-
-const ViewPort = ({ props }) => {
-  switch (props.category) {
-    case "group":
-      return <GroupChartViewport {...props} />;
-    case "axis-series":
-      return <AxisSeriesChartViewport {...props} />;
-    default:
-      return <SeriesChartViewport {...props} />;
-  }
-};
+import { ViewPort } from "./ViewPort";
 
 export function ChartViewport(props) {
   const { chartWidth } = props.layout;

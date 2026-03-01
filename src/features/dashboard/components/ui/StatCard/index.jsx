@@ -5,7 +5,6 @@ import { VARIANTS } from "./variants";
 import { evaluateColorRules, formatValue } from "@shared/utils";
 import { useMemo } from "react";
 import { Trash2 } from "lucide-react";
-import { PureFunctions } from "@lib/analytics/engine/functions/base";
 
 export default function StatCard({ statId }) {
   const stat = useDashboardStore((s) => s.statsById[statId]);
