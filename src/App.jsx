@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 
-import { pageRoute } from "@data";
 import { PageContainer } from "@shared/components/layout";
 
 import { useTradeStore, useUIStore } from "@shared/stores";
@@ -16,6 +15,9 @@ import SetupRules from "./features/setups-rules/SetupRules";
 import Settings from "./features/settings/Settings";
 import Mistakes from "./features/mistakes/Mistakes";
 import RiskManagement from "./features/risk-management/RiskManagement";
+import DhanSuccess from "@features/dhan-success/DhanSuccess";
+import IntegrationsPage from "@features/integrations/Integrations";
+import { PAGE_CONFIG } from "@config/pages/pageConfig";
 
 function Layout() {
   return (
@@ -86,21 +88,34 @@ function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path={pageRoute.dashboard} element={<Dashboard />} />
-        <Route path={pageRoute.tradeMetrics} element={<TradeMetrics />} />
+        <Route path={PAGE_CONFIG.DASHBOARD.route} element={<Dashboard />} />
         <Route
-          path={pageRoute.sheetIntegration}
-          element={<SheetIntegration />}
+          path={PAGE_CONFIG.TRADE_METRICS.route}
+          element={<TradeMetrics />}
         />
-        <Route path={pageRoute.calendar} element={<YearlyCalendar />} />
-        <Route path={pageRoute.setupRules} element={<SetupRules />} />
+
+        <Route path={PAGE_CONFIG.CALENDAR.route} element={<YearlyCalendar />} />
+        <Route path={PAGE_CONFIG.SETUP_RULES.route} element={<SetupRules />} />
         <Route
-          path={pageRoute.capturedStrategies}
+          path={PAGE_CONFIG.CAPTURED_STRATEGIES.route}
           element={<CapturedStrategies />}
         />
-        <Route path={pageRoute.settings} element={<Settings />} />
-        <Route path={pageRoute.mistakes} element={<Mistakes />} />
-        <Route path={pageRoute.riskManagement} element={<RiskManagement />} />
+        <Route path={PAGE_CONFIG.SETTINGS.route} element={<Settings />} />
+        <Route path={PAGE_CONFIG.MISTAKES.route} element={<Mistakes />} />
+        <Route
+          path={PAGE_CONFIG.RISK_MANAGEMENT.route}
+          element={<RiskManagement />}
+        />
+        <Route
+          path={PAGE_CONFIG.INTEGRATIONS.route}
+          element={<IntegrationsPage />}
+        />
+        {/* <Route
+          path={PAGE_CONFIG.sheetIntegration}
+          element={<SheetIntegration />}
+        /> */}
+        <Route path="/dhan/success" element={<DhanSuccess />} />
+        {/* <Route path="/google/success" element={<GoogleSuccess />} /> */}
       </Route>
     </Routes>
   );

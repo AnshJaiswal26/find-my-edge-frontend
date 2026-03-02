@@ -1,14 +1,16 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@shared/components/ui";
 import { Bell, Search, Settings } from "lucide-react";
 import { useUIStore } from "@shared/stores";
+import { getPageByRoute } from "@config/pages/getPageRoute";
 import { NavbarToggle } from "./NavbarToggle";
-import { ThemeToggle } from "./ThemeToggle";
 
 const PageName = () => {
-  const page = useUIStore((s) => s.pageName);
-  return <div className="font-bold text-xl">{page}</div>;
+  const { pathname } = useLocation();
+  const page = getPageByRoute(pathname);
+
+  return <div className="font-bold text-xl">{page.label}</div>;
 };
 
 const EditorLeftActions = () => {
@@ -66,7 +68,7 @@ const EditorRightActions = () => {
   );
 };
 
-export default function Editor() {
+export default function Header() {
   return (
     <div
       className="

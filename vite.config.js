@@ -14,11 +14,14 @@ export default defineConfig({
   resolve: {
     alias: {
       "@icons": path.resolve(__dirname, "src/assets/icons"),
+
+      "@config": path.resolve(__dirname, "src/config"),
+
       "@shared": path.resolve(__dirname, "src/shared"),
       "@modules": path.resolve(__dirname, "src/modules"),
 
       "@features": path.resolve(__dirname, "src/features"),
-      
+
       "@lib": path.resolve(__dirname, "src/lib"),
 
       // --- Data ---

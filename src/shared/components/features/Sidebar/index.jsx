@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUIStore } from "@shared/stores";
-import { sidebarItems } from "./content";
+import { PAGE_CONFIG } from "@config/pages/pageConfig";
+import { PAGE_LIST } from "@config/pages/pageKeys";
 
 const Profile = () => {
   const selectedAvatar = useUIStore((s) => s.selectedAvatar);
@@ -78,7 +79,8 @@ export default function Sidebar() {
             overflow-y-auto
           "
         >
-          {sidebarItems.map((item, index) => {
+          {PAGE_LIST.map((pageKey, index) => {
+            const item = PAGE_CONFIG[pageKey];
             const isActive = location.pathname === item.route;
 
             return (

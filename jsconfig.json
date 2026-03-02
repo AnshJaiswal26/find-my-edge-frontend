@@ -4,6 +4,8 @@
     "baseUrl": "src",
     "paths": {
       "@icons/*": ["assets/icons/*"],
+      "@config/*": ["config/*"],
+
       "@shared/*": ["shared/*"],
       "@modules/*": ["modules/*"],
 

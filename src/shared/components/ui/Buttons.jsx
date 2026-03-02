@@ -176,11 +176,7 @@ Button.Text = ({
       disabled={disabled}
       onClick={onClick}
       className={`
-        text-sm
-        text-(--info)
-        hover:underline
-        disabled:opacity-50
-        disabled:cursor-not-allowed
+        text-sm text-(--text) underline underline-offset-4 hover:text-(--info) transition
         ${className}
       `}
     >

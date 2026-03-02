@@ -10,10 +10,17 @@ import { Container } from "@shared/components/layout";
 
 import { useDashboardStore } from "./store";
 import { AddWidgetPopup } from "./components/ui/Popups";
-import { ChartGridItem, StatsGrid } from "./components/feature";
+import {
+  ChartGridItem,
+  DhanConnectCard,
+  StatsGrid,
+} from "./components/feature";
 import { useTradeStore } from "@shared/stores";
 import DashboardSkeleton from "./components/ui/DashboardSkeleton";
 import { dashboardInit } from "./init/dashboard.init";
+import DhanSuccess from "@features/dhan-success/DhanSuccess";
+import NoTradesFound from "@features/noTradesFound/NoTradesFound";
+import NoTradesEmptyState from "@shared/components/ui/NoTradesEmptyState";
 
 const getColumnCount = () => {
   const w = document.innerWidth;
@@ -26,15 +33,15 @@ const getColumnCount = () => {
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const init = async () => {
-      await dashboardInit();
-      setLoading(false);
-    };
-    init();
-  }, []);
+  // useEffect(() => {
+  //   const init = async () => {
+  //     await dashboardInit();
+  //     setLoading(false);
+  //   };
+  //   init();
+  // }, []);
 
-  if (loading) return <DashboardSkeleton />;
+  // if (loading) return <DashboardSkeleton />;
 
   return <DashboardContext />;
 }
@@ -79,9 +86,11 @@ function DashboardContext() {
         open={true}
         onCancel={() => null}
         onConfirm={() => null}
+
+        
       /> */}
 
-      <Container className="rounded-[4px]">
+      {/* <Container className="rounded-[4px]">
         <div className="flex-box items-center">
           <img
             className="w-13 h-13"
@@ -104,7 +113,13 @@ function DashboardContext() {
             />
           </div>
         </div>
-      </Container>
+      </Container> */}
+
+      {seriesOrder.length === 0 && <DhanConnectCard />}
+      {/* <NoTradesEmptyState /> */}
+
+      {/* <DhanSuccess /> */}
+      {/* <NoTradesFound /> */}
 
       {/* <StatsGrid /> */}
 

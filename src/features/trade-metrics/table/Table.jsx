@@ -6,6 +6,7 @@ import { TableHeader } from "./ui/Header/TableHeader";
 import VirtualizedRow from "./ui/Row/VirtualizedRows";
 import Popups from "./ui/Popups";
 import { Loader } from "@shared/components/ui";
+import { DhanConnectCard } from "@features/dashboard/components/feature";
 
 export function Table() {
   const tableRef = useRef(null);
@@ -13,6 +14,10 @@ export function Table() {
   const addRow = useTableStore((s) => s.addRow);
   const openPopup = useTableStore((s) => s.openPopup);
   const deleteColumn = useTableStore((s) => s.deleteColumn);
+
+  const columnOrder = useTableStore((s) => s.columnsOrder);
+
+  if (columnOrder.length === 0) return <DhanConnectCard />;
 
   const isDataLoading = useTableStore((s) => s.isDataLoading);
 

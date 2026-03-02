@@ -1,5 +1,6 @@
-import { Button, Editor, Sidebar, Toast } from "@shared/components/ui";
+import { Button, Toast } from "@shared/components/ui";
 import { Loader2, X } from "lucide-react";
+import { Sidebar, Header } from "@shared/components/features";
 
 export const PageContainer = ({
   children,
@@ -15,7 +16,7 @@ export const PageContainer = ({
       >
         <Toast />
 
-        {editor && <Editor />}
+        {editor && <Header />}
         <div className="box-border flex-wrap p-5 bg-(--surface) w-full h-full max-w-[1350px] overflow-x-auto overflow-y-hidden">
           {children}
         </div>

@@ -8,6 +8,7 @@ import {
   ChartNoAxesCombined,
   Scale,
   FileSpreadsheet,
+  ChartCandlestick,
 } from "lucide-react";
 import { pageRoute } from "@data";
 
@@ -29,4 +30,9 @@ export const sidebarItems = [
   { label: "Strategy Analysis", icon: ChartNoAxesCombined, route: null },
   { label: "Mistakes To Avoid", icon: CircleX, route: pageRoute.mistakes },
   { label: "Risk Management", icon: Scale, route: pageRoute.riskManagement },
+  {
+    label: "Integrations",
+    icon: ChartCandlestick,
+    route: pageRoute.integrations,
+  },
 ];

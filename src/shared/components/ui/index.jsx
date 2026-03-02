@@ -18,16 +18,17 @@ export { default as SuccessText } from "./SuccessText";
 /* =========================
    🔹 DISPLAY / VISUAL
 ========================= */
+export { default as DhanLogo } from "./DhanLogo";
 export { default as Badge } from "./Badge";
 export { default as Divider } from "./Divider";
 export { default as Legend } from "./Legend";
 export { default as Bar } from "./Bar";
 export { default as Skeleton } from "./Skeleton";
+export { default as NoTradesEmptyState } from "./NoTradesEmptyState";
 
 /* =========================
    🔹 NAVIGATION / STRUCTURE
 ========================= */
-export { default as Sidebar } from "./Sidebar";
 export { default as TabSelector } from "./TabSelector";
 export { default as ButtonSelector } from "./ButtonSelector";
 
@@ -40,7 +41,6 @@ export { default as PopupSideList } from "./PopupSideList";
 /* =========================
    🔹 EDITORS / BUILDERS (ADVANCED)
 ========================= */
-export { default as Editor } from "./Editor";
 export { default as ExpressionBuilder } from "./ExpressionBuilder";
 export { default as GroupByBuilder } from "./GroupByBuilder";
 export { default as FilterBuilder } from "./FilterBuilder";

@@ -1,11 +1,8 @@
-export const pageRoute = {
+export const pageRoutes = {
   dashboard: "/",
   edge: "/edge",
   tradeMetrics: "/trade-metrics",
   sheetIntegration: "/sheet-integration",
-  customJournal: "/custom-journal",
-  customEdge: "/custom-edge",
-  tradingJournal: "/trading-journal",
   calendar: "/calendar",
   setupRules: "/setup-rules",
   backtest: "/backtest",
@@ -13,4 +10,5 @@ export const pageRoute = {
   mistakes: "/mistakes",
   riskManagement: "/risk-management",
   capturedStrategies: "/captured-strategies",
+  integrations: "/integrations",
 };

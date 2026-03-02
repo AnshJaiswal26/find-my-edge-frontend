@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./SetupRules.css";
-import Sidebar from "../../shared/components/ui/Sidebar";
-import Editor from "../../shared/components/ui/Editor";
+import Sidebar from "../../shared/components/features/Sidebar";
+import Editor from "../../shared/components/features/Header";
 
 const SetupRules = () => {
   const [setups, setSetups] = useState([]);
