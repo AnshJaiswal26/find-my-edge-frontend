@@ -17,6 +17,8 @@ export const createComputeSlice = (set, get) => ({
         affectedMap,
       } = state;
 
+      console.log(schemasOrder);
+
       /* ================================
        * Helpers
        * ================================ */

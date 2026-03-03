@@ -1,4 +1,4 @@
-export default function Badge({ value, label, formatter, className = "" }) {
+export default function ValueBadge({ value, label, formatter, className = "" }) {
   const v = Number(value);
   const formattedValue = formatter ? formatter(v) : v;
 

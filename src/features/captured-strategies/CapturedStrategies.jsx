@@ -1,5 +1,5 @@
 import { Container } from "@shared/components/layout";
-import { Badge } from "@shared/components/ui";
+import { ValueBadge } from "@shared/components/ui";
 import { useEffect, useState } from "react";
 
 export default function CapturedStrategies() {
@@ -15,7 +15,7 @@ export default function CapturedStrategies() {
     fetchData();
   });
 
-  if (!tradeRecords) return <Badge value={-40} />;
+  if (!tradeRecords) return <ValueBadge value={-40} />;
 
   return (
     <div className=" flex">

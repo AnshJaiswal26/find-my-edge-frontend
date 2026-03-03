@@ -33,15 +33,15 @@ const getColumnCount = () => {
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const init = async () => {
-  //     await dashboardInit();
-  //     setLoading(false);
-  //   };
-  //   init();
-  // }, []);
+  useEffect(() => {
+    const init = async () => {
+      await dashboardInit();
+      setLoading(false);
+    };
+    init();
+  }, []);
 
-  // if (loading) return <DashboardSkeleton />;
+  if (loading) return <DashboardSkeleton />;
 
   return <DashboardContext />;
 }
@@ -115,13 +115,12 @@ function DashboardContext() {
         </div>
       </Container> */}
 
-      {seriesOrder.length === 0 && <DhanConnectCard />}
+      {/* {seriesOrder.length === 0 && <DhanConnectCard />} */}
       {/* <NoTradesEmptyState /> */}
 
-      {/* <DhanSuccess /> */}
       {/* <NoTradesFound /> */}
 
-      {/* <StatsGrid /> */}
+      <StatsGrid />
 
       {/* <TopPieCharts
         data={"demo"}

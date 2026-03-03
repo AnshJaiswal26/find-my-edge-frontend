@@ -23,7 +23,7 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
 
   return (
     <input
-      className="w-ful px-2 py-1 outline-0 h-[28px]"
+      className="w-full px-2 py-1 outline-0 h-[28px]"
       autoFocus
       type={INPUT_TYPES[type] || "text"}
       step={1}

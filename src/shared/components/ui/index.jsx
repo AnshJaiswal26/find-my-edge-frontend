@@ -19,7 +19,8 @@ export { default as SuccessText } from "./SuccessText";
    🔹 DISPLAY / VISUAL
 ========================= */
 export { default as DhanLogo } from "./DhanLogo";
-export { default as Badge } from "./Badge";
+export { default as ConnectionBadge } from "./ConnectionBage";
+export { default as ValueBadge } from "./ValueBadge";
 export { default as Divider } from "./Divider";
 export { default as Legend } from "./Legend";
 export { default as Bar } from "./Bar";

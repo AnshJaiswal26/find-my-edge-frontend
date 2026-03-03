@@ -28,9 +28,9 @@ export default function AddColumnPopup() {
 
     if (!isValid(draft, setError, { columnsById, columnsOrder })) return;
 
+    console.log(draft);
     addColumn({
       ...draft,
-      editable: draft.source !== SchemaSource.COMPUTED,
     });
   };
 

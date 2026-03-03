@@ -145,10 +145,17 @@ export default function ColumnDetails({
             schemasById={columnsById}
             mode={mode}
             ref={builderRef}
-            onCommit={(formula, ast, dependencies, semanticType) => {
+            onCommit={({
+              labelFormula,
+              idFormula,
+              ast,
+              dependencies,
+              semanticType,
+            }) => {
               onDraftChange((p) => ({
                 ...p,
-                formula,
+                formula: labelFormula, // UI expression
+                idFormula, // ENGINE expression
                 ast,
                 dependencies,
                 semanticType,
@@ -156,7 +163,6 @@ export default function ColumnDetails({
                   semanticType === SemanticType.STRING
                     ? SchemaType.TEXT
                     : semanticType,
-                editable: false,
               }));
             }}
           />

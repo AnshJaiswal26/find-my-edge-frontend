@@ -111,7 +111,7 @@ export const CartesianChartForm = forwardRef(
                 schemasById={schemasById}
                 mode={"AGGREGATE"}
                 semanticMode={"AGGREGATE"}
-                onCommit={(expr, ast, dependencies, semanticType) => {
+                onCommit={({ idFormula, ast, dependencies, semanticType }) => {
                   setExpr(expr);
 
                   if (dependencies.length && groupBy?.key) {
@@ -127,7 +127,7 @@ export const CartesianChartForm = forwardRef(
                         name: schemasById[dependencies[0]].label,
                         type: semanticType,
                         ast,
-                        formula: expr,
+                        formula: idFormula,
                         dependencies,
                       },
                     ]);

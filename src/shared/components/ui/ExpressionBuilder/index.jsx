@@ -229,11 +229,13 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   // ---------- DETECT SCHEMAS ----------
   useEffect(() => {
     if (!schemas?.length || !labelExpr) return;
-    const detected = schemas.filter((s) =>
-      new RegExp(
-        `\\b${s.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
-      ).test(labelExpr),
-    );
+
+    const detected = schemas.filter((s) => {
+      const escaped = s.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(`\\[\\s*${escaped}\\s*\\]`);
+      return regex.test(labelExpr);
+    });
+
     setUsedSchemas(detected.map((s) => ({ id: s.id, label: s.label })));
   }, [schemas, labelExpr]);
 
@@ -243,7 +245,15 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       setLabelExpr(e.target.value);
       setCursor(e.target.selectionStart);
       setOpen(true);
-      onChange?.(labelExpr, ast, dependencies, semanticType, error);
+
+      onChange?.({
+        labelFormula: formatted,
+        idFormula: idExpr,
+        ast,
+        dependencies,
+        semanticType,
+        error,
+      });
     },
     [labelExpr, ast, dependencies, error],
   );
@@ -275,7 +285,14 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       setLabelExpr(formatted);
     }
 
-    onCommit?.(formatted, ast, dependencies, semanticType, error);
+    onCommit?.({
+      labelFormula: formatted,
+      idFormula: idExpr,
+      ast,
+      dependencies,
+      semanticType,
+      error,
+    });
 
     if (!formatted.trim()) setError("Expression is required");
 

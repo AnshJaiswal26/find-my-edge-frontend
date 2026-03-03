@@ -104,27 +104,6 @@ export const createStatsSlice = (set, get) => ({
     });
   },
 
-  /* ---------------- FETCH ---------------- */
-  // just testing never be called separately, stats are fetched with the page data
-  async fetchStats() {
-    try {
-      const res = await statService.getAll("dashboard"); // UPDATED
-
-      console.log(res);
-      const statsById = res.statsById || {};
-      const statsOrder = res.statsOrder || [];
-
-      set((s) => {
-        s.statsById = { ...statsById };
-        s.statsOrder = [...statsOrder];
-      });
-
-      get().recomputeStats();
-    } catch (err) {
-      useUIStore.getState().showToast("ERROR", err.message);
-    }
-  },
-
   /* ---------------- ADD ---------------- */
   async addStat(stat) {
     const { statsOrder } = get();

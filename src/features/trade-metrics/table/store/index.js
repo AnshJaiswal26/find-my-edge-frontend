@@ -12,6 +12,7 @@ import { createGroupSlice } from "./group.slice";
 import { useTradeStore } from "@shared/stores";
 
 import { getLockedColumnsMap } from "@features/trade-metrics/table/view";
+import { tradeMetricService } from "@features/trade-metrics/table/service/tradeMetric.service";
 
 /* ----------------------------------------------- */
 /*                     STORE                       */
@@ -19,7 +20,21 @@ import { getLockedColumnsMap } from "@features/trade-metrics/table/view";
 
 export const useTableStore = create(
   immer((set, get) => ({
-    isDataLoading: false,
+    columnsById: {},
+    columnsOrder: [],
+    columnWidths: {},
+    lockedColumnsMap: {},
+    highlightedRows: {},
+
+    loading: {
+      createSchema: false,
+      deleteSchema: false,
+    },
+
+    isInitializing: false,
+    isInitialized: false,
+
+    isSavingLayout: false,
 
     ...createGroupSlice(set, get),
 
@@ -46,14 +61,28 @@ export const useTableStore = create(
       });
     },
 
-    hydrateSchema() {
-      const { schemasOrder } = useTradeStore.getState();
+    initTradeMetricTable: async () => {
+      const { isInitialized } = get();
+      if (isInitialized) return;
 
-      if (get().columnsOrder.length === 0) return;
+      try {
+        set({ isInitializing: true });
 
-      set({
-        columnsOrder: schemasOrder,
-      });
+        const res = await tradeMetricService.init();
+
+        console.log("Init response", res);
+        const data = res.data || res;
+
+        set({
+          columnsOrder: data.columnsOrder || [],
+          columnWidths: data.columnWidths || {},
+          isInitialized: true,
+        });
+      } catch (err) {
+        console.error("Failed to initialize table page", err);
+      } finally {
+        set({ isInitializing: false });
+      }
     },
   })),
 );

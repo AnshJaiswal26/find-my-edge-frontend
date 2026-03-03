@@ -18,7 +18,9 @@ const createSchema = (partial) => {
     /* ------------------ COMPUTATION ------------------ */
     mode: partial.mode ?? SchemaComputeMode.ROW, // row | cumulative
     ast: partial.ast ?? null,
-    formula: partial.formula ?? "",
+    formula: partial.formula ?? "", // formula in UI format (e.g. with labels instead of ids)
+    idFormula: partial.idFormula ?? "", // formula in engine format (e.g. with ids instead of labels)
+
     dependencies: partial.dependencies ?? [],
 
     /* ------------------ DATA SOURCE ------------------ */

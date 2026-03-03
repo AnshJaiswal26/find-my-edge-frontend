@@ -13,7 +13,7 @@ export default function Skeleton({
         borderRadius: radius,
       }}
     >
-      <div className="absolute inset-0 shimmer" />
+      <div className="shimmer" />
     </div>
   );
 }

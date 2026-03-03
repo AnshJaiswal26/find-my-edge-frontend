@@ -1,4 +1,4 @@
-import { DhanLogo } from "@shared/components/ui";
+import { ConnectionBadge, DhanLogo } from "@shared/components/ui";
 import { Check } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -27,20 +27,17 @@ export default function DhanSuccess() {
 
   return (
     <div className="min-h-[82vh] bg-(--surface) flex items-center justify-center">
-      <div className="bg-(--surface-muted) border border-(--border) rounded-2xl p-10 text-center max-w-md w-full">
+      <div className="bg-(--surface-muted) border border-(--border) rounded-2xl p-10 text-center max-w-md w-full space-y-4">
         {/* Logo */}
         <DhanLogo />
 
-        {/* Title */}
-        <h2 className="text-(--text) text-xl font-semibold mb-2 flex items-center justify-center gap-2">
-          <div className="bg-(--success) w-10 h-10 rounded-full flex items-center justify-center">
-            <Check size={28} className="stroke-white stroke-5" />
-          </div>{" "}
-          Connected to Dhan 🎉
-        </h2>
+        <ConnectionBadge
+          text="You have successfully connected to dhan 🎉"
+          size="md"
+        />
 
         {/* Subtitle */}
-        <p className="text-(--text-muted) text-sm mb-6">
+        <p className="text-(--text-muted) text-sm">
           Your account has been successfully linked. We’re preparing your
           dashboard...
         </p>

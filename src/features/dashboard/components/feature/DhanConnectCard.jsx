@@ -12,7 +12,7 @@ export default function DhanConnectCard() {
         <DhanLogo />
 
         {/* Title */}
-        <h2 className="text-xl font-semibold text-(--text)">
+        <h2 className="text-xl font-semibold text-(--text) mb-3">
           Connect your Dhan account
         </h2>
 

@@ -1,5 +1,20 @@
 import { useTradeStore } from "@shared/stores";
 import { moveItem } from "../interaction";
+import { debounce } from "lodash";
+
+import { tradeMetricService } from "../service/tradeMetric.service";
+
+const debouncedWidthSync = debounce(async (columnId, width, set) => {
+  try {
+    set({ isSavingLayout: true });
+
+    await tradeMetricService.updateColumnWidth(columnId, width);
+  } catch (e) {
+    console.error("Width sync failed", e);
+  } finally {
+    set({ isSavingLayout: false });
+  }
+}, 400);
 
 export const createDragSlice = (set, get) => ({
   /* ---------------- DRAG STATE ---------------- */
@@ -54,7 +69,7 @@ export const createDragSlice = (set, get) => ({
             s.groupBy && toIndex == 0 ? 1 : toIndex,
           );
           s.columnsOrder = newOrder;
-          useTradeStore.getState().updateSchemaOrder(newOrder);
+          useTradeStore.getState().updateSchemaOrder(newOrder, "TABLE");
         }
       }
 
@@ -62,6 +77,7 @@ export const createDragSlice = (set, get) => ({
       if (s.colDragMode === "resize") {
         if (payload?.width != null) {
           s.columnWidths[s.draggingColumn.id] = payload.width;
+          debouncedWidthSync(s.draggingColumn.id, payload.width, set);
         }
       }
 

@@ -2,22 +2,34 @@ import { SchemaSource } from "@lib/analytics/schema";
 import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
 import { createCellValue } from "@features/trade-metrics/table/model";
 import { schemaService } from "@lib/services/schema.service";
+import { debounce } from "lodash";
+
+const debouncedSyncOrder = debounce(async (order, viewType, set) => {
+  try {
+    set({ isSaving: true });
+
+    await schemaService.updateOrder(order, viewType);
+
+    set({ isSaving: false });
+  } catch (err) {
+    set({ isSaving: false });
+    console.error("Failed to sync schema order", err);
+  }
+}, 600);
 
 export const createSchemaSlice = (set, get) => ({
-  updateSchemaOrder(order) {
-    set((s) => {
-      s.schemasOrder = order;
-    });
+  updateSchemaOrder(order, viewType = "DEFAULT") {
+    debouncedSyncOrder(order, viewType, set);
   },
 
   addSchema: async (metric) => {
     // 1. API call
-    const { schema: savedSchema, order } = await schemaService.create(metric);
+    const savedSchema = await schemaService.create(metric);
 
     // 2. Update store
     set((s) => {
       s.schemasById[savedSchema.id] = savedSchema;
-      s.schemasOrder = order;
+      s.schemasOrder.push(savedSchema.id);
 
       s.affectedMap = buildSchemasAffectedMap(s.schemasById, s.schemasOrder);
 

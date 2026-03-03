@@ -14,5 +14,7 @@ export async function apiFetch(url, options = {}) {
     throw new Error(json.message);
   }
 
+  console.log("API response for", url, json);
+
   return json.data || json; //  directly return data
 }

@@ -1,32 +1,38 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTableStore } from "./store";
 
 import { Toolbar } from "./ui/Toolbar/Toolbar";
 import { TableHeader } from "./ui/Header/TableHeader";
 import VirtualizedRow from "./ui/Row/VirtualizedRows";
 import Popups from "./ui/Popups";
-import { Loader } from "@shared/components/ui";
-import { DhanConnectCard } from "@features/dashboard/components/feature";
+import { Skeleton } from "@shared/components/ui";
 
 export function Table() {
   const tableRef = useRef(null);
+
+  const initTradeMetricTable = useTableStore((s) => s.initTradeMetricTable);
 
   const addRow = useTableStore((s) => s.addRow);
   const openPopup = useTableStore((s) => s.openPopup);
   const deleteColumn = useTableStore((s) => s.deleteColumn);
 
-  const columnOrder = useTableStore((s) => s.columnsOrder);
+  const isInitializing = useTableStore((s) => s.isInitializing);
 
-  if (columnOrder.length === 0) return <DhanConnectCard />;
+  useEffect(() => {
+    initTradeMetricTable();
+  }, []);
 
-  const isDataLoading = useTableStore((s) => s.isDataLoading);
-
-  if (isDataLoading) return <Loader />;
+  if (isInitializing)
+    return (
+      <div className="flex flex-col gap-4 w-full -m-3 justify-self-center">
+        <Skeleton width="100%" height="10vh" />
+        <Skeleton width="100%" height="73vh" />
+      </div>
+    );
 
   return (
-    <div className="flex flex-col flex-1 gap-4 relative -m-3">
+    <div className="flex flex-col flex-1 gap-4 relative -m-2">
       <Popups />
-
       <Toolbar
         onAddTrade={addRow}
         onAddColumn={() => openPopup("add-column")}
@@ -37,7 +43,6 @@ export function Table() {
         onDelete={deleteColumn}
         onOpenColumnSettings={() => openPopup("column-settings")}
       />
-
       {/* SCROLL CONTAINER */}
       <div
         ref={tableRef}

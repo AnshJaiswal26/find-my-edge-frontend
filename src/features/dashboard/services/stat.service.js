@@ -1,4 +1,4 @@
-import { statApi } from "@lib/api/workspace/stat.api";
+import { statApi } from "@features/dashboard/api/stat.api";
 
 /* --------- HELPERS (optional but powerful) --------- */
 

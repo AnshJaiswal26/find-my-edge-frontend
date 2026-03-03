@@ -35,6 +35,8 @@ export function Toolbar({
   const isSortingApplied = useTableStore((s) => s.sort.columnId !== null);
   const isGroupingApplied = useTableStore((s) => s.groupBy !== null);
 
+  const isSavingLayout = useTableStore((s) => s.isSavingLayout);
+
   const isSaving = useTradeStore((s) => s.isSaving);
   const pendingUpdates = useTradeStore((s) => s.pendingUpdates);
   const pending = Object.keys(pendingUpdates).length;
@@ -132,7 +134,7 @@ export function Toolbar({
       <div className="flex items-center gap-3">
         {/* STATUS */}
         <div className="flex items-center gap-2 text-xs text-(--text-muted)">
-          {isSaving ? (
+          {isSaving || isSavingLayout ? (
             <>
               <Loader2 size={13} className="animate-spin" />
               <span>Saving..</span>

@@ -52,4 +52,17 @@ export const schemaService = {
 
     return res;
   },
+
+  /* -------- UPDATE ORDER -------- */
+  async updateOrder(order, viewType) {
+    if (!order || !Array.isArray(order) || order.length === 0) {
+      throw new Error("Order must be a non-empty array");
+    }
+
+    if (!viewType) {
+      throw new Error("View type is required");
+    }
+
+    return await schemaApi.updateOrder(order, viewType);
+  },
 };

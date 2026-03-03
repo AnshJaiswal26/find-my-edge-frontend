@@ -1,4 +1,4 @@
-import { apiFetch } from "../client";
+import { apiFetch } from "@lib/api/client";
 
 export const statApi = {
   create: (page, data) =>

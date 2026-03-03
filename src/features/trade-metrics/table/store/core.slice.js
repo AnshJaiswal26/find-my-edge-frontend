@@ -1,21 +1,20 @@
 import { useTradeStore, useUIStore } from "@shared/stores";
+import { debounce } from "lodash";
+import { tradeMetricService } from "../service/tradeMetric.service";
+
+const debouncedHighlightSync = debounce(async (rowId, highlight, set) => {
+  try {
+    set({ isSavingLayout: true });
+
+    await tradeMetricService.updateHighlightRow(rowId, highlight);
+  } catch (e) {
+    console.error("Highlight sync failed", e);
+  } finally {
+    set({ isSavingLayout: false });
+  }
+}, 400);
 
 export const createCoreSlice = (set, get) => ({
-  columnsById: {},
-  columnsOrder: [],
-  columnWidths: {},
-  lockedColumnsMap: {},
-  highlightedRows: {},
-
-  loading: {
-    createSchema: false,
-    deleteSchema: false,
-  },
-
-  /* ----------------------------------------------- */
-  /*                  DATA ACTIONS                   */
-  /* ----------------------------------------------- */
-
   /* ------------------------------------------------- */
   /*                ROW ACTIONS                        */
   /* ------------------------------------------------- */
@@ -41,7 +40,10 @@ export const createCoreSlice = (set, get) => ({
 
   toggleHighlightRow(id) {
     set((s) => {
-      s.highlightedRows[id] = !s.highlightedRows[id];
+      const newValue = !s.highlightedRows[id];
+      s.highlightedRows[id] = newValue;
+
+      debouncedHighlightSync(id, newValue, set);
     });
   },
 

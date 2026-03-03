@@ -17,11 +17,10 @@ export const AddStatsForm = forwardRef(({ schemasById }, ref) => {
     title: "",
     ast: null,
     format: "",
+    formula: "",
     type: "number",
     colorRules: [],
   });
-
-  const [expr, setExpr] = useState("");
 
   console.log(stat);
 
@@ -43,11 +42,16 @@ export const AddStatsForm = forwardRef(({ schemasById }, ref) => {
       />
 
       <ExpressionBuilder
-        value={expr}
+        value={stat.formula}
         schemasById={schemasById}
-        onCommit={(expr, ast, _, semanticType) => {
-          setStat((p) => ({ ...p, ast, type: semanticType }));
-          setExpr(expr);
+        onCommit={({ idFormula, ast, dependencies, semanticType }) => {
+          setStat((p) => ({
+            ...p,
+            formula: idFormula,
+            ast,
+            dependencies,
+            type: semanticType,
+          }));
         }}
         mode={"GLOBAL"}
         semanticMode="AGGREGATE"

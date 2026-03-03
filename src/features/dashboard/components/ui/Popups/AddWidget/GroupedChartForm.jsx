@@ -94,13 +94,15 @@ export const GroupedChartForm = forwardRef(({ type, schemasById }, ref) => {
               schemasById={schemasById}
               mode={"GLOBAL"}
               semanticMode={"AGGREGATE"}
-              onCommit={(expr, ast, dependencies, semanticType) => {
+              onCommit={({ idFormula, ast, dependencies, semanticType }) => {
                 setExpr(expr);
                 setSeriesConfig((s) => {
                   const next = [...s];
                   next[i] = {
                     ...next[i],
                     ast,
+                    formula: idFormula,
+                    dependencies,
                     type: semanticType,
                   };
                   return next;

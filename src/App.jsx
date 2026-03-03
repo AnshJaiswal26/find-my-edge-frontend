@@ -18,6 +18,7 @@ import RiskManagement from "./features/risk-management/RiskManagement";
 import DhanSuccess from "@features/dhan-success/DhanSuccess";
 import IntegrationsPage from "@features/integrations/Integrations";
 import { PAGE_CONFIG } from "@config/pages/pageConfig";
+import { Loader } from "@shared/components/ui";
 
 function Layout() {
   return (
@@ -28,15 +29,16 @@ function Layout() {
 }
 
 function App() {
+  const init = useTradeStore((s) => s.init);
+
+  const isIntializing = useTradeStore((s) => s.isInitializing);
+
+  useEffect(() => {
+    init();
+  }, [init]);
+
   useEffect(() => {
     const { setSelect, setColorPicker } = useUIStore.getState();
-
-    // // ✅ Fetch immediately (no artificial delay)
-    // const init = async () => {
-    //   await useTradeStore.getState().fetchAll();
-    // };
-
-    // init();
 
     const close = () => {
       setSelect(null);
@@ -85,6 +87,8 @@ function App() {
     };
   }, []);
 
+  if (isIntializing) return <Loader />;
+
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -114,9 +118,9 @@ function App() {
           path={PAGE_CONFIG.sheetIntegration}
           element={<SheetIntegration />}
         /> */}
-        <Route path="/dhan/success" element={<DhanSuccess />} />
         {/* <Route path="/google/success" element={<GoogleSuccess />} /> */}
       </Route>
+      <Route path="/dhan/success" element={<DhanSuccess />} />
     </Routes>
   );
 }

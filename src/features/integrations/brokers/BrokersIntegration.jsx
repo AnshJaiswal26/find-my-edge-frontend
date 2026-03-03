@@ -1,5 +1,6 @@
 import { Section } from "@shared/components/layout";
-import { Button } from "@shared/components/ui";
+import { Button, ConnectionBadge } from "@shared/components/ui";
+import { Check } from "lucide-react";
 
 const brokers = [
   { name: "Dhan", logo: "Icons/broker/dhan.png" },
@@ -76,6 +77,8 @@ export function BrokerIntegration() {
                     <p>Integration support coming soon.</p>
                   )}
                 </div>
+
+                {/* {isDhan && <ConnectionBadge />} */}
 
                 {/* CTA / STATUS */}
                 <div className="mt-4">
