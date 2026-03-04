@@ -7,6 +7,7 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
   const onBlur = () => {
     const normalized = parseInputValue(draft, type);
     onCommit(normalized);
+    console.log({ normalized }, "instance of: ", typeof normalized);
     setEditing(false);
   };
 
@@ -23,7 +24,7 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
 
   return (
     <input
-      className="w-full px-2 py-1 outline-0 h-[28px]"
+      className="w-full px-2 py-1 outline-0 h-[28px] appearance-none"
       autoFocus
       type={INPUT_TYPES[type] || "text"}
       step={1}

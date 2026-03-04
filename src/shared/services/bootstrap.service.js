@@ -1,4 +1,4 @@
-import { bootstrapApi } from "../api/bootstrap.api";
+import { bootstrapApi } from "@shared/api/bootstrap.api";
 
 export const bootstrapService = {
   async init() {

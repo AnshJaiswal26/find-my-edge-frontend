@@ -18,7 +18,7 @@ import {
 import { useTradeStore } from "@shared/stores";
 import DashboardSkeleton from "./components/ui/DashboardSkeleton";
 import { dashboardInit } from "./init/dashboard.init";
-import DhanSuccess from "@features/dhan-success/DhanSuccess";
+import BrokerSuccess from "@features/integrations/brokers/success/BrokerSuccess";
 import NoTradesFound from "@features/noTradesFound/NoTradesFound";
 import NoTradesEmptyState from "@shared/components/ui/NoTradesEmptyState";
 
@@ -32,6 +32,7 @@ const getColumnCount = () => {
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
+  const isEmpty = useTradeStore((s) => s.tradesOrder.length === 0);
 
   useEffect(() => {
     const init = async () => {
@@ -42,6 +43,8 @@ export default function Dashboard() {
   }, []);
 
   if (loading) return <DashboardSkeleton />;
+
+  if (isEmpty) return <NoTradesEmptyState />;
 
   return <DashboardContext />;
 }
@@ -90,7 +93,7 @@ function DashboardContext() {
         
       /> */}
 
-      {/* <Container className="rounded-[4px]">
+      <Container className="rounded-[4px]">
         <div className="flex-box items-center">
           <img
             className="w-13 h-13"
@@ -113,7 +116,7 @@ function DashboardContext() {
             />
           </div>
         </div>
-      </Container> */}
+      </Container>
 
       {/* {seriesOrder.length === 0 && <DhanConnectCard />} */}
       {/* <NoTradesEmptyState /> */}

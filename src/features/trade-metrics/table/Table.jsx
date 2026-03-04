@@ -5,7 +5,8 @@ import { Toolbar } from "./ui/Toolbar/Toolbar";
 import { TableHeader } from "./ui/Header/TableHeader";
 import VirtualizedRow from "./ui/Row/VirtualizedRows";
 import Popups from "./ui/Popups";
-import { Skeleton } from "@shared/components/ui";
+import { NoTradesEmptyState, Skeleton } from "@shared/components/ui";
+import { useTradeStore } from "@shared/stores";
 
 export function Table() {
   const tableRef = useRef(null);
@@ -15,6 +16,8 @@ export function Table() {
   const addRow = useTableStore((s) => s.addRow);
   const openPopup = useTableStore((s) => s.openPopup);
   const deleteColumn = useTableStore((s) => s.deleteColumn);
+
+  const isEmpty = useTradeStore((s) => s.tradesOrder.length === 0);
 
   const isInitializing = useTableStore((s) => s.isInitializing);
 
@@ -44,9 +47,13 @@ export function Table() {
         onOpenColumnSettings={() => openPopup("column-settings")}
       />
       {/* SCROLL CONTAINER */}
-      <div
-        ref={tableRef}
-        className="
+
+      {isEmpty ? (
+        <NoTradesEmptyState className="!min-h-[70vh]" />
+      ) : (
+        <div
+          ref={tableRef}
+          className="
           relative
           border border-(--border)
           rounded
@@ -56,12 +63,13 @@ export function Table() {
           w-full
           overflow-auto
         "
-      >
-        <div className="min-w-max relative">
-          <TableHeader tableRef={tableRef} />
-          <VirtualizedRow scrollRef={tableRef} />
+        >
+          <div className="min-w-max relative">
+            <TableHeader tableRef={tableRef} />
+            <VirtualizedRow scrollRef={tableRef} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

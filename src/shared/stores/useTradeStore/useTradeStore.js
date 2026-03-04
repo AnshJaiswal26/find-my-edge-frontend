@@ -11,9 +11,11 @@ import { useDashboardStore } from "@features/dashboard/store";
 import { useTableStore } from "@features/trade-metrics/table/store";
 
 import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
-import { tradeService } from "@lib/services/trade.service";
-import { schemaService } from "@lib/services/schema.service";
-import { bootstrapService } from "@features/bootstrap/services/bootstrap.service";
+
+import { tradeService } from "@shared/services/trade.service";
+import { schemaService } from "@shared/services/schema.service";
+
+import { bootstrapService } from "@shared/services/bootstrap.service";
 
 export const useTradeStore = create(
   immer((set, get) => ({
@@ -29,9 +31,6 @@ export const useTradeStore = create(
     affectedMap: {},
 
     isSaving: false,
-
-    isInitialized: false,
-    isInitializing: false,
 
     ...createComputeSlice(set, get),
     ...createTradeSlice(set, get),
@@ -84,32 +83,6 @@ export const useTradeStore = create(
         console.error(err);
         useUIStore.getState().showToast("ERROR", err.message);
         set({ isLoading: false });
-      }
-    },
-
-    async init() {
-      if (get().isInitialized || get().isInitializing) return;
-
-      try {
-        set({ isInitializing: true });
-
-        const data = await bootstrapService.init();
-
-        set({
-          tradesById: data.tradesById,
-          derivedByTradeId: data.derivedByTradeId,
-          tradesOrder: data.tradesOrder,
-
-          schemasById: data.schemasById,
-          schemasOrder: data.schemasOrder,
-
-          isInitialized: true,
-          isInitializing: false,
-        });
-      } catch (error) {
-        console.error("Bootstrap init failed:", error);
-      } finally {
-        set({ isInitializing: false });
       }
     },
   })),

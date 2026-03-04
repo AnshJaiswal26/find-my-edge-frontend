@@ -1,4 +1,4 @@
-import { Button, DhanLogo } from "@shared/components/ui";
+import { Button, BrokerLogo } from "@shared/components/ui";
 import { Inbox } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ export default function NoTradesFound() {
     <div className="min-h-[82vh] bg-(--surface) flex items-center justify-center">
       <div className="bg-(--surface) border border-(--border) rounded-2xl p-10 text-center max-w-md w-full">
         {/* Logo */}
-        <DhanLogo />
+        <BrokerLogo />
 
         {/* Title */}
         <h2 className="text-(--text) text-xl font-semibold mb-2 flex items-center justify-center gap-2">

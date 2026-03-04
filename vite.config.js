@@ -24,6 +24,8 @@ export default defineConfig({
 
       "@lib": path.resolve(__dirname, "src/lib"),
 
+      "@pages": path.resolve(__dirname, "src/pages"),
+
       // --- Data ---
       "@data": path.resolve(__dirname, "src/data"),
 

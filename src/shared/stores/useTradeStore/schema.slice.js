@@ -1,7 +1,7 @@
 import { SchemaSource } from "@lib/analytics/schema";
 import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
 import { createCellValue } from "@features/trade-metrics/table/model";
-import { schemaService } from "@lib/services/schema.service";
+import { schemaService } from "@shared/services/schema.service";
 import { debounce } from "lodash";
 
 const debouncedSyncOrder = debounce(async (order, viewType, set) => {

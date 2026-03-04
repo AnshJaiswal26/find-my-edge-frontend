@@ -18,7 +18,7 @@ export { default as SuccessText } from "./SuccessText";
 /* =========================
    🔹 DISPLAY / VISUAL
 ========================= */
-export { default as DhanLogo } from "./DhanLogo";
+export { default as BrokerLogo } from "./BrokerLogo";
 export { default as ConnectionBadge } from "./ConnectionBage";
 export { default as ValueBadge } from "./ValueBadge";
 export { default as Divider } from "./Divider";

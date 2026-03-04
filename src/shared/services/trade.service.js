@@ -1,4 +1,4 @@
-import { tradeApi } from "@lib/api/trade.api";
+import { tradeApi } from "@shared/api/trade.api";
 
 /* ---------------- SERVICE ---------------- */
 

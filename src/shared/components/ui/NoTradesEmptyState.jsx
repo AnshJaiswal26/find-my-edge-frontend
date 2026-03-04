@@ -5,9 +5,12 @@ export default function NoTradesEmptyState({
   title = "No trades available",
   message = "You don’t have any trades to display right now.",
   onRetry,
+  className = "",
 }) {
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-(--surface)">
+    <div
+      className={`min-h-[80vh] flex items-center justify-center bg-(--surface) ${className}`}
+    >
       <div className="border border-(--border) bg-(--surface) rounded-2xl p-8 text-center max-w-md w-full shadow-sm">
         {/* Icon */}
         <div className="flex justify-center mb-4">

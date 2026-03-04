@@ -1,4 +1,4 @@
-import { schemaApi } from "@lib/api/schema.api";
+import { schemaApi } from "@shared/api/schema.api";
 import { SchemaSource } from "@lib/analytics/schema";
 
 /* ---------------- HELPERS ---------------- */

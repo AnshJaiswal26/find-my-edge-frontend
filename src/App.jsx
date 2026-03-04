@@ -1,11 +1,7 @@
-import { useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 
 import { PageContainer } from "@shared/components/layout";
 
-import { useTradeStore, useUIStore } from "@shared/stores";
-
-// ✅ Direct imports (no lazy)
 import Dashboard from "./features/dashboard/Dashboard";
 import TradeMetrics from "./features/trade-metrics/TradeMetrics";
 import SheetIntegration from "./features/sheet-integration/SheetIntegration";
@@ -15,10 +11,29 @@ import SetupRules from "./features/setups-rules/SetupRules";
 import Settings from "./features/settings/Settings";
 import Mistakes from "./features/mistakes/Mistakes";
 import RiskManagement from "./features/risk-management/RiskManagement";
-import DhanSuccess from "@features/dhan-success/DhanSuccess";
-import IntegrationsPage from "@features/integrations/Integrations";
+import IntegrationsPage from "./features/integrations/Integrations";
+
+import BrokerSuccess from "@features/integrations/brokers/success/BrokerSuccess";
+
+import OfflinePage from "@pages/system/offlinePage";
+import ServerUnavailablePage from "@pages/system/ServerUnavailablePage";
+
 import { PAGE_CONFIG } from "@config/pages/pageConfig";
+
+import { useAppBootstrap } from "@lib/bootstrap/useAppBootstrap";
 import { Loader } from "@shared/components/ui";
+import { useEffect } from "react";
+import { useUIStore } from "@shared/stores";
+
+function AppGate({ children }) {
+  const loading = useAppBootstrap();
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  return children;
+}
 
 function Layout() {
   return (
@@ -28,15 +43,7 @@ function Layout() {
   );
 }
 
-function App() {
-  const init = useTradeStore((s) => s.init);
-
-  const isIntializing = useTradeStore((s) => s.isInitializing);
-
-  useEffect(() => {
-    init();
-  }, [init]);
-
+function AppRoutes() {
   useEffect(() => {
     const { setSelect, setColorPicker } = useUIStore.getState();
 
@@ -87,8 +94,6 @@ function App() {
     };
   }, []);
 
-  if (isIntializing) return <Loader />;
-
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -97,7 +102,6 @@ function App() {
           path={PAGE_CONFIG.TRADE_METRICS.route}
           element={<TradeMetrics />}
         />
-
         <Route path={PAGE_CONFIG.CALENDAR.route} element={<YearlyCalendar />} />
         <Route path={PAGE_CONFIG.SETUP_RULES.route} element={<SetupRules />} />
         <Route
@@ -114,15 +118,20 @@ function App() {
           path={PAGE_CONFIG.INTEGRATIONS.route}
           element={<IntegrationsPage />}
         />
-        {/* <Route
-          path={PAGE_CONFIG.sheetIntegration}
-          element={<SheetIntegration />}
-        /> */}
-        {/* <Route path="/google/success" element={<GoogleSuccess />} /> */}
       </Route>
-      <Route path="/dhan/success" element={<DhanSuccess />} />
+
+      <Route path="/integrations/success/:broker" element={<BrokerSuccess />} />
+
+      <Route path="/offline" element={<OfflinePage />} />
+      <Route path="/server-unavailable" element={<ServerUnavailablePage />} />
     </Routes>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AppGate>
+      <AppRoutes />
+    </AppGate>
+  );
+}

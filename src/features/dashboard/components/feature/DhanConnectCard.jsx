@@ -1,4 +1,4 @@
-import { DhanLogo } from "@shared/components/ui";
+import { BrokerLogo } from "@shared/components/ui";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ export default function DhanConnectCard() {
     <div className="w-full h-[82vh] flex items-center justify-center bg-(--surface)">
       <div className="text-center max-w-md py-18 px-10 rounded-2xl border border-(--border) bg-(--surface-muted)">
         {/* Logo */}
-        <DhanLogo />
+        <BrokerLogo />
 
         {/* Title */}
         <h2 className="text-xl font-semibold text-(--text) mb-3">

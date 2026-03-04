@@ -10,7 +10,7 @@ export default function ToastContainer() {
     <div
       className="
         fixed bottom-5 right-5
-        z-9999
+        z-1000
         flex flex-col gap-2.5
         pointer-events-none
       "

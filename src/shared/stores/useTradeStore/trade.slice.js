@@ -1,7 +1,8 @@
 import { debounce } from "lodash";
 import { useUIStore } from "@shared/stores";
 import { createRow } from "@features/trade-metrics/table/model";
-import { tradeService } from "@lib/services/trade.service";
+
+import { tradeService } from "@shared/services/trade.service";
 
 export const createTradeSlice = (set, get) => ({
   pendingUpdates: {},
