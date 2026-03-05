@@ -1,16 +1,38 @@
-import { Button, ConnectionBadge } from "@shared/components/ui";
+import { Button, ConnectionBadge, ValueBadge } from "@shared/components/ui";
 import { useIntegrationStore } from "@shared/stores/useIntegrationStore";
+import { ConnectionStatus } from "@features/integrations/brokers/config";
+
+const badgeMap = {
+  [ConnectionStatus.CONNECTED]: {
+    text: "Active",
+    color: "text-(--success) bg-(--success-soft)",
+  },
+  [ConnectionStatus.TOKEN_EXPIRED]: {
+    text: "Connection Expired",
+    color: "text-(--error) bg-(--error-soft)",
+  },
+  [ConnectionStatus.DISCONNECTED]: {
+    text: "Disconnected",
+    color: "text-(--error) bg-(--error-soft)",
+  },
+  [ConnectionStatus.NOT_CONNECTED]: {
+    text: "Not Active",
+    color: "text-(--error) font-bold bg-(--error-soft)",
+  },
+};
 
 export function BrokerConnectCard({ broker }) {
   const connectBroker = useIntegrationStore((s) => s.connectBroker);
   const disconnectBroker = useIntegrationStore((s) => s.disconnectBroker);
 
   const loading = useIntegrationStore((s) => s.brokers?.[broker.key]?.loading);
-  const connected = useIntegrationStore(
-    (s) => s.brokers?.[broker.key]?.connected,
-  );
+  const brokerState = useIntegrationStore((s) => s.brokers?.[broker.key]);
+
+  const status = brokerState?.status ?? ConnectionStatus.NOT_CONNECTED;
+  const connectedAt = brokerState?.connectedAt;
 
   const handleConnect = () => {
+    localStorage.setItem("connectStatus", status);
     connectBroker(broker.key);
   };
 
@@ -20,7 +42,7 @@ export function BrokerConnectCard({ broker }) {
 
   const isAvailable = broker.available;
 
-  console.log(broker, loading, connected);
+  const badge = badgeMap[status] || badgeMap[ConnectionStatus.CONNECTED];
 
   return (
     <div
@@ -51,6 +73,16 @@ export function BrokerConnectCard({ broker }) {
         </div>
       </div>
 
+      {!isAvailable && (
+        <div className="h-full flex items-start mt-3">
+          <div
+            className={`text-(--info) bg-(--info-soft) font-bold py-0.5 px-2 rounded w-30`}
+          >
+            In Development
+          </div>
+        </div>
+      )}
+
       {/* MIDDLE */}
       <div className="mt-3 text-xs text-(--text-muted)">
         {isAvailable ? (
@@ -64,41 +96,44 @@ export function BrokerConnectCard({ broker }) {
       </div>
 
       {/* CTA */}
-      <div className="mt-4">
-        {isAvailable ? (
-          connected ? (
-            <div className="flex justify-between items-center gap-2">
-              <ConnectionBadge text="Connected" size="sm" />
-              <Button
-                text={"Disconnected"}
-                variant="error"
-                disabled={loading || !connected}
-                onClick={handleDisconnect}
-                className="w-full text-sm"
-              />
-            </div>
+      {isAvailable && (
+        <div className="mt-4 flex justify-between items-center gap-2">
+          <div className={`${badge.color} font-bold py-0.5 px-2 rounded`}>
+            {badge.text}
+          </div>
+
+          {ConnectionStatus.isConnected(status) ? (
+            <Button
+              text={loading ? "Disconnecting..." : "Disconnect"}
+              variant="error"
+              disabled={loading}
+              onClick={handleDisconnect}
+            />
           ) : (
             <Button
-              text={loading ? "Redirecting..." : `Connect ${broker.name}`}
+              text={
+                loading
+                  ? "Redirecting..."
+                  : ConnectionStatus.isTokenExpired(status)
+                    ? "Reconnect"
+                    : `Connect ${broker.name}`
+              }
               variant="info"
-              disabled={loading || connected}
+              disabled={loading}
               onClick={handleConnect}
-              className="w-full text-sm"
             />
-          )
-        ) : (
-          <div className="inline-block px-2.5 py-1 text-[11px] font-medium rounded-full bg-(--hover) text-(--text-muted) mt-6">
-            In Development
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* BOTTOM */}
-      <div className="mt-auto pt-3 text-[11px] text-(--text-muted)">
-        {isAvailable
-          ? "Secure OAuth connection. No manual uploads needed."
-          : ""}
-      </div>
+      {isAvailable && (
+        <div className="mt-auto pt-3 text-[11px] text-(--text-muted)">
+          {ConnectionStatus.isConnected(status)
+            ? `${ConnectionStatus.isTokenExpired(status) ? "Last " : ""}Connected ${connectedAt ? `• ${connectedAt}` : ""}`
+            : "Secure OAuth connection. No manual uploads needed."}
+        </div>
+      )}
     </div>
   );
 }

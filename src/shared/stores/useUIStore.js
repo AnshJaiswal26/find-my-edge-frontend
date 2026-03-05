@@ -115,14 +115,11 @@ export const useUIStore = create((set) => ({
       const newToast = { id, type: type.toLowerCase(), message };
 
       // auto-remove
-      setTimeout(
-        () => {
-          set((s) => ({
-            toasts: s.toasts.filter((t) => t.id !== id),
-          }));
-        },
-        type === "ERROR" || type === "INFO" ? duration : 1500,
-      );
+      setTimeout(() => {
+        set((s) => ({
+          toasts: s.toasts.filter((t) => t.id !== id),
+        }));
+      }, duration);
 
       return { toasts: [newToast, ...state.toasts] };
     });

@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, Info, AlertTriangle, X } from "lucide-react";
 
 const sizes = {
   sm: {
@@ -23,16 +23,53 @@ const sizes = {
   },
 };
 
-export default function ConnectionBadge({ text = "Connected", size = "sm" }) {
+const variants = {
+  success: {
+    color: "bg-(--success)",
+    Icon: Check,
+    text: "Success",
+  },
+
+  info: {
+    color: "bg-(--info)",
+    Icon: Info,
+    text: "Info",
+  },
+
+  warning: {
+    color: "bg-(--warning)",
+    Icon: AlertTriangle,
+    text: "Warning",
+  },
+
+  error: {
+    color: "bg-(--error)",
+    Icon: X,
+    text: "Error",
+  },
+};
+
+export default function ConnectionBadge({
+  text,
+  size = "sm",
+  variant = "success",
+}) {
   const { iconsize, textsize, width, height } = sizes[size] || sizes.sm;
+
+  const config = variants[variant] || variants.info;
+
+  const Icon = config.Icon;
+  const label = text ?? config.text;
+
   return (
     <div className={`flex items-center gap-2 text-(--text) mt-2 ${textsize}`}>
       <div
-        className={`bg-(--success) rounded-full flex items-center justify-center ${width} ${height}`}
+        className={`${config.color} rounded-full flex items-center justify-center ${width} ${height}`}
       >
-        <Check size={iconsize} className="stroke-white stroke-5" />
+        <Icon size={iconsize} className="stroke-white stroke-[2.5]" />
       </div>
-      {text}
+
+      {label}
     </div>
   );
 }

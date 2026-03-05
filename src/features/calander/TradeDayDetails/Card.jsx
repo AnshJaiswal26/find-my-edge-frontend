@@ -3,7 +3,7 @@ export const Card = ({ label, value, positive }) => (
     <span className="text-(--text-muted)">{label}</span>
     <span
       className={`font-semibold ${
-        positive == null
+        positive == null || positive === undefined
           ? "text-(--text)"
           : positive
             ? "text-(--success)"

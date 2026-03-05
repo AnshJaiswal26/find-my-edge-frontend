@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUIStore } from "@shared/stores";
-import { PAGE_CONFIG } from "@config/pages/pageConfig";
-import { PAGE_LIST } from "@config/pages/pageKeys";
+import { PAGE_CONFIG } from "@pages/config/pageConfig";
+import { PAGE_LIST } from "@pages/config/pageKeys";
 
 const Profile = () => {
   const selectedAvatar = useUIStore((s) => s.selectedAvatar);

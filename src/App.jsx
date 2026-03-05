@@ -18,7 +18,7 @@ import BrokerSuccess from "@features/integrations/brokers/success/BrokerSuccess"
 import OfflinePage from "@pages/system/offlinePage";
 import ServerUnavailablePage from "@pages/system/ServerUnavailablePage";
 
-import { PAGE_CONFIG } from "@config/pages/pageConfig";
+import { PAGE_CONFIG } from "@pages/config/pageConfig";
 
 import { useAppBootstrap } from "@lib/bootstrap/useAppBootstrap";
 import { Loader } from "@shared/components/ui";

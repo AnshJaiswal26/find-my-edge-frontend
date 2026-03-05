@@ -29,6 +29,10 @@ export const tradeService = {
     return tradeApi.delete(id);
   },
 
+  async syncAllTradesFromBroker() {
+    return tradeApi.syncAllTradesFromBroker();
+  },
+
   /* -------- BULK SYNC -------- */
   async sync({ creates = {}, updates = {}, deletes = new Set(), tradesById }) {
     await Promise.all(

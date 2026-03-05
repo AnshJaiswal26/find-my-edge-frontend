@@ -3,28 +3,29 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { useUIStore } from "./useUIStore";
 
-import {
-  Brokers,
-  ConnectionStatus,
-} from "@features/integrations/brokers/config";
+import { Brokers } from "@features/integrations/brokers/config";
 
 export const useIntegrationStore = create(
   immer((set, get) => ({
     brokers: {
       [Brokers.DHAN.key]: {
-        connected: null,
-        isTokenValid: false,
         loading: false,
+        status: null,
+        connectionStatus: null,
+        connectedAt: null,
       },
       [Brokers.ZERODHA.key]: {
         connected: false,
         isTokenValid: false,
         loading: false,
       },
+
+      initializing: true,
+      initialized: false,
     },
 
-    fetchBrokerStatus: async (broker) => {
-      if (get().brokers[broker].connected !== null) return;
+    fetchConnectionStatus: async (broker, force = false) => {
+      if (get().initialized && !force) return;
 
       set((s) => {
         s.brokers[broker].loading = true;
@@ -34,11 +35,9 @@ export const useIntegrationStore = create(
         const res = await brokersService.fetchStatus(broker);
 
         set((s) => {
-          s.brokers[broker].connected =
-            res.status === ConnectionStatus.CONNECTED;
-
-          s.brokers[broker].isTokenValid =
-            res.status !== ConnectionStatus.TOKEN_EXPIRED;
+          s.brokers[broker].status = res.status;
+          s.brokers[broker].connectedAt = res.connectedAt;
+          s.brokers.initialized = true;
         });
       } catch (err) {
         useUIStore
@@ -47,6 +46,7 @@ export const useIntegrationStore = create(
       } finally {
         set((s) => {
           s.brokers[broker].loading = false;
+          s.brokers.initializing = false;
         });
       }
     },

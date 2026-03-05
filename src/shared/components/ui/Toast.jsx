@@ -1,17 +1,33 @@
 import { useUIStore } from "@shared/stores";
+import { X, CheckCircle, Info, AlertCircle, AlertTriangle } from "lucide-react";
 
 export default function ToastContainer() {
   const removeToast = useUIStore((s) => s.removeToast);
   const toasts = useUIStore((s) => s.toasts);
 
-  if (toasts.length === 0) return null;
+  if (!toasts.length) return null;
+
+  const iconMap = {
+    success: <CheckCircle size={16} className="text-green-500 shrink-0" />,
+    error: <AlertCircle size={16} className="text-red-500 shrink-0" />,
+    info: <Info size={16} className="text-sky-500 shrink-0" />,
+    warning: <AlertTriangle size={16} className="text-amber-500 shrink-0" />,
+  };
+
+  const progressColor = {
+    success: "bg-green-500",
+    error: "bg-red-500",
+    info: "bg-sky-500",
+    warning: "bg-amber-500",
+  };
 
   return (
     <div
       className="
-        fixed bottom-5 right-5
-        z-1000
-        flex flex-col gap-2.5
+        fixed bottom-3 right-10
+        z-[1000]
+        flex flex-col gap-2
+        w-[280px]
         pointer-events-none
       "
     >
@@ -20,47 +36,50 @@ export default function ToastContainer() {
           key={toast.id}
           className={`
             pointer-events-auto
-            flex items-start justify-between gap-2.5
-            px-[7px] py-[4px]
-            rounded-[3px]
-            text-white
-            shadow-[0_6px_18px_rgba(0,0,0,0.12)]
-            border-l-4 border-white/10
-            opacity-0 translate-x-[12px]
-            animate-[toast-in_260ms_ease_forwards]
-            ${
-              toast.type === "success"
-                ? "bg-(--success) border-l-green-700"
-                : toast.type === "error"
-                  ? "bg-(--error) border-l-red-700"
-                  : "bg-(--info) border-l-sky-600"
-            }
-            ${toast.leaving ? "animate-[toast-out_220ms_ease_forwards]" : ""}
+            relative
+            flex items-center gap-2
+            px-3 py-2
+            rounded-lg
+            text-[13px]
+            backdrop-blur-md
+            border border-white/10
+            shadow-md
+            bg-(--surface-disabled)
+            opacity-0 translate-x-4
+            animate-[toast-in_200ms_ease_forwards]
+            ${toast.leaving ? "animate-[toast-out_180ms_ease_forwards]" : ""}
           `}
         >
+          {/* icon */}
+          {iconMap[toast.type]}
+
           {/* message */}
-          <div className="max-w-[260px] text-sm overflow-hidden">
-            <span>{toast.message}</span>
+          <div className="flex-1 text-(--text) leading-snug">
+            {toast.message}
           </div>
 
           {/* close */}
           <button
             onClick={() => removeToast(toast.id)}
             className="
-              bg-white/25
-              text-white/90
-              cursor-pointer
-              text-sm
-              p-1
-              leading-none
-              rounded
-              opacity-90
-              hover:bg-white/50
+              opacity-60
               hover:opacity-100
+              transition
+              cursor-pointer
+              text-(--text)
             "
           >
-            ✕
+            <X size={14} />
           </button>
+
+          {/* progress */}
+          {!toast.leaving && (
+            <div className="absolute bottom-0 left-0 h-[2px] w-full bg-(--surface)">
+              <div
+                className={`h-full ${progressColor[toast.type]} animate-[toast-progress_5s_linear]`}
+              />
+            </div>
+          )}
         </div>
       ))}
     </div>

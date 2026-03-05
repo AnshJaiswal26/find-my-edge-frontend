@@ -1,8 +1,10 @@
 import { Section } from "@shared/components/layout";
 import { BrokerConnectCard } from "./components/features/BrokerConnectCard";
 import { Brokers } from "./config";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useIntegrationStore } from "@shared/stores/useIntegrationStore";
+import { useUIStore } from "@shared/stores";
+import { Skeleton } from "@shared/components/ui";
 
 const brokers = [
   {
@@ -38,10 +40,13 @@ const brokers = [
 ];
 
 export function BrokerIntegration() {
-  const fetchStatus = useIntegrationStore((s) => s.fetchBrokerStatus);
+  const fetchStatus = useIntegrationStore((s) => s.fetchConnectionStatus);
+  const initializing = useIntegrationStore((s) => s.brokers.initializing);
+
   useEffect(() => {
     fetchStatus(Brokers.DHAN.key);
   }, []);
+
   return (
     <div className="w-full flex justify-center">
       <Section className="w-full p-7">
@@ -54,9 +59,13 @@ export function BrokerIntegration() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mt-5">
-          {brokers.map((broker) => (
-            <BrokerConnectCard key={broker.key} broker={broker} />
-          ))}
+          {brokers.map((broker) =>
+            initializing ? (
+              <Skeleton key={broker.key} width={"100%"} height={"200px"} />
+            ) : (
+              <BrokerConnectCard key={broker.key} broker={broker} />
+            ),
+          )}
         </div>
       </Section>
     </div>

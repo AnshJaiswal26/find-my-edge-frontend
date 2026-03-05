@@ -1,5 +1,11 @@
-export default function ValueBadge({ value, label, formatter, className = "" }) {
-  const v = Number(value);
+export default function ValueBadge({
+  value,
+  label,
+  formatter,
+  className = "",
+}) {
+  const num = Number(value);
+  const v = isNaN(num) ? value : num;
   const formattedValue = formatter ? formatter(v) : v;
 
   const variant =
