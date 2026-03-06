@@ -1,7 +1,7 @@
-import { BrokerLogo } from "@shared/components/ui";
-import { useIntegrationStore } from "@shared/stores/useIntegrationStore";
-import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { BrokerLogo } from "@shared/components/ui";
+import { useIntegrationsStore } from "@shared/stores";
+import { useEffect, useRef, useState } from "react";
 import { Brokers } from "../config";
 import { useUIStore } from "@shared/stores";
 import { dashboardInit } from "@features/dashboard/init/dashboard.init";
@@ -178,10 +178,10 @@ export default function BrokerSuccess() {
   const navigate = useNavigate();
   const { broker } = useParams();
 
-  const fetchConnectionStatus = useIntegrationStore(
+  const fetchConnectionStatus = useIntegrationsStore(
     (s) => s.fetchConnectionStatus,
   );
-  const brokerState = useIntegrationStore((s) => s.brokers?.[broker]);
+  const brokerState = useIntegrationsStore((s) => s.brokers?.[broker]);
   const loading = brokerState?.loading;
 
   const brokerInfo = Brokers.get(broker);

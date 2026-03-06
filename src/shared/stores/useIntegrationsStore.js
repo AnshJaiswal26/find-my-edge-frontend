@@ -5,7 +5,7 @@ import { useUIStore } from "./useUIStore";
 
 import { Brokers } from "@features/integrations/brokers/config";
 
-export const useIntegrationStore = create(
+export const useIntegrationsStore = create(
   immer((set, get) => ({
     brokers: {
       [Brokers.DHAN.key]: {

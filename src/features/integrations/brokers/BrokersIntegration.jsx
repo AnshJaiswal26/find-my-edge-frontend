@@ -1,9 +1,8 @@
 import { Section } from "@shared/components/layout";
 import { BrokerConnectCard } from "./components/features/BrokerConnectCard";
 import { Brokers } from "./config";
-import { useEffect, useState } from "react";
-import { useIntegrationStore } from "@shared/stores/useIntegrationStore";
-import { useUIStore } from "@shared/stores";
+import { useEffect } from "react";
+import { useIntegrationsStore } from "@shared/stores";
 import { Skeleton } from "@shared/components/ui";
 
 const brokers = [
@@ -40,8 +39,8 @@ const brokers = [
 ];
 
 export function BrokerIntegration() {
-  const fetchStatus = useIntegrationStore((s) => s.fetchConnectionStatus);
-  const initializing = useIntegrationStore((s) => s.brokers.initializing);
+  const fetchStatus = useIntegrationsStore((s) => s.fetchConnectionStatus);
+  const initializing = useIntegrationsStore((s) => s.brokers.initializing);
 
   useEffect(() => {
     fetchStatus(Brokers.DHAN.key);

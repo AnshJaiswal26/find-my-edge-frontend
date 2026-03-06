@@ -6,23 +6,31 @@ export function setAccessToken(token) {
   accessToken = token;
 }
 
-async function refreshAccessToken() {
-  const res = await fetch(`${BASE_API_URL}/auth/refresh`, {
-    method: "POST",
-    credentials: "include", // sends httpOnly cookie
-  });
+let refreshPromise = null;
 
-  if (!res.ok) {
-    throw new Error("Refresh failed");
+async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${BASE_API_URL}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Refresh failed");
+
+        const json = await res.json();
+        accessToken = json?.accessToken ?? json?.data?.accessToken;
+        return accessToken;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
   }
 
-  const json = await res.json();
-  accessToken = json.data.accessToken;
-
-  return accessToken;
+  return refreshPromise;
 }
 
 export async function apiFetch(url, options = {}) {
+  console.log(accessToken);
   let res = await fetch(`${BASE_API_URL}/${url}`, {
     credentials: "include",
     headers: {
@@ -33,7 +41,7 @@ export async function apiFetch(url, options = {}) {
     ...options,
   });
 
-  if (res.status === 401) {
+  if (res.status === 401 && url !== "auth/refresh") {
     try {
       await refreshAccessToken();
 
@@ -54,13 +62,18 @@ export async function apiFetch(url, options = {}) {
     }
   }
 
-  const json = await res.json();
+  console.log("API response for", url);
+  let json = null;
 
-  if (!res.ok) {
-    throw new Error(json.message || "API error");
+  try {
+    json = await res.json();
+  } catch {
+    json = null;
   }
 
-  console.log("API response for", url, json);
+  if (!res.ok) {
+    throw new Error(json?.message || "API error");
+  }
 
   return json.data || json;
 }

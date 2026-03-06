@@ -1,2 +1,4 @@
 export { useUIStore } from "./useUIStore";
 export { useTradeStore } from "./useTradeStore";
+export { useAuthStore } from "./useAuthStore";
+export { useIntegrationsStore } from "./useIntegrationsStore";

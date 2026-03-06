@@ -1,5 +1,5 @@
 import { Button, ConnectionBadge, ValueBadge } from "@shared/components/ui";
-import { useIntegrationStore } from "@shared/stores/useIntegrationStore";
+import { useIntegrationsStore } from "@shared/stores";
 import { ConnectionStatus } from "@features/integrations/brokers/config";
 
 const badgeMap = {
@@ -22,11 +22,11 @@ const badgeMap = {
 };
 
 export function BrokerConnectCard({ broker }) {
-  const connectBroker = useIntegrationStore((s) => s.connectBroker);
-  const disconnectBroker = useIntegrationStore((s) => s.disconnectBroker);
+  const connectBroker = useIntegrationsStore((s) => s.connectBroker);
+  const disconnectBroker = useIntegrationsStore((s) => s.disconnectBroker);
 
-  const loading = useIntegrationStore((s) => s.brokers?.[broker.key]?.loading);
-  const brokerState = useIntegrationStore((s) => s.brokers?.[broker.key]);
+  const loading = useIntegrationsStore((s) => s.brokers?.[broker.key]?.loading);
+  const brokerState = useIntegrationsStore((s) => s.brokers?.[broker.key]);
 
   const status = brokerState?.status ?? ConnectionStatus.NOT_CONNECTED;
   const connectedAt = brokerState?.connectedAt;
