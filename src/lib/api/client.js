@@ -29,9 +29,8 @@ async function refreshAccessToken() {
   return refreshPromise;
 }
 
-export async function apiFetch(url, options = {}) {
-  console.log(accessToken);
-  let res = await fetch(`${BASE_API_URL}/${url}`, {
+async function doRequest(url, options = {}) {
+  return fetch(`${BASE_API_URL}/${url}`, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
@@ -40,21 +39,17 @@ export async function apiFetch(url, options = {}) {
     },
     ...options,
   });
+}
+
+export async function apiFetch(url, options = {}) {
+  let res = await doRequest(url, options);
 
   if (res.status === 401 && url !== "auth/refresh") {
     try {
       await refreshAccessToken();
 
       // retry request
-      res = await fetch(`${BASE_API_URL}/${url}`, {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-          ...options.headers,
-        },
-        ...options,
-      });
+      res = await doRequest(url, options);
     } catch (err) {
       // redirect to login if refresh fails
       window.location.href = "/login";

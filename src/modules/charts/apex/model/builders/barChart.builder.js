@@ -24,6 +24,7 @@ export function buildBarChart({
   y,
   mode = "SERIES",
   groupSpec,
+  series,
   layout = {},
   category = "series",
 }) {
@@ -55,6 +56,8 @@ export function buildBarChart({
       from: null,
       to: null,
     },
+
+    series: series ?? [],
 
     xSeriesConfig: {
       key: x.key ?? "",

@@ -5,22 +5,20 @@ import { ChartPopups } from "@modules/charts";
 
 import "gridstack/dist/gridstack.min.css";
 
-import { Button } from "@shared/components/ui";
+import { BrokerConnectCard, Button } from "@shared/components/ui";
 import { Container } from "@shared/components/layout";
 
 import { useDashboardStore } from "./store";
 import { AddWidgetPopup } from "./components/ui/Popups";
-import {
-  ChartGridItem,
-  DhanConnectCard,
-  StatsGrid,
-} from "./components/feature";
-import { useTradeStore } from "@shared/stores";
+import { ChartGridItem, StatsGrid } from "./components/feature";
+import { useIntegrationsStore, useTradeStore } from "@shared/stores";
 import DashboardSkeleton from "./components/ui/DashboardSkeleton";
 import { dashboardInit } from "./init/dashboard.init";
-import BrokerSuccess from "@features/integrations/brokers/success/BrokerSuccess";
-import NoTradesFound from "@features/noTradesFound/NoTradesFound";
 import NoTradesEmptyState from "@shared/components/ui/NoTradesEmptyState";
+import {
+  Brokers,
+  ConnectionStatus,
+} from "@features/integrations/brokers/config";
 
 const getColumnCount = () => {
   const w = document.innerWidth;
@@ -33,8 +31,16 @@ const getColumnCount = () => {
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const isEmpty = useTradeStore((s) => s.tradesOrder.length === 0);
+  const isNotConnected = useIntegrationsStore(
+    (s) =>
+      s.brokers[Brokers.DHAN.key]?.status === ConnectionStatus.NOT_CONNECTED,
+  );
 
   useEffect(() => {
+    if (isNotConnected && isEmpty) {
+      return;
+    }
+
     const init = async () => {
       await dashboardInit();
       setLoading(false);
@@ -42,8 +48,12 @@ export default function Dashboard() {
     init();
   }, []);
 
-  if (loading) return <DashboardSkeleton />;
+  console.log(isNotConnected);
 
+  if (isNotConnected && isEmpty)
+    return <BrokerConnectCard broker={Brokers.DHAN} />;
+
+  if (loading) return <DashboardSkeleton />;
   if (isEmpty) return <NoTradesEmptyState />;
 
   return <DashboardContext />;

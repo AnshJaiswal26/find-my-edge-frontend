@@ -40,7 +40,7 @@ const brokers = [
 
 export function BrokerIntegration() {
   const fetchStatus = useIntegrationsStore((s) => s.fetchConnectionStatus);
-  const initializing = useIntegrationsStore((s) => s.brokers.initializing);
+  const initializing = useIntegrationsStore((s) => s.initializing);
 
   useEffect(() => {
     fetchStatus(Brokers.DHAN.key);

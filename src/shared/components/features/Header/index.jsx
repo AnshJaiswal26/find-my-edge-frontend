@@ -2,7 +2,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@shared/components/ui";
 import { Bell, Search, Settings } from "lucide-react";
-import { useUIStore } from "@shared/stores";
+import { useAuthStore, useUIStore } from "@shared/stores";
 import { getPageByRoute } from "@pages/config/getPageRoute";
 import { NavbarToggle } from "./NavbarToggle";
 
@@ -44,7 +44,7 @@ const EditorLeftActions = () => {
 const EditorRightActions = () => {
   const navigate = useNavigate();
   const selectedAvatar = useUIStore((s) => s.selectedAvatar);
-  const username = useUIStore((s) => s.username);
+  const username = useAuthStore((s) => s.user.username);
 
   return (
     <div className="flex items-center gap-4">

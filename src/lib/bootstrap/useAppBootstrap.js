@@ -1,29 +1,35 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { appBootstrap } from "./appBootstrap";
 import { authService } from "@lib/services/auth.service";
 import { setAccessToken } from "@lib/api/client";
-import { useAuthStore } from "@shared/stores";
+import { useAuthStore, useIntegrationsStore } from "@shared/stores";
+import { Brokers } from "@features/integrations/brokers/config";
 
 const PUBLIC_ROUTES = ["/login", "/register"];
 
 export function useAppBootstrap() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const setUser = useAuthStore((s) => s.setUser);
+  const location = useLocation();
+
+  const login = useAuthStore((s) => s.login);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  const fetchConnectionStatus = useIntegrationsStore(
+    (s) => s.fetchConnectionStatus,
+  );
 
   useEffect(() => {
     async function init() {
       try {
-        //  Offline check
         if (!navigator.onLine) {
           navigate("/offline", { replace: true });
           return;
         }
+        let authenticated = isAuthenticated;
 
-        // Try restoring session
         try {
           const res = await authService.refresh();
 
@@ -31,21 +37,25 @@ export function useAppBootstrap() {
             setAccessToken(res.accessToken);
 
             const user = await authService.getMe();
-            setUser(user);
-          }
-        } catch {}
+            login(user);
 
-        if (!isAuthenticated && PUBLIC_ROUTES.includes(location.pathname)) {
+            await fetchConnectionStatus(Brokers.DHAN.key);
+
+            authenticated = true;
+          }
+        } catch (err) {
+          console.error("Token refresh failed", err);
+        }
+
+        if (!authenticated && PUBLIC_ROUTES.includes(location.pathname)) {
           return;
         }
 
-        // If user not authenticated → login
-        if (!isAuthenticated) {
+        if (!authenticated) {
           navigate("/login", { replace: true });
           return;
         }
 
-        // Bootstrap app
         await appBootstrap();
       } catch (err) {
         console.error("Bootstrap failed:", err);
@@ -56,7 +66,7 @@ export function useAppBootstrap() {
     }
 
     init();
-  }, [navigate, setUser]);
+  }, []);
 
   return loading;
 }

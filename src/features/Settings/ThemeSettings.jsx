@@ -22,7 +22,7 @@ export function ThemeSettings() {
   const setTheme = useUIStore((s) => s.setTheme);
 
   return (
-    <Section title="Themes" className={"max-w-150 w-150 self-center"}>
+    <Section title="Themes">
       <div className="grid grid-cols-2 gap-4 p-3">
         {THEMES.map((t) => {
           const isActive = theme === t.id;

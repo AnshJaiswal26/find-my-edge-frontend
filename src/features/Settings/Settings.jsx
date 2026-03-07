@@ -44,7 +44,7 @@ function Settings() {
           />
         </div>
 
-        <div className="settings-content">
+        <div className="px-15 py-5">
           {currentTab === "riskTracking" ? (
             <RiskTracking
               riskPerTrade={riskPerTrade}

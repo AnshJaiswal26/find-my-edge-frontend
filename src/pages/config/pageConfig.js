@@ -1,41 +1,42 @@
 import {
   LayoutDashboardIcon,
-  Table,
-  Calendar,
+  BarChart3,
+  CalendarDays,
   FileCheck,
-  NotepadText,
+  NotebookPen,
   CircleX,
   ChartNoAxesCombined,
   Scale,
   FileSpreadsheet,
-  ChartCandlestick,
+  LineChart,
   Plug,
   Puzzle,
+  Settings,
 } from "lucide-react";
 
 export const PAGE_CONFIG = {
   DASHBOARD: {
-    label: "Dashboard",
+    label: "Edge Dashboard",
     route: "/",
     icon: LayoutDashboardIcon,
   },
 
   TRADE_METRICS: {
-    label: "Trade Metrics",
+    label: "Trade Explorer",
     route: "/trade-metrics",
-    icon: Table,
+    icon: BarChart3,
   },
 
   SHEET_INTEGRATION: {
-    label: "Sheet Integration",
+    label: "Trade Import",
     route: "/sheet-integration",
     icon: FileSpreadsheet,
   },
 
   CALENDAR: {
-    label: "Monthly Overview",
+    label: "Trading Calendar",
     route: "/calendar",
-    icon: Calendar,
+    icon: CalendarDays,
   },
 
   SETUP_RULES: {
@@ -45,31 +46,31 @@ export const PAGE_CONFIG = {
   },
 
   CAPTURED_STRATEGIES: {
-    label: "Captured Strategies",
+    label: "Captured Setups",
     route: "/captured-strategies",
-    icon: NotepadText,
+    icon: NotebookPen,
   },
 
   STRATEGY_ANALYSIS: {
-    label: "Strategy Analysis",
-    route: "/setup-rules",
+    label: "Strategy Analytics",
+    route: "/strategy-analysis",
     icon: ChartNoAxesCombined,
   },
 
   MISTAKES: {
-    label: "Mistakes To Avoid",
+    label: "Mistake Tracker",
     route: "/mistakes",
     icon: CircleX,
   },
 
   RISK_MANAGEMENT: {
-    label: "Risk Management",
+    label: "Risk Analytics",
     route: "/risk-management",
     icon: Scale,
   },
 
   INTEGRATIONS: {
-    label: "Integrations",
+    label: "Broker Integrations",
     route: "/integrations",
     icon: Plug,
   },
@@ -83,6 +84,6 @@ export const PAGE_CONFIG = {
   SETTINGS: {
     label: "Settings",
     route: "/settings",
-    icon: ChartCandlestick,
+    icon: Settings,
   },
 };

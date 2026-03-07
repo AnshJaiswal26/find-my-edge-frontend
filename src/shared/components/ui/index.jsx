@@ -18,6 +18,7 @@ export { default as SuccessText } from "./SuccessText";
 /* =========================
    🔹 DISPLAY / VISUAL
 ========================= */
+export { default as BrokerConnectCard } from "./BrokerConnectCard";
 export { default as BrokerLogo } from "./BrokerLogo";
 export { default as ConnectionBadge } from "./ConnectionBage";
 export { default as ValueBadge } from "./ValueBadge";

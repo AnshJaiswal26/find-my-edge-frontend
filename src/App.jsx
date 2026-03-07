@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 
 import { PageContainer } from "@shared/components/layout";
 import { Loader } from "@shared/components/ui";
@@ -27,6 +27,17 @@ import OfflinePage from "@pages/system/offlinePage";
 import ServerUnavailablePage from "@pages/system/ServerUnavailablePage";
 
 import { PAGE_CONFIG } from "@pages/config/pageConfig";
+import { useAuthStore } from "@shared/stores";
+
+function PublicRoute({ children }) {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
 
 function AppGate({ children }) {
   const loading = useAppBootstrap();
@@ -52,8 +63,22 @@ function AppRoutes() {
   return (
     <Routes>
       {/* PUBLIC ROUTES */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
 
       {/* PROTECTED APP */}
       <Route
@@ -95,15 +120,16 @@ function AppRoutes() {
 
         <Route
           path={PAGE_CONFIG.SHEET_INTEGRATION?.route}
-          element={<SheetIntegration />}
-        />
-
-        {/* BROKER OAUTH SUCCESS */}
-        <Route
-          path="/integrations/success/:broker"
-          element={<BrokerSuccess />}
+          element={
+            <ProtectedRoute>
+              <SheetIntegration />
+            </ProtectedRoute>
+          }
         />
       </Route>
+
+      {/* BROKER OAUTH SUCCESS */}
+      <Route path="/integrations/success/:broker" element={<BrokerSuccess />} />
 
       {/* SYSTEM ROUTES */}
       <Route path="/offline" element={<OfflinePage />} />

@@ -8,17 +8,15 @@ import { Brokers } from "@features/integrations/brokers/config";
 export const useIntegrationsStore = create(
   immer((set, get) => ({
     brokers: {
-      [Brokers.DHAN.key]: {
-        loading: false,
-        status: null,
-        connectionStatus: null,
-        connectedAt: null,
-      },
-      [Brokers.ZERODHA.key]: {
-        connected: false,
-        isTokenValid: false,
-        loading: false,
-      },
+      ...Object.keys(Brokers).reduce((acc, key) => {
+        acc[Brokers[key].key] = {
+          loading: false,
+          status: null,
+          connectedAt: null,
+          expiresAt: null,
+        };
+        return acc;
+      }, {}),
 
       initializing: true,
       initialized: false,
@@ -37,7 +35,9 @@ export const useIntegrationsStore = create(
         set((s) => {
           s.brokers[broker].status = res.status;
           s.brokers[broker].connectedAt = res.connectedAt;
-          s.brokers.initialized = true;
+          s.brokers[broker].expiresAt = res.expiresOn;
+
+          s.initialized = true;
         });
       } catch (err) {
         useUIStore
@@ -46,7 +46,7 @@ export const useIntegrationsStore = create(
       } finally {
         set((s) => {
           s.brokers[broker].loading = false;
-          s.brokers.initializing = false;
+          s.initializing = false;
         });
       }
     },
@@ -57,6 +57,10 @@ export const useIntegrationsStore = create(
       });
 
       brokersService.connect(broker); // redirect → browser leaves page
+
+      set((s) => {
+        s.brokers[broker].loading = false;
+      });
     },
 
     disconnectBroker: async (broker) => {
@@ -68,8 +72,6 @@ export const useIntegrationsStore = create(
 
       set((s) => {
         s.brokers[broker].loading = false;
-        s.brokers[broker].connected = false;
-        s.brokers[broker].isTokenValid = false;
       });
     },
   })),

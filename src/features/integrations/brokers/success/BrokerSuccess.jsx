@@ -7,6 +7,7 @@ import { useUIStore } from "@shared/stores";
 import { dashboardInit } from "@features/dashboard/init/dashboard.init";
 import { tradeSyncService } from "@shared/services/tradesSync.service";
 import { Check, ShieldCheck, TrendingUp, LayoutDashboard } from "lucide-react";
+import { PAGE_CONFIG } from "@pages/config/pageConfig";
 
 // ─── Step config ────────────────────────────────────────────────────────────
 const STEPS = { CONNECTED: 0, SYNCING: 1, PREPARING: 2 };
@@ -193,7 +194,7 @@ export default function BrokerSuccess() {
   // Validate broker
   useEffect(() => {
     if (!broker || !brokerInfo) {
-      navigate("/integrations", { replace: true });
+      navigate(PAGE_CONFIG.INTEGRATIONS.route, { replace: true });
     }
   }, [broker, brokerInfo, navigate]);
 
@@ -227,14 +228,14 @@ export default function BrokerSuccess() {
           .getState()
           .showToast(
             "SUCCESS",
-            `${brokerInfo.name} account connected successfully`,
+            `Your ${brokerInfo.name} account connected successfully`,
           );
 
-        navigate("/", { replace: true });
+        navigate(PAGE_CONFIG.DASHBOARD.route, { replace: true });
       } catch (err) {
         console.error(err);
         useUIStore.getState().showToast("ERROR", "Failed to prepare dashboard");
-        navigate("/integrations", { replace: true });
+        navigate(PAGE_CONFIG.INTEGRATIONS.route, { replace: true });
       }
     };
 

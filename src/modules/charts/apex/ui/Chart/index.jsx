@@ -5,7 +5,7 @@ import { ChartTitle } from "./ChartTitle";
 import { ChartWithConfig } from "./ChartWithConfig";
 import styles from "./CustomApexChart.module.css";
 import { buildGroups } from "@lib/analytics/engine/data";
-import { Select, Skeleton } from "@shared/components/ui";
+import { Loader, Select, Skeleton } from "@shared/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { formatGroupValue } from "@shared/utils";
 
@@ -97,30 +97,32 @@ export default function CustomApexChart({
 
       <div className={styles.chartWrapper}>
         {!ready ? (
-          <div className="w-full h-full" />
+          <Loader className="!w-full !h-full" />
         ) : (
-          <ChartWithConfig
-            chartId={chartId}
-            type={type}
-            category={category}
-            groups={groups}
-            groupSpec={groupSpec}
-            selectedGroupIndex={selectedGroupIndex}
-            seriesOrder={seriesOrder}
-            seriesById={seriesById}
-            schemasById={schemasById}
-            schemasOrder={schemasOrder}
-          />
+          <>
+            <ChartWithConfig
+              chartId={chartId}
+              type={type}
+              category={category}
+              groups={groups}
+              groupSpec={groupSpec}
+              selectedGroupIndex={selectedGroupIndex}
+              seriesOrder={seriesOrder}
+              seriesById={seriesById}
+              schemasById={schemasById}
+              schemasOrder={schemasOrder}
+            />{" "}
+            <Toolbar
+              type={type}
+              chartId={chartId}
+              seriesOrder={seriesOrder}
+              seriesById={seriesById}
+              schemasById={schemasById}
+              schemasOrder={schemasOrder}
+              onRemove={onRemove}
+            />
+          </>
         )}
-        <Toolbar
-          type={type}
-          chartId={chartId}
-          seriesOrder={seriesOrder}
-          seriesById={seriesById}
-          schemasById={schemasById}
-          schemasOrder={schemasOrder}
-          onRemove={onRemove}
-        />
       </div>
     </ChartContainer>
   );

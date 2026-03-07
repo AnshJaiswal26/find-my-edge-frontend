@@ -1,4 +1,4 @@
-import { Button, ConnectionBadge, ValueBadge } from "@shared/components/ui";
+import { Button } from "@shared/components/ui";
 import { useIntegrationsStore } from "@shared/stores";
 import { ConnectionStatus } from "@features/integrations/brokers/config";
 
@@ -30,6 +30,7 @@ export function BrokerConnectCard({ broker }) {
 
   const status = brokerState?.status ?? ConnectionStatus.NOT_CONNECTED;
   const connectedAt = brokerState?.connectedAt;
+  const expiresAt = brokerState?.expiresAt;
 
   const handleConnect = () => {
     localStorage.setItem("connectStatus", status);
@@ -73,6 +74,14 @@ export function BrokerConnectCard({ broker }) {
         </div>
       </div>
 
+      {ConnectionStatus.isConnected(status) && (
+        <span className="text-[11px] text-(--text-muted) mt-1">
+          {ConnectionStatus.isTokenExpired(status) ? "Last " : ""}
+          <span className="text-(--text)">Connected At</span>{" "}
+          {connectedAt ? `• ${connectedAt}` : ""}
+        </span>
+      )}
+
       {!isAvailable && (
         <div className="h-full flex items-start mt-3">
           <div
@@ -101,10 +110,9 @@ export function BrokerConnectCard({ broker }) {
           <div className={`${badge.color} font-bold py-0.5 px-2 rounded`}>
             {badge.text}
           </div>
-
           {ConnectionStatus.isConnected(status) ? (
             <Button
-              text={loading ? "Disconnecting..." : "Disconnect"}
+              text={loading === true ? "Disconnecting..." : "Disconnect"}
               variant="error"
               disabled={loading}
               onClick={handleDisconnect}
@@ -128,10 +136,18 @@ export function BrokerConnectCard({ broker }) {
 
       {/* BOTTOM */}
       {isAvailable && (
-        <div className="mt-auto pt-3 text-[11px] text-(--text-muted)">
-          {ConnectionStatus.isConnected(status)
-            ? `${ConnectionStatus.isTokenExpired(status) ? "Last " : ""}Connected ${connectedAt ? `• ${connectedAt}` : ""}`
-            : "Secure OAuth connection. No manual uploads needed."}
+        <div className="flex gap-1 mt-auto pt-3 text-[11px] text-(--text-muted)">
+          {ConnectionStatus.isConnected(status) ? (
+            expiresAt ? (
+              <>
+                <span className="text-(--text)">Expires At</span> • {expiresAt}
+              </>
+            ) : (
+              ""
+            )
+          ) : (
+            "Secure OAuth connection. No manual uploads needed."
+          )}
         </div>
       )}
     </div>
