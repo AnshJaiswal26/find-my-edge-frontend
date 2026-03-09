@@ -15,6 +15,12 @@ export const tradeApi = {
       body: JSON.stringify(data),
     }),
 
+  updateValue: (id, field, value) =>
+    apiFetch(`api/trades/${id}/value`, {
+      method: "PATCH",
+      body: JSON.stringify({ field, value }),
+    }),
+
   delete: (id) =>
     apiFetch(`api/trades/${id}`, {
       method: "DELETE",

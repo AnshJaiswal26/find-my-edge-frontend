@@ -3,92 +3,98 @@ import { resolveFormatGroup } from "./resolveFormatGroup";
 import { FORMAT_VARIANTS } from "./formatVariants";
 import { VARIANTS } from "./variants";
 import { evaluateColorRules, formatValue } from "@shared/utils";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Trash2 } from "lucide-react";
 
 export default function StatCard({ statId }) {
   const stat = useDashboardStore((s) => s.statsById[statId]);
   const deleteStat = useDashboardStore((s) => s.deleteStat);
+  const [hovered, setHovered] = useState(false);
 
   const formatGroup = resolveFormatGroup(stat.format, stat.type);
   const ui = FORMAT_VARIANTS[formatGroup] ?? FORMAT_VARIANTS.NUMBER;
-
-  const v = VARIANTS[ui.variant];
+  const v = VARIANTS[ui.variant] ?? VARIANTS.neutral;
   const Icon = ui.icon;
 
-  const color = useMemo(() => {
+  const accentColor = useMemo(() => {
     const rule = evaluateColorRules(stat.value, stat.colorRules);
-    return rule?.label === "Default" ? null : rule.color;
-  }, [stat.value, stat.colorRules]);
-
-  // console.log(PureFunctions.ABS);
+    return rule?.label === "Default" || !rule ? v.rawColor : rule.color;
+  }, [stat.value, stat.colorRules, v.rawColor]);
 
   return (
     <div
-      className={`
-        group
-        relative overflow-hidden
-        rounded-2xl
-        bg-(--surface-muted)
-        border border-(--border-muted)
-        p-4 min-w-64
-        transition-all duration-300
-        hover:-translate-y-1
-        hover:${v.glow}
-        shadow-xl
-      `}
+      style={{
+        border: `1px solid ${hovered ? accentColor : "var(--surface-muted)"}`,
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="group relative overflow-hidden rounded-xl border border-(--border-muted) bg-(--surface-muted) p-4 min-w-[210px] cursor-default select-none transition-all duration-200 ease-out hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.08)] shadow-lg"
     >
-      <Trash2
-        className="group-hover:opacity-100
-        group-hover:pointer-events-auto
-        pointer-events-none
-        opacity-0 
-        absolute 
-        top-2 
-        right-2
-        text-(--text)
-        cursor-pointer
-        hover:text-(--error) z-1"
-        size={18}
-        onClick={() => deleteStat(statId)}
-      />
-      {/* Accent strip */}
+      {/* Top accent hairline */}
       <div
-        className={`absolute left-0 top-0 h-full w-1 ${v.strip}`}
-        style={{ background: color }}
+        className="absolute top-0 left-0 right-0 h-[2px] rounded-t-xl opacity-90"
+        style={{ background: accentColor }}
       />
 
-      {/* Content */}
-      <div className="relative pl-3 flex gap-3">
-        {/* Icon */}
+      {/* Subtle inner top sheen */}
+      <div className="absolute top-0 left-0 right-0 h-16 rounded-t-xl opacity-[0.03] bg-gradient-to-b from-white to-transparent pointer-events-none" />
+
+      {/* Delete btn — fades in on hover */}
+      <button
+        onClick={() => deleteStat(statId)}
+        className="absolute top-2.5 right-2.5 p-1 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-150 text-(--text-muted) hover:text-(--error) hover:bg-(--error)/10 cursor-pointer"
+      >
+        <Trash2 size={12} />
+      </button>
+
+      {/* ── Header: icon pill + label ── */}
+      <div className="flex items-center gap-2 mb-3 pr-5">
         <div
-          className={`
-            mt-4 h-full w-8 rounded-lg
-            flex items-center justify-center
-            ${v.bar}/15
-          `}
+          className="flex items-center justify-center w-[26px] h-[26px] rounded-[7px] flex-shrink-0 border"
+          style={{
+            background: `${accentColor}14`,
+            borderColor: `${accentColor}28`,
+          }}
         >
-          <Icon className={`h-10 w-10 ${v.text}`} style={{ color: color }} />
+          <Icon size={12} style={{ color: accentColor }} />
         </div>
+        <span className="text-[10px] font-medium tracking-[0.1em] uppercase text-(--text-muted) truncate leading-none">
+          {stat.title}
+        </span>
+      </div>
 
-        {/* Text */}
-        <div className="flex-1">
-          <div className="text-xs uppercase tracking-wide text-(--text-muted)">
-            {stat.title}
-          </div>
+      {/* ── Value ── */}
+      <div
+        className="text-[27px] font-semibold tracking-[-0.04em] leading-none text-(--text) tabular-nums"
+        style={{ color: accentColor }}
+      >
+        {formatValue(stat.value, stat.type, {
+          format: stat.format,
+          decimals: 2,
+        })}
+      </div>
 
-          <div
-            className={`mt-1 text-3xl font-semibold ${v.text}`}
-            style={{ color }}
-          >
-            {formatValue(stat.value, stat.type, {
-              format: stat.format,
-              decimals: 2,
-            })}
-          </div>
+      {/* ── Divider ── */}
+      <div className="mt-3 mb-2.5 h-px bg-(--border-muted) opacity-60" />
 
-          <div className="mt-1 text-[10px] text-(--text) uppercase tracking-wide opacity-50">
+      {/* ── Footer ── */}
+      <div className="flex items-end justify-between gap-2">
+        {/* Left: aggregate + format badge */}
+        <div className="flex flex-col gap-1.5 min-w-0">
+          <span className="text-[11px] text-(--text-muted) font-normal leading-none truncate">
             {stat.aggregate}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <div
+              className="w-[5px] h-[5px] rounded-full flex-shrink-0"
+              style={{ background: accentColor, opacity: 0.75 }}
+            />
+            <span
+              className="text-[9px] uppercase tracking-[0.08em] font-medium"
+              style={{ color: accentColor, opacity: 0.6 }}
+            >
+              {stat.format ?? stat.type}
+            </span>
           </div>
         </div>
       </div>

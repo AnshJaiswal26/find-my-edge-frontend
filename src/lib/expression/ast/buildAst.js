@@ -88,6 +88,10 @@ export function buildAST(postfix, type) {
         }
       }
 
+      if (fnDef.field) {
+        dependencies.add(fnDef.field);
+      }
+
       stack.push({
         type: NodeType.FUNCTION,
         fn: name,

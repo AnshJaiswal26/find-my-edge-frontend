@@ -202,4 +202,14 @@ export const createStatsSlice = (set, get) => ({
       set({ statsOrder: prev });
     }
   },
+
+  updateComputedStats(statValues) {
+    set((s) => {
+      Object.entries(statValues).forEach(([id, value]) => {
+        if (s.statsById[id]) {
+          s.statsById[id].value = value;
+        }
+      });
+    });
+  },
 });

@@ -3,6 +3,8 @@ import { useUIStore } from "@shared/stores";
 import { createRow } from "@features/trade-metrics/table/model";
 
 import { tradeService } from "@shared/services/trade.service";
+import { useDashboardStore } from "@features/dashboard/store";
+import { useChartStore } from "@modules/charts/apex/store";
 
 export const createTradeSlice = (set, get) => ({
   pendingUpdates: {},
@@ -10,7 +12,13 @@ export const createTradeSlice = (set, get) => ({
   pendingDeletes: new Set(),
 
   updateTradeValue(rowId, colId, value) {
-    const { tradesById, schemasById, affectedMap } = get();
+    const {
+      tradesById,
+      schemasById,
+      affectedMap,
+      recompute,
+      queueTradeUpdate,
+    } = get();
 
     const schema = schemasById[colId];
     if (!schema) return;
@@ -27,7 +35,7 @@ export const createTradeSlice = (set, get) => ({
 
     //  2. recompute dependent columns
     if (affectedMap?.[colId]) {
-      get().recompute({
+      recompute({
         reason: "value",
         tradeId: rowId,
         schemaId: colId,
@@ -35,7 +43,7 @@ export const createTradeSlice = (set, get) => ({
     }
 
     //  3. queue backend update (optional)
-    get().queueTradeUpdate(rowId, {
+    queueTradeUpdate(rowId, {
       [colId]: value,
     });
   },
@@ -61,6 +69,8 @@ export const createTradeSlice = (set, get) => ({
   },
 
   deleteTrade(tradeId) {
+    const { debouncedSync, recompute } = get();
+
     let tradeIndex = 0;
 
     set((s) => {
@@ -78,8 +88,8 @@ export const createTradeSlice = (set, get) => ({
       delete s.pendingCreates[tradeId];
     });
 
-    get().recompute({ reason: "trade-delete", tradeIndex });
-    get().debouncedSync();
+    recompute({ reason: "trade-delete", tradeIndex });
+    debouncedSync();
   },
 
   queueTradeUpdate: (id, patch) => {
@@ -93,9 +103,22 @@ export const createTradeSlice = (set, get) => ({
     get().debouncedSync(); // trigger background sync
   },
 
+  applyTradeUpdates(updates) {
+    set((s) => {
+      Object.entries(updates).forEach(([id, patch]) => {
+        if (!s.tradesById[id]) return;
+        Object.assign(s.tradesById[id], patch);
+      });
+    });
+  },
+
   debouncedSync: debounce(async () => {
-    const { pendingUpdates, pendingCreates, pendingDeletes, tradesById } =
-      get();
+    const {
+      pendingUpdates,
+      pendingCreates,
+      pendingDeletes,
+      applyTradeUpdates,
+    } = get();
 
     if (
       !Object.keys(pendingUpdates).length &&
@@ -119,11 +142,25 @@ export const createTradeSlice = (set, get) => ({
       });
 
       //  SINGLE SERVICE CALL
-      await tradeService.sync({
-        creates,
-        updates,
-        deletes,
-        tradesById,
+
+      const results = await tradeService.sync({ creates, updates, deletes });
+
+      results.forEach((result) => {
+        if (!result) return;
+
+        const { statValues, seriesValues, tradeUpdates } = result;
+
+        if (tradeUpdates) {
+          applyTradeUpdates(tradeUpdates);
+        }
+
+        if (statValues) {
+          useDashboardStore.getState().updateComputedStats(statValues);
+        }
+
+        if (seriesValues) {
+          useChartStore.getState().updateComputedSeries(seriesValues);
+        }
       });
     } catch (err) {
       useUIStore.getState().showToast("ERROR", err.message);

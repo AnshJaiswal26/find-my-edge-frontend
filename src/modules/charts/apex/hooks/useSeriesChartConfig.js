@@ -14,14 +14,14 @@ function useChartControls(chartId) {
   const filters = useChartStore((s) => s.charts[chartId].filters);
   const sort = useChartStore((s) => s.charts[chartId].sort);
   const selection = useChartStore((s) => s.charts[chartId].selection);
-  const xKey = useChartStore((s) => s.charts[chartId].xSeriesConfig.key);
+  const xField = useChartStore((s) => s.charts[chartId].xSeriesConfig.key);
 
   return {
     type,
     filters,
     sort,
     selection,
-    xKey,
+    xField,
   };
 }
 
@@ -33,55 +33,72 @@ function useChartMode(groups, groupSpec) {
   }, [groups, groupSpec]);
 }
 
-function useChartTransformations(data, filters, sort, selection) {
+function useChartEngine({ ids, seriesSelector, filters, sort, selection }) {
   return useMemo(() => {
-    let result = [...data];
+    let result = ids;
 
-    // Selection
-    if (selection.from !== null && selection.to !== null) {
-      result = result.slice(selection.from, selection.to);
-    }
+    /* ---------------- FILTER ---------------- */
 
-    // Filter
     if (filters?.length) {
-      result = result.filter((item) =>
+      result = result.filter((id) =>
         filters.some((f) => {
           const fn = FILTER_OPERATION_MAP[f.operator];
-          return fn?.(item.values[f.key], f.value ?? f.from, f.to);
+          const value = seriesSelector(id, f.key);
+
+          return fn?.(value, f.value ?? f.from, f.to);
         }),
       );
     }
 
-    // Sort
+    /* ---------------- SORT ---------------- */
+
     if (sort?.key && sort.operator !== "none") {
       const fn = SORT_OPERATION_MAP[sort.operator];
+
       result = [...result].sort((a, b) => {
-        return fn?.(a.values[sort.key], b.values[sort.key]) ?? 0;
+        const v1 = seriesSelector(a, sort.key);
+        const v2 = seriesSelector(b, sort.key);
+
+        return fn?.(v1, v2) ?? 0;
       });
     }
 
+    /* ---------------- SELECTION ---------------- */
+
+    if (selection?.from !== null && selection?.to !== null) {
+      result = result.slice(selection.from, selection.to);
+    }
+
     return result;
-  }, [data, filters, sort, selection]);
+  }, [ids, filters, sort, selection, seriesSelector]);
 }
 
-function useChartSeries(finalData, seriesConfig, selectedSeriesKeys, type) {
-  return useMemo(() => {
-    const config = selectedSeriesKeys?.length
-      ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-      : seriesConfig;
+function useChartSeries({
+  ids,
+  series,
+  selectedSeriesKeys,
+  type,
+  seriesSelector,
+}) {
+  const config = selectedSeriesKeys?.length
+    ? series.filter((s) => selectedSeriesKeys.includes(s.field))
+    : series;
 
+  return useMemo(() => {
     return config.map((s) => ({
-      name: s.name,
-      data: finalData.map((item) => item.values[s.key]),
+      name: s.label,
+
+      data: ids.map((id) => seriesSelector(id, s.field)),
+
       color:
         type === "line"
           ? s.color
           : ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
     }));
-  }, [finalData, seriesConfig, selectedSeriesKeys, type]);
+  }, [ids, config, type, seriesSelector]);
 }
 
-function useChartTooltip({ chartId, finalData, selectedSeriesKeys, mode }) {
+function useChartTooltip({ chartId, ids, selectedSeriesKeys }) {
   return useCallback(
     (seriesValue, index, seriesIndex) =>
       seriesTooltipCallback({
@@ -89,14 +106,10 @@ function useChartTooltip({ chartId, finalData, selectedSeriesKeys, mode }) {
         index,
         seriesIndex,
         chartId,
-        getTitle: (i, key) => {
-          const item = finalData[i];
-          return mode === "GROUP_AGGREGATE" ? item.meta : item.values[key];
-        },
+        getTitle: (field) => seriesSelector(ids[index], field),
         selectedSeriesKeys,
-        mode,
       }),
-    [chartId, finalData, selectedSeriesKeys, mode],
+    [chartId, ids, selectedSeriesKeys],
   );
 }
 
@@ -147,7 +160,7 @@ function useChartData({
   filters,
   sort,
   selection,
-  xKey,
+  xField,
 }) {
   return useMemo(() => {
     let data = [];
@@ -176,7 +189,9 @@ function useChartData({
         })) ?? [];
     }
 
-    const keys = Array.from(new Set([...seriesConfig.map((s) => s.key), xKey]));
+    const keys = Array.from(
+      new Set([...seriesConfig.map((s) => s.key), xField]),
+    );
 
     data = data.map((item) => {
       const values = {};
@@ -249,7 +264,7 @@ function useChartData({
     filters,
     sort,
     selection,
-    xKey,
+    xField,
   ]);
 }
 
@@ -259,73 +274,64 @@ function useChartData({
 export default function useSeriesChartConfig({
   chartId,
   layout,
-  groups,
-  groupSpec,
-  selectedGroupIndex,
-  seriesOrder,
   seriesById,
-  seriesConfig,
   selectedSeriesKeys,
-  schemasById,
+
+  ids,
+  seriesSelector,
 }) {
-  const { type, mode } = useChartStore((s) => s.charts[chartId].meta);
+  const type = useChartStore((s) => s.charts[chartId].type);
+  const mode = useChartStore((s) => s.charts[chartId].mode);
+
+  const series = useChartStore((s) => s.charts[chartId].series);
 
   const filters = useChartStore((s) => s.charts[chartId].filters);
   const sort = useChartStore((s) => s.charts[chartId].sort);
   const selection = useChartStore((s) => s.charts[chartId].selection);
-  const xKey = useChartStore((s) => s.charts[chartId].xSeriesConfig.key);
+
+  const filteredSeries = selectedSeriesKeys?.length
+    ? series.filter((s) => selectedSeriesKeys.includes(s.id))
+    : series;
 
   /* ------------------ CORE DATA ------------------ */
-  const finalData = useChartData({
-    mode,
-    seriesOrder,
-    groups,
-    selectedGroupIndex,
-    seriesById,
-    seriesConfig: selectedSeriesKeys?.length
-      ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-      : seriesConfig,
-    groupSpec,
-    schemasById,
+  const finalIds = useChartEngine({
+    ids,
+    seriesSelector,
     filters,
     sort,
     selection,
-    xKey,
+  });
+
+  const computedSeries = useChartSeries({
+    ids,
+    series: filteredSeries,
+    selectedSeriesKeys,
+    type,
+    seriesSelector,
   });
 
   /* ------------------ SERIES ------------------ */
-  const computedSeries = useMemo(() => {
-    return (
-      selectedSeriesKeys?.length
-        ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-        : seriesConfig
-    ).map((s) => ({
-      name: s.name,
-      data: finalData.map((item) => item.values[s.key]),
-      color:
-        type === "line"
-          ? s.color
-          : ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
-    }));
-  }, [finalData, seriesConfig, selectedSeriesKeys, type]);
+  // const computedSeries = useMemo(() => {
+  //   return (
+  //     selectedSeriesKeys?.length
+  //       ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
+  //       : seriesConfig
+  //   ).map((s) => ({
+  //     name: s.name,
+  //     data: finalData.map((item) => item.values[s.key]),
+  //     color:
+  //       type === "line"
+  //         ? s.color
+  //         : ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
+  //   }));
+  // }, [finalData, seriesConfig, selectedSeriesKeys, type]);
 
   /* ------------------ TOOLTIP ------------------ */
-  const tooltipCallback = useCallback(
-    (seriesValue, index, seriesIndex) =>
-      seriesTooltipCallback({
-        seriesValue,
-        index,
-        seriesIndex,
-        chartId,
-        getTitle: (i, key) => {
-          const item = finalData[i];
-          return mode === "GROUP_AGGREGATE" ? item.meta : item.values[key];
-        },
-        selectedSeriesKeys,
-        mode,
-      }),
-    [chartId, finalData, selectedSeriesKeys, mode],
-  );
+  const tooltipCallback = useChartTooltip({
+    chartId,
+    ids: finalIds,
+    selectedSeriesKeys,
+  });
 
   /* ------------------ OPTIONS ------------------ */
   const options = useMemo(() => {
@@ -333,9 +339,6 @@ export default function useSeriesChartConfig({
       chart: useChartStore.getState().charts[chartId],
       chartId,
       seriesById,
-
-      data: finalData,
-
       selectedSeriesKeys,
       tooltipCallback,
       mode,
@@ -343,8 +346,6 @@ export default function useSeriesChartConfig({
   }, [
     type,
     chartId,
-    finalData,
-    seriesById,
     selectedSeriesKeys,
     layout,
     layout?.area,

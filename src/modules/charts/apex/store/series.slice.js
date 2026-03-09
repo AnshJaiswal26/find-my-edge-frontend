@@ -38,4 +38,14 @@ export const createSeriesSlice = (set, get) => ({
       s.charts[chartId].selection.to = null;
     });
   },
+
+  updateComputedSeries(seriesValues) {
+    set((s) => {
+      Object.entries(seriesValues).forEach(([chartId, values]) => {
+        if (s.charts[chartId]) {
+          s.charts[chartId].computedSeries = values;
+        }
+      });
+    });
+  },
 });

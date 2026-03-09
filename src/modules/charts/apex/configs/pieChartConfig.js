@@ -90,9 +90,8 @@ export const getPieChartConfig = ({
             value: {
               show: config.value ?? true,
               formatter: (val, w) => {
-                const index = w.globals.seriesTotals.findIndex(
-                  (v) => v === +val,
-                );
+                let index = w.globals.seriesTotals.findIndex((v) => v === +val);
+                
                 return formatValue(series[index], seriesConfig[index].type, {
                   format: config.format,
                   decimals: config.decimals,

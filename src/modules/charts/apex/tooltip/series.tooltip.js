@@ -5,51 +5,81 @@ import {
 } from "@shared/utils";
 import { useChartStore } from "../store";
 
+function getActiveSeriesConfig(series, selectedSeriesKeys) {
+  if (!selectedSeriesKeys?.length) return series;
+
+  return series.filter((s) => selectedSeriesKeys.includes(s.key));
+}
+
+function formatTooltipTitle(title, xMetric, layout, mode) {
+  const options = {
+    format: layout.xFormat,
+    decimals: layout.xDecimals,
+  };
+
+  return mode === "GROUP_AGGREGATE"
+    ? formatGroupValue(title, xMetric.type, options)
+    : formatValue(title, xMetric.type, options);
+}
+
+function resolveSeriesStyle({ value, config, chartType }) {
+  if (chartType === "line") {
+    return {
+      color: config.color,
+      label: config.label || "",
+    };
+  }
+
+  if (config.colorRules?.length) {
+    return evaluateColorRules(value, config.colorRules);
+  }
+
+  return {
+    color: "var(--info)",
+    label: config.label || "",
+  };
+}
+
+function buildTooltipRow(value, config, layout, chartType) {
+  const style = resolveSeriesStyle({
+    value,
+    config,
+    chartType,
+  });
+
+  return {
+    value: formatValue(value, config.type, {
+      format: layout.yFormat,
+      decimals: layout.yDecimals,
+    }),
+    label: style.label || "",
+    color: style.color || "var(--info)",
+  };
+}
+
 export const seriesTooltipCallback = ({
   seriesValue,
   index,
   chartId,
   getTitle,
   selectedSeriesKeys,
-  mode,
 }) => {
   const chart = useChartStore.getState().charts[chartId];
 
-  const { meta, xSeriesConfig, ySeriesConfig, layout } = chart;
-  const title = getTitle(index, xSeriesConfig.key);
+  const { type, xMetric, series, layout, mode } = chart;
+
+  const activeSeriesConfig = getActiveSeriesConfig(series, selectedSeriesKeys);
+
+  const titleValue = getTitle(index, xMetric.field);
+
+  const title = formatTooltipTitle(titleValue, xMetric, layout, mode);
+
+  const dataArray = seriesValue.map((value, i) =>
+    buildTooltipRow(value, activeSeriesConfig[i], layout, type),
+  );
 
   return {
-    title:
-      mode === "GROUP_AGGREGATE"
-        ? formatGroupValue(title, xSeriesConfig.type, {
-            format: layout.xFormat,
-            decimals: layout.xDecimals,
-          })
-        : formatValue(title, xSeriesConfig.type, {
-            format: layout.xFormat,
-            decimals: layout.xDecimals,
-          }),
-
-    dataArray: seriesValue.map((value, i) => {
-      const config = selectedSeriesKeys
-        ? ySeriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-        : ySeriesConfig;
-
-      const cfg =
-        meta.type === "line"
-          ? { color: config[i].color, label: config[i].label }
-          : config[i].colorRules.length > 0
-            ? evaluateColorRules(value, config[i].colorRules)
-            : { color: "var(--info)", label: config[i].name || "" };
-
-      return {
-        value: formatValue(value, config[0].type, {
-          format: layout.yFormat,
-          decimals: layout.yDecimals,
-        }),
-        label: cfg.label || config[i].name || "",
-        color: cfg.color || "var(--info)",
-      };
-    }),
+    title,
+    dataArray,
   };
 };

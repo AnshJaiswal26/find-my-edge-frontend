@@ -1,3 +1,4 @@
+import { SourceType } from "@shared/constants";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
 export const buildPolarSeriesConfig = (s) => ({
@@ -16,6 +17,7 @@ export function buildPolarAreaChart({ series, layout = {} }) {
       id: crypto.randomUUID(),
       type: "polarArea",
       category: "axis-series",
+      source: SourceType.USER,
     },
 
     layout: {

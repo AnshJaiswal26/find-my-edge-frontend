@@ -12,7 +12,7 @@ const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
       getTradeValue: (index, key) => {
         if (index < 0) return null;
         const id = seriesOrder[index];
-        
+
         return id ? seriesById[id]?.[key] : null;
       },
       getSchemaType: (key) => {
@@ -42,6 +42,7 @@ export default function useGroupChartConfig({
 }) {
   console.log(seriesConfig);
   const type = useChartStore((s) => s.charts[chartId].meta.type);
+  const series = useChartStore((s) => s.charts[chartId].series);
 
   const filteredConfig = useMemo(
     () =>
@@ -51,14 +52,16 @@ export default function useGroupChartConfig({
     [seriesConfig, selectedSeriesKeys],
   );
 
-  const computedSeries = useMemo(() => {
-    return seriesGenerator[type]({
-      seriesConfig: filteredConfig,
-      seriesOrder,
-      seriesById,
-      schemasById,
-    });
-  }, [type, filteredConfig, seriesOrder, seriesById, schemasById]);
+  // const computedSeries = useMemo(() => {
+  //   return seriesGenerator[type]({
+  //     seriesConfig: filteredConfig,
+  //     seriesOrder,
+  //     seriesById,
+  //     schemasById,
+  //   });
+  // }, [type, filteredConfig, seriesOrder, seriesById, schemasById]);
+
+  const computedSeries = filteredConfig.map((c) => c.value);
 
   const tooltipCb = useCallback(
     (seriesValue, index, seriesIndex) =>

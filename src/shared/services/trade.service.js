@@ -23,6 +23,11 @@ export const tradeService = {
     return tradeApi.update(id, trade);
   },
 
+  async updateValue(id, field, value) {
+    if (!id) throw new Error("Trade id required");
+    return tradeApi.updateValue(id, field, value);
+  },
+
   /* -------- DELETE -------- */
   async delete(id) {
     if (!id) throw new Error("Trade id required");
@@ -34,15 +39,26 @@ export const tradeService = {
   },
 
   /* -------- BULK SYNC -------- */
-  async sync({ creates = {}, updates = {}, deletes = new Set(), tradesById }) {
-    await Promise.all(
-      Object.values(creates).map((trade) => this.create(trade)),
-    );
+  async sync({ creates = {}, updates = {}, deletes = new Set() }) {
+    const requests = [];
 
-    await Promise.all(
-      Object.keys(updates).map((id) => this.update(id, tradesById[id])),
-    );
+    // creates
+    for (const trade of Object.values(creates)) {
+      requests.push(this.create(trade));
+    }
 
-    await Promise.all(Array.from(deletes).map((id) => this.delete(id)));
+    // updates (only fields)
+    for (const [tradeId, fields] of Object.entries(updates)) {
+      for (const [field, value] of Object.entries(fields)) {
+        requests.push(this.updateValue(tradeId, field, value));
+      }
+    }
+
+    // deletes
+    for (const id of deletes) {
+      requests.push(this.delete(id));
+    }
+
+    return Promise.all(requests);
   },
 };

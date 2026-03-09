@@ -1,9 +1,12 @@
 import { DEFAULT_FORMATS } from "@shared/utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
+import { SourceType } from "@shared/constants";
 
-export const buildBarSeriesConfig = (s) => ({
-  key: s.key,
-  name: s.name ?? s.key,
+export const buildBarSeriesConfig = (s, chartId) => ({
+  id: crypto.randomUUID(),
+  chartId,
+  field: s.field,
+  name: s.name ?? s.field,
   type: s.type ?? "number",
   ast: s.ast ?? null,
   formula: s.formula ?? null,
@@ -28,13 +31,14 @@ export function buildBarChart({
   layout = {},
   category = "series",
 }) {
+  const chartId = crypto.randomUUID();
   return {
-    meta: {
-      id: crypto.randomUUID(),
-      type: "bar",
-      category,
-      mode,
-    },
+    
+    id: chartId,
+    type: "bar",
+    category,
+    mode,
+    source: SourceType.USER,
 
     layout: {
       ...DEFAULT_LAYOUTS.bar,
@@ -57,14 +61,21 @@ export function buildBarChart({
       to: null,
     },
 
-    series: series ?? [],
-
-    xSeriesConfig: {
-      key: x.key ?? "",
+    xMetric: {
+      field: x.field ?? "",
       name: x.name ?? "",
-      type: x.type ?? "number",
     },
 
-    ySeriesConfig: y.map(buildBarSeriesConfig),
+    // xSeriesConfig: {
+    //   key: x.key ?? "",
+    //   name: x.name ?? "",
+    //   type: x.type ?? "number",
+    // },
+
+    // ySeriesConfig: y.map(buildBarSeriesConfig),
+
+    series: series ?? [],
+
+    seriesConfig: y.map((s) => buildBarSeriesConfig(s, chartId)),
   };
 }

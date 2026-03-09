@@ -1,5 +1,6 @@
 import { DEFAULT_FORMATS } from "@shared/utils";
 import { DEFAULT_LAYOUTS } from "../defaults";
+import { SourceType } from "@shared/constants";
 
 export const buildLineSeriesConfig = (s) => ({
   key: s.key,
@@ -31,6 +32,7 @@ export function buildLineChart({
       type: "line",
       category,
       mode,
+      source: SourceType.USER,
     },
 
     layout: {

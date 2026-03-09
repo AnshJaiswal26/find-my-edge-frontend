@@ -6,6 +6,7 @@ import {
   Input,
   Select,
 } from "@shared/components/ui";
+import { SourceType } from "@shared/constants";
 import { DEFAULT_FORMATS, FORMATS } from "@shared/utils";
 import { forwardRef, useImperativeHandle, useState } from "react";
 
@@ -19,6 +20,7 @@ export const AddStatsForm = forwardRef(({ schemasById }, ref) => {
     format: "",
     formula: "",
     type: "number",
+    source: SourceType.USER,
     colorRules: [],
   });
 

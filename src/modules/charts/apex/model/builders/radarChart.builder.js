@@ -1,3 +1,4 @@
+import { SourceType } from "@shared/constants";
 import { DEFAULT_LAYOUTS } from "../defaults";
 
 export const buildRadarSeriesConfig = (s) => ({
@@ -16,6 +17,7 @@ export function buildRadarChart({ series, layout = {} }) {
       id: crypto.randomUUID(),
       type: "radar",
       category: "axis-series",
+      source: SourceType.USER,
     },
 
     layout: {
