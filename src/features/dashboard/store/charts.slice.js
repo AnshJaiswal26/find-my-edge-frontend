@@ -187,12 +187,12 @@ export const createChartsSlice = (set, get) => ({
 
     // useChartStore.setState((s) => {
     //   ["bar", "line", "donut1", "donut2", "radialBar", "radar"].map((ch) => {
-    //     s.charts[map[ch].meta.id] = map[ch];
+    //     s.charts[map[ch].id] = map[ch];
     //   });
     // });
     // set((s) => {
     //   ["bar", "line", "donut1", "donut2", "radialBar", "radar"].map((ch) => {
-    //     s.chartsOrder.push(map[ch].meta.id);
+    //     s.chartsOrder.push(map[ch].id);
     //   });
     // });
   },
@@ -202,11 +202,11 @@ export const createChartsSlice = (set, get) => ({
     const chart = createChart(type, config);
 
     useChartStore.setState((cs) => {
-      cs.charts[chart.meta.id] = chart;
+      cs.charts[chart.id] = chart;
     });
 
     set((s) => {
-      s.chartsOrder.push(chart.meta.id);
+      s.chartsOrder.push(chart.id);
     });
     closePopup();
   },

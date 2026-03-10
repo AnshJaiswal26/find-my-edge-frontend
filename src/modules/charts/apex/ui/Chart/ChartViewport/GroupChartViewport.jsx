@@ -5,9 +5,9 @@ import {
 import ReactApexChart from "react-apexcharts";
 
 export function GroupChartViewport(props) {
-  const { options, series } = useGroupChartConfig(props);
+  const { options, series, type } = useGroupChartConfig(props);
 
-  useApexEffects({ ...props, series });
+  useApexEffects({ ...props, type, series });
 
   return (
     <ReactApexChart

@@ -4,43 +4,30 @@ import { useChartStore } from "../store";
 export const groupedTooltipCallback = ({
   seriesIndex,
   chartId,
-  filteredConfig, // ✅ now source of truth
-  series, // ✅ computedSeries from chart
+  filteredSeries,
+  dataSeries,
 }) => {
   const chart = useChartStore.getState().charts[chartId];
-  const { layout } = chart;
+  const { layout, type } = chart;
 
   // safety
-  if (!filteredConfig?.length || !series?.length) return null;
+  if (!filteredSeries?.length || !dataSeries?.length) return null;
 
-  const config = filteredConfig[seriesIndex];
+  const config = filteredSeries[seriesIndex];
   if (!config) return null;
 
-  const value = series[seriesIndex];
+  const value = dataSeries[seriesIndex];
 
-  if (chart.meta.type === "donut") {
-    return {
-      dataArray: [
-        {
-          value: formatValue(value, config?.type || "number", {
-            format: layout.format,
-            decimals: layout.decimals,
-          }),
-          label: config?.label || config.label,
-          color: config?.color || "var(--info)",
-        },
-      ],
-    };
-  }
+  const display =
+    type === "donut"
+      ? { format: layout.format, decimals: layout.decimals }
+      : { format: config.format, decimals: config.decimals };
 
   return {
     dataArray: [
       {
-        value: formatValue(value, config?.type || "number", {
-          format: config.format,
-          decimals: config.decimals,
-        }),
-        label: config?.label || config.label,
+        value: formatValue(value, config?.type || "number", display),
+        label: config?.label || "",
         color: config?.color || "var(--info)",
       },
     ],

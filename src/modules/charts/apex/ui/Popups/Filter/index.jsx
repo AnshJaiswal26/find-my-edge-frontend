@@ -11,10 +11,7 @@ export default function FilterPopup({ chartId, schemasById }) {
 
   const [filters, setFilters] = useState([...appliedfilters]);
 
-  const ySeriesConfig = useChartStore((s) => s.charts[chartId].ySeriesConfig);
-  const xSeriesConfig = useChartStore((s) => s.charts[chartId].xSeriesConfig);
-
-  const seriesConfig = [...ySeriesConfig, xSeriesConfig];
+  const seriesConfig = useChartStore((s) => s.charts[chartId].series);
 
   const { clearFilters, closePopup, applyFilters } = useChartStore.getState();
 

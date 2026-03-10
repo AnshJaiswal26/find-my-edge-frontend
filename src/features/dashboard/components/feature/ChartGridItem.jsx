@@ -7,7 +7,7 @@ export default function ChartGridItem({ id, ...props }) {
   const savedLayout = useDashboardStore((s) => s.chartGridLayout?.[id]);
   const deleteChart = useDashboardStore((s) => s.deleteChart);
 
-  const { type, category } = useChartStore.getState().charts[id].meta;
+  const { type, category, mode } = useChartStore.getState().charts[id];
 
   return (
     <div
@@ -26,6 +26,7 @@ export default function ChartGridItem({ id, ...props }) {
           <CustomApexChart
             chartId={id}
             type={type}
+            mode={mode}
             category={category}
             onRemove={deleteChart}
             {...props}

@@ -14,6 +14,7 @@ export const useChartAxes = ({
     const style = { fontSize: "0.75rem" };
 
     const xaxis = {
+      categories: ids.map((id, i) => id),
       tooltip: { enabled: !layout.horizontal && layout.xTooltip },
       ...(!layout.horizontal && { tickPlacement: "on" }),
       labels: {
@@ -25,6 +26,7 @@ export const useChartAxes = ({
           const format = { format: layout.xFormat, decimals: layout.xDecimals };
 
           if (mode === "SERIES") {
+            console.log(v);
             const item = seriesSelector(ids[index], xMetric.field);
             if (!item) return 0;
             return formatValue(item, xMetric.type, format);

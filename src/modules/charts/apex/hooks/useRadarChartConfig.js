@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { configGenerator } from "../configs";
 import { useChartStore } from "../store";
 import { formatValue } from "@shared/utils";
 

@@ -1,104 +1,62 @@
 import { useCallback, useMemo } from "react";
 import { useChartStore } from "@modules/charts/apex/store";
-import { configGenerator } from "../configs";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
-import { computeAggregate } from "@lib/analytics/engine/execute";
+import { useRadialBarChartConfig, usePieChartConfig } from "../configs";
 
-const getSeries = ({ seriesConfig, seriesById, seriesOrder, schemasById }) => {
-  const series = seriesConfig.map((s) => {
-    const value = computeAggregate({
-      ast: s.ast,
-      getTradeCount: () => seriesOrder.length,
-      getTradeValue: (index, key) => {
-        if (index < 0) return null;
-        const id = seriesOrder[index];
+function useGroupChartOptions(params) {
+  const radialBarOptions = useRadialBarChartConfig(params);
+  const pieOptions = usePieChartConfig(params);
 
-        return id ? seriesById[id]?.[key] : null;
-      },
-      getSchemaType: (key) => {
-        const schema = schemasById[key];
-        return { format: schema?.display?.format, type: schema.semanticType };
-      },
-    });
-    return value;
-  });
-  console.log(series, seriesConfig);
-  return series;
-};
-
-const seriesGenerator = {
-  donut: getSeries,
-  radialBar: getSeries,
-};
+  return params.type === "radialBar" ? radialBarOptions : pieOptions;
+}
 
 export default function useGroupChartConfig({
   chartId,
   layout,
-  seriesConfig,
-  seriesOrder,
-  seriesById,
-  schemasById,
-  selectedSeriesKeys,
+  selectedSeriesIds,
 }) {
-  console.log(seriesConfig);
-  const type = useChartStore((s) => s.charts[chartId].meta.type);
+  const type = useChartStore((s) => s.charts[chartId].type);
   const series = useChartStore((s) => s.charts[chartId].series);
 
-  const filteredConfig = useMemo(
+  const filteredSeries = useMemo(
     () =>
-      selectedSeriesKeys
-        ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-        : seriesConfig,
-    [seriesConfig, selectedSeriesKeys],
+      selectedSeriesIds?.length
+        ? series.filter((s) => selectedSeriesIds.includes(s.id))
+        : series,
+    [selectedSeriesIds, series],
   );
 
-  // const computedSeries = useMemo(() => {
-  //   return seriesGenerator[type]({
-  //     seriesConfig: filteredConfig,
-  //     seriesOrder,
-  //     seriesById,
-  //     schemasById,
-  //   });
-  // }, [type, filteredConfig, seriesOrder, seriesById, schemasById]);
+  console.log(filteredSeries);
 
-  const computedSeries = filteredConfig.map((c) => c.value);
+  const computedSeries = useMemo(
+    () => filteredSeries.map((c) => c.value),
+    [filteredSeries],
+  );
+  console.log(computedSeries);
 
-  const tooltipCb = useCallback(
+  const tooltipCallback = useCallback(
     (seriesValue, index, seriesIndex) =>
       groupedTooltipCallback({
         seriesValue,
         index,
         seriesIndex,
         chartId,
-        filteredConfig, // ✅ pass filtered config
-        series: computedSeries, // ✅ pass actual data
+        filteredSeries,
+        dataSeries: computedSeries,
       }),
-    [chartId, selectedSeriesKeys, computedSeries],
+    [chartId, selectedSeriesIds, computedSeries],
   );
 
-  const options = useMemo(() => {
-    return configGenerator?.[type]?.({
-      chart: useChartStore.getState().charts[chartId],
-      chartId,
-      seriesById,
-      filteredConfig,
-      series: computedSeries,
-      tooltipCallback: tooltipCb,
-      layout,
-    });
-  }, [
-    type,
-    chartId,
+  const options = useGroupChartOptions({
     layout,
-    seriesById,
-    filteredConfig,
-    tooltipCb,
-    computedSeries,
-  ]);
+    tooltipCallback,
+    filteredSeries,
+    dataSeries: computedSeries,
+  });
 
   return {
     options,
-    series: computedSeries.map((v) => Math.abs(v)),
+    series: computedSeries.map(Math.abs),
     type,
   };
 }

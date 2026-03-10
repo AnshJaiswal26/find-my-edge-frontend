@@ -11,17 +11,13 @@ export function ChartWithConfig({
   groups,
   groupSpec,
   selectedGroupIndex,
-  seriesById,
-  seriesOrder,
-  schemasById,
-  schemasOrder,
+  ids,
+  seriesSelector,
 }) {
   const layout = useChartStore((s) => s.charts[chartId].layout);
-  const seriesConfig = useChartStore(
-    (s) => s.charts[chartId].ySeriesConfig ?? s.charts[chartId].seriesConfig,
-  );
+  const seriesConfig = useChartStore((s) => s.charts[chartId].series);
 
-  const [selectedSeriesKeys, setSelectedSeriesKeys] = useState(null);
+  const [selectedSeriesIds, setSelectedSeriesIds] = useState(null);
 
   return (
     <div
@@ -34,8 +30,8 @@ export function ChartWithConfig({
         show={layout.legend}
         alignment={layout.legendAlignment}
         seriesConfig={seriesConfig}
-        selectedSeriesKeys={selectedSeriesKeys}
-        setSelectedSeriesKeys={setSelectedSeriesKeys}
+        selectedSeriesIds={selectedSeriesIds}
+        setSelectedSeriesIds={setSelectedSeriesIds}
       />
 
       <ChartViewport
@@ -47,11 +43,9 @@ export function ChartWithConfig({
         groups={groups}
         groupSpec={groupSpec}
         selectedGroupIndex={selectedGroupIndex}
-        seriesById={seriesById}
-        seriesOrder={seriesOrder}
-        schemasById={schemasById}
-        schemasOrder={schemasOrder}
-        selectedSeriesKeys={selectedSeriesKeys}
+        ids={ids}
+        seriesSelector={seriesSelector}
+        selectedSeriesIds={selectedSeriesIds}
       />
     </div>
   );

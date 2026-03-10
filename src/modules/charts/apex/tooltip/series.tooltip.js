@@ -70,7 +70,7 @@ export const seriesTooltipCallback = ({
 
   const activeSeriesConfig = getActiveSeriesConfig(series, selectedSeriesKeys);
 
-  const titleValue = getTitle(index, xMetric.field);
+  const titleValue = getTitle(xMetric.field);
 
   const title = formatTooltipTitle(titleValue, xMetric, layout, mode);
 

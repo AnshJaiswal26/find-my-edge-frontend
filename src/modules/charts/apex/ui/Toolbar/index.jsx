@@ -65,14 +65,14 @@ export default function Toolbar({ chartId, onRemove }) {
   const chart = useChartStore.getState().charts[chartId];
 
   const isGroupType =
-    chart.meta.category === "group" || chart.meta.category === "axis-series";
+    chart.category === "group" || chart.category === "axis-series";
 
   const iconButtonsBar = isGroupType
     ? commonActions
     : [...seriesChartActions, ...commonActions];
 
   return (
-    <div className="apexcharts-custom-toolbar">
+    <div className="apexcharts-custom-toolbar border">
       {iconButtonsBar.map((item, index) => (
         <Button.Icon
           key={index}

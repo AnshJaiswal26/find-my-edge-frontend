@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useCartesianChartConfig } from "./cartesian";
 
 export const useBarChartConfig = (params) => {

@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 export const useChartDataLabels = (type, config) => {
   return useMemo(
     () => ({

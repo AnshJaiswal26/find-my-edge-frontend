@@ -33,12 +33,10 @@ export default function ChartLayoutPopup({ chartId }) {
 
   const chart = state.charts[chartId];
 
-  const type = chart.meta.type;
+  const type = chart.type;
 
   const [layoutDraft, setLayoutDraft] = useState({ ...chart.layout });
-  const [seriesDraft, setSeriesDraft] = useState([
-    ...(chart?.ySeriesConfig ?? chart.seriesConfig),
-  ]);
+  const [seriesDraft, setSeriesDraft] = useState([...chart?.series]);
 
   const updateSeries = useCallback(
     (index, patch) => {

@@ -271,10 +271,12 @@ function ChartDashboard({
         <ChartGridItem
           key={id}
           id={id}
-          seriesById={seriesById}
           seriesOrder={seriesOrder}
-          schemasById={schemasById}
+          seriesById={seriesById}
           schemasOrder={schemasOrder}
+          schemasById={schemasById}
+          ids={seriesOrder}
+          seriesSelector={(id, metric) => seriesById[id]?.[metric] || 0}
         />
       ))}
     </div>

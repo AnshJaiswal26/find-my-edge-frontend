@@ -1,15 +1,15 @@
 import { Legend } from "@shared/components/ui";
 import styles from "./CustomApexChart.module.css";
 
-function toggleSeriesKey(key, selected, cfg) {
-  if (!selected) return cfg.filter((c) => c.key !== key).map((c) => c.key);
+function toggleSeriesKey(id, selected, cfg) {
+  if (!selected) return cfg.filter((c) => c.id !== id).map((c) => c.id);
 
-  if (selected.includes(key)) {
-    const next = selected.filter((k) => k !== key);
+  if (selected.includes(id)) {
+    const next = selected.filter((k) => k !== id);
     return next.length ? next : null;
   }
 
-  return [...selected, key];
+  return [...selected, id];
 }
 
 export function ChartLegend({
@@ -17,8 +17,8 @@ export function ChartLegend({
   show,
   alignment,
   seriesConfig,
-  selectedSeriesKeys,
-  setSelectedSeriesKeys,
+  selectedSeriesIds,
+  setSelectedSeriesIds,
 }) {
   if (!show) return null;
 
@@ -34,17 +34,17 @@ export function ChartLegend({
                 : s.colorRules.map((r) => r.color)
               : s.color
           }
-          label={s.name ?? s.label}
-          selected={selectedSeriesKeys && !selectedSeriesKeys.includes(s.key)}
+          label={s.label ?? ""}
+          selected={selectedSeriesIds && !selectedSeriesIds.includes(s.id)}
           onClick={() => {
             if (seriesConfig.length === 1) return;
 
             const series = toggleSeriesKey(
-              s.key,
-              selectedSeriesKeys,
+              s.id,
+              selectedSeriesIds,
               seriesConfig,
             );
-            setSelectedSeriesKeys(series);
+            setSelectedSeriesIds(series);
           }}
         />
       ))}

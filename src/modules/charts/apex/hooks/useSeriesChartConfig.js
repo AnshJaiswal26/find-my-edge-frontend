@@ -1,37 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useChartStore } from "@modules/charts/apex/store";
-import { configGenerator } from "../configs";
 import {
   evaluateColorRules,
   FILTER_OPERATION_MAP,
   SORT_OPERATION_MAP,
 } from "@shared/utils";
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
-import { computeAggregate } from "@lib/analytics/engine/execute";
-
-function useChartControls(chartId) {
-  const type = useChartStore((s) => s.charts[chartId].meta.type);
-  const filters = useChartStore((s) => s.charts[chartId].filters);
-  const sort = useChartStore((s) => s.charts[chartId].sort);
-  const selection = useChartStore((s) => s.charts[chartId].selection);
-  const xField = useChartStore((s) => s.charts[chartId].xSeriesConfig.key);
-
-  return {
-    type,
-    filters,
-    sort,
-    selection,
-    xField,
-  };
-}
-
-function useChartMode(groups, groupSpec) {
-  return useMemo(() => {
-    if (!groups) return "SERIES";
-    if (groupSpec?.ast) return "GROUP_AGGREGATE";
-    return "GROUP_SELECT";
-  }, [groups, groupSpec]);
-}
+import { useLineChartConfig, useBarChartConfig } from "../configs";
 
 function useChartEngine({ ids, seriesSelector, filters, sort, selection }) {
   return useMemo(() => {
@@ -73,19 +48,9 @@ function useChartEngine({ ids, seriesSelector, filters, sort, selection }) {
   }, [ids, filters, sort, selection, seriesSelector]);
 }
 
-function useChartSeries({
-  ids,
-  series,
-  selectedSeriesKeys,
-  type,
-  seriesSelector,
-}) {
-  const config = selectedSeriesKeys?.length
-    ? series.filter((s) => selectedSeriesKeys.includes(s.field))
-    : series;
-
+function useChartSeries({ ids, series, type, seriesSelector }) {
   return useMemo(() => {
-    return config.map((s) => ({
+    return series.map((s) => ({
       name: s.label,
 
       data: ids.map((id) => seriesSelector(id, s.field)),
@@ -95,10 +60,10 @@ function useChartSeries({
           ? s.color
           : ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
     }));
-  }, [ids, config, type, seriesSelector]);
+  }, [ids, series, type, seriesSelector]);
 }
 
-function useChartTooltip({ chartId, ids, selectedSeriesKeys }) {
+function useChartTooltip({ chartId, ids, selectedSeriesIds, seriesSelector }) {
   return useCallback(
     (seriesValue, index, seriesIndex) =>
       seriesTooltipCallback({
@@ -107,191 +72,47 @@ function useChartTooltip({ chartId, ids, selectedSeriesKeys }) {
         seriesIndex,
         chartId,
         getTitle: (field) => seriesSelector(ids[index], field),
-        selectedSeriesKeys,
+        selectedSeriesIds,
       }),
-    [chartId, ids, selectedSeriesKeys],
+    [chartId, ids, selectedSeriesIds],
   );
 }
 
-function useChartOptions({
-  type,
-  chartId,
-  chart,
-  seriesById,
-  finalData,
-  selectedSeriesKeys,
-  tooltipCallback,
-  mode,
-}) {
-  return useMemo(() => {
-    return configGenerator?.[type]?.({
-      chart,
-      chartId,
-      seriesById,
-      data: finalData,
-      selectedSeriesKeys,
-      tooltipCallback,
-      mode,
-    });
-  }, [
-    type,
-    chartId,
-    chart,
-    seriesById,
-    finalData,
-    selectedSeriesKeys,
-    tooltipCallback,
-    mode,
-  ]);
-}
+export function useSeriesChartOptions(params) {
+  const lineConfig = useLineChartConfig(params);
+  const barConfig = useBarChartConfig(params);
 
-/* =========================================================
-   🔥 CORE DATA ENGINE (Single Source of Truth)
-========================================================= */
-function useChartData({
-  mode,
-  seriesOrder,
-  groups,
-  selectedGroupIndex,
-  seriesById,
-  seriesConfig,
-  groupSpec,
-  schemasById,
-  filters,
-  sort,
-  selection,
-  xField,
-}) {
-  return useMemo(() => {
-    let data = [];
-
-    /* ------------------ NORMALIZE ------------------ */
-    if (mode === "SERIES") {
-      data = seriesOrder.map((id) => ({
-        id,
-        source: [id],
-      }));
-    }
-
-    if (mode === "GROUP_SELECT") {
-      const ids = groups?.[selectedGroupIndex ?? 0]?.tradeIds ?? [];
-      data = ids.map((id) => ({
-        id,
-        source: [id],
-      }));
-    }
-
-    if (mode === "GROUP_AGGREGATE") {
-      data =
-        groups?.map((g) => ({
-          meta: g.meta,
-          source: g.tradeIds,
-        })) ?? [];
-    }
-
-    const keys = Array.from(
-      new Set([...seriesConfig.map((s) => s.key), xField]),
-    );
-
-    data = data.map((item) => {
-      const values = {};
-
-      if (mode === "GROUP_AGGREGATE") {
-        // compute once
-        const computed = computeAggregate({
-          ast: groupSpec?.ast,
-          getTradeCount: () => item.source.length,
-          getTradeValue: (index, key) => {
-            const id = item.source[index];
-            return id ? seriesById[id]?.[key] : null;
-          },
-          getSchemaType: (k) => {
-            const schema = schemasById?.[k];
-            return {
-              format: schema?.display?.format,
-              type: schema?.semanticType,
-            };
-          },
-        });
-
-        keys.forEach((key) => {
-          values[key] = computed;
-        });
-      } else {
-        const trade = seriesById[item.id];
-
-        keys.forEach((key) => {
-          values[key] = trade?.[key];
-        });
-      }
-
-      return { ...item, values };
-    });
-
-    /* ------------------ SELECTION ------------------ */
-    if (selection.from !== null && selection.to !== null) {
-      data = data.slice(selection.from, selection.to);
-    }
-
-    /* ------------------ FILTER ------------------ */
-    if (filters?.length) {
-      data = data.filter((item) =>
-        filters.some((f) => {
-          const fn = FILTER_OPERATION_MAP[f.operator];
-          return fn?.(item.values[f.key], f.value ?? f.from, f.to);
-        }),
-      );
-    }
-
-    /* ------------------ SORT ------------------ */
-    if (sort?.key && sort.operator !== "none") {
-      const fn = SORT_OPERATION_MAP[sort.operator];
-      data = [...data].sort((a, b) => {
-        return fn?.(a.values[sort.key], b.values[sort.key]) ?? 0;
-      });
-    }
-
-    return data;
-  }, [
-    mode,
-    seriesOrder,
-    groups,
-    selectedGroupIndex,
-    seriesById,
-    seriesConfig,
-    groupSpec,
-    schemasById,
-    filters,
-    sort,
-    selection,
-    xField,
-  ]);
+  return params.type === "line" ? lineConfig : barConfig;
 }
 
 /* =========================================================
    MAIN HOOK
 ========================================================= */
 export default function useSeriesChartConfig({
+  ids,
   chartId,
   layout,
-  seriesById,
-  selectedSeriesKeys,
-
-  ids,
+  selectedSeriesIds,
   seriesSelector,
+  groupSelector,
+  seriesConfig,
 }) {
   const type = useChartStore((s) => s.charts[chartId].type);
   const mode = useChartStore((s) => s.charts[chartId].mode);
 
-  const series = useChartStore((s) => s.charts[chartId].series);
+  const xMetric = useChartStore((s) => s.charts[chartId].xMetric);
 
   const filters = useChartStore((s) => s.charts[chartId].filters);
   const sort = useChartStore((s) => s.charts[chartId].sort);
   const selection = useChartStore((s) => s.charts[chartId].selection);
 
-  const filteredSeries = selectedSeriesKeys?.length
-    ? series.filter((s) => selectedSeriesKeys.includes(s.id))
-    : series;
+  const filteredSeries = useMemo(
+    () =>
+      selectedSeriesIds?.length
+        ? seriesConfig.filter((s) => selectedSeriesIds.includes(s.id))
+        : seriesConfig,
+    [selectedSeriesIds, seriesConfig],
+  );
 
   /* ------------------ CORE DATA ------------------ */
   const finalIds = useChartEngine({
@@ -302,56 +123,36 @@ export default function useSeriesChartConfig({
     selection,
   });
 
+  /* ------------------ SERIES ------------------ */
   const computedSeries = useChartSeries({
-    ids,
+    ids: finalIds,
     series: filteredSeries,
-    selectedSeriesKeys,
+    selectedSeriesIds,
     type,
     seriesSelector,
   });
-
-  /* ------------------ SERIES ------------------ */
-  // const computedSeries = useMemo(() => {
-  //   return (
-  //     selectedSeriesKeys?.length
-  //       ? seriesConfig.filter((s) => selectedSeriesKeys.includes(s.key))
-  //       : seriesConfig
-  //   ).map((s) => ({
-  //     name: s.name,
-  //     data: finalData.map((item) => item.values[s.key]),
-  //     color:
-  //       type === "line"
-  //         ? s.color
-  //         : ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
-  //   }));
-  // }, [finalData, seriesConfig, selectedSeriesKeys, type]);
 
   /* ------------------ TOOLTIP ------------------ */
   const tooltipCallback = useChartTooltip({
     chartId,
     ids: finalIds,
-    selectedSeriesKeys,
+    selectedSeriesIds,
+    seriesSelector,
   });
 
   /* ------------------ OPTIONS ------------------ */
-  const options = useMemo(() => {
-    return configGenerator?.[type]?.({
-      chart: useChartStore.getState().charts[chartId],
-      chartId,
-      seriesById,
-      selectedSeriesKeys,
-      tooltipCallback,
-      mode,
-    });
-  }, [
+  const options = useSeriesChartOptions({
+    ids,
     type,
     chartId,
-    selectedSeriesKeys,
     layout,
-    layout?.area,
-    mode,
+    seriesSelector,
     tooltipCallback,
-  ]);
+    series: filteredSeries,
+    mode,
+    xMetric,
+    groupSelector,
+  });
 
   return { options, series: computedSeries, type };
 }

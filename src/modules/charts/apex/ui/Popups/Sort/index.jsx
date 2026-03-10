@@ -7,12 +7,9 @@ import { useChartStore } from "@modules/charts/apex/store";
 export default function SortPopup({ chartId, schemasById }) {
   const sort = useChartStore((s) => s.charts[chartId].sort);
 
-  const ySeriesConfig = useChartStore((s) => s.charts[chartId].ySeriesConfig);
-  const xSeriesConfig = useChartStore((s) => s.charts[chartId].xSeriesConfig);
+  const seriesConfig = useChartStore((s) => s.charts[chartId].series);
 
   const [draft, setDraft] = useState(sort);
-
-  const seriesConfig = [...ySeriesConfig, xSeriesConfig];
 
   const { applySort, clearSort, closePopup } = useChartStore.getState();
 
@@ -29,7 +26,7 @@ export default function SortPopup({ chartId, schemasById }) {
             getLabel={(o) => o.name}
             getKey={(o) => o.key}
             value={draft.key}
-            onChange={(o) => setDraft({ key: o.key, operator: "none" })}
+            onChange={(o) => setDraft({ key: o.field, operator: "none" })}
           />
           <Select
             label="Sort Order"

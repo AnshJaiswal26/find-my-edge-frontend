@@ -14,14 +14,13 @@ const GroupOptionSelect = ({
   groups,
   groupSpec,
   schemasById,
-  category,
   selectedGroupIndex,
   setSelectedGroupIndex,
 }) => {
   const format = useChartStore((s) => s.charts[chartId].layout.xFormat);
   const decimals = useChartStore((s) => s.charts[chartId].layout.xDecimals);
   const isKeySame = useChartStore(
-    (s) => s.charts[chartId].xSeriesConfig.key === groupSpec.key,
+    (s) => s.charts[chartId].xMetric.field === groupSpec.field,
   );
 
   return (
@@ -52,11 +51,13 @@ export default function CustomApexChart({
   chartId,
   type,
   category,
+  mode,
   seriesOrder,
   seriesById,
   schemasById,
-  schemasOrder,
   onRemove,
+  ids,
+  seriesSelector,
 }) {
   const groupSpec = useChartStore((s) => s.charts[chartId]?.groupSpec);
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
@@ -78,14 +79,21 @@ export default function CustomApexChart({
     return () => cancelAnimationFrame(id);
   }, []);
 
+  const filteredIds = useMemo(
+    () =>
+      mode === "GROUP_SELECT"
+        ? groups?.[selectedGroupIndex]?.tradeIds || ids
+        : ids,
+    [mode, groups, selectedGroupIndex, ids],
+  );
+
   return (
     <ChartContainer chartId={chartId}>
       <div className="flex items-center justify-between">
         <ChartTitle chartId={chartId} />
-        {groups && !groupSpec?.ast && category !== "grouped" && (
+        {groups && category !== "grouped" && mode === "GROUP_SELECT" && (
           <GroupOptionSelect
             chartId={chartId}
-            category={category}
             groups={groups}
             groupSpec={groupSpec}
             schemasById={schemasById}
@@ -107,20 +115,10 @@ export default function CustomApexChart({
               groups={groups}
               groupSpec={groupSpec}
               selectedGroupIndex={selectedGroupIndex}
-              seriesOrder={seriesOrder}
-              seriesById={seriesById}
-              schemasById={schemasById}
-              schemasOrder={schemasOrder}
+              ids={filteredIds}
+              seriesSelector={seriesSelector}
             />{" "}
-            <Toolbar
-              type={type}
-              chartId={chartId}
-              seriesOrder={seriesOrder}
-              seriesById={seriesById}
-              schemasById={schemasById}
-              schemasOrder={schemasOrder}
-              onRemove={onRemove}
-            />
+            <Toolbar type={type} chartId={chartId} onRemove={onRemove} />
           </>
         )}
       </div>

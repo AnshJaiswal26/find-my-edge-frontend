@@ -6,6 +6,7 @@ import { useChartGrid } from "./useChartGrid";
 import { useChartTooltip } from "./useChartTooltip";
 
 export const useCartesianChartConfig = ({
+  ids,
   type,
   chartId,
   layout,
@@ -16,7 +17,7 @@ export const useCartesianChartConfig = ({
   xMetric,
   groupSelector,
 }) => {
-  const events = useChartEvents(chartId, layout); // done
+  const events = useChartEvents(chartId, layout);
   const { xaxis, yaxis } = useChartAxes({
     ids,
     seriesSelector,
