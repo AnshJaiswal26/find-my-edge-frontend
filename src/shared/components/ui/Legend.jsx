@@ -17,7 +17,7 @@ export default function Legend({
           px-1
           rounded-[5px]
           cursor-pointer
-          ${selected ? "opacity-30" : ""}
+          ${selected ? "" : "opacity-30"}
         `}
       >
         {Array.isArray(color) ? (

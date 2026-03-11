@@ -37,7 +37,7 @@ export default function StatCard({ statId }) {
       />
 
       {/* Subtle inner top sheen */}
-      <div className="absolute top-0 left-0 right-0 h-16 rounded-t-xl opacity-[0.03] bg-gradient-to-b from-white to-transparent pointer-events-none" />
+      {/* <div className="absolute top-0 left-0 right-0 h-16 rounded-t-xl opacity-[0.03] bg-gradient-to-b from-white to-transparent pointer-events-none" /> */}
 
       {/* Delete btn — fades in on hover */}
       <button

@@ -3,7 +3,6 @@ import Toolbar from "../Toolbar";
 import { ChartContainer } from "./ChartContainer";
 import { ChartTitle } from "./ChartTitle";
 import { ChartWithConfig } from "./ChartWithConfig";
-import styles from "./CustomApexChart.module.css";
 import { buildGroups } from "@lib/analytics/engine/data";
 import { Loader, Select, Skeleton } from "@shared/components/ui";
 import { useEffect, useMemo, useState } from "react";
@@ -103,7 +102,7 @@ export default function CustomApexChart({
         )}
       </div>
 
-      <div className={styles.chartWrapper}>
+      <div className="flex h-full w-full relative">
         {!ready ? (
           <Loader className="!w-full !h-full" />
         ) : (
@@ -117,7 +116,7 @@ export default function CustomApexChart({
               selectedGroupIndex={selectedGroupIndex}
               ids={filteredIds}
               seriesSelector={seriesSelector}
-            />{" "}
+            />
             <Toolbar type={type} chartId={chartId} onRemove={onRemove} />
           </>
         )}

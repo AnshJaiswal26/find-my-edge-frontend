@@ -1,34 +1,24 @@
 import { formatValue } from "@shared/utils";
 import { useChartStore } from "../store";
+import { ChartType } from "../model/enums";
 
-export const groupedTooltipCallback = ({
-  seriesIndex,
-  chartId,
-  filteredSeries,
-  dataSeries,
-}) => {
+export const groupedTooltipCallback = ({ seriesIndex, chartId }) => {
   const chart = useChartStore.getState().charts[chartId];
-  const { layout, type } = chart;
+  const { layout, type: chartType, series } = chart;
 
-  // safety
-  if (!filteredSeries?.length || !dataSeries?.length) return null;
-
-  const config = filteredSeries[seriesIndex];
-  if (!config) return null;
-
-  const value = dataSeries[seriesIndex];
+  const { label, color, value, type, format, decimals } = series[seriesIndex];
 
   const display =
-    type === "donut"
+    chartType === ChartType.DONUT
       ? { format: layout.format, decimals: layout.decimals }
-      : { format: config.format, decimals: config.decimals };
+      : { format, decimals };
 
   return {
     dataArray: [
       {
-        value: formatValue(value, config?.type || "number", display),
-        label: config?.label || "",
-        color: config?.color || "var(--info)",
+        value: formatValue(value, type || "number", display),
+        label: label || "",
+        color: color || "var(--info)",
       },
     ],
   };

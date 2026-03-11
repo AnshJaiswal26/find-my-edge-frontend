@@ -1,3 +1,5 @@
+import { chartEngine } from "../model/chartEngine";
+
 export const createFilterSlice = (set, get) => ({
   updateFilter(chartId, index, patch) {
     set((s) => {
@@ -34,6 +36,7 @@ export const createFilterSlice = (set, get) => ({
     set((s) => {
       s.charts[chartId].filters = filters;
     });
+    chartEngine.charts.get(chartId)?.computeSeries(filters);
     get().closePopup();
   },
 });

@@ -6,7 +6,14 @@ import {
 } from "@shared/utils";
 
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
-import { buildLineChartOptions, buildBarChartOptions } from "../options";
+import {
+  buildLineChartOptions,
+  buildBarChartOptions,
+  buildPieChartOptions,
+  buildRadialBarChartOptions,
+} from "../options";
+import { ChartType } from "./enums";
+import { groupedTooltipCallback } from "../tooltip/group.tooltip";
 
 export default class ChartInstance {
   constructor(container, chartId, store, dataset) {
@@ -19,8 +26,6 @@ export default class ChartInstance {
     this.groupSelector = dataset.groupSelector;
 
     this.render();
-
-    this.setupResizeListener();
   }
 
   get chart() {
@@ -62,23 +67,26 @@ export default class ChartInstance {
   }
 
   destroy() {
-    window.removeEventListener("chart-resize", this.resizeListener);
     this.apex?.destroy();
   }
 
-  setupResizeListener() {
-    this.resizeListener = (e) => {
-      if (e.detail?.chartId === this.chartId) {
-        this.apex?.resize();
-      }
-    };
-
-    window.addEventListener("chart-resize", this.resizeListener);
+  toggleSeries(seriesName) {
+    this.apex.toggleSeries(seriesName);
   }
 
   /* =========================
      DATA PIPELINE
   ========================= */
+
+  recomputeSeries() {
+    const ids = this.dataset.ids;
+
+    const finalIds = this.computeIds(ids);
+
+    const series = this.computeSeries(finalIds);
+
+    this.apex.updateSeries(series, true);
+  }
 
   computeIds(ids) {
     const { filters, sort, selection } = this.chart;
@@ -111,7 +119,7 @@ export default class ChartInstance {
 
     /* SELECTION */
 
-    if (selection?.from !== null && selection?.to !== null) {
+    if (selection && selection?.from !== null && selection?.to !== null) {
       result = result.slice(selection.from, selection.to);
     }
 
@@ -120,6 +128,11 @@ export default class ChartInstance {
 
   computeSeries(ids) {
     const { series, type } = this.chart;
+
+    if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR) {
+      if (ChartType.RADIAL_BAR) return [20, 50];
+      return series.map((c) => Math.abs(c.value));
+    }
 
     return series.map((s) => ({
       name: s.label,
@@ -137,17 +150,25 @@ export default class ChartInstance {
      TOOLTIP
   ========================= */
 
-  buildTooltip(ids) {
-    const { selectedSeriesIds } = this.chart;
+  buildTooltip() {
+    const { type } = this.chart;
+    if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR)
+      return (seriesValue, index, seriesIndex, w) =>
+        groupedTooltipCallback({
+          chartId: this.chartId,
+          seriesIndex,
+          seriesValue,
+          index,
+          w,
+        });
 
-    return (seriesValue, index, seriesIndex) =>
+    return (seriesValue, index, seriesIndex, w) =>
       seriesTooltipCallback({
+        chartId: this.chartId,
         seriesValue,
         index,
         seriesIndex,
-        chartId: this.chartId,
-        getTitle: (field) => this.seriesSelector(ids[index], field),
-        selectedSeriesIds,
+        w,
       });
   }
 
@@ -166,11 +187,26 @@ export default class ChartInstance {
       mode: this.chart.mode,
       xMetric: this.chart.xMetric,
       groupSelector: this.groupSelector,
-      tooltipCallback: this.buildTooltip(ids),
+      tooltipCallback: this.buildTooltip(),
+      dataSeries: this.computeSeries(ids),
     };
 
-    return this.chart.type === "line"
-      ? buildLineChartOptions(params)
-      : buildBarChartOptions(params);
+    const type = this.chart.type;
+
+    if (type === ChartType.LINE) {
+      return buildLineChartOptions(params);
+    }
+
+    if (type === ChartType.BAR) {
+      return buildBarChartOptions(params);
+    }
+
+    if (type === ChartType.DONUT) {
+      return buildPieChartOptions(params);
+    }
+
+    if (type === ChartType.RADIAL_BAR) {
+      return buildRadialBarChartOptions(params);
+    }
   }
 }

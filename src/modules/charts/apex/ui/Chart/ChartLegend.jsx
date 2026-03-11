@@ -1,32 +1,34 @@
 import { Legend } from "@shared/components/ui";
-import styles from "./CustomApexChart.module.css";
+import { chartEngine } from "../../model/chartEngine";
+import { useState } from "react";
 
-function toggleSeriesKey(id, selected, cfg) {
-  if (!selected) return cfg.filter((c) => c.id !== id).map((c) => c.id);
-
-  if (selected.includes(id)) {
-    const next = selected.filter((k) => k !== id);
-    return next.length ? next : null;
-  }
-
-  return [...selected, id];
-}
-
-export function ChartLegend({
-  type,
-  show,
-  alignment,
-  seriesConfig,
-  selectedSeriesIds,
-  setSelectedSeriesIds,
-}) {
+export function ChartLegend({ type, show, alignment, seriesConfig, chartId }) {
   if (!show) return null;
 
+  const [activeSeries, setActiveSeries] = useState(new Set());
+
+  const toggleSeriesState = (id) => {
+    setActiveSeries((prev) => {
+      const next = new Set(prev);
+
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+
+      return next;
+    });
+  };
+
+  const alignmentClass = {
+    left: "justify-start",
+    right: "justify-end",
+    center: "justify-center",
+  }[alignment];
+
   return (
-    <div className={`${styles.legendWrapper} ${styles[alignment]}`}>
+    <div className={`flex relative gap-1 flex-wrap w-full ${alignmentClass}`}>
       {seriesConfig.map((s, i) => (
         <Legend
-          key={i}
+          key={s.id ?? i}
           color={
             type === "bar"
               ? s.colorRules.length === 0
@@ -35,16 +37,10 @@ export function ChartLegend({
               : s.color
           }
           label={s.label ?? ""}
-          selected={selectedSeriesIds && !selectedSeriesIds.includes(s.id)}
+          selected={!activeSeries.has(s.id)}
           onClick={() => {
-            if (seriesConfig.length === 1) return;
-
-            const series = toggleSeriesKey(
-              s.id,
-              selectedSeriesIds,
-              seriesConfig,
-            );
-            setSelectedSeriesIds(series);
+            chartEngine.charts.get(chartId).toggleSeries(s.label);
+            toggleSeriesState(s.id);
           }}
         />
       ))}

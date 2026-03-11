@@ -1,37 +1,16 @@
-import {
-  evaluateColorRules,
-  formatGroupValue,
-  formatValue,
-} from "@shared/utils";
+import { evaluateColorRules } from "@shared/utils";
 import { useChartStore } from "../store";
 
-function getActiveSeriesConfig(series, selectedSeriesKeys) {
-  if (!selectedSeriesKeys?.length) return series;
+function resolveSeriesStyle({ value, config }) {
+  if (config?.colorRules?.length) {
+    return evaluateColorRules(value, config.colorRules);
+  }
 
-  return series.filter((s) => selectedSeriesKeys.includes(s.key));
-}
-
-function formatTooltipTitle(title, xMetric, layout, mode) {
-  const options = {
-    format: layout.xFormat,
-    decimals: layout.xDecimals,
-  };
-
-  return mode === "GROUP_AGGREGATE"
-    ? formatGroupValue(title, xMetric.type, options)
-    : formatValue(title, xMetric.type, options);
-}
-
-function resolveSeriesStyle({ value, config, chartType }) {
-  if (chartType === "line") {
+  if (!config?.colorRules) {
     return {
       color: config.color,
       label: config.label || "",
     };
-  }
-
-  if (config.colorRules?.length) {
-    return evaluateColorRules(value, config.colorRules);
   }
 
   return {
@@ -40,18 +19,11 @@ function resolveSeriesStyle({ value, config, chartType }) {
   };
 }
 
-function buildTooltipRow(value, config, layout, chartType) {
-  const style = resolveSeriesStyle({
-    value,
-    config,
-    chartType,
-  });
+function buildTooltipRow(value, config, formatter) {
+  const style = resolveSeriesStyle({ value, config });
 
   return {
-    value: formatValue(value, config.type, {
-      format: layout.yFormat,
-      decimals: layout.yDecimals,
-    }),
+    value: formatter(value),
     label: style.label || "",
     color: style.color || "var(--info)",
   };
@@ -59,27 +31,27 @@ function buildTooltipRow(value, config, layout, chartType) {
 
 export const seriesTooltipCallback = ({
   seriesValue,
+  seriesIndex,
   index,
+  w,
   chartId,
-  getTitle,
-  selectedSeriesKeys,
 }) => {
   const chart = useChartStore.getState().charts[chartId];
 
-  const { type, xMetric, series, layout, mode } = chart;
+  const nonActiveIndexes = w.globals.collapsedSeriesIndices || [];
 
-  const activeSeriesConfig = getActiveSeriesConfig(series, selectedSeriesKeys);
+  const value = seriesValue[seriesIndex];
 
-  const titleValue = getTitle(xMetric.field);
+  const formatter = w.globals.yLabelFormatters[0];
 
-  const title = formatTooltipTitle(titleValue, xMetric, layout, mode);
-
-  const dataArray = seriesValue.map((value, i) =>
-    buildTooltipRow(value, activeSeriesConfig[i], layout, type),
-  );
+  const dataArray = nonActiveIndexes.length
+    ? [buildTooltipRow(value, chart.series[seriesIndex], formatter)]
+    : chart.series.map((_, i) =>
+        buildTooltipRow(value, chart.series[i], formatter),
+      );
 
   return {
-    title,
+    title: w.globals.categoryLabels[index],
     dataArray,
   };
 };

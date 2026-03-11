@@ -35,7 +35,7 @@ export const buildCartesianChartOptions = ({
       id: chartId,
       fontFamily: "inherit",
       toolbar: { show: true, tools: { download: true, selection: false } },
-      zoom: { enabled: false },
+      zoom: { enabled: false, type: "x", allowMouseWheelZoom: false },
       selection: { enabled: false },
       events,
     },

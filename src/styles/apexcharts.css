@@ -90,7 +90,31 @@
 }
 
 .apexcharts-toolbar {
+  height: 0 !important;
+}
+
+.apexcharts-menu-icon {
   display: none !important;
+  height: 0 !important;
+}
+
+.apexcharts-menu,
+.apexcharts-menu-open {
+  height: fit-content !important;
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  text-align: center !important;
+}
+
+.apexcharts-menu-open .apexcharts-menu-item:hover {
+  background-color: var(--hover) !important;
+}
+
+.apexcharts-selection-rect {
+  fill: var(--info-soft) !important;
+  fill-opacity: 1 !important;
+  stroke: var(--info) !important;
+  stroke-width: 1px !important;
 }
 
 /* custom toolbar */

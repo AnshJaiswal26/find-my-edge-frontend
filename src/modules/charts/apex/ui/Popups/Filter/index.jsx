@@ -51,7 +51,9 @@ export default function FilterPopup({ chartId, schemasById }) {
         <Popup.Footer
           text={["Clear", "Apply"]}
           onCancel={() => clearFilters(chartId)}
-          onApply={() => applyFilters(chartId, filters)}
+          onApply={() => {
+            applyFilters(chartId, filters);
+          }}
         />
       </Popup.Container>
     </Popup>

@@ -1,7 +1,5 @@
-import styles from "./CustomApexChart.module.css";
 import { ChartLegend } from "./ChartLegend";
-import { ChartViewport } from "./ChartViewport";
-import { useState } from "react";
+import { ChartViewportWrapper } from "./ChartViewport";
 import { useChartStore } from "@modules/charts/apex/store";
 
 export function ChartWithConfig({
@@ -17,24 +15,20 @@ export function ChartWithConfig({
   const layout = useChartStore((s) => s.charts[chartId].layout);
   const seriesConfig = useChartStore((s) => s.charts[chartId].series);
 
-  const [selectedSeriesIds, setSelectedSeriesIds] = useState(null);
+  const positionClass =
+    layout.legendPosition === "bottom" ? "flex-col-reverse" : "flex-col";
 
   return (
-    <div
-      className={`${styles.legendChartWrapper} ${
-        styles[layout.legendPosition]
-      }`}
-    >
+    <div className={`flex flex-1 min-w-0 w-full h-full ${positionClass}`}>
       <ChartLegend
+        chartId={chartId}
         type={type}
         show={layout.legend}
         alignment={layout.legendAlignment}
         seriesConfig={seriesConfig}
-        selectedSeriesIds={selectedSeriesIds}
-        setSelectedSeriesIds={setSelectedSeriesIds}
       />
 
-      <ChartViewport
+      <ChartViewportWrapper
         type={type}
         category={category}
         chartId={chartId}
@@ -45,7 +39,6 @@ export function ChartWithConfig({
         selectedGroupIndex={selectedGroupIndex}
         ids={ids}
         seriesSelector={seriesSelector}
-        selectedSeriesIds={selectedSeriesIds}
       />
     </div>
   );

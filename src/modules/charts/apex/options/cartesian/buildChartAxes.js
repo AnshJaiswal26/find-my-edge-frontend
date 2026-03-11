@@ -8,6 +8,7 @@ export const buildChartAxes = ({
   mode,
   xMetric,
   groupSelector,
+  type,
 }) => {
   const style = { fontSize: "0.75rem" };
 
@@ -19,6 +20,7 @@ export const buildChartAxes = ({
       show: layout.xLabels,
       formatter: (v) => {
         if (v < 0) return;
+        if (!mode) return v;
         const index = v - 1;
 
         const format = { format: layout.xFormat, decimals: layout.xDecimals };

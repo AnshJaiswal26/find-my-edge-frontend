@@ -15,7 +15,7 @@ export const customTooltip = (callback) => {
             <span class="tooltip-text">${label}
               <strong style="color:${color}">${value}</strong>
             </span>
-        </div>`
+        </div>`,
     );
 
     return `

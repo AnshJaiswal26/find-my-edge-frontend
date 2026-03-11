@@ -1,14 +1,16 @@
 import { Container } from "@shared/components/layout";
-import styles from "./CustomApexChart.module.css";
 
 export function ChartContainer({ chartId, children }) {
   return (
     <Container
       id={`${chartId}-container`}
-      className={`${styles.chartContainer} pr-2! pt-1!`}
-      childClassName={styles.chartInnerContainer}
+      className="group flex-col !h-full !min-w-0 select-none p-[15px]"
+      childClassName="!gap-1 !h-full min-w-0"
     >
-      <div className={`chart-toolbar ${styles.chartDragIcon}`}>⠿</div>
+      <div className="chart-toolbar invisible group-hover:visible absolute cursor-move bg-inherit text-[var(--text)] p-1 text-xs top-0 left-1/2 rotate-90 box-border">
+        ⠿
+      </div>
+
       {children}
     </Container>
   );

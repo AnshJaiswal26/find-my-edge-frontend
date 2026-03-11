@@ -1,0 +1,5 @@
+export const ChartMode = Object.freeze({
+  SERIES: "SERIES",
+  GROUP_SELECT: "GROUP_SELECT",
+  GROUP_AGGREGATE: "GROUP_AGGREGATE",
+});
