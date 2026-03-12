@@ -16,6 +16,8 @@ export default function VirtualizedRow({ scrollRef }) {
         : rowsOrder,
   );
 
+  // console.log(rowsOrder);
+
   const groupBy = useTableStore((s) => s.groupBy);
   const expandedGroups = useTableStore((s) => s.expandedGroups);
   const groups = useTableStore((s) => s.groups);
@@ -55,6 +57,7 @@ export default function VirtualizedRow({ scrollRef }) {
     >
       {rowVirtualizer.getVirtualItems().map((vRow, i) => {
         const item = visibleRows[vRow.index];
+
         return (
           <div
             key={item.type === "group" ? `group-${item.groupId}` : item.rowId}

@@ -40,15 +40,17 @@ export const seriesTooltipCallback = ({
 
   const nonActiveIndexes = w.globals.collapsedSeriesIndices || [];
 
-  const value = seriesValue[seriesIndex];
-
   const formatter = w.globals.yLabelFormatters[0];
 
   const dataArray = nonActiveIndexes.length
-    ? [buildTooltipRow(value, chart.series[seriesIndex], formatter)]
-    : chart.series.map((_, i) =>
-        buildTooltipRow(value, chart.series[i], formatter),
-      );
+    ? [
+        buildTooltipRow(
+          seriesValue[seriesIndex],
+          chart.series[seriesIndex],
+          formatter,
+        ),
+      ]
+    : chart.series.map((s, i) => buildTooltipRow(seriesValue[i], s, formatter));
 
   return {
     title: w.globals.categoryLabels[index],

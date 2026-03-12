@@ -29,6 +29,8 @@ export const createFilterSlice = (set, get) => ({
     set((s) => {
       s.charts[chartId].filters = [];
     });
+    chartEngine.get(chartId)?.recomputeSeries();
+
     get().closePopup();
   },
 
@@ -36,7 +38,7 @@ export const createFilterSlice = (set, get) => ({
     set((s) => {
       s.charts[chartId].filters = filters;
     });
-    chartEngine.charts.get(chartId)?.computeSeries(filters);
+    chartEngine.get(chartId)?.recomputeSeries();
     get().closePopup();
   },
 });

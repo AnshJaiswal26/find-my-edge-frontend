@@ -15,9 +15,10 @@ export {
   isBetween,
   FILTER_OPERATION_MAP,
   FILTER_OPTIONS,
+  applyFilters,
 } from "./filters";
 
-export { SORT_TYPE, SORT_OPERATION_MAP, SORT_OPTIONS } from "./sort";
+export { SORT_TYPE, SORT_OPERATION_MAP, SORT_OPTIONS, applySort } from "./sort";
 
 export {
   parseColor,

@@ -1,10 +1,19 @@
 import { Popup } from "@shared/components/layout";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { FilterBuilder } from "@shared/components/ui";
+import { useTradeStore } from "@shared/stores";
+import { useMemo } from "react";
 
 export default function FilterPopup() {
   const filters = useTableStore((s) => s.filters);
-  const columnsById = useTableStore((s) => s.columnsById);
+
+  const schemasOrder = useTradeStore((s) => s.schemasOrder);
+  const schemasById = useTradeStore((s) => s.schemasById);
+
+  const schemas = useMemo(
+    () => schemasOrder.map((id) => schemasById[id]),
+    [schemasById, schemasOrder],
+  );
 
   const {
     addFilter,
@@ -23,8 +32,8 @@ export default function FilterPopup() {
         <Popup.Body className="px-4 py-3 flex flex-col gap-4 justify-between">
           <FilterBuilder
             filters={filters}
-            fieldOptions={Object.values(columnsById)}
-            getFieldMeta={(key) => columnsById[key]}
+            fieldOptions={schemas}
+            getFieldType={(key) => schemasById[key]?.semanticType}
             addFilter={addFilter}
             updateFilter={updateFilter}
             removeFilter={removeFilter}

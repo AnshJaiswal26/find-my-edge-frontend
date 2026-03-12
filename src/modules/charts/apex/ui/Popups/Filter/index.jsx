@@ -7,13 +7,13 @@ import { useChartStore } from "@modules/charts/apex/store";
 export default function FilterPopup({ chartId, schemasById }) {
   const appliedfilters = useChartStore((s) => s.charts[chartId].filters);
 
-  console.log(appliedfilters);
-
-  const [filters, setFilters] = useState([...appliedfilters]);
+  const clearFilters = useChartStore((s) => s.clearFilters);
+  const closePopup = useChartStore((s) => s.closePopup);
+  const applyFilters = useChartStore((s) => s.applyFilters);
 
   const seriesConfig = useChartStore((s) => s.charts[chartId].series);
 
-  const { clearFilters, closePopup, applyFilters } = useChartStore.getState();
+  const [filters, setFilters] = useState([...appliedfilters]);
 
   const addFilter = () => {
     setFilters((f) => [
@@ -41,7 +41,7 @@ export default function FilterPopup({ chartId, schemasById }) {
           <FilterBuilder
             filters={filters}
             fieldOptions={seriesConfig}
-            getFieldMeta={(key) => schemasById[key]}
+            getFieldType={(key) => schemasById[key].semanticType}
             addFilter={addFilter}
             updateFilter={updateFilter}
             removeFilter={removeFilter}

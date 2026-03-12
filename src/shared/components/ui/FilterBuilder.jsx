@@ -1,11 +1,12 @@
 import { FILTER_OPTIONS, FILTER_TYPE, isBetween } from "@shared/utils";
 import { Button, Input, RangeInput, Select } from "@shared/components/ui";
 import { Trash2 } from "lucide-react";
+import { SemanticType } from "@lib/analytics/schema";
 
 export default function FilterBuilder({
   filters,
   fieldOptions,
-  getFieldMeta,
+  getFieldType,
   addFilter,
   updateFilter,
   removeFilter,
@@ -19,7 +20,7 @@ export default function FilterBuilder({
       )}
 
       {filters.map((f, index) => {
-        const field = getFieldMeta(f.key);
+        const type = getFieldType(f.key);
 
         return (
           <div
@@ -35,11 +36,11 @@ export default function FilterBuilder({
                 label="Field:"
                 options={fieldOptions}
                 getLabel={(o) => o.label ?? o.name}
-                getKey={(o) => o.key ?? o.id}
+                getKey={(o) => o.field ?? o.id}
                 value={f.key}
                 onChange={(o) =>
                   updateFilter(index, {
-                    key: o.key ?? o.id,
+                    key: o.field ?? o.id,
                     operator: "none",
                     value: "",
                     value2: "",
@@ -47,11 +48,11 @@ export default function FilterBuilder({
                 }
               />
 
-              {field && (
+              {type && (
                 <>
                   <Select
                     label="Condition:"
-                    options={FILTER_TYPE[field.semanticType]}
+                    options={FILTER_TYPE[type]}
                     getLabel={(o) => FILTER_OPTIONS[o]}
                     value={f.operator}
                     onChange={(o) => updateFilter(index, { operator: o })}
@@ -59,11 +60,21 @@ export default function FilterBuilder({
 
                   {isBetween(f.operator) ? (
                     <RangeInput
-                      type={field.type}
+                      type={type}
                       value={{ from: f.from, to: f.to }}
-                      onChange={({ from, to }) =>
-                        updateFilter(index, { from, to, value: null })
-                      }
+                      onChange={({ from, to }) => {
+                        // auto swap if range is reversed
+                        if (
+                          type !== SemanticType.STRING &&
+                          from != null &&
+                          to != null &&
+                          from > to
+                        ) {
+                          [from, to] = [to, from];
+                        }
+
+                        updateFilter(index, { from, to });
+                      }}
                     />
                   ) : (
                     <Input
@@ -71,8 +82,8 @@ export default function FilterBuilder({
                       vertical
                       normalize
                       placeholder="Enter value"
-                      type={field.type}
-                      value={f.value}
+                      type={type}
+                      value={f.value ?? ""}
                       onChange={(parsed) =>
                         updateFilter(index, { value: parsed })
                       }

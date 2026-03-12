@@ -155,6 +155,24 @@ const FILTER_OPTIONS = {
   durationNotBetween: "Not between durations",
 };
 
+const applyFilters = (filters, context, getValue) => {
+  for (let i = 0; i < filters.length; i++) {
+    const f = filters[i];
+
+    const fn = FILTER_OPERATION_MAP[f.operator];
+    if (!fn) continue;
+
+    const targetVal = getValue(context, f.key);
+    const value = isBetween(f.operator) ? f.from : f.value;
+
+    if (!fn(targetVal, value, f.to)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 export {
   TEXT_OPS,
   NUMBER_OPS,
@@ -165,4 +183,5 @@ export {
   isBetween,
   FILTER_OPERATION_MAP,
   FILTER_OPTIONS,
+  applyFilters,
 };

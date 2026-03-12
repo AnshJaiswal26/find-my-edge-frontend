@@ -6,8 +6,8 @@ import { authService } from "@lib/services/auth.service";
 import { setAccessToken } from "@lib/api/client";
 import { useAuthStore, useIntegrationsStore } from "@shared/stores";
 import { Brokers } from "@features/integrations/brokers/config";
-
-const PUBLIC_ROUTES = ["/login", "/register"];
+import { ServerUnavailableError } from "@lib/api/error";
+import { PUBLIC_ROUTES } from "@lib/auth/publicRoutes";
 
 export function useAppBootstrap() {
   const [loading, setLoading] = useState(true);
@@ -24,10 +24,19 @@ export function useAppBootstrap() {
   useEffect(() => {
     async function init() {
       try {
+        if (
+          location.pathname === "/offline" ||
+          location.pathname === "/server-unavailable"
+        ) {
+          setLoading(false);
+          return;
+        }
+
         if (!navigator.onLine) {
           navigate("/offline", { replace: true });
           return;
         }
+
         let authenticated = isAuthenticated;
 
         try {
@@ -45,6 +54,14 @@ export function useAppBootstrap() {
           }
         } catch (err) {
           console.error("Token refresh failed", err);
+
+          if (
+            err instanceof ServerUnavailableError ||
+            err instanceof TypeError
+          ) {
+            navigate("/server-unavailable", { replace: true });
+            return;
+          }
         }
 
         if (!authenticated && PUBLIC_ROUTES.includes(location.pathname)) {
@@ -52,6 +69,7 @@ export function useAppBootstrap() {
         }
 
         if (!authenticated) {
+          console.log("User not authenticated, redirecting to login");
           navigate("/login", { replace: true });
           return;
         }
@@ -59,6 +77,7 @@ export function useAppBootstrap() {
         await appBootstrap();
       } catch (err) {
         console.error("Bootstrap failed:", err);
+
         navigate("/server-unavailable", { replace: true });
       } finally {
         setLoading(false);

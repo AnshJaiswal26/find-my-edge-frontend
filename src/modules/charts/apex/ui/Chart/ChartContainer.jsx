@@ -7,7 +7,7 @@ export function ChartContainer({ chartId, children }) {
       className="group flex-col !h-full !min-w-0 select-none p-[15px]"
       childClassName="!gap-1 !h-full min-w-0"
     >
-      <div className="chart-toolbar invisible group-hover:visible absolute cursor-move bg-inherit text-[var(--text)] p-1 text-xs top-0 left-1/2 rotate-90 box-border">
+      <div className="chart-toolbar invisible group-hover:visible absolute cursor-move bg-inherit text-(--text) p-1 text-xs top-0 left-1/2 rotate-90 box-border">
         ⠿
       </div>
 

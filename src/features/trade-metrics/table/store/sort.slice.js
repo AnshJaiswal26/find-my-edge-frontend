@@ -1,5 +1,5 @@
 import { useTradeStore } from "@shared/stores";
-import { SORT_OPERATION_MAP } from "@shared/utils";
+import { applySort } from "@shared/utils";
 
 export const createSortSlice = (set, get) => ({
   sort: {
@@ -42,19 +42,17 @@ export const createSortSlice = (set, get) => ({
       buildGroups,
       updateLockedColumns,
       filteredRowOrder,
-      rowsOrder,
       derivedViewByTradeId,
     } = get();
 
-    const { tradesById, derivedByTradeId } = useTradeStore.getState();
+    const { tradesOrder, tradesById, derivedByTradeId } =
+      useTradeStore.getState();
 
     if (!sort.columnId || sort.operator === "none") {
       set({ sortedRowOrder: [] });
       closePopup();
       return;
     }
-
-    const fn = SORT_OPERATION_MAP[sort.operator];
 
     //  unified value resolver
     const getValue = (tradeId, colId) => {
@@ -65,14 +63,15 @@ export const createSortSlice = (set, get) => ({
       );
     };
 
-    const order = filteredRowOrder.length ? filteredRowOrder : rowsOrder;
+    const order = filteredRowOrder.length ? filteredRowOrder : tradesOrder;
 
+    console.log("applying sort on order", order);
     set((s) => {
-      s.sortedRowOrder = [...order].sort((a, b) => {
-        const va = getValue(a, sort.columnId);
-        const vb = getValue(b, sort.columnId);
-        return fn?.(va, vb) ?? 0;
-      });
+      s.sortedRowOrder = applySort(
+        order,
+        { key: sort.columnId, operator: sort.operator },
+        getValue,
+      );
     });
 
     if (groupBy) buildGroups();

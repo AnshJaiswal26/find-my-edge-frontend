@@ -1,9 +1,5 @@
 import ApexCharts from "apexcharts";
-import {
-  evaluateColorRules,
-  FILTER_OPERATION_MAP,
-  SORT_OPERATION_MAP,
-} from "@shared/utils";
+import { applyFilters, applySort, evaluateColorRules } from "@shared/utils";
 
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
 import {
@@ -94,31 +90,18 @@ export default class ChartInstance {
     let result = ids;
 
     /* FILTER */
+    const getValue = (id, key) => this.seriesSelector(id, key);
 
     if (filters?.length) {
-      result = result.filter((id) =>
-        filters.some((f) => {
-          const fn = FILTER_OPERATION_MAP[f.operator];
-          const value = this.seriesSelector(id, f.key);
-          return fn?.(value, f.value ?? f.from, f.to);
-        }),
-      );
+      result = result.filter((id) => applyFilters(filters, id, getValue));
     }
 
     /* SORT */
-
     if (sort?.key && sort.operator !== "none") {
-      const fn = SORT_OPERATION_MAP[sort.operator];
-
-      result = [...result].sort((a, b) => {
-        const v1 = this.seriesSelector(a, sort.key);
-        const v2 = this.seriesSelector(b, sort.key);
-        return fn?.(v1, v2) ?? 0;
-      });
+      result = applySort(result, sort, this.seriesSelector);
     }
 
     /* SELECTION */
-
     if (selection && selection?.from !== null && selection?.to !== null) {
       result = result.slice(selection.from, selection.to);
     }

@@ -63,4 +63,21 @@ const SORT_OPTIONS = {
   sortLongestFirst: "Longest → Shortest",
 };
 
-export { SORT_TYPE, SORT_OPERATION_MAP, SORT_OPTIONS };
+const applySort = (data, sort, getValue) => {
+  if (!sort?.key || sort.operator === "none") return data;
+
+  const fn = SORT_OPERATION_MAP[sort.operator];
+  if (!fn) return data;
+
+  const result = [...data];
+
+  result.sort((a, b) => {
+    const v1 = getValue(a, sort.key);
+    const v2 = getValue(b, sort.key);
+    return fn(v1, v2);
+  });
+
+  return result;
+};
+
+export { SORT_TYPE, SORT_OPERATION_MAP, SORT_OPTIONS, applySort };

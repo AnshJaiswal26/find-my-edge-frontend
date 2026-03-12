@@ -1,5 +1,6 @@
 import { formatForInput, parseInputValue, INPUT_TYPES } from "@shared/utils";
 import { useTradeStore } from "@shared/stores";
+import { DurationInput } from "@shared/components/ui";
 
 export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
   const type = useTradeStore((s) => s.schemasById[colId].semanticType);
@@ -17,7 +18,9 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
         value={draft}
         onChange={setDraft}
         onBlur={onBlur}
-        className="w-ful px-2 py-1 outline-0 h-[28px]"
+        className="!w-full pl-2 py-1 outline-0 h-[28px] border-r border-r-(--info)"
+        wrpperClassName="flex gap-0"
+        guide={false}
       />
     );
   }

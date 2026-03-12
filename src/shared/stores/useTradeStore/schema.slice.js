@@ -24,7 +24,10 @@ export const createSchemaSlice = (set, get) => ({
 
   addSchema: async (metric) => {
     // 1. API call
-    const savedSchema = await schemaService.create(metric);
+    const { schema: savedSchema, recomputeResult } =
+      await schemaService.create(metric);
+
+    console.log("Created schema", savedSchema, recomputeResult);
 
     // 2. Update store
     set((s) => {
@@ -53,20 +56,25 @@ export const createSchemaSlice = (set, get) => ({
       });
     });
 
-    // 3. Recompute ONLY for computed
-    if (savedSchema.source === SchemaSource.COMPUTED) {
-      get().recompute({
-        reason: "schema",
-        schemaId: savedSchema.id,
-      });
+    if (recomputeResult) {
+      get().applyTradeUpdates(recomputeResult.tradeUpdates);
     }
+
+    // // 3. Recompute ONLY for computed
+    // if (savedSchema.source === SchemaSource.COMPUTED) {
+    //   get().recompute({
+    //     reason: "schema",
+    //     schemaId: savedSchema.id,
+    //   });
+    // }
 
     return { savedSchema };
   },
 
   updateSchema: async (id, draft) => {
     // 1. API call
-    const updatedSchema = await schemaService.update(id, draft);
+    const { schema: updatedSchema, recomputeResult } =
+      await schemaService.update(id, draft);
 
     console.log(updatedSchema);
     const prevSchema = get().schemasById[id];
@@ -123,7 +131,7 @@ export const createSchemaSlice = (set, get) => ({
 
   deleteSchema: async (id) => {
     // 1. API call
-    const { order } = await schemaService.delete(id);
+    await schemaService.delete(id);
 
     set((s) => {
       const schema = s.schemasById[id];
@@ -133,7 +141,7 @@ export const createSchemaSlice = (set, get) => ({
 
       // 2. Remove schema
       delete s.schemasById[id];
-      s.schemasOrder = order;
+      s.schemasOrder = s.schemasOrder.filter((schemaId) => schemaId !== id);
 
       // 3. Remove values from trades
       s.tradesOrder.forEach((tradeId) => {

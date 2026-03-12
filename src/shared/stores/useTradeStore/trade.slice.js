@@ -105,10 +105,14 @@ export const createTradeSlice = (set, get) => ({
 
   applyTradeUpdates(updates) {
     set((s) => {
-      Object.entries(updates).forEach(([id, patch]) => {
-        if (!s.tradesById[id]) return;
-        Object.assign(s.tradesById[id], patch);
-      });
+      for (const [id, patch] of Object.entries(updates)) {
+        if (!s.derivedByTradeId[id]) continue;
+
+        s.derivedByTradeId[id] = {
+          ...s.derivedByTradeId[id],
+          ...patch,
+        };
+      }
     });
   },
 
@@ -145,6 +149,8 @@ export const createTradeSlice = (set, get) => ({
 
       const results = await tradeService.sync({ creates, updates, deletes });
 
+      console.log("Sync results", results);
+
       results.forEach((result) => {
         if (!result) return;
 
@@ -155,11 +161,11 @@ export const createTradeSlice = (set, get) => ({
         }
 
         if (statValues) {
-          useDashboardStore.getState().updateComputedStats(statValues);
+          useDashboardStore.getState()?.updateComputedStats?.(statValues);
         }
 
         if (seriesValues) {
-          useChartStore.getState().updateComputedSeries(seriesValues);
+          useChartStore.getState()?.updateComputedSeries?.(seriesValues);
         }
       });
     } catch (err) {

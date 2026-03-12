@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Popup } from "@shared/components/layout";
 import { Select } from "@shared/components/ui";
 import { SORT_TYPE, SORT_OPTIONS } from "@shared/utils";
 import { useTableStore } from "@features/trade-metrics/table/store";
+import { useTradeStore } from "@shared/stores";
 
 export default function SortPopup() {
-  const columnsById = useTableStore((s) => s.columnsById);
+  const schemasById = useTradeStore((s) => s.schemasById);
+  const columnsOrder = useTableStore((s) => s.columnsOrder);
+
+  const schemas = useMemo(
+    () => columnsOrder.map((id) => schemasById[id]),
+    [schemasById, columnsOrder],
+  );
+
   const sort = useTableStore((s) => s.sort);
 
   const [draft, setDraft] = useState(sort);
@@ -22,7 +30,7 @@ export default function SortPopup() {
           {/* Column */}
           <Select
             label="Column"
-            options={Object.values(columnsById)}
+            options={schemas}
             getLabel={(o) => o.label}
             getKey={(o) => o.id}
             value={draft.columnId}
@@ -32,7 +40,7 @@ export default function SortPopup() {
           <Select
             label="Sort Order"
             options={
-              SORT_TYPE[columnsById[draft?.columnId]?.semanticType] ?? ["none"]
+              SORT_TYPE[schemasById[draft?.columnId]?.semanticType] ?? ["none"]
             }
             getLabel={(o) => SORT_OPTIONS[o]}
             value={draft.operator}

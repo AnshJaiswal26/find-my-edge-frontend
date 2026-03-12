@@ -41,6 +41,7 @@ export const schemaService = {
 
     const res = await schemaApi.update(id, updates);
 
+    console.log("Schema update", res);
     return res;
   },
 

@@ -1,4 +1,5 @@
-import { FILTER_OPERATION_MAP } from "@shared/utils";
+import { useTradeStore } from "@shared/stores";
+import { applyFilters, FILTER_OPERATION_MAP } from "@shared/utils";
 
 export const createFilterSlice = (set, get) => ({
   filters: [],
@@ -75,11 +76,7 @@ export const createFilterSlice = (set, get) => ({
     } else {
       set((s) => {
         s.filteredRowOrder = tradesOrder.filter((tradeId) => {
-          return filters.some((f) => {
-            const fn = FILTER_OPERATION_MAP[f.operator];
-            const value = getValue(tradeId, f.key);
-            return fn?.(value, f.value ?? f.from, f.to);
-          });
+          return applyFilters(filters, tradeId, getValue);
         });
       });
     }

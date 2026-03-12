@@ -1,11 +1,10 @@
 import { useChartStore } from "@modules/charts/apex/store";
-import styles from "./CustomApexChart.module.css";
 
 export function ChartTitle({ chartId }) {
   const title = useChartStore((s) => s.charts[chartId].layout.title);
 
   return (
-    <div className={styles.chartTitleWrapper}>
+    <div className="flex items-center h-fit justify-between flex-wrap font-bold">
       <span>{title}</span>
     </div>
   );

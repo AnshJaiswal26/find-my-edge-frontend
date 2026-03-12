@@ -1,5 +1,4 @@
-import styles from "../CustomApexChart.module.css";
-import { ChartViewport } from "./ChartViewportWrapper";
+import { ChartViewport } from "./ChartViewport";
 
 export function ChartViewportWrapper(props) {
   const { chartWidth } = props.layout;
@@ -12,7 +11,7 @@ export function ChartViewportWrapper(props) {
         overflowX: isZoomedIn ? "" : "auto",
         overflowY: !isZoomedIn ? "hidden" : "",
       }}
-      className={styles.chartZoomWrapper}
+      className={"relative h-full w-full"}
     >
       <div className="h-full relative" style={{ width: `${chartWidth}%` }}>
         <ChartViewport {...props} />

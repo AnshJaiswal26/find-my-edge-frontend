@@ -17,9 +17,6 @@ export const Cell = memo(function Cell({
 
   const value = useCellValue(rowId, colId);
 
-  if (colId == "f5829913-0ea1-46e5-ade2-b9a4aca2f24f")
-    console.log(value, rowId, colId);
-
   // console.log(value, colId);
   const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
   const column = useTradeStore((s) => s.schemasById[colId]);

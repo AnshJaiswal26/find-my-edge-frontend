@@ -15,8 +15,6 @@ import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
 import { tradeService } from "@shared/services/trade.service";
 import { schemaService } from "@shared/services/schema.service";
 
-import { bootstrapService } from "@shared/services/bootstrap.service";
-
 export const useTradeStore = create(
   immer((set, get) => ({
     tradesById: {},

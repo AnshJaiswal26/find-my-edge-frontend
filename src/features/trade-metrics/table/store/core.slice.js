@@ -57,7 +57,7 @@ export const createCoreSlice = (set, get) => ({
         s.loading.createSchema = true;
       });
 
-      // 🔥 Call trade store (single source of truth)
+      // Call trade store (single source of truth)
       const { savedSchema } = await useTradeStore.getState().addSchema(metric);
 
       set((s) => {
@@ -65,8 +65,6 @@ export const createCoreSlice = (set, get) => ({
       });
 
       get().closePopup();
-
-      useUIStore.getState().showToast("SUCCESS", "Column added");
     } catch (err) {
       useUIStore.getState().showToast("ERROR", err.message);
     } finally {
@@ -119,6 +117,7 @@ export const createCoreSlice = (set, get) => ({
       useUIStore.getState().showToast("SUCCESS", "Column deleted");
     } catch (err) {
       useUIStore.getState().showToast("ERROR", err.message);
+      console.error("Failed to delete column", err);
     } finally {
       set((s) => {
         s.loading.deleteSchema = false;

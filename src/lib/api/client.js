@@ -1,3 +1,5 @@
+import { ServerUnavailableError } from "./error";
+
 const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
 
 let accessToken = null;
@@ -15,11 +17,19 @@ async function refreshAccessToken() {
       credentials: "include",
     })
       .then(async (res) => {
-        if (!res.ok) throw new Error("Refresh failed");
+        if (!res.ok) throw new Error("REFRESH_FAILED");
 
         const json = await res.json();
         accessToken = json?.accessToken ?? json?.data?.accessToken;
         return accessToken;
+      })
+      .catch((err) => {
+        // network/server down
+        if (err instanceof TypeError) {
+          throw new ServerUnavailableError();
+        }
+
+        throw err;
       })
       .finally(() => {
         refreshPromise = null;
@@ -30,36 +40,46 @@ async function refreshAccessToken() {
 }
 
 async function doRequest(url, options = {}) {
-  return fetch(`${BASE_API_URL}/${url}`, {
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-      ...options.headers,
-    },
-    ...options,
-  });
+  try {
+    return await fetch(`${BASE_API_URL}/${url}`, {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+        ...options.headers,
+      },
+      ...options,
+    });
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new ServerUnavailableError();
+    }
+    throw err;
+  }
 }
 
 export async function apiFetch(url, options = {}) {
-  let res = await doRequest(url, options);
+  let res;
+
+  try {
+    res = await doRequest(url, options);
+  } catch (err) {
+    throw err;
+  }
 
   if (res.status === 401 && url !== "auth/refresh") {
     try {
       await refreshAccessToken();
-
-      // retry request
       res = await doRequest(url, options);
     } catch (err) {
-      // redirect to login if refresh fails
-      window.location.href = "/login";
-      throw err;
+      if (err instanceof ServerUnavailableError) {
+        throw err;
+      }
+      throw new Error("UNAUTHORIZED");
     }
   }
 
-  console.log("API response for", url);
   let json = null;
-
   try {
     json = await res.json();
   } catch {
@@ -67,8 +87,8 @@ export async function apiFetch(url, options = {}) {
   }
 
   if (!res.ok) {
-    throw new Error(json?.message || "API error");
+    throw new Error(json?.message || "API_ERROR");
   }
 
-  return json.data || json;
+  return json?.data ?? json;
 }
