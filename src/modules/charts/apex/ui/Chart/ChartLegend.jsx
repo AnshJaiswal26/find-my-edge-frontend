@@ -39,9 +39,14 @@ export function ChartLegend({ type, show, alignment, seriesConfig, chartId }) {
           label={s.label ?? ""}
           selected={!activeSeries.has(s.id)}
           onClick={() => {
-            chartEngine.charts.get(chartId).toggleSeries(s.label);
+            chartEngine.get(chartId).toggleSeries(s.label);
             toggleSeriesState(s.id);
           }}
+          onMouseEnter={() => {
+            if (activeSeries.has(s.id)) return;
+            chartEngine.get(chartId).highlightSeries(s.label);
+          }}
+          onMouseLeave={() => chartEngine.get(chartId).highlightSeries("")}
         />
       ))}
     </div>

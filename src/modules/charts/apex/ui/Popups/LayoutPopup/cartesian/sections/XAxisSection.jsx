@@ -15,7 +15,7 @@ export default function XAxisSection({
   chart,
 }) {
   const axisLabel = isHorizontal ? "Y-Axis" : "X-Axis";
-  const seriesType = chart.xSeriesConfig.type;
+  const seriesType = chart.xMetric.type;
 
   return (
     <Section title={axisLabel}>

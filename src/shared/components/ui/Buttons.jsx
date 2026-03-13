@@ -177,6 +177,7 @@ Button.Text = ({
       onClick={onClick}
       className={`
         text-sm text-(--text) underline underline-offset-4 hover:text-(--info) transition
+        ${disabled ? "opacity-40 pointer-events-none" : ""}
         ${className}
       `}
     >

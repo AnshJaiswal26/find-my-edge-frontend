@@ -1,4 +1,5 @@
 import { formatGroupValue, formatValue } from "@shared/utils";
+import { ChartMode } from "@modules/charts/apex/model/enums";
 
 export const buildChartAxes = ({
   ids,
@@ -13,20 +14,20 @@ export const buildChartAxes = ({
   const style = { fontSize: "0.75rem" };
 
   const xaxis = {
-    // categories: ids.map((id, i) => id),
+    ...(!layout.horizontal && { categories: ids.map((_, i) => i) }),
     tooltip: { enabled: !layout.horizontal && layout.xTooltip },
     ...(!layout.horizontal && { tickPlacement: "on" }),
     labels: {
-      show: layout.xLabels,
+      tickAmount: ids.length,
+      show: !layout.xLabels,
       formatter: (v) => {
         if (v < 0) return;
         if (!mode) return v;
-        const index = v - 1;
+        const index = v;
 
         const format = { format: layout.xFormat, decimals: layout.xDecimals };
 
-        if (mode === "SERIES") {
-          // console.log(v);
+        if (mode === ChartMode.SERIES) {
           const item = seriesSelector(ids[index], xMetric.field);
           if (!item) return 0;
           return formatValue(item, xMetric.type, format);

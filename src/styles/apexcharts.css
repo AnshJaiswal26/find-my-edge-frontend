@@ -140,8 +140,8 @@
 
 .apexcharts-custom-select {
   position: absolute;
-  background-color: #89d4ff;
-  opacity: 0.3;
+  border: 1px dashed var(--info);
+  background-color: var(--info-soft);
   pointer-events: none;
 }
 

@@ -1,13 +1,13 @@
+import { chartEngine } from "../model/chartEngine";
+
 export const createLayoutSlice = (set, get) => ({
   updateLayout(chartId, layoutDraft, seriesDraft) {
     set((s) => {
       Object.assign(s.charts[chartId].layout, layoutDraft);
-      if (s.charts[chartId].ySeriesConfig) {
-        s.charts[chartId].ySeriesConfig = seriesDraft;
-      } else {
-        s.charts[chartId].seriesConfig = seriesDraft;
-      }
+      s.charts[chartId].series = seriesDraft;
     });
+
+    chartEngine.get(chartId).updateLayout(layoutDraft);
 
     get().closePopup();
   },

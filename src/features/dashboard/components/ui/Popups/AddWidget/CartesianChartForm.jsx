@@ -96,55 +96,61 @@ export const CartesianChartForm = forwardRef(
           onChange={(o) => setMode(o.id)}
         />
 
-        {mode === "GROUP_SELECT" && (
-          <Section title={"Group Chart Series"}>
-            <GroupByBuilder
-              schemasById={schemasById}
-              groupBy={groupBy}
-              onChange={setGroupBy}
-            />
-
-            {mode === "GROUP_AGGREGATE" && (
-              <ExpressionBuilder
-                ref={builderRef}
-                value={expr}
+        {mode === "GROUP_SELECT" ||
+          (mode === "GROUP_AGGREGATE" && (
+            <Section title={"Group Chart Series"}>
+              <GroupByBuilder
                 schemasById={schemasById}
-                mode={"AGGREGATE"}
-                semanticMode={"AGGREGATE"}
-                onCommit={({ idFormula, ast, dependencies, semanticType }) => {
-                  setExpr(expr);
-
-                  if (dependencies.length && groupBy?.key) {
-                    setSeriesX({
-                      key: groupBy.key,
-                      name: schemasById[groupBy.key].label,
-                      type: schemasById[groupBy.key].semanticType,
-                    });
-
-                    setSeriesY([
-                      {
-                        key: dependencies[0],
-                        name: schemasById[dependencies[0]].label,
-                        type: semanticType,
-                        ast,
-                        formula: idFormula,
-                        dependencies,
-                      },
-                    ]);
-
-                    setLayout((p) => ({
-                      ...p,
-                      xTitleText: schemasById[groupBy.key].label,
-                      yTitleText: schemasById[dependencies[0]].label,
-                    }));
-                  }
-
-                  setGroupBy((p) => ({ ...p }));
-                }}
+                groupBy={groupBy}
+                onChange={setGroupBy}
               />
-            )}
-          </Section>
-        )}
+
+              {mode === "GROUP_AGGREGATE" && (
+                <ExpressionBuilder
+                  ref={builderRef}
+                  value={expr}
+                  schemasById={schemasById}
+                  mode={"AGGREGATE"}
+                  semanticMode={"AGGREGATE"}
+                  onCommit={({
+                    idFormula,
+                    ast,
+                    dependencies,
+                    semanticType,
+                  }) => {
+                    setExpr(expr);
+
+                    if (dependencies.length && groupBy?.key) {
+                      setSeriesX({
+                        key: groupBy.key,
+                        name: schemasById[groupBy.key].label,
+                        type: schemasById[groupBy.key].semanticType,
+                      });
+
+                      setSeriesY([
+                        {
+                          key: dependencies[0],
+                          name: schemasById[dependencies[0]].label,
+                          type: semanticType,
+                          ast,
+                          formula: idFormula,
+                          dependencies,
+                        },
+                      ]);
+
+                      setLayout((p) => ({
+                        ...p,
+                        xTitleText: schemasById[groupBy.key].label,
+                        yTitleText: schemasById[dependencies[0]].label,
+                      }));
+                    }
+
+                    setGroupBy((p) => ({ ...p }));
+                  }}
+                />
+              )}
+            </Section>
+          ))}
 
         {(mode === "SERIES" || mode === "GROUP_SELECT") && (
           <>

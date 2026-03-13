@@ -1,14 +1,4 @@
 import { useChartStore } from "@modules/charts/apex/store";
-import { chartEngine } from "../../model/chartEngine";
-
-function clearSelectionRect(ctx) {
-  const rect = ctx.el.querySelector(".apexcharts-selection-rect");
-  if (rect) rect.remove();
-
-  // reset only the range
-  ctx.w.globals.selectionStart = null;
-  ctx.w.globals.selectionEnd = null;
-}
 
 export const buildChartEvents = (chartId, config) => {
   return {
@@ -27,11 +17,11 @@ export const buildChartEvents = (chartId, config) => {
         t.el.style.position = "relative";
         selection = document.createElement("div");
         selection.classList.add("apexcharts-custom-select");
-   
+
         const startX = e.clientX - svgRect.left;
         const startY = e.clientY - svgRect.top;
         if (config.horizontal) {
-          selection.style.left = "0px";
+          selection.style.left = `${gridRect.left - svgRect.left}px`;
           selection.style.width = `${gridRect.width}px`;
           selection.style.top = `${startY}px`;
           selection.dataset.startY = startY;

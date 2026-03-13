@@ -9,15 +9,19 @@ class ChartEngine {
     this.charts.set(chartId, chart);
   }
 
-  patch(chartId, patch) {
-    const chart = this.charts.get(chartId);
-    if (!chart) return;
+  // patch(chartId, patch) {
+  //   const chart = this.charts.get(chartId);
+  //   if (!chart) return;
 
-    if (patch.filters) chart.applyFilters(patch.filters);
-    if (patch.sort) chart.applySort(patch.sort);
-    if (patch.layout) chart.updateLayout(patch.layout);
-    if (patch.series) chart.updateSeriesConfig(patch.series);
-    if (patch.selection) chart.applySelection(patch.selection);
+  //   if (patch.filters) chart.applyFilters(patch.filters);
+  //   if (patch.sort) chart.applySort(patch.sort);
+  //   if (patch.layout) chart.updateLayout(patch.layout);
+  //   if (patch.series) chart.updateSeriesConfig(patch.series);
+  //   if (patch.selection) chart.applySelection(patch.selection);
+  // }
+
+  updateLayout(chartId) {
+    this.charts.get(chartId)?.updateLayout();
   }
 
   get(chartId) {

@@ -34,7 +34,7 @@ export function ChartViewport({
 
   useEffect(() => {
     chartEngine.update(chartId);
-  }, [ids, selectedGroupIndex]);
+  }, [ids, selectedGroupIndex, seriesSelector]);
 
   return <div ref={containerRef} className="h-full w-full" />;
 }

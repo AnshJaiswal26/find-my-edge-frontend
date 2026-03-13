@@ -38,11 +38,18 @@ export const seriesTooltipCallback = ({
 }) => {
   const chart = useChartStore.getState().charts[chartId];
 
-  const nonActiveIndexes = w.globals.collapsedSeriesIndices || [];
+  const {
+    categoryLabels,
+    collapsedSeriesIndices,
+    xLabelFormatter,
+    yLabelFormatters,
+  } = w.globals;
 
-  const formatter = w.globals.yLabelFormatters[0];
+  const isHorizontal = chart.layout.horizontal;
 
-  const dataArray = nonActiveIndexes.length
+  const formatter = isHorizontal ? xLabelFormatter : yLabelFormatters[0];
+
+  const dataArray = collapsedSeriesIndices.length
     ? [
         buildTooltipRow(
           seriesValue[seriesIndex],
@@ -53,7 +60,7 @@ export const seriesTooltipCallback = ({
     : chart.series.map((s, i) => buildTooltipRow(seriesValue[i], s, formatter));
 
   return {
-    title: w.globals.categoryLabels[index],
+    title: isHorizontal ? yLabelFormatters[0](index) : categoryLabels[index],
     dataArray,
   };
 };

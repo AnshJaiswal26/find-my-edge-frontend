@@ -41,7 +41,7 @@ export default function FilterPopup({ chartId, schemasById }) {
           <FilterBuilder
             filters={filters}
             fieldOptions={seriesConfig}
-            getFieldType={(key) => schemasById[key].semanticType}
+            getFieldType={(key) => schemasById[key]?.semanticType}
             addFilter={addFilter}
             updateFilter={updateFilter}
             removeFilter={removeFilter}

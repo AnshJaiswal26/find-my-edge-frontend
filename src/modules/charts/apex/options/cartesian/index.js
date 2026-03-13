@@ -2,7 +2,7 @@ import { buildChartAxes } from "./buildChartAxes";
 import { buildChartDataLabels } from "./buildChartDataLabels";
 import { buildChartEvents } from "./buildChartEvents";
 import { buildChartGrid } from "./buildChartGrid";
-import { buildChartTooltip } from "./useChartTooltip";
+import { buildChartTooltip } from "./buildChartTooltip";
 
 export const buildCartesianChartOptions = ({
   ids,
@@ -34,8 +34,14 @@ export const buildCartesianChartOptions = ({
     chart: {
       id: chartId,
       fontFamily: "inherit",
-      toolbar: { show: true, tools: { download: true, selection: false } },
-      zoom: { enabled: false, type: "x", allowMouseWheelZoom: false },
+      toolbar: {
+        show: true,
+        tools: {
+          download: true,
+          selection: true,
+        },
+      },
+      zoom: { enabled: false, allowMouseWheelZoom: false },
       selection: { enabled: false },
       events,
     },

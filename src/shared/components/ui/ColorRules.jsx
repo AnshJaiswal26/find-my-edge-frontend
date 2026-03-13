@@ -6,6 +6,7 @@ import {
   Button,
   RangeInput,
   Divider,
+  ErrorText,
 } from "@shared/components/ui";
 import { FILTER_TYPE, FILTER_OPTIONS, isBetween } from "@shared/utils";
 import { Trash2 } from "lucide-react";
@@ -34,7 +35,7 @@ export default function ColorRules({
           {i !== 0 && <Divider className="my-3" />}
 
           <Select
-            label={"Condition"}
+            label={`Condition ${i + 1}`}
             vertical
             value={r.operator}
             options={["always", ...FILTER_TYPE[type]]}
@@ -94,7 +95,11 @@ export default function ColorRules({
       ))}
 
       <div>
+        {rules.length >= 10 && (
+          <ErrorText text="You cannot add more than 10 rules" />
+        )}
         <Button.Text
+          disabled={rules.length >= 10}
           onClick={() =>
             onChange((p) => ({
               ...p,

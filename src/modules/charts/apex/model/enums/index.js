@@ -1,3 +1,3 @@
-export { ChartMode } from "./ChartMode.enum";
-export { ChartCategory } from "./chartCategrory.enum";
-export { ChartType } from "./chartType.enum";
+export { ChartCategory } from "./ChartCategrory";
+export { ChartType } from "./ChartType";
+export { ChartMode } from "./ChartMode";

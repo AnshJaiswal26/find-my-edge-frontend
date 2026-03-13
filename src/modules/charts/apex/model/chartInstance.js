@@ -1,5 +1,10 @@
 import ApexCharts from "apexcharts";
-import { applyFilters, applySort, evaluateColorRules } from "@shared/utils";
+import {
+  applyFilters,
+  applySort,
+  evaluateColorRules,
+  smallHash,
+} from "@shared/utils";
 
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
 import {
@@ -18,6 +23,13 @@ export default class ChartInstance {
     this.store = store;
     this.dataset = dataset;
 
+    this.originalIds = dataset.ids;
+
+    this.processedIds = null;
+
+    this.filterHash = 0;
+    this.sortHash = 0;
+
     this.seriesSelector = dataset.seriesSelector;
     this.groupSelector = dataset.groupSelector;
 
@@ -33,13 +45,11 @@ export default class ChartInstance {
   ========================= */
 
   render() {
-    const ids = this.dataset.ids;
+    const ids = this.getVisibleIds();
 
-    const finalIds = this.computeIds(ids);
+    const series = this.computeSeries(ids);
 
-    const series = this.computeSeries(finalIds);
-
-    const options = this.buildOptions(finalIds);
+    const options = this.buildOptions(ids, series);
 
     this.apex = new ApexCharts(this.container, {
       ...options,
@@ -50,13 +60,11 @@ export default class ChartInstance {
   }
 
   update() {
-    const ids = this.dataset.ids;
+    const ids = this.getVisibleIds();
 
-    const finalIds = this.computeIds(ids);
+    const series = this.computeSeries(ids);
 
-    const series = this.computeSeries(finalIds);
-
-    const options = this.buildOptions(finalIds);
+    const options = this.buildOptions(ids, series);
 
     this.apex.updateOptions(options, false, true);
     this.apex.updateSeries(series, true);
@@ -70,28 +78,53 @@ export default class ChartInstance {
     this.apex.toggleSeries(seriesName);
   }
 
+  highlightSeries(seriesName) {
+    this.apex.highlightSeries(seriesName);
+  }
+
   /* =========================
      DATA PIPELINE
   ========================= */
 
   recomputeSeries() {
-    const ids = this.dataset.ids;
-
-    const finalIds = this.computeIds(ids);
-
-    const series = this.computeSeries(finalIds);
-
-    this.apex.updateSeries(series, true);
+    this.update();
   }
 
-  computeIds(ids) {
-    const { filters, sort, selection } = this.chart;
+  getVisibleIds() {
+    return this.computeIds();
+  }
 
-    let result = ids;
+  computeIds() {
+    const processed = this.computeProcessedIds();
 
-    /* FILTER */
+    const { selection } = this.chart;
+
+    if (selection?.from != null && selection?.to != null) {
+      return processed.slice(selection.from, selection.to);
+    }
+
+    return processed;
+  }
+
+  computeProcessedIds() {
+    const { filters, sort } = this.chart;
+
+    const newFilterHash = smallHash(filters);
+    const newSortHash = smallHash(sort);
+
+    if (
+      this.processedIds &&
+      newFilterHash === this.filterHash &&
+      newSortHash === this.sortHash
+    ) {
+      return this.processedIds;
+    }
+
+    let result = this.originalIds;
+
     const getValue = (id, key) => this.seriesSelector(id, key);
 
+    /* FILTER */
     if (filters?.length) {
       result = result.filter((id) => applyFilters(filters, id, getValue));
     }
@@ -101,10 +134,10 @@ export default class ChartInstance {
       result = applySort(result, sort, this.seriesSelector);
     }
 
-    /* SELECTION */
-    if (selection && selection?.from !== null && selection?.to !== null) {
-      result = result.slice(selection.from, selection.to);
-    }
+    this.processedIds = result;
+
+    this.filterHash = newFilterHash;
+    this.sortHash = newSortHash;
 
     return result;
   }
@@ -113,7 +146,6 @@ export default class ChartInstance {
     const { series, type } = this.chart;
 
     if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR) {
-      if (ChartType.RADIAL_BAR) return [20, 50];
       return series.map((c) => Math.abs(c.value));
     }
 
@@ -159,7 +191,7 @@ export default class ChartInstance {
      OPTIONS BUILDER
   ========================= */
 
-  buildOptions(ids) {
+  buildOptions(ids, computedSeries) {
     const params = {
       ids,
       type: this.chart.type,
@@ -171,7 +203,7 @@ export default class ChartInstance {
       xMetric: this.chart.xMetric,
       groupSelector: this.groupSelector,
       tooltipCallback: this.buildTooltip(),
-      dataSeries: this.computeSeries(ids),
+      dataSeries: computedSeries,
     };
 
     const type = this.chart.type;

@@ -58,3 +58,5 @@ export {
   parseTimeByFormat,
   deformatValue,
 } from "./deFormat";
+
+export { smallHash } from "./hash";

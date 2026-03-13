@@ -3,6 +3,8 @@ export default function Legend({
   label,
   selected,
   onClick = () => null,
+  onMouseEnter = () => null,
+  onMouseLeave = () => null,
   className = "",
 }) {
   return (
@@ -11,6 +13,8 @@ export default function Legend({
     >
       <div
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         className={`
           flex items-center
           gap-[5px]

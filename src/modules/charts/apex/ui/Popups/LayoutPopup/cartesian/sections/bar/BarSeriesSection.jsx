@@ -17,8 +17,8 @@ export default function BarSeriesSection({
               {/* ---------- Series Name ---------- */}
               <Input
                 label="Series Name"
-                value={series.name}
-                onCommit={(v) => updateSeries(index, { name: v })}
+                value={series.label}
+                onCommit={(v) => updateSeries(index, { label: v })}
               />
 
               <ColorRules

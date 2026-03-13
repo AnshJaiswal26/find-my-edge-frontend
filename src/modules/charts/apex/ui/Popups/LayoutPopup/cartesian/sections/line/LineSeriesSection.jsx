@@ -11,13 +11,6 @@ export default function LineSeriesSection({ seriesDraft, updateSeries }) {
             <Input
               vertical
               label="Series Name"
-              value={series.name}
-              onCommit={(v) => updateSeries(index, { name: v })}
-            />
-
-            <Input
-              vertical
-              label="Tooltip Label"
               value={series.label}
               onCommit={(v) => updateSeries(index, { label: v })}
             />
