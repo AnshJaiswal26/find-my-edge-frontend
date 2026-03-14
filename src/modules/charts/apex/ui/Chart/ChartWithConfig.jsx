@@ -13,7 +13,8 @@ export function ChartWithConfig({
   seriesSelector,
 }) {
   const layout = useChartStore((s) => s.charts[chartId].layout);
-  const seriesConfig = useChartStore((s) => s.charts[chartId].series);
+  const seriesById = useChartStore((s) => s.charts[chartId].seriesById);
+  const seriesOrder = useChartStore((s) => s.charts[chartId].seriesOrder);
 
   const positionClass =
     layout.legendPosition === "bottom" ? "flex-col-reverse" : "flex-col";
@@ -23,9 +24,10 @@ export function ChartWithConfig({
       <ChartLegend
         chartId={chartId}
         type={type}
-        show={layout.legend}
+        layout={layout}
         alignment={layout.legendAlignment}
-        seriesConfig={seriesConfig}
+        seriesOrder={seriesOrder}
+        seriesConfig={seriesById}
       />
 
       <ChartViewportWrapper
@@ -33,7 +35,6 @@ export function ChartWithConfig({
         category={category}
         chartId={chartId}
         layout={layout}
-        seriesConfig={seriesConfig}
         groups={groups}
         groupSpec={groupSpec}
         selectedGroupIndex={selectedGroupIndex}

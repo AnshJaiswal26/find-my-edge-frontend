@@ -11,7 +11,7 @@ export default function GroupByBuilder({
 }) {
   const draft = groupBy ?? {};
 
-  const field = draft.key ? schemasById[draft.key] : null;
+  const field = draft.field ? schemasById[draft.field] : null;
   const schema = field ? GROUPING_SCHEMA[field.semanticType] : null;
 
   const update = (patch) => onChange?.({ ...draft, ...patch });
@@ -19,7 +19,7 @@ export default function GroupByBuilder({
   const onFieldChange = (f) => {
     const schema = schemasOrder ? schemasById[f] : f;
     update({
-      key: schema.id,
+      field: schema.id,
       schemaType: schema.semanticType,
       kind: GROUPING_SCHEMA[schema.semanticType].kinds[0],
       ranges: [],
@@ -40,7 +40,7 @@ export default function GroupByBuilder({
         options={schemasOrder ? schemasOrder : Object.values(schemasById)}
         getLabel={(f) => (schemasOrder ? schemasById[f].label : f.label)}
         getKey={(f) => (schemasOrder ? schemasById[f].id : f.id)}
-        value={draft.key}
+        value={draft.field}
         onChange={onFieldChange}
       />
 
@@ -103,7 +103,7 @@ export default function GroupByBuilder({
                 from: draft.from,
                 to: draft.to,
               }}
-              onChange={({ from, to }) => update({ from, to, value: null })}
+              onChange={({ from, to }) => update({ from, to })}
             />
           )}
 

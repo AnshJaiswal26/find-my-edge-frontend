@@ -1,11 +1,31 @@
 import { Legend } from "@shared/components/ui";
 import { chartEngine } from "../../model/chartEngine";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useChartStore } from "../../store";
 
-export function ChartLegend({ type, show, alignment, seriesConfig, chartId }) {
+export function ChartLegend({
+  type,
+  layout,
+  alignment,
+  seriesOrder,
+  seriesConfig,
+  chartId,
+}) {
+  const show = layout.legend;
   if (!show) return null;
 
+  const filterLength = useChartStore((s) => s.charts[chartId].filters?.length);
+  const sort = useChartStore((s) => s.charts[chartId].sort);
+
+  const selection = useChartStore((s) => s.charts[chartId].selection);
+
   const [activeSeries, setActiveSeries] = useState(new Set());
+
+  useEffect(() => {
+    if (setActiveSeries.length) {
+      setActiveSeries(new Set());
+    }
+  }, [sort, filterLength, layout, selection]);
 
   const toggleSeriesState = (id) => {
     setActiveSeries((prev) => {
@@ -26,29 +46,31 @@ export function ChartLegend({ type, show, alignment, seriesConfig, chartId }) {
 
   return (
     <div className={`flex relative gap-1 flex-wrap w-full ${alignmentClass}`}>
-      {seriesConfig.map((s, i) => (
-        <Legend
-          key={s.id ?? i}
-          color={
-            type === "bar"
-              ? s.colorRules.length === 0
-                ? "var(--info)"
-                : s.colorRules.map((r) => r.color)
-              : s.color
-          }
-          label={s.label ?? ""}
-          selected={!activeSeries.has(s.id)}
-          onClick={() => {
-            chartEngine.get(chartId).toggleSeries(s.label);
-            toggleSeriesState(s.id);
-          }}
-          onMouseEnter={() => {
-            if (activeSeries.has(s.id)) return;
-            chartEngine.get(chartId).highlightSeries(s.label);
-          }}
-          onMouseLeave={() => chartEngine.get(chartId).highlightSeries("")}
-        />
-      ))}
+      {seriesOrder.map((id, i) => {
+        const s = seriesConfig[id];
+        return (
+          <Legend
+            key={s.id ?? i}
+            color={
+              type === "bar"
+                ? s.colorRules.length === 0
+                  ? "var(--info)"
+                  : s.colorRules.map((r) => r.color)
+                : s.color
+            }
+            label={s.label ?? ""}
+            selected={!activeSeries.has(s.id)}
+            onClick={() => {
+              chartEngine.get(chartId).toggleSeries(s.label);
+              toggleSeriesState(s.id);
+            }}
+            onMouseEnter={() => {
+              chartEngine.get(chartId).highlightSeries(s.label);
+            }}
+            onMouseLeave={() => chartEngine.get(chartId).highlightSeries("")}
+          />
+        );
+      })}
     </div>
   );
 }

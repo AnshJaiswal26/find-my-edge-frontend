@@ -1,5 +1,4 @@
 import { useDurationInput } from "@shared/hooks";
-import { createPortal } from "react-dom";
 
 export default function DurationInput({
   value,
@@ -9,33 +8,27 @@ export default function DurationInput({
   wrpperClassName = "flex gap-2",
   guide = true,
 }) {
-  const duration = useDurationInput(value || "", onChange);
-
-  const { parts, updatePart, handleArrow } = duration;
+  const { parts, updatePart, handleArrow } = useDurationInput(value, onChange);
 
   const labels = ["Days", "Hrs", "Mins", "Sec"];
 
   return (
     <div className={`${wrpperClassName} ${guide ? "mt-2.5" : ""}`}>
       {parts.map((p, index) => (
-        <div className={`flex flex-col relative`}>
+        <div key={index} className="flex flex-col relative">
           {guide && (
-            <span
-              className={`text-[11px] text-center opacity-60 absolute -top-4 left-3 -translate-x-1/2 mt-0.5 whitespace-nowrap z-50`}
-            >
+            <span className="text-[11px] text-center opacity-60 absolute -top-4 left-3 -translate-x-1/2 whitespace-nowrap">
               {labels[index]}
             </span>
           )}
+
           <input
-            key={index}
             className={`${className} !min-w-0 !w-10`}
-            type="text"
             value={p}
-            maxLength={2}
-            autoFocus={index === 0}
+            // maxLength={2}
             onChange={(e) => updatePart(index, e.target.value, e)}
             onKeyDown={(e) => handleArrow(index, e)}
-            onBlur={(e) => onBlur?.(duration.value, e)}
+            onBlur={(e) => onBlur?.(parts.join(":"), e)}
           />
         </div>
       ))}

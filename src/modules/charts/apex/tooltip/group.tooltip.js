@@ -4,9 +4,11 @@ import { ChartType } from "../model/enums";
 
 export const groupedTooltipCallback = ({ seriesIndex, chartId }) => {
   const chart = useChartStore.getState().charts[chartId];
-  const { layout, type: chartType, series } = chart;
+  const { layout, type: chartType, seriesOrder, seriesById } = chart;
 
-  const { label, color, value, type, format, decimals } = series[seriesIndex];
+  const sId = seriesOrder[seriesIndex];
+
+  const { label, color, value, type, format, decimals } = seriesById[sId] || {};
 
   const display =
     chartType === ChartType.DONUT

@@ -1,29 +1,15 @@
 import { CartesianChartForm } from "./CartesianChartForm";
 import { GroupedChartForm } from "./GroupedChartForm";
 
-export default function AddChartForm({ type, options, ref, schemasById }) {
-  switch (type) {
+export default function AddChartForm(props) {
+  switch (props.type) {
     case "bar":
     case "line":
-      return (
-        <CartesianChartForm
-          ref={ref}
-          type={type}
-          options={options}
-          schemasById={schemasById}
-        />
-      );
+      return <CartesianChartForm {...props} />;
 
     case "donut":
     case "radialBar":
-      return (
-        <GroupedChartForm
-          ref={ref}
-          type={type}
-          options={options}
-          schemasById={schemasById}
-        />
-      );
+      return <GroupedChartForm {...props} />;
 
     default:
       null;

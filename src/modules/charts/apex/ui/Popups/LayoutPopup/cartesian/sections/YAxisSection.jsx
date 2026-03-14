@@ -15,9 +15,7 @@ export default function YAxisSection({
   chart,
 }) {
   const axisLabel = isHorizontal ? "X-Axis" : "Y-Axis";
-  const seriesType = chart.ySeriesConfig[0].type;
-
-  console.log(seriesType);
+  const seriesType = chart.seriesById[chart.seriesOrder[0]].type;
 
   return (
     <Section title={axisLabel}>

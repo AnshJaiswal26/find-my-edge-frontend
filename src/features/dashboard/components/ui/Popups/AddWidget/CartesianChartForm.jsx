@@ -11,15 +11,16 @@ import { Trash2 } from "lucide-react";
 import { useDashboardStore } from "@features/dashboard/store";
 import { useFilteredOptions } from "@features/dashboard/hooks";
 import { draftToSpec } from "@lib/analytics/engine/data";
+import { ChartMode } from "@modules/charts/apex/model/enums";
 
 export const CartesianChartForm = forwardRef(
-  ({ type, options, schemasById }, ref) => {
+  ({ type, options, schemasById, setLoading }, ref) => {
     const addChart = useDashboardStore((s) => s.addChart);
     const builderRef = useRef();
 
-    const [groupBy, setGroupBy] = useState({});
+    const [groupSpec, setGroupSpec] = useState({});
 
-    const [mode, setMode] = useState("SERIES");
+    const [mode, setMode] = useState(ChartMode.SERIES);
 
     const [expr, setExpr] = useState("");
 
@@ -50,25 +51,52 @@ export const CartesianChartForm = forwardRef(
 
     useImperativeHandle(ref, () => ({
       submit() {
-        if (mode === "GROUP_AGGREGATE") {
-          if (!groupBy?.key || !groupBy?.ast) return;
-        }
+        if (!seriesX.key) return;
+        if (!seriesY.length || !seriesY[0].key) return;
 
-        if (mode === "SERIES") {
-          if (!seriesX.key || !seriesY[0]?.key) return;
-        }
+        const seriesById = {};
+        const seriesOrder = [];
 
-        if (mode === "GROUP_SELECT") {
-          if (!groupBy?.key) return;
-        }
+        seriesY.forEach((s, i) => {
+          const id = `series_${i}`;
 
-        addChart(type, {
-          mode,
-          layout,
-          groupSpec: draftToSpec(groupBy),
-          x: seriesX,
-          y: seriesY,
+          seriesById[id] = {
+            id,
+            field: s.key,
+            label: s.name,
+            type: s.type,
+            ast: s.ast ?? null,
+            formula: s.formula ?? null,
+            dependencies: s.dependencies ?? [],
+          };
+
+          seriesOrder.push(id);
         });
+
+        const payload = {
+          chartType: type,
+          layout,
+          xMetric: {
+            field: seriesX.key,
+            label: seriesX.name,
+            type: seriesX.type,
+          },
+          seriesById,
+          seriesOrder,
+        };
+        console.log("Payload:", payload);
+
+        if (groupSpec?.field || groupSpec?.type) {
+          payload.groupSpec = draftToSpec(groupSpec);
+        }
+
+        const add = async () => {
+          setLoading(true);
+          addChart(payload);
+          setLoading(false);
+        };
+
+        add();
       },
     }));
 
@@ -87,70 +115,63 @@ export const CartesianChartForm = forwardRef(
           label="Chart Mode"
           value={mode}
           options={[
-            { id: "SERIES", label: "Normal Series" },
-            { id: "GROUP_SELECT", label: "Grouped (Select)" },
-            { id: "GROUP_AGGREGATE", label: "Grouped (Aggregate)" },
+            { id: ChartMode.SERIES, label: "Normal Series" },
+            { id: ChartMode.GROUP_SELECT, label: "Grouped (Select)" },
+            { id: ChartMode.GROUP_AGGREGATE, label: "Grouped (Aggregate)" },
           ]}
           getKey={(o) => o.id}
           getLabel={(o) => o.label}
           onChange={(o) => setMode(o.id)}
         />
 
-        {mode === "GROUP_SELECT" ||
-          (mode === "GROUP_AGGREGATE" && (
-            <Section title={"Group Chart Series"}>
-              <GroupByBuilder
+        {(mode === ChartMode.GROUP_SELECT ||
+          mode === ChartMode.GROUP_AGGREGATE) && (
+          <Section title={"Group Chart Series"}>
+            <GroupByBuilder
+              schemasById={schemasById}
+              groupBy={groupSpec}
+              onChange={setGroupSpec}
+            />
+
+            {ChartMode.GROUP_AGGREGATE && (
+              <ExpressionBuilder
+                ref={builderRef}
+                value={expr}
                 schemasById={schemasById}
-                groupBy={groupBy}
-                onChange={setGroupBy}
+                mode={"AGGREGATE"}
+                semanticMode={"AGGREGATE"}
+                onCommit={({ idFormula, ast, dependencies, semanticType }) => {
+                  setExpr(idFormula);
+
+                  if (dependencies.length && groupSpec?.field) {
+                    setSeriesX({
+                      key: groupSpec.field,
+                      name: schemasById[groupSpec.field].label,
+                      type: schemasById[groupSpec.field].semanticType,
+                    });
+
+                    setSeriesY([
+                      {
+                        key: dependencies[0],
+                        name: schemasById[dependencies[0]].label,
+                        type: semanticType,
+                        ast,
+                        formula: idFormula,
+                        dependencies,
+                      },
+                    ]);
+
+                    setLayout((p) => ({
+                      ...p,
+                      xTitleText: schemasById[groupSpec.field].label,
+                      yTitleText: schemasById[dependencies[0]].label,
+                    }));
+                  }
+                }}
               />
-
-              {mode === "GROUP_AGGREGATE" && (
-                <ExpressionBuilder
-                  ref={builderRef}
-                  value={expr}
-                  schemasById={schemasById}
-                  mode={"AGGREGATE"}
-                  semanticMode={"AGGREGATE"}
-                  onCommit={({
-                    idFormula,
-                    ast,
-                    dependencies,
-                    semanticType,
-                  }) => {
-                    setExpr(expr);
-
-                    if (dependencies.length && groupBy?.key) {
-                      setSeriesX({
-                        key: groupBy.key,
-                        name: schemasById[groupBy.key].label,
-                        type: schemasById[groupBy.key].semanticType,
-                      });
-
-                      setSeriesY([
-                        {
-                          key: dependencies[0],
-                          name: schemasById[dependencies[0]].label,
-                          type: semanticType,
-                          ast,
-                          formula: idFormula,
-                          dependencies,
-                        },
-                      ]);
-
-                      setLayout((p) => ({
-                        ...p,
-                        xTitleText: schemasById[groupBy.key].label,
-                        yTitleText: schemasById[dependencies[0]].label,
-                      }));
-                    }
-
-                    setGroupBy((p) => ({ ...p }));
-                  }}
-                />
-              )}
-            </Section>
-          ))}
+            )}
+          </Section>
+        )}
 
         {(mode === "SERIES" || mode === "GROUP_SELECT") && (
           <>

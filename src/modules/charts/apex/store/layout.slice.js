@@ -4,10 +4,13 @@ export const createLayoutSlice = (set, get) => ({
   updateLayout(chartId, layoutDraft, seriesDraft) {
     set((s) => {
       Object.assign(s.charts[chartId].layout, layoutDraft);
-      s.charts[chartId].series = seriesDraft;
+
+      s.charts[chartId].seriesOrder.map((id, i) => {
+        Object.assign(s.charts[chartId].seriesById[id], seriesDraft[i]);
+      });
     });
 
-    chartEngine.get(chartId).updateLayout(layoutDraft);
+    chartEngine.update(chartId);
 
     get().closePopup();
   },

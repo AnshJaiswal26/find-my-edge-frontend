@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Popup } from "@shared/components/layout";
 
 import { FilterBuilder } from "@shared/components/ui";
@@ -11,7 +11,13 @@ export default function FilterPopup({ chartId, schemasById }) {
   const closePopup = useChartStore((s) => s.closePopup);
   const applyFilters = useChartStore((s) => s.applyFilters);
 
-  const seriesConfig = useChartStore((s) => s.charts[chartId].series);
+  const seriesOrder = useChartStore((s) => s.charts[chartId].seriesOrder);
+  const seriesById = useChartStore((s) => s.charts[chartId].seriesById);
+
+  const seriesConfig = useMemo(
+    () => seriesOrder.map((id) => seriesById[id]),
+    [seriesOrder],
+  );
 
   const [filters, setFilters] = useState([...appliedfilters]);
 

@@ -9,6 +9,8 @@ export async function dashboardInit() {
   try {
     const data = await dashboardService.init();
 
+    console.log("Dashboard init data:", data);
+
     useDashboardStore.setState((s) => {
       s.statsById = data.statsById;
       s.statsOrder = data.statsOrder;

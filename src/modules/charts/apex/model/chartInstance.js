@@ -78,6 +78,10 @@ export default class ChartInstance {
     this.apex.toggleSeries(seriesName);
   }
 
+  hideSeries(seriesName) {
+    this.apex.hideSeries(seriesName);
+  }
+
   highlightSeries(seriesName) {
     this.apex.highlightSeries(seriesName);
   }
@@ -143,21 +147,22 @@ export default class ChartInstance {
   }
 
   computeSeries(ids) {
-    const { series, type } = this.chart;
+    const { seriesOrder, seriesById, type } = this.chart;
 
     if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR) {
-      return series.map((c) => Math.abs(c.value));
+      return seriesOrder.map((id) => Math.abs(seriesById[id].value));
     }
 
-    return series.map((s) => ({
-      name: s.label,
+    return seriesOrder.map((sId) => ({
+      name: seriesById[sId].label,
 
-      data: ids.map((id) => this.seriesSelector(id, s.field)),
+      data: ids.map((id) => this.seriesSelector(id, seriesById[sId].field)),
 
       color:
         type === "line"
-          ? s.color
-          : ({ value }) => evaluateColorRules(value, s.colorRules)?.color,
+          ? seriesById[sId].color
+          : ({ value }) =>
+              evaluateColorRules(value, seriesById[sId].colorRules)?.color,
     }));
   }
 
@@ -166,11 +171,11 @@ export default class ChartInstance {
   ========================= */
 
   buildTooltip() {
-    const { type } = this.chart;
+    const { type, id } = this.chart;
     if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR)
       return (seriesValue, index, seriesIndex, w) =>
         groupedTooltipCallback({
-          chartId: this.chartId,
+          chartId: id,
           seriesIndex,
           seriesValue,
           index,
@@ -179,7 +184,7 @@ export default class ChartInstance {
 
     return (seriesValue, index, seriesIndex, w) =>
       seriesTooltipCallback({
-        chartId: this.chartId,
+        chartId: id,
         seriesValue,
         index,
         seriesIndex,
@@ -192,21 +197,22 @@ export default class ChartInstance {
   ========================= */
 
   buildOptions(ids, computedSeries) {
+    const { type, id, layout, mode, seriesOrder, seriesById, xMetric } =
+      this.chart;
+
     const params = {
       ids,
-      type: this.chart.type,
-      chartId: this.chartId,
-      layout: this.chart.layout,
+      type,
+      chartId: id,
+      layout,
       seriesSelector: this.seriesSelector,
-      series: this.chart.series,
-      mode: this.chart.mode,
-      xMetric: this.chart.xMetric,
+      series: seriesOrder.map((id) => seriesById[id]),
+      mode,
+      xMetric,
       groupSelector: this.groupSelector,
       tooltipCallback: this.buildTooltip(),
       dataSeries: computedSeries,
     };
-
-    const type = this.chart.type;
 
     if (type === ChartType.LINE) {
       return buildLineChartOptions(params);

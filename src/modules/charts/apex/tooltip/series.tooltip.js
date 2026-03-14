@@ -57,7 +57,9 @@ export const seriesTooltipCallback = ({
           formatter,
         ),
       ]
-    : chart.series.map((s, i) => buildTooltipRow(seriesValue[i], s, formatter));
+    : chart.seriesOrder.map((sId, i) =>
+        buildTooltipRow(seriesValue[i], chart.seriesById[sId], formatter),
+      );
 
   return {
     title: isHorizontal ? yLabelFormatters[0](index) : categoryLabels[index],

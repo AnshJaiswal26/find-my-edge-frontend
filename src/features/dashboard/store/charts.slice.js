@@ -1,6 +1,7 @@
 import { createChart } from "@modules/charts/apex/model/factory";
 import { useChartStore } from "@modules/charts/apex/store";
-import { makeAST } from "@lib/expression";
+import { PAGE_CONFIG } from "@pages/config/pageConfig";
+import { chartApi } from "../api/chart.api";
 
 export const createChartsSlice = (set, get) => ({
   chartsOrder: [],
@@ -197,17 +198,20 @@ export const createChartsSlice = (set, get) => ({
     // });
   },
 
-  addChart(type, config) {
+  addChart: async (payload) => {
     const { closePopup } = get();
-    const chart = createChart(type, config);
 
-    useChartStore.setState((cs) => {
-      cs.charts[chart.id] = chart;
+    const chart = await chartApi.create(PAGE_CONFIG.DASHBOARD.key, payload);
+
+    console.log("Created chart:", chart);
+    useChartStore.setState((s) => {
+      s.charts[chart.id] = chart;
     });
 
     set((s) => {
       s.chartsOrder.push(chart.id);
     });
+
     closePopup();
   },
 

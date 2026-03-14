@@ -38,13 +38,21 @@ export default function CartesianLayoutPopup(props) {
     }
 
     base.push(
-      { id: "xAxis", label: "X Axis", Comp: XAxisSection },
-      { id: "yAxis", label: "Y Axis", Comp: YAxisSection },
+      {
+        id: "xAxis",
+        label: isHorizontal ? "Y Axis" : "X Axis",
+        Comp: XAxisSection,
+      },
+      {
+        id: "yAxis",
+        label: !isHorizontal ? "Y Axis" : "X Axis",
+        Comp: YAxisSection,
+      },
       { id: "legend", label: "Legend", Comp: LegendSection },
     );
 
     return base;
-  }, [type]);
+  }, [type, isHorizontal]);
 
   return (
     <PopupSideList

@@ -1,3 +1,5 @@
+import { chartEngine } from "../model/chartEngine";
+
 export const createSortSlice = (set, get) => ({
   /* ----------------------------------------------- */
   /*                SORT ACTIONS                     */
@@ -8,6 +10,8 @@ export const createSortSlice = (set, get) => ({
       s.charts[chartId].sort.key = key;
       s.charts[chartId].sort.operator = operator;
     });
+    chartEngine.get(chartId)?.recomputeSeries();
+
     get().closePopup();
   },
 
@@ -15,6 +19,8 @@ export const createSortSlice = (set, get) => ({
     set((s) => {
       s.charts[chartId].sort = { key: null, operator: "none" };
     });
+    chartEngine.get(chartId)?.recomputeSeries();
+
     get().closePopup();
   },
 });

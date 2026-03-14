@@ -28,6 +28,7 @@ function AddWidgetPopupContent({ schemasById }) {
   const { closePopup } = useDashboardStore.getState();
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const options = useMemo(() => Object.values(schemasById), [schemasById]);
 
@@ -49,6 +50,7 @@ function AddWidgetPopupContent({ schemasById }) {
                   ref={formRef}
                   options={options}
                   schemasById={schemasById}
+                  setLoading={setLoading}
                 />
               ) : (
                 <div className="space-y-4">
@@ -57,6 +59,7 @@ function AddWidgetPopupContent({ schemasById }) {
                     type={item.id}
                     ref={formRef}
                     options={options}
+                    setLoading={setLoading}
                     schemasById={schemasById}
                   />{" "}
                 </div>
@@ -71,6 +74,9 @@ function AddWidgetPopupContent({ schemasById }) {
           text={["Cancel", "Add"]}
           onApply={() => formRef.current?.submit?.()}
           onCancel={closePopup}
+          loading={{ apply: loading }}
+          disableApply={loading}
+          disableCancel={loading}
         />
       </Popup.Container>
     </Popup>

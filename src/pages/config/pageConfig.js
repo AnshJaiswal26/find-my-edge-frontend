@@ -18,12 +18,14 @@ export const PAGE_CONFIG = {
   DASHBOARD: {
     label: "Edge Dashboard",
     route: "/",
+    key : "dashboard",
     icon: LayoutDashboardIcon,
   },
 
   TRADE_METRICS: {
     label: "Trade Explorer",
     route: "/trade-metrics",
+    key : "trade-metric",
     icon: BarChart3,
   },
 

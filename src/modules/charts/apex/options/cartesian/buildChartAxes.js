@@ -19,7 +19,7 @@ export const buildChartAxes = ({
     ...(!layout.horizontal && { tickPlacement: "on" }),
     labels: {
       tickAmount: ids.length,
-      show: !layout.xLabels,
+      show: layout.xLabels,
       formatter: (v) => {
         if (v < 0) return;
         if (!mode) return v;
