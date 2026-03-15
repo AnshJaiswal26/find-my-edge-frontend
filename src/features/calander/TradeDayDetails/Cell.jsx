@@ -3,9 +3,12 @@ export const Cell = ({
   align = "left",
   header = false,
   positive,
+  width,
 }) => (
   <div
-    className={`px-2 py-2 flex items-center text-nowrap overflow-ellipsis
+    style={{ width }}
+    className={`px-2 py-2 flex w-full items-center min-w-0 flex-none
+      whitespace-nowrap overflow-hidden text-ellipsis border-r border-(--border)
       ${align === "right" ? "justify-end text-right" : "justify-start text-left"}
       ${
         header
@@ -21,6 +24,6 @@ export const Cell = ({
       }
     `}
   >
-    {children}
+    <span className="truncate w-full">{children}</span>
   </div>
 );

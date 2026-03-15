@@ -22,20 +22,18 @@ export const CartesianChartForm = forwardRef(
 
     const [mode, setMode] = useState(ChartMode.SERIES);
 
-    const [expr, setExpr] = useState("");
-
     const [layout, setLayout] = useState({
       xTitleText: "",
       yTitleText: "",
       title: "",
     });
 
-    const [seriesX, setSeriesX] = useState({ key: "", name: "", type: "" });
+    const [seriesX, setSeriesX] = useState({ field: "", label: "", type: "" });
 
     const [seriesY, setSeriesY] = useState([
       {
-        key: "",
-        name: "",
+        field: "",
+        label: "",
         type: "",
         ast: null,
         formula: null,
@@ -50,9 +48,11 @@ export const CartesianChartForm = forwardRef(
     });
 
     useImperativeHandle(ref, () => ({
-      submit() {
-        if (!seriesX.key) return;
-        if (!seriesY.length || !seriesY[0].key) return;
+      async submit() {
+        if (!seriesX.field) return;
+        if (!seriesY.length || !seriesY[0].field) return;
+
+        setLoading(true);
 
         const seriesById = {};
         const seriesOrder = [];
@@ -62,8 +62,8 @@ export const CartesianChartForm = forwardRef(
 
           seriesById[id] = {
             id,
-            field: s.key,
-            label: s.name,
+            field: s.field,
+            label: s.label,
             type: s.type,
             ast: s.ast ?? null,
             formula: s.formula ?? null,
@@ -76,27 +76,18 @@ export const CartesianChartForm = forwardRef(
         const payload = {
           chartType: type,
           layout,
-          xMetric: {
-            field: seriesX.key,
-            label: seriesX.name,
-            type: seriesX.type,
-          },
-          seriesById,
-          seriesOrder,
+          xMetric: seriesX,
+          series: seriesY,
         };
-        console.log("Payload:", payload);
+        // console.log("Payload:", payload);
 
         if (groupSpec?.field || groupSpec?.type) {
           payload.groupSpec = draftToSpec(groupSpec);
         }
 
-        const add = async () => {
-          setLoading(true);
-          addChart(payload);
-          setLoading(false);
-        };
+        await addChart(payload);
 
-        add();
+        setLoading(false);
       },
     }));
 
@@ -136,24 +127,22 @@ export const CartesianChartForm = forwardRef(
             {ChartMode.GROUP_AGGREGATE && (
               <ExpressionBuilder
                 ref={builderRef}
-                value={expr}
+                value={""}
                 schemasById={schemasById}
                 mode={"AGGREGATE"}
                 semanticMode={"AGGREGATE"}
                 onCommit={({ idFormula, ast, dependencies, semanticType }) => {
-                  setExpr(idFormula);
-
                   if (dependencies.length && groupSpec?.field) {
                     setSeriesX({
-                      key: groupSpec.field,
-                      name: schemasById[groupSpec.field].label,
+                      field: groupSpec.field,
+                      label: schemasById[groupSpec.field].label,
                       type: schemasById[groupSpec.field].semanticType,
                     });
 
                     setSeriesY([
                       {
-                        key: dependencies[0],
-                        name: schemasById[dependencies[0]].label,
+                        field: dependencies[0],
+                        label: schemasById[dependencies[0]].label,
                         type: semanticType,
                         ast,
                         formula: idFormula,
@@ -177,12 +166,12 @@ export const CartesianChartForm = forwardRef(
           <>
             <Section title={"X Axis Series"}>
               <Select
-                value={seriesX.key}
+                value={seriesX.field}
                 options={options}
                 getLabel={(o) => o.label}
                 getKey={(o) => o.id}
                 onChange={(o) => {
-                  setSeriesX({ key: o.id, name: o.label, type: o.type });
+                  setSeriesX({ field: o.id, label: o.label, type: o.type });
                   setLayout((p) => ({ ...p, xTitleText: o.label }));
                 }}
               />
@@ -194,7 +183,7 @@ export const CartesianChartForm = forwardRef(
                   <Select
                     vertical
                     label={`Series ${i + 1}`}
-                    value={s.key}
+                    value={s.field}
                     options={i === 0 ? baseOptions : filteredOptions}
                     getLabel={(o) => o.label}
                     getKey={(o) => o.id}
@@ -202,8 +191,8 @@ export const CartesianChartForm = forwardRef(
                       setSeriesY((p) => {
                         const next = [...p];
                         next[i] = {
-                          key: o.id,
-                          name: o.label,
+                          field: o.id,
+                          label: o.label,
                           type: o.semanticType,
                         };
                         return next;
@@ -223,7 +212,10 @@ export const CartesianChartForm = forwardRef(
               <div>
                 <Button.Text
                   onClick={() =>
-                    setSeriesY((p) => [...p, { key: "", name: "", type: "" }])
+                    setSeriesY((p) => [
+                      ...p,
+                      { field: "", label: "", type: "" },
+                    ])
                   }
                   disabled={!optionsGroup}
                   className={

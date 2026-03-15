@@ -15,7 +15,7 @@ const Brokers = {
 
   toName(key) {
     const broker = Object.values(this).find((b) => b.key === key);
-    return broker ? broker.name : key;
+    return broker ? broker.label : key;
   },
 
   get(key) {

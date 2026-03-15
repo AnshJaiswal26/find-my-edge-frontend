@@ -28,8 +28,11 @@ export default function StatCard({ statId }) {
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group relative overflow-hidden rounded-xl border border-(--border-muted) bg-(--surface-muted) p-4 min-w-[210px] cursor-default select-none transition-all duration-200 ease-out hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.08)] shadow-lg"
+      className="group relative overflow-hidden rounded-xl border border-(--border-muted) bg-(--surface-muted) p-4 min-w-[210px] w-full cursor-default select-none transition-all duration-200 ease-out hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.08)] shadow-lg h-full"
     >
+      <div className="grid-item-drag invisible group-hover:visible absolute cursor-move bg-inherit text-(--text) p-1 text-xs top-0 left-1/2 rotate-90 box-border">
+        ⠿
+      </div>
       {/* Top accent hairline */}
       <div
         className="absolute top-0 left-0 right-0 h-[2px] rounded-t-xl opacity-90"

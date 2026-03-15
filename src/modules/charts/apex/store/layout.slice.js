@@ -1,16 +1,20 @@
+import { chartService } from "@features/dashboard/services/chart.service";
 import { chartEngine } from "../model/chartEngine";
+import { PAGE_CONFIG } from "@pages/config/pageConfig";
 
 export const createLayoutSlice = (set, get) => ({
-  updateLayout(chartId, layoutDraft, seriesDraft) {
+  async updateLayout(chartId, { layout, seriesById }) {
     set((s) => {
-      Object.assign(s.charts[chartId].layout, layoutDraft);
-
-      s.charts[chartId].seriesOrder.map((id, i) => {
-        Object.assign(s.charts[chartId].seriesById[id], seriesDraft[i]);
-      });
+      Object.assign(s.charts[chartId].layout, layout);
+      Object.assign(s.charts[chartId].seriesById, seriesById);
     });
 
     chartEngine.update(chartId);
+
+    await chartService.updateLayout(PAGE_CONFIG.DASHBOARD.key, chartId, {
+      layout,
+      seriesById,
+    });
 
     get().closePopup();
   },

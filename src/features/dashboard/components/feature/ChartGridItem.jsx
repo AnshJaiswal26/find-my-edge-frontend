@@ -2,10 +2,10 @@ import { useDashboardStore } from "@features/dashboard/store";
 import { useChartStore } from "@modules/charts/apex/store";
 
 import { CustomApexChart } from "@modules/charts";
+import { ChartCategory } from "@modules/charts/apex/model/enums";
 
-export default function ChartGridItem({ id, ...props }) {
-  const savedLayout = useDashboardStore((s) => s.chartGridLayout?.[id]);
-  const deleteChart = useDashboardStore((s) => s.deleteChart);
+export default function ChartGridItem({ id, onRemove, ...props }) {
+  const savedLayout = useDashboardStore((s) => s.gridLayout?.[id]);
 
   const { type, category, mode } = useChartStore.getState().charts[id];
 
@@ -15,9 +15,9 @@ export default function ChartGridItem({ id, ...props }) {
       gs-id={id}
       gs-x={savedLayout?.x}
       gs-y={savedLayout?.y}
-      gs-w={savedLayout?.w ?? (category === "group" ? 10 : 20)}
+      gs-w={savedLayout?.w ?? (category === ChartCategory.GROUP ? 10 : 15)}
       gs-h={savedLayout?.h ?? 10}
-      gs-min-w={category === "group" ? 8 : 12}
+      gs-min-w={category === ChartCategory.GROUP ? 8 : 12}
       gs-min-h={8}
       gs-max-h={100}
     >
@@ -28,7 +28,7 @@ export default function ChartGridItem({ id, ...props }) {
             type={type}
             mode={mode}
             category={category}
-            onRemove={deleteChart}
+            onRemove={onRemove}
             {...props}
           />
         </div>

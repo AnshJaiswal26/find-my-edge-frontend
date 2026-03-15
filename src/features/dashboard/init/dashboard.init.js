@@ -14,7 +14,7 @@ export async function dashboardInit() {
     useDashboardStore.setState((s) => {
       s.statsById = data.statsById;
       s.statsOrder = data.statsOrder;
-      s.chartGridLayout = data.chartGridLayout;
+      s.gridLayout = data.gridLayout;
       s.chartsOrder = data.chartOrder;
       s.isInitialized = true;
     });

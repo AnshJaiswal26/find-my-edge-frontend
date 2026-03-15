@@ -9,7 +9,7 @@ export const PageContainer = ({
   sidebar = true,
 }) => {
   return (
-    <div className="w-full h-[100vh] overflow-auto">
+    <div id={"app-container"} className="w-full h-[100vh] overflow-auto">
       {sidebar && <Sidebar />}
       <div
         className={`flex flex-col justify-center items-center font-(--font-faimily-base) w-full h-fit box-border ${className}`}
@@ -54,7 +54,7 @@ export const Container = ({
         ${className}
       `}
     >
-      <div className="flex flex-col flex-1 gap-[0.65rem]">
+      <div className="flex flex-col gap-[0.65rem] min-w-0 w-full h-full">
         <div className="flex items-center justify-between">
           {title && (
             <div className="text-[1.2rem] font-semibold mb-1.5">{title}</div>
@@ -62,7 +62,9 @@ export const Container = ({
           {header && <div>{header}</div>}
         </div>
 
-        <div className={`flex flex-col flex-1 gap-5 ${childClassName}`}>
+        <div
+          className={`flex flex-col flex-1 gap-[0.65rem] min-w-0 ${childClassName}`}
+        >
           {children}
         </div>
       </div>

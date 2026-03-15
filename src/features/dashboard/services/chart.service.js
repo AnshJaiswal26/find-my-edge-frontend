@@ -7,7 +7,7 @@ const validateChartRequest = (chart) => {
     throw new Error("Chart type is required");
   }
 
-  if (!chart?.seriesById || !Object.keys(chart.seriesById).length) {
+  if (!chart?.series?.length) {
     throw new Error("Chart must contain at least one series");
   }
 };

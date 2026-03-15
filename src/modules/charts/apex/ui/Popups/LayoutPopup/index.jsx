@@ -35,10 +35,13 @@ export default function ChartLayoutPopup({ chartId }) {
 
   const type = chart.type;
 
-  const [layoutDraft, setLayoutDraft] = useState({ ...chart.layout });
-  const [seriesDraft, setSeriesDraft] = useState([
-    ...chart?.seriesOrder.map((id) => chart.seriesById[id]),
-  ]);
+  const [layoutDraft, setLayoutDraft] = useState(() => ({ ...chart.layout }));
+
+  const [seriesDraft, setSeriesDraft] = useState(() =>
+    chart.seriesOrder.map((id) => ({ ...chart.seriesById[id] })),
+  );
+
+  const [loading, setLoading] = useState(false);
 
   const updateSeries = useCallback(
     (index, patch) => {
@@ -50,6 +53,18 @@ export default function ChartLayoutPopup({ chartId }) {
     },
     [setSeriesDraft],
   );
+
+  const handleApply = async () => {
+    setLoading(true);
+
+    const seriesById = {};
+
+    seriesDraft.forEach((s) => (seriesById[s.id] = s));
+
+    await updateLayout(chartId, { layout: layoutDraft, seriesById });
+
+    setLoading(false);
+  };
 
   return (
     <Popup open={true}>
@@ -75,7 +90,10 @@ export default function ChartLayoutPopup({ chartId }) {
         <Popup.Footer
           text={["Cancel", "Apply"]}
           onCancel={closePopup}
-          onApply={() => updateLayout(chartId, layoutDraft, seriesDraft)}
+          onApply={handleApply}
+          loading={{ apply: loading }}
+          disableApply={loading}
+          disableCancel={loading}
         />
       </Popup.Container>
     </Popup>

@@ -76,6 +76,7 @@ export const useTableStore = create(
         set({
           columnsOrder: data.columnsOrder || [],
           columnWidths: data.columnWidths || {},
+          highlightedRows: data.highlightedRows || {},
           isInitialized: true,
         });
       } catch (err) {

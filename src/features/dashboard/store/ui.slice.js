@@ -1,9 +1,14 @@
+import { dashboardService } from "../services/dashboard.service";
+
 export const createUISlice = (set) => ({
   activePopup: null,
-  chartGridLayout: null,
+  gridLayout: null,
 
   setLayout(layout) {
-    set({ chartGridLayout: layout });
+    set((s) => {
+      s.gridLayout = { ...s.gridLayout, ...layout };
+    });
+    dashboardService.updateGridLayout(layout);
   },
 
   openPopup(id) {

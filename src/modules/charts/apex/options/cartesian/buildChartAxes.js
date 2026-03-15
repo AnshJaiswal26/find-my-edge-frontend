@@ -65,6 +65,8 @@ export const buildChartAxes = ({
     title: {
       text: layout.yTitleText,
       style: { fontSize: style.fontSize, color: layout.yTitleColor },
+      offsetX: 0,
+      offsetY: layout.horizontal ? 25 : 0,
     },
     axisBorder: { show: false },
     axisTicks: { show: false },

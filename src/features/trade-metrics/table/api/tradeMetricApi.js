@@ -6,15 +6,15 @@ export const tradeMetricApi = {
   },
 
   updateColumnWidth(columnId, width) {
-    return apiFetch(`api/pages/trade-metric/table/columnWidth/${columnId}`, {
-      method: "POST",
+    return apiFetch(`api/pages/trade-metric/table/columns/${columnId}/width`, {
+      method: "PATCH",
       body: width,
     });
   },
 
   updateHighlightRow(rowId, highlight) {
-    return apiFetch(`api/pages/trade-metric/table/highlightRow/${rowId}`, {
-      method: "POST",
+    return apiFetch(`api/pages/trade-metric/table/rows/${rowId}/highlight`, {
+      method: "PATCH",
       body: highlight, // Boolean body
     });
   },

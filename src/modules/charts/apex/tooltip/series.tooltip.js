@@ -53,7 +53,7 @@ export const seriesTooltipCallback = ({
     ? [
         buildTooltipRow(
           seriesValue[seriesIndex],
-          chart.series[seriesIndex],
+          chart.seriesById[chart.seriesOrder[seriesIndex]],
           formatter,
         ),
       ]

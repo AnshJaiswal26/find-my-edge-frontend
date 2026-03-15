@@ -5,7 +5,7 @@ export const buildChartTooltip = (config, tooltipCallback) => {
     enabled: config.tooltip,
     intersect: false,
     followCursor: true,
-    shared: false,
+    shared: true,
     custom: customTooltip(tooltipCallback),
   };
 };
