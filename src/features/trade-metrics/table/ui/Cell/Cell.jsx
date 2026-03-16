@@ -5,6 +5,7 @@ import { CellSelect } from "./CellSelect";
 import { CellDisplay } from "./CellDisplay";
 import { useCellValue } from "@features/trade-metrics/table/hooks";
 import { useTradeStore } from "@shared/stores";
+import { SemanticType } from "@lib/analytics/schema";
 
 export const Cell = memo(function Cell({
   rowId,
@@ -18,11 +19,14 @@ export const Cell = memo(function Cell({
   const value = useCellValue(rowId, colId);
 
   // console.log(value, colId);
-  const width = useTableStore((s) => s.columnWidths[colId] ?? 150);
   const column = useTradeStore((s) => s.schemasById[colId]);
 
   const type = column.semanticType;
 
+  const width = useTableStore(
+    (s) =>
+      s.columnWidths[colId] ?? (type === SemanticType.DATETIME ? 200 : 150),
+  );
   /* ---------- Keep draft synced with store value ---------- */
   const [draft, setDraft] = useState(value);
 

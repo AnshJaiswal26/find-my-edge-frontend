@@ -18,9 +18,7 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
         value={draft}
         onChange={setDraft}
         onBlur={onBlur}
-        className="!w-full pl-2 py-1 outline-0 h-[28px] border-r border-r-(--info)"
-        wrpperClassName="flex gap-0"
-        guide={false}
+        className="!w-full py-1 h-[28px]"
       />
     );
   }

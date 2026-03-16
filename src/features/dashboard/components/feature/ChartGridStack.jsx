@@ -1,7 +1,7 @@
-import { useGridStack } from "@features/dashboard/hooks";
 import { useDashboardStore } from "@features/dashboard/store";
 import { useRef } from "react";
 import ChartGridItem from "./ChartGridItem";
+import { useGridStack } from "@shared/hooks";
 
 export default function ChartGridStack({
   seriesOrder,
@@ -15,8 +15,6 @@ export default function ChartGridStack({
   const deleteChart = useDashboardStore((s) => s.deleteChart);
 
   useGridStack(gridRef, {
-    order: [...chartsOrder],
-    idPrefix: "chart-",
     onLayoutChange: (layout) => {
       useDashboardStore.getState().setLayout(layout);
     },

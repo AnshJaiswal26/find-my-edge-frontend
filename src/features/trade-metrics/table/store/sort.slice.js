@@ -65,7 +65,6 @@ export const createSortSlice = (set, get) => ({
 
     const order = filteredRowOrder.length ? filteredRowOrder : tradesOrder;
 
-    console.log("applying sort on order", order);
     set((s) => {
       s.sortedRowOrder = applySort(
         order,

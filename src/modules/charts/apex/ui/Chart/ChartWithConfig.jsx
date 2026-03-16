@@ -6,9 +6,6 @@ export function ChartWithConfig({
   chartId,
   type,
   category,
-  groups,
-  groupSpec,
-  selectedGroupIndex,
   ids,
   seriesSelector,
 }) {
@@ -31,13 +28,10 @@ export function ChartWithConfig({
       />
 
       <ChartViewportWrapper
+        chartId={chartId}
         type={type}
         category={category}
-        chartId={chartId}
         layout={layout}
-        groups={groups}
-        groupSpec={groupSpec}
-        selectedGroupIndex={selectedGroupIndex}
         ids={ids}
         seriesSelector={seriesSelector}
       />

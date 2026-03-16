@@ -153,12 +153,12 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
         cursorOffset = insert.length - 1; // inside ()
       }
 
-      const before = labelExpr.slice(0, cursor).replace(/[a-zA-Z_]+$/, "");
+      const before = labelExpr.slice(0, cursor).replace(/[a-zA-Z0-9_]+$/, "");
       const after = labelExpr.slice(cursor);
       const next = `${before}${insert}${after}`;
       setLabelExpr(next);
 
-      const newCursor = before.length + cursorOffset ?? insert.length;
+      const newCursor = before.length + (cursorOffset ?? insert.length);
       setCursor(newCursor);
       setOpen(false);
 

@@ -68,18 +68,19 @@ export const createGroupSlice = (set, get) => ({
         ? filteredRowOrder
         : tradesOrder;
 
-    const getValue = (trade, key) => {
-      return derivedByTradeId?.[trade.id]?.[key] ?? trade?.[key] ?? null;
+    const getValue = (id, field) => {
+      return (
+        derivedByTradeId?.[id]?.[field] ?? tradesById?.[id]?.[field] ?? null
+      );
     };
 
     const groups = buildGroups({
-      tradesOrder: effectiveOrder,
-      tradesById: tradesById,
+      ids: effectiveOrder,
       groupSpec: draftToSpec(spec ?? groupBy),
       getValue,
-      getFormat: (key) => ({
-        type: columnsById[key].semanticType,
-        display: columnsById[key]?.display,
+      getFormat: (id) => ({
+        type: columnsById[id].semanticType,
+        display: columnsById[id]?.display,
       }),
     });
 

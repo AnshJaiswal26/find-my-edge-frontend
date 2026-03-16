@@ -2,15 +2,7 @@ import { useEffect, useRef } from "react";
 import { chartEngine } from "../../../model/chartEngine";
 import { useChartStore } from "@modules/charts/apex/store";
 
-export function ChartViewport({
-  chartId,
-  ids,
-  seriesSelector,
-  groupSelector,
-  groups,
-  groupSpec,
-  selectedGroupIndex,
-}) {
+export function ChartViewport({ chartId, ids, seriesSelector, groupSelector }) {
   const containerRef = useRef(null);
 
   /* ---------------- CREATE CHART ---------------- */
@@ -22,9 +14,6 @@ export function ChartViewport({
       ids,
       seriesSelector,
       groupSelector,
-      groups,
-      groupSpec,
-      selectedGroupIndex,
     });
 
     return () => chartEngine.destroy(chartId);
@@ -34,7 +23,7 @@ export function ChartViewport({
 
   useEffect(() => {
     chartEngine.update(chartId);
-  }, [ids, selectedGroupIndex, seriesSelector]);
+  }, [ids, seriesSelector]);
 
   return <div ref={containerRef} className="h-full w-full" />;
 }

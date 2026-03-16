@@ -55,6 +55,7 @@ export const createFilterSlice = (set, get) => ({
       closePopup,
       groupBy,
       buildGroups,
+      sortedRowOrder,
       derivedViewByTradeId,
       updateLockedColumns,
     } = get();
@@ -71,11 +72,13 @@ export const createFilterSlice = (set, get) => ({
       );
     };
 
+    const order = sortedRowOrder.length ? sortedRowOrder : tradesOrder;
+
     if (!filters.length) {
       set({ filteredRowOrder: [] });
     } else {
       set((s) => {
-        s.filteredRowOrder = tradesOrder.filter((tradeId) => {
+        s.filteredRowOrder = order.filter((tradeId) => {
           return applyFilters(filters, tradeId, getValue);
         });
       });

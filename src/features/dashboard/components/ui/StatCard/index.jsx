@@ -2,7 +2,7 @@ import { useDashboardStore } from "@features/dashboard/store";
 import { resolveFormatGroup } from "./resolveFormatGroup";
 import { FORMAT_VARIANTS } from "./formatVariants";
 import { VARIANTS } from "./variants";
-import { evaluateColorRules, formatValue } from "@shared/utils";
+import { evaluateColorRules, formatValue, parseColor } from "@shared/utils";
 import { useMemo, useState } from "react";
 import { Trash2 } from "lucide-react";
 
@@ -18,7 +18,9 @@ export default function StatCard({ statId }) {
 
   const accentColor = useMemo(() => {
     const rule = evaluateColorRules(stat.value, stat.colorRules);
-    return rule?.label === "Default" || !rule ? v.rawColor : rule.color;
+    return rule?.label === "Default" || !rule
+      ? v.rawColor
+      : parseColor(rule.color);
   }, [stat.value, stat.colorRules, v.rawColor]);
 
   return (

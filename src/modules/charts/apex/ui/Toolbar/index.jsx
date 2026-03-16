@@ -1,3 +1,4 @@
+import { ChartCategory } from "@modules/charts/apex/model/enums";
 import { DownloadButton } from "./DownloadButton";
 import { FilterButton } from "./FilterButton";
 import { LayoutButton } from "./LayoutButton";
@@ -13,7 +14,8 @@ export default function Toolbar({ chartId, onRemove }) {
   const chart = useChartStore((s) => s.charts[chartId]);
 
   const isGroupType =
-    chart.category === "group" || chart.category === "axis-series";
+    chart.category === ChartCategory.PARTITION ||
+    chart.category === ChartCategory.RADIAL_AXIS;
 
   return (
     <div className="apexcharts-custom-toolbar">

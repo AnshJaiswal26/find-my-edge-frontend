@@ -1,3 +1,4 @@
+import { SemanticType } from "@lib/analytics/schema";
 import { Section } from "@shared/components/layout";
 import { ColorPicker, Input, Select } from "@shared/components/ui";
 import { FORMATS } from "@shared/utils";
@@ -10,14 +11,7 @@ export default function RadialBarSeriesSection({ seriesDraft, updateSeries }) {
           <div className="space-y-4">
             <Input
               vertical
-              label="Name"
-              value={series.name}
-              onCommit={(v) => updateSeries(index, { name: v })}
-            />
-
-            <Input
-              vertical
-              label="Tooltip Label"
+              label="Label"
               value={series.label}
               onCommit={(v) => updateSeries(index, { label: v })}
             />
@@ -31,7 +25,7 @@ export default function RadialBarSeriesSection({ seriesDraft, updateSeries }) {
               onChange={(v) => updateSeries(index, { format: v })}
             />
 
-            {series.type.includes("number") && (
+            {series.type === SemanticType.NUMBER && (
               <Input
                 label="Decimals"
                 type="range"

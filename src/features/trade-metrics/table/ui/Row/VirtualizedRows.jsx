@@ -9,10 +9,10 @@ import { useTradeStore } from "@shared/stores";
 export default function VirtualizedRow({ scrollRef }) {
   const rowsOrder = useTradeStore((s) => s.tradesOrder);
   const effectiveRowOrder = useTableStore((s) =>
-    s.sortedRowOrder.length
-      ? s.sortedRowOrder
-      : s.filteredRowOrder.length
-        ? s.filteredRowOrder
+    s.filteredRowOrder.length
+      ? s.filteredRowOrder
+      : s.sortedRowOrder.length
+        ? s.sortedRowOrder
         : rowsOrder,
   );
 

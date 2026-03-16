@@ -16,14 +16,14 @@ const debouncedWidthSync = debounce(async (columnId, width, set) => {
   }
 }, 400);
 
-export const createDragSlice = (set, get) => ({
-  /* ---------------- DRAG STATE ---------------- */
+export const createUiSlice = (set, get) => ({
+  /* ---------------------------------------------------------------------- */
+  /*                        DRAG & RESIZE                                   */
+  /* ---------------------------------------------------------------------- */
 
-  draggingColumn: null, // { id, fromIndex }
-  colDragMode: null, // "reorder" | "resize"
-  colDragOverIndex: null, // number | null
-
-  /* ---------------- ACTIONS ---------------- */
+  draggingColumn: null,
+  colDragMode: null,
+  colDragOverIndex: null,
 
   startColumnDrag({ id, index }) {
     set({
@@ -86,5 +86,42 @@ export const createDragSlice = (set, get) => ({
       s.colDragMode = null;
       s.colDragOverIndex = null;
     });
+  },
+
+  /* ---------------------------------------------------------------------- */
+  /*                             SELECTION                                  */
+  /* ---------------------------------------------------------------------- */
+
+  selectedColumn: null,
+  selectedRow: null,
+
+  selectColumn(payload) {
+    set({
+      selectedColumn: {
+        id: payload.id,
+        width: payload.width,
+        left: payload.left,
+      },
+      colDragMode: "select",
+    });
+  },
+
+  unselectColumn(payload) {
+    if (payload?.id === get().selectedColumn?.id) return;
+    set({ selectedColumn: null, colDragMode: null });
+  },
+
+  /* ---------------------------------------------------------------------- */
+  /*                             POPUP                                      */
+  /* ---------------------------------------------------------------------- */
+
+  activePopup: null,
+
+  openPopup(id) {
+    set({ activePopup: id });
+  },
+
+  closePopup() {
+    set({ activePopup: null });
   },
 });

@@ -91,7 +91,7 @@ export const createComputeSlice = (set, get) => ({
         groups.forEach((group) =>
           compute({
             schema,
-            sequenceIds: group.tradeIds,
+            sequenceIds: group.ids,
           }),
         );
         return;

@@ -22,14 +22,11 @@ const syncLayoutDebounced = debounce(
 export default function useGridStack(
   gridRef,
   {
-    order,
-    idPrefix = "",
     onLayoutChange = () => {},
     // user configurable
     columns = { min: 6, sm: 12, md: 20, lg: 30 },
     float = false,
     resizable = { handles: "" },
-    draggable = { handle: ".grid-item-drag" },
     animate = false,
   },
 ) {
@@ -39,14 +36,18 @@ export default function useGridStack(
   useEffect(() => {
     if (!gridRef.current || grid.current) return;
 
-    // INIT GRID ONLY ONCE (after items exist)
     const instance = GridStack.init(
       {
         column: getColumnCount(columns),
         float,
         resizable,
-        draggable,
+        draggable: {
+          handle: ".grid-item-drag",
+          appendTo: "body",
+          scroll: true,
+        },
         animate,
+        margin: 8,
       },
       gridRef.current,
     );
@@ -55,7 +56,7 @@ export default function useGridStack(
 
     /* ------------------ EVENTS ------------------ */
 
-    const handleChange = () => {
+    instance.on("change", () => {
       if (isResponsiveChange.current) return;
 
       const layout = Object.fromEntries(
@@ -66,22 +67,39 @@ export default function useGridStack(
       );
 
       syncLayoutDebounced(() => onLayoutChange(layout));
-    };
+    });
 
-    instance.on("change", handleChange);
+    instance.on("remove", () => instance.compact());
 
     /* ------------------ RESPONSIVE ------------------ */
 
-    const updateColumns = () => {
+    const updateColumns = debounce(() => {
       if (!grid.current) return;
 
+      const newCols = getColumnCount(columns);
+
+      if (grid.current.getColumn() === newCols) return;
+
       isResponsiveChange.current = true;
-      instance.column(getColumnCount(columns), "move");
+
+      grid.current.batchUpdate(true);
+
+      grid.current.column(newCols); // REMOVE "move"
+
+      grid.current.compact(); // resolve gaps
+
+      grid.current.engine.nodes.forEach((n) => {
+        if (n.x + n.w > newCols) {
+          n.x = Math.max(0, newCols - n.w);
+        }
+      });
+
+      grid.current.batchUpdate(false);
 
       requestAnimationFrame(() => {
         isResponsiveChange.current = false;
       });
-    };
+    }, 150);
 
     updateColumns();
     window.addEventListener("resize", updateColumns);
@@ -97,24 +115,4 @@ export default function useGridStack(
       }
     };
   }, []);
-
-  useEffect(() => {
-    if (!grid.current || !gridRef.current || !order?.length) return;
-
-    const instance = grid.current;
-
-    requestAnimationFrame(() => {
-      instance.batchUpdate(true); // prevent multiple reflows
-
-      order.forEach((id) => {
-        const el = gridRef.current?.querySelector(`[gs-id="${idPrefix}${id}"]`);
-
-        if (el && !el.gridstackNode) {
-          instance.makeWidget(el);
-        }
-      });
-
-      instance.batchUpdate(false); // apply once
-    });
-  }, [order]);
 }

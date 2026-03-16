@@ -27,15 +27,14 @@ function getGroupKey(value) {
   return JSON.stringify(value);
 }
 
-export function buildGroups({ tradesOrder, tradesById, groupSpec, getValue }) {
+export function buildGroups({ ids, groupSpec, getValue }) {
   if (!groupSpec) return null;
 
   const getKey = compileGroupSpec(groupSpec, getValue);
   const map = new Map();
 
-  for (const tradeId of tradesOrder) {
-    const trade = tradesById[tradeId];
-    const raw = getKey(trade);
+  for (const id of ids) {
+    const raw = getKey(id);
     const key = getGroupKey(raw);
 
     if (!map.has(key)) {
@@ -43,11 +42,11 @@ export function buildGroups({ tradesOrder, tradesById, groupSpec, getValue }) {
         groupId: key,
         key,
         meta: raw,
-        tradeIds: [],
+        ids: [],
       });
     }
 
-    map.get(key).tradeIds.push(tradeId);
+    map.get(key).ids.push(id);
   }
 
   // 🔥 SORT GROUPS (KEY STEP)

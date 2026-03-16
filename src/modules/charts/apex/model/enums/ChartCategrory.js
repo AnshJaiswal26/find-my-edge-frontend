@@ -1,5 +1,6 @@
 export const ChartCategory = Object.freeze({
-  CARTESIAN: "series",
-  AXIS_SERIES: "axis-series",
-  GROUP: "group",
+  CARTESIAN: "cartesian",
+  RADIAL_AXIS: "radial_axis",
+  PARTITION: "partition",
+  FINANCIAL: "financial",
 });

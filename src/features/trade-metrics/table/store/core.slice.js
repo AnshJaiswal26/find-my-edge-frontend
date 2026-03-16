@@ -29,7 +29,7 @@ export const createCoreSlice = (set, get) => ({
     set((s) => {
       if (s.groups) {
         s.groups.forEach((group) => {
-          group.tradeIds = group.tradeIds.filter((id) => id !== rowId);
+          group.ids = group.ids.filter((id) => id !== rowId);
         });
         if (s.highlightedRows[rowId]) delete s.highlightedRows[id];
       }

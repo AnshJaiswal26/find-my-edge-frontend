@@ -5,25 +5,25 @@ import { matchRange } from "./ranges";
 export function compileGroupSpec(spec, getValue) {
   switch (spec.type) {
     case "value":
-      return (trade) => getValue(trade, spec.key);
+      return (id) => getValue(id, spec.field);
 
     case "dateBucket":
-      return (trade) => getDateBucket(getValue(trade, spec.key), spec.unit);
+      return (id) => getDateBucket(getValue(id, spec.field), spec.unit);
 
     case "timeBucket":
-      return (trade) => getTimeBucket(getValue(trade, spec.key), spec.unit);
+      return (id) => getTimeBucket(getValue(id, spec.field), spec.unit);
 
     case "numberRange":
-      return (trade) => matchRange(getValue(trade, spec.key), spec.ranges);
+      return (id) => matchRange(getValue(id, spec.field), spec.ranges);
 
     case "timeRange":
-      return (trade) => matchRange(getValue(trade, spec.key), spec.ranges);
+      return (id) => matchRange(getValue(id, spec.field), spec.ranges);
 
     case "condition":
-      return (trade) => {
+      return (id) => {
         const fn = FILTER_OPERATION_MAP[spec.operator];
         const result = fn(
-          getValue(trade, spec.key),
+          getValue(id, spec.field),
           spec.value ?? spec.from,
           spec.to,
         );

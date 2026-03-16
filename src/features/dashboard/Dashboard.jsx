@@ -8,6 +8,7 @@ import { Container } from "@shared/components/layout";
 import { useDashboardStore } from "./store";
 import { AddWidgetPopup } from "./components/ui/Popups";
 import { ChartGridStack, StatsGridStack } from "./components/feature";
+
 import { useIntegrationsStore, useTradeStore } from "@shared/stores";
 import DashboardSkeleton from "./components/ui/DashboardSkeleton";
 import { dashboardInit } from "./init/dashboard.init";

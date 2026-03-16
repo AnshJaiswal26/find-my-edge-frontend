@@ -9,7 +9,10 @@ export const PageContainer = ({
   sidebar = true,
 }) => {
   return (
-    <div id={"app-container"} className="w-full h-[100vh] overflow-auto">
+    <div
+      id={"app-container"}
+      className="w-full h-screen overflow-x-hidden overflow-y-auto"
+    >
       {sidebar && <Sidebar />}
       <div
         className={`flex flex-col justify-center items-center font-(--font-faimily-base) w-full h-fit box-border ${className}`}
@@ -17,7 +20,7 @@ export const PageContainer = ({
         <Toast />
 
         {editor && <Header />}
-        <div className="box-border flex-wrap p-5 bg-(--surface) w-full h-full max-w-[1350px] overflow-x-auto overflow-y-hidden">
+        <div className="box-border flex-wrap p-5 bg-(--surface) w-full h-full max-w-[1350px] overflow-x-auto overflow-y-auto">
           {children}
         </div>
       </div>
@@ -40,7 +43,7 @@ export const Container = ({
         min-w-[360px]
         flex
         rounded-[7px]
-        h-fit
+        h-full
         p-2
         sm:p-3
         md:p-5

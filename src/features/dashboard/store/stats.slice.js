@@ -1,9 +1,7 @@
 import { useTradeStore, useUIStore } from "@shared/stores";
-import { DURATION_FORMAT, NUMBER_FORMAT } from "@shared/utils";
-import { makeAST } from "@lib/expression";
-import { SchemaType } from "@lib/analytics/schema";
 import { computeAggregate } from "@lib/analytics/engine/execute";
 import { statService } from "@features/dashboard/services/stat.service";
+import { PAGE_CONFIG } from "@pages/config/pageConfig";
 
 const computeStat = (ast, store) => {
   const { tradesOrder, tradesById, derivedByTradeId, schemasById } = store;
@@ -28,62 +26,6 @@ const computeStat = (ast, store) => {
 };
 
 export const createStatsSlice = (set, get) => ({
-  statsById: {
-    "stat-1": {
-      id: "stat-1",
-      title: "Pnl",
-      type: SchemaType.NUMBER,
-      ast: makeAST("SUM(pnl)"),
-      format: NUMBER_FORMAT.COMPACT_CURRENCY_SIGNED,
-      value: 0,
-      colorRules: [
-        { operator: "greaterThan", value: 0, color: "var(--success)" },
-        { operator: "lessThan", value: 0, color: "var(--error)" },
-      ],
-    },
-    "stat-2": {
-      id: "stat-2",
-      title: "Avg Risk/Reward",
-      type: SchemaType.NUMBER,
-      ast: makeAST("AVG(riskReward)"),
-      format: NUMBER_FORMAT.RATIO,
-      value: 0,
-    },
-    "stat-3": {
-      id: "stat-3",
-      title: "Avg Holding Time",
-      type: SchemaType.DURATION,
-      ast: makeAST("AVG(duration)"),
-      format: DURATION_FORMAT.HH_MM_SS,
-      value: 0,
-    },
-    "stat-4": {
-      id: "stat-4",
-      title: "Max Profit",
-      type: SchemaType.NUMBER,
-      ast: makeAST("MAX(pnl)"),
-      format: NUMBER_FORMAT.CURRENCY_SIGNED,
-      value: 0,
-    },
-    "stat-5": {
-      id: "stat-5",
-      title: "Max Loss",
-      type: SchemaType.NUMBER,
-      ast: makeAST("MIN(pnl)"),
-      format: NUMBER_FORMAT.CURRENCY_SIGNED,
-      value: 0,
-    },
-    "stat-6": {
-      id: "stat-6",
-      title: "win rate",
-      type: SchemaType.NUMBER,
-      ast: makeAST("WIN_RATE()"),
-      format: NUMBER_FORMAT.PERCENT,
-      value: 0,
-    },
-  },
-  statsOrder: ["stat-1", "stat-2", "stat-3", "stat-4", "stat-5", "stat-6"],
-
   statLoading: {
     create: false,
     update: false,
@@ -125,7 +67,7 @@ export const createStatsSlice = (set, get) => ({
     });
 
     try {
-      await statService.create("dashboard", stat); // UPDATED
+      await statService.create(PAGE_CONFIG.DASHBOARD.key, stat); // UPDATED
       get().closePopup();
     } catch (err) {
       useUIStore.getState().showToast("ERROR", err.message);

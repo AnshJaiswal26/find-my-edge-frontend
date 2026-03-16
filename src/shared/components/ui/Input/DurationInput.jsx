@@ -1,35 +1,61 @@
 import { useDurationInput } from "@shared/hooks";
+import { useRef } from "react";
+import { hideTooltip, showTooltip } from "../tooltip";
+
+const labels = ["Days", "Hrs", "Mins", "Sec"];
 
 export default function DurationInput({
   value,
   onChange,
   onBlur,
-  className = "!min-w-14 w-10 text-center",
-  wrpperClassName = "flex gap-2",
-  guide = true,
+  className = "",
+  wrpperClassName = "",
 }) {
-  const { parts, updatePart, handleArrow } = useDurationInput(value, onChange);
+  const wrapperRef = useRef(null);
 
-  const labels = ["Days", "Hrs", "Mins", "Sec"];
+  const inputRefs = useRef([]);
+
+  const { parts, updatePart, handleArrow } = useDurationInput(
+    value,
+    onChange,
+    inputRefs,
+    labels,
+  );
+
+  const handleBlur = (e) => {
+    const nextFocused = e.relatedTarget;
+
+    // Ignore blur if focus moved to another child
+    if (wrapperRef.current?.contains(nextFocused)) return;
+
+    onBlur?.(parts.join(":"));
+    hideTooltip();
+  };
 
   return (
-    <div className={`${wrpperClassName} ${guide ? "mt-2.5" : ""}`}>
+    <div
+      className={`relative flex ${wrpperClassName}`}
+      ref={wrapperRef}
+      onBlur={handleBlur}
+    >
       {parts.map((p, index) => (
         <div key={index} className="flex flex-col relative">
-          {guide && (
-            <span className="text-[11px] text-center opacity-60 absolute -top-4 left-3 -translate-x-1/2 whitespace-nowrap">
-              {labels[index]}
-            </span>
-          )}
-
-          <input
-            className={`${className} !min-w-0 !w-10`}
-            value={p}
-            // maxLength={2}
-            onChange={(e) => updatePart(index, e.target.value, e)}
-            onKeyDown={(e) => handleArrow(index, e)}
-            onBlur={(e) => onBlur?.(parts.join(":"), e)}
-          />
+          <div className="flex min-w-5 items-center">
+            {index !== 0 && <span>:</span>}
+            <input
+              ref={(el) => (inputRefs.current[index] = el)}
+              className={`${className} outline-0 text-center !min-w-0 !w-10`}
+              value={String(p).padStart(2, "0")}
+              autoFocus={index === 0}
+              onFocus={(e) => {
+                showTooltip(e, labels[index]);
+              }}
+              onChange={(e) => updatePart(index, e.target.value, e)}
+              onKeyDown={(e) => {
+                handleArrow(index, e);
+              }}
+            />
+          </div>
         </div>
       ))}
     </div>

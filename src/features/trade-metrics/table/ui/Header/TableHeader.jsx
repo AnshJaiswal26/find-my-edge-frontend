@@ -3,11 +3,8 @@ import { useTableStore } from "@features/trade-metrics/table/store";
 
 export function TableHeader({ tableRef }) {
   const columnsOrder = useTableStore((s) => s.columnsOrder);
-  console.log(columnsOrder);
   const groupBy = useTableStore((s) => s.groupBy?.key);
   const scrollEdge = useTableStore((s) => s.scrollEdge);
-
-  
 
   return (
     <div

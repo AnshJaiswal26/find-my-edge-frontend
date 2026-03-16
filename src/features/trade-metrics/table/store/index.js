@@ -1,11 +1,9 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-import { createSelectionSlice } from "./selection.slice";
-import { createPopupSlice } from "./popup.slice";
 import { createFilterSlice } from "./filter.slice";
 import { createSortSlice } from "./sort.slice";
-import { createDragSlice } from "./drag.slice";
+import { createUiSlice } from "./ui.slice";
 import { createCoreSlice } from "./core.slice";
 import { createComputeSlice } from "./compute.slice";
 import { createGroupSlice } from "./group.slice";
@@ -38,11 +36,7 @@ export const useTableStore = create(
 
     ...createGroupSlice(set, get),
 
-    ...createSelectionSlice(set, get),
-
-    ...createDragSlice(set, get),
-
-    ...createPopupSlice(set, get),
+    ...createUiSlice(set, get),
 
     ...createFilterSlice(set, get),
 

@@ -53,7 +53,7 @@ export const createChartsSlice = (set, get) => ({
 
     set((s) => {
       s.chartsOrder = s.chartsOrder.filter((id) => id !== chartId);
-      delete s.chartGridLayout?.[chartId];
+      delete s.gridLayout?.[chartId];
     });
 
     debounceDelete(chartId);

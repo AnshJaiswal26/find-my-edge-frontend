@@ -39,7 +39,8 @@ export function InputField({
           if (commitMode) onCommit?.(parsed);
           onBlur?.(e);
         }}
-        className={`${BASE_CLASS} max-w-50 min-w-30 py-4.5 ${sizes?.input} ${classNames?.input}`}
+        className={`py-4.5 ${sizes?.input} ${classNames?.input}`}
+        wrpperClassName="flex focus-within:border-(--info) border border-(--border) rounded"
         {...props}
       />
     );

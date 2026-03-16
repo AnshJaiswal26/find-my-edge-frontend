@@ -76,12 +76,13 @@ export const CartesianChartForm = forwardRef(
         const payload = {
           chartType: type,
           layout,
+          mode,
           xMetric: seriesX,
           series: seriesY,
         };
         // console.log("Payload:", payload);
 
-        if (groupSpec?.field || groupSpec?.type) {
+        if (groupSpec?.field || groupSpec?.kind) {
           payload.groupSpec = draftToSpec(groupSpec);
         }
 
@@ -124,7 +125,7 @@ export const CartesianChartForm = forwardRef(
               onChange={setGroupSpec}
             />
 
-            {ChartMode.GROUP_AGGREGATE && (
+            {mode == ChartMode.GROUP_AGGREGATE && (
               <ExpressionBuilder
                 ref={builderRef}
                 value={""}
@@ -171,7 +172,11 @@ export const CartesianChartForm = forwardRef(
                 getLabel={(o) => o.label}
                 getKey={(o) => o.id}
                 onChange={(o) => {
-                  setSeriesX({ field: o.id, label: o.label, type: o.type });
+                  setSeriesX({
+                    field: o.id,
+                    label: o.label,
+                    type: o.semanticType,
+                  });
                   setLayout((p) => ({ ...p, xTitleText: o.label }));
                 }}
               />

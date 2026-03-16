@@ -4,7 +4,7 @@ import { useTableStore } from "@features/trade-metrics/table/store";
 import { createColumnDragController } from "@features/trade-metrics/table/interaction/columnDragController";
 import { useTradeStore } from "@shared/stores";
 import { showTooltip, hideTooltip } from "@shared/components/ui/tooltip";
-import { SchemaSource } from "@lib/analytics/schema";
+import { SchemaSource, SemanticType } from "@lib/analytics/schema";
 
 const controller = createColumnDragController();
 
@@ -20,16 +20,21 @@ export function ColumnHeader(props) {
   const isHidden = useTradeStore(
     (s) => s.schemasById[props.colId].hidden === true,
   );
-  console.log(isHidden);
+
   if (isHidden) return null;
-  return <ColumnHeaderContext {...props} />;
+  return <ColumnHeaderContent {...props} />;
 }
 
-function ColumnHeaderContext({ colId, index, tableRef, isGroupColumn }) {
+function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
   const headerRef = useRef(null);
 
   const column = useTradeStore((s) => s.schemasById[colId]);
-  const width = useTableStore((s) => s.columnWidths?.[colId] ?? 150);
+  const width = useTableStore(
+    (s) =>
+      s.columnWidths[colId] ??
+      (column.semanticType === SemanticType.DATETIME ? 200 : 150),
+  );
+
   const isColEditable = column.source !== SchemaSource.COMPUTED;
   const isColUnlocked = useTableStore(
     (s) => s.lockedColumnsMap?.[colId] !== true,
@@ -47,7 +52,7 @@ function ColumnHeaderContext({ colId, index, tableRef, isGroupColumn }) {
   } = useTableStore.getState();
 
   const handlePointerDown = (e, mode) => {
-    e.preventDefault();
+    // e.preventDefault();
     unselectColumn();
 
     const headerEl = headerRef.current;

@@ -34,7 +34,7 @@ export function Table() {
     );
 
   return (
-    <div className="flex flex-col flex-1 gap-4 relative -m-2">
+    <div className="flex flex-col h-full gap-4 relative -m-2">
       <Popups />
       <Toolbar
         onAddTrade={addRow}
@@ -60,7 +60,7 @@ export function Table() {
           text-(--text)
           text-sm
           max-h-[440px]
-          w-full
+          w-full h-full
           overflow-auto
         "
         >

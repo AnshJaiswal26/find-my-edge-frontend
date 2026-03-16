@@ -3,103 +3,42 @@ import Toolbar from "../Toolbar";
 import { ChartContainer } from "./ChartContainer";
 import { ChartTitle } from "./ChartTitle";
 import { ChartWithConfig } from "./ChartWithConfig";
-import { buildGroups } from "@lib/analytics/engine/data";
-import { Loader, Select, Skeleton } from "@shared/components/ui";
-import { useEffect, useMemo, useState } from "react";
-import { formatGroupValue } from "@shared/utils";
+import { Loader, Skeleton } from "@shared/components/ui";
+import { useEffect, useState } from "react";
 
-const GroupOptionSelect = ({
-  chartId,
-  groups,
-  groupSpec,
-  schemasById,
-  selectedGroupIndex,
-  setSelectedGroupIndex,
-}) => {
-  const format = useChartStore((s) => s.charts[chartId].layout.xFormat);
-  const decimals = useChartStore((s) => s.charts[chartId].layout.xDecimals);
-  const isKeySame = useChartStore(
-    (s) => s.charts[chartId].xMetric.field === groupSpec.field,
-  );
-
-  return (
-    <Select
-      classNames={{ button: "py-1.5!" }}
-      options={groups}
-      value={groups[selectedGroupIndex]}
-      getLabel={(g) => {
-        const display = isKeySame
-          ? {
-              format,
-              decimals,
-            }
-          : schemasById[groupSpec.key].display;
-
-        return formatGroupValue(
-          g.meta,
-          schemasById[groupSpec.key].semanticType,
-          display,
-        );
-      }}
-      onChange={(_, i) => setSelectedGroupIndex(i)}
-    />
-  );
-};
+import { ChartCategory, ChartMode } from "@modules/charts/apex/model/enums";
+import { GroupOptionSelect } from "./GroupOptionsSelect";
 
 export default function CustomApexChart({
   chartId,
   type,
   category,
   mode,
-  seriesOrder,
-  seriesById,
   schemasById,
   onRemove,
   ids,
   seriesSelector,
 }) {
   const groupSpec = useChartStore((s) => s.charts[chartId]?.groupSpec);
-  const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
   const [ready, setReady] = useState(false);
-
-  const groups = useMemo(() => {
-    if (!groupSpec) return null;
-
-    return buildGroups({
-      tradesOrder: seriesOrder,
-      tradesById: seriesById,
-      groupSpec,
-      getValue: (trade, key) => trade[key],
-    });
-  }, [seriesOrder, seriesById, groupSpec]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setReady(true));
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const filteredIds = useMemo(
-    () =>
-      mode === "GROUP_SELECT"
-        ? groups?.[selectedGroupIndex]?.tradeIds || ids
-        : ids,
-    [mode, groups, selectedGroupIndex, ids],
-  );
-
   return (
     <ChartContainer chartId={chartId}>
       <div className="flex items-center justify-between">
         <ChartTitle chartId={chartId} />
-        {groups && category !== "grouped" && mode === "GROUP_SELECT" && (
-          <GroupOptionSelect
-            chartId={chartId}
-            groups={groups}
-            groupSpec={groupSpec}
-            schemasById={schemasById}
-            selectedGroupIndex={selectedGroupIndex}
-            setSelectedGroupIndex={setSelectedGroupIndex}
-          />
-        )}
+        {category !== ChartCategory.PARTITION &&
+          mode === ChartMode.GROUP_SELECT && (
+            <GroupOptionSelect
+              chartId={chartId}
+              groupSpec={groupSpec}
+              schemasById={schemasById}
+            />
+          )}
       </div>
 
       <div className="flex h-full w-full relative">
@@ -111,11 +50,9 @@ export default function CustomApexChart({
               chartId={chartId}
               type={type}
               category={category}
-              groups={groups}
-              groupSpec={groupSpec}
-              selectedGroupIndex={selectedGroupIndex}
-              ids={filteredIds}
+              ids={ids}
               seriesSelector={seriesSelector}
+              // groupSelector={(id, field) => }
             />
             <Toolbar type={type} chartId={chartId} onRemove={onRemove} />
           </>

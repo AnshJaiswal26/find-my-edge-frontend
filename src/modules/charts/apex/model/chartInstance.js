@@ -15,6 +15,7 @@ import {
 } from "../options";
 import { ChartType } from "./enums";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
+import { buildGroups } from "@lib/analytics/engine/data";
 
 export default class ChartInstance {
   constructor(container, chartId, store, dataset) {
@@ -27,11 +28,16 @@ export default class ChartInstance {
 
     this.processedIds = null;
 
+    this.groups = null;
+    this.currentGroupIndex = 0;
+
     this.filterHash = 0;
     this.sortHash = 0;
 
     this.seriesSelector = dataset.seriesSelector;
     this.groupSelector = dataset.groupSelector;
+
+    this.initGroups();
 
     this.render();
   }
@@ -70,6 +76,18 @@ export default class ChartInstance {
     this.apex.updateSeries(series, true);
   }
 
+  initGroups() {
+    const { groupSpec } = this.chart;
+
+    if (!groupSpec) return;
+
+    this.groups = buildGroups({
+      ids: this.originalIds,
+      groupSpec,
+      getValue: this.seriesSelector,
+    });
+  }
+
   destroy() {
     this.apex?.destroy();
   }
@@ -86,6 +104,23 @@ export default class ChartInstance {
     this.apex.highlightSeries(seriesName);
   }
 
+  showGroup(index) {
+    if (!this.groups || !this.groups[index]) return;
+
+    if (this.currentGroupIndex === index) return;
+
+    this.currentGroupIndex = index;
+
+    this.update();
+  }
+
+  getGroups() {
+    return {
+      groups: this.groups ?? [],
+      currentGroupIndex: this.currentGroupIndex,
+    };
+  }
+
   /* =========================
      DATA PIPELINE
   ========================= */
@@ -99,15 +134,21 @@ export default class ChartInstance {
   }
 
   computeIds() {
-    const processed = this.computeProcessedIds();
+    let ids;
+
+    if (this.groups) {
+      ids = this.groups[this.currentGroupIndex]?.ids ?? [];
+    } else {
+      ids = this.computeProcessedIds();
+    }
 
     const { selection } = this.chart;
 
     if (selection?.from != null && selection?.to != null) {
-      return processed.slice(selection.from, selection.to);
+      return ids.slice(selection.from, selection.to);
     }
 
-    return processed;
+    return ids;
   }
 
   computeProcessedIds() {

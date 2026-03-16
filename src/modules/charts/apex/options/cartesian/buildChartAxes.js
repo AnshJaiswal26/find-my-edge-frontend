@@ -27,7 +27,7 @@ export const buildChartAxes = ({
 
         const format = { format: layout.xFormat, decimals: layout.xDecimals };
 
-        if (mode === ChartMode.SERIES) {
+        if (mode === ChartMode.SERIES || mode == ChartMode.GROUP_SELECT) {
           const item = seriesSelector(ids[index], xMetric.field);
           if (!item) return 0;
           return formatValue(item, xMetric.type, format);
@@ -36,7 +36,7 @@ export const buildChartAxes = ({
         // if (mode === "GROUP_AGGREGATE") {
         //   return formatGroupValue(meta, xMetric.type, format);
         // }
-        const group = groupSelector(ids[index], xMetric.field);
+        const group = seriesSelector(ids[index], xMetric.field);
         if (!group) return "";
 
         return formatGroupValue(group.meta, xMetric.type, format);

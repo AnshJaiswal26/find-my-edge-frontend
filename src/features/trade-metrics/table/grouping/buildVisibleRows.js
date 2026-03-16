@@ -9,7 +9,7 @@ export function buildVisibleRows(groups, expandedGroups) {
     });
 
     if (expandedGroups[group.groupId]) {
-      for (const rowId of group.tradeIds) {
+      for (const rowId of group.ids) {
         result.push({ type: "row", rowId, index });
         index++;
       }
