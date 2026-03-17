@@ -8,14 +8,10 @@ import { SortButton } from "./SortButton";
 import { ZoomInButton } from "./ZoomInButton";
 import { ZoomOutButton } from "./ZoomOutButton";
 
-import { useChartStore } from "@modules/charts/apex/store";
-
-export default function Toolbar({ chartId, onRemove }) {
-  const chart = useChartStore((s) => s.charts[chartId]);
-
+export default function Toolbar({ chartId, category }) {
   const isGroupType =
-    chart.category === ChartCategory.PARTITION ||
-    chart.category === ChartCategory.RADIAL_AXIS;
+    category === ChartCategory.PARTITION ||
+    category === ChartCategory.RADIAL_AXIS;
 
   return (
     <div className="apexcharts-custom-toolbar">
@@ -31,7 +27,7 @@ export default function Toolbar({ chartId, onRemove }) {
 
       <LayoutButton chartId={chartId} />
       <DownloadButton chartId={chartId} />
-      <RemoveButton chartId={chartId} onRemove={onRemove} />
+      <RemoveButton chartId={chartId} />
     </div>
   );
 }

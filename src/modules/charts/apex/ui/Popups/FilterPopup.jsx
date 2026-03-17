@@ -4,7 +4,7 @@ import { Popup } from "@shared/components/layout";
 import { FilterBuilder } from "@shared/components/ui";
 import { useChartStore } from "@modules/charts/apex/store";
 
-export default function FilterPopup({ chartId, schemasById }) {
+export default function FilterPopup({ chartId }) {
   const appliedfilters = useChartStore((s) => s.charts[chartId].filters);
 
   const clearFilters = useChartStore((s) => s.clearFilters);
@@ -21,23 +21,6 @@ export default function FilterPopup({ chartId, schemasById }) {
 
   const [filters, setFilters] = useState([...appliedfilters]);
 
-  const addFilter = () => {
-    setFilters((f) => [
-      ...f,
-      { key: "", operator: "none", value: 0, from: 0, to: 0 },
-    ]);
-  };
-
-  const updateFilter = (index, patch) => {
-    setFilters((f) =>
-      f.map((item, i) => (i === index ? { ...item, ...patch } : item)),
-    );
-  };
-
-  const removeFilter = (index) => {
-    setFilters((f) => f.filter((_, i) => i !== index));
-  };
-
   return (
     <Popup open>
       <Popup.Container className="w-50 max-w-50">
@@ -47,10 +30,9 @@ export default function FilterPopup({ chartId, schemasById }) {
           <FilterBuilder
             filters={filters}
             fieldOptions={seriesConfig}
-            getFieldType={(key) => schemasById[key]?.semanticType}
-            addFilter={addFilter}
-            updateFilter={updateFilter}
-            removeFilter={removeFilter}
+            getKey={(s) => s.id}
+            getType={(id) => seriesById[id]?.type}
+            setFilters={setFilters}
           />
         </Popup.Body>
 

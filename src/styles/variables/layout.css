@@ -85,3 +85,24 @@
   );
   animation: shimmer 1.5s infinite;
 }
+
+.ui-tooltip {
+  position: fixed;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: #000;
+  color: white;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 9999;
+  transition: opacity 0.12s ease;
+}
+
+.ui-tooltip-arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #000;
+  transform: rotate(45deg);
+}

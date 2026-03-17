@@ -5,10 +5,10 @@ export const createSortSlice = (set, get) => ({
   /*                SORT ACTIONS                     */
   /* ----------------------------------------------- */
 
-  applySort(chartId, key, operator) {
+  applySort(chartId, sort) {
     set((s) => {
-      s.charts[chartId].sort.key = key;
-      s.charts[chartId].sort.operator = operator;
+      s.charts[chartId].sort.key = sort.key;
+      s.charts[chartId].sort.operator = sort.operator;
     });
     chartEngine.get(chartId)?.recomputeSeries();
 

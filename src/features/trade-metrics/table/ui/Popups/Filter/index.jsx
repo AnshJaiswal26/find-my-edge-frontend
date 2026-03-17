@@ -2,10 +2,10 @@ import { Popup } from "@shared/components/layout";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { FilterBuilder } from "@shared/components/ui";
 import { useTradeStore } from "@shared/stores";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export default function FilterPopup() {
-  const filters = useTableStore((s) => s.filters);
+  const appliedfilters = useTableStore((s) => s.filters);
 
   const schemasOrder = useTradeStore((s) => s.schemasOrder);
   const schemasById = useTradeStore((s) => s.schemasById);
@@ -15,14 +15,9 @@ export default function FilterPopup() {
     [schemasById, schemasOrder],
   );
 
-  const {
-    addFilter,
-    updateFilter,
-    removeFilter,
-    clearFilters,
-    closePopup,
-    applyFilters,
-  } = useTableStore.getState();
+  const [filters, setFilters] = useState([...appliedfilters]);
+
+  const { clearFilters, closePopup, applyFilters } = useTableStore.getState();
 
   return (
     <Popup open>
@@ -33,17 +28,16 @@ export default function FilterPopup() {
           <FilterBuilder
             filters={filters}
             fieldOptions={schemas}
-            getFieldType={(key) => schemasById[key]?.semanticType}
-            addFilter={addFilter}
-            updateFilter={updateFilter}
-            removeFilter={removeFilter}
+            getKey={(s) => s.field}
+            getType={(key) => schemasById[key]?.semanticType}
+            setFilters={setFilters}
           />
         </Popup.Body>
 
         <Popup.Footer
           text={["Clear", "Apply"]}
           onCancel={clearFilters}
-          onApply={applyFilters}
+          onApply={() => applyFilters(filters)}
         />
       </Popup.Container>
     </Popup>

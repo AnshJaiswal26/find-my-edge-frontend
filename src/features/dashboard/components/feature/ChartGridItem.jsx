@@ -6,12 +6,12 @@ import { ChartCategory } from "@modules/charts/apex/model/enums";
 import { useRef } from "react";
 import { useGridStackWidget } from "@shared/hooks";
 
-export default function ChartGridItem({ id, onRemove, ...props }) {
+export default function ChartGridItem(props) {
   const itemRef = useRef(null);
 
-  const savedLayout = useDashboardStore((s) => s.gridLayout?.[id]);
+  const savedLayout = useDashboardStore((s) => s.gridLayout?.[props.id]);
 
-  const { type, category, mode } = useChartStore.getState().charts[id];
+  const { type, category, mode } = useChartStore.getState().charts[props.id];
 
   useGridStackWidget(itemRef);
 
@@ -19,7 +19,7 @@ export default function ChartGridItem({ id, onRemove, ...props }) {
     <div
       ref={itemRef}
       className="grid-stack-item"
-      gs-id={id}
+      gs-id={props.id}
       gs-x={savedLayout?.x}
       gs-y={savedLayout?.y}
       gs-w={savedLayout?.w ?? (category === ChartCategory.PARTITION ? 10 : 15)}
@@ -31,11 +31,10 @@ export default function ChartGridItem({ id, onRemove, ...props }) {
       <div className="grid-stack-item-content rounded-[8px] shadow-xl">
         <div className="h-full relative">
           <CustomApexChart
-            chartId={id}
+            chartId={props.id}
             type={type}
             mode={mode}
             category={category}
-            onRemove={onRemove}
             {...props}
           />
         </div>

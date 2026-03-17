@@ -1,4 +1,3 @@
-import { useChartStore } from "@modules/charts/apex/store";
 import Toolbar from "../Toolbar";
 import { ChartContainer } from "./ChartContainer";
 import { ChartTitle } from "./ChartTitle";
@@ -14,12 +13,10 @@ export default function CustomApexChart({
   type,
   category,
   mode,
-  schemasById,
-  onRemove,
-  ids,
-  seriesSelector,
+  dataset,
+  getDisplayValue,
+  getSemanticType,
 }) {
-  const groupSpec = useChartStore((s) => s.charts[chartId]?.groupSpec);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -35,8 +32,8 @@ export default function CustomApexChart({
           mode === ChartMode.GROUP_SELECT && (
             <GroupOptionSelect
               chartId={chartId}
-              groupSpec={groupSpec}
-              schemasById={schemasById}
+              getDisplayValue={getDisplayValue}
+              getSemanticType={getSemanticType}
             />
           )}
       </div>
@@ -50,11 +47,9 @@ export default function CustomApexChart({
               chartId={chartId}
               type={type}
               category={category}
-              ids={ids}
-              seriesSelector={seriesSelector}
-              // groupSelector={(id, field) => }
+              dataset={dataset}
             />
-            <Toolbar type={type} chartId={chartId} onRemove={onRemove} />
+            <Toolbar type={type} chartId={chartId} category={category} />
           </>
         )}
       </div>

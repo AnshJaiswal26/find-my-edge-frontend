@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { useDashboardStore } from "@features/dashboard/store";
 import AddChartForm from "./AddChartForm";
 import { AddStatsForm } from "./AddStatsForm";
+import { useTradeStore } from "@shared/stores";
 
 const CHART_TYPES = [
   { id: "stat", label: "Stat Card" },
@@ -15,15 +16,17 @@ const CHART_TYPES = [
   { id: "radar", label: "Radar" },
 ];
 
-export default function AddWidgetPopup({ schemasById }) {
+export default function AddWidgetPopup() {
   const isOpen = useDashboardStore((s) => s.activePopup === "widget");
   if (!isOpen) return null;
 
-  return <AddWidgetPopupContent schemasById={schemasById} />;
+  return <AddWidgetPopupContent />;
 }
 
-function AddWidgetPopupContent({ schemasById }) {
+function AddWidgetPopupContent() {
   const formRef = useRef(null);
+
+  const schemasById = useTradeStore((s) => s.schemasById);
 
   const { closePopup } = useDashboardStore.getState();
 

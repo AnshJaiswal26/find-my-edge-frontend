@@ -4,10 +4,20 @@ import { formatGroupValue } from "@shared/utils";
 import { chartEngine } from "@modules/charts/apex/model/chartEngine";
 import { useChartStore } from "@modules/charts/apex/store";
 import { useChartEngineEvent } from "@modules/charts/apex/hooks";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-export const GroupOptionSelect = ({ chartId, schemasById }) => {
-  useChartEngineEvent("chart:init");
+export const GroupOptionSelect = ({
+  chartId,
+  getDisplayValue,
+  getSemanticType,
+}) => {
+  const [, setReady] = useState(false);
+
+  useChartEngineEvent("chart:init", (id) => {
+    if (chartId === id) {
+      setReady(true);
+    }
+  });
 
   const format = useChartStore((s) => s.charts[chartId].layout.xFormat);
   const decimals = useChartStore((s) => s.charts[chartId].layout.xDecimals);
@@ -17,7 +27,11 @@ export const GroupOptionSelect = ({ chartId, schemasById }) => {
   const isKeySame = useChartStore(
     (s) => s.charts[chartId].xMetric.field === groupSpecField,
   );
-  const { groups, currentGroupIndex } = chartEngine.getGroups(chartId);
+
+  const { groups, currentGroupIndex } = useMemo(
+    () => chartEngine.getGroups(chartId),
+    [],
+  );
 
   const [currentIndex, setCurrentIndex] = useState(currentGroupIndex);
 
@@ -30,15 +44,12 @@ export const GroupOptionSelect = ({ chartId, schemasById }) => {
       value={groups[currentIndex]}
       getLabel={(g) => {
         const display = isKeySame
-          ? {
-              format,
-              decimals,
-            }
-          : schemasById[groupSpecField].display;
+          ? { format, decimals }
+          : getDisplayValue(groupSpecField);
 
         return formatGroupValue(
           g.meta,
-          schemasById[groupSpecField].semanticType,
+          getSemanticType(groupSpecField),
           display,
         );
       }}

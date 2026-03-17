@@ -8,7 +8,6 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
   const onBlur = () => {
     const normalized = parseInputValue(draft, type);
     onCommit(normalized);
-    console.log({ normalized }, "instance of: ", typeof normalized);
     setEditing(false);
   };
 

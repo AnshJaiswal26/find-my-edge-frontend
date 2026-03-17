@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ChartPopups } from "@modules/charts";
 
@@ -27,9 +27,7 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
-    if (isNotConnected && isEmpty) {
-      return;
-    }
+    if (isNotConnected && isEmpty) return;
 
     const init = async () => {
       await dashboardInit();
@@ -38,52 +36,20 @@ export default function Dashboard() {
     init();
   }, []);
 
-  // console.log(isNotConnected);
-
   if (isNotConnected && isEmpty)
     return <BrokerConnectCard broker={Brokers.DHAN} />;
 
   if (loading) return <DashboardSkeleton />;
   if (isEmpty) return <NoTradesEmptyState />;
 
-  return <DashboardContext />;
+  return <DashboardContent />;
 }
 
-function DashboardContext() {
-  const seriesOrder = useTradeStore((s) => s.tradesOrder);
-  const tradesById = useTradeStore((s) => s.tradesById);
-  const derivedByTradeId = useTradeStore((s) => s.derivedByTradeId);
-
-  const schemasById = useTradeStore((s) => s.schemasById);
-  const schemasOrder = useTradeStore((s) => s.schemasOrder);
-
-  const seriesById = useMemo(() => {
-    const result = {};
-
-    seriesOrder.forEach((id) => {
-      result[id] = {
-        ...tradesById[id],
-        ...(derivedByTradeId[id] || {}),
-      };
-    });
-
-    return result;
-  }, [seriesOrder, tradesById, derivedByTradeId]);
-
+function DashboardContent() {
   return (
     <>
-      <ChartPopups
-        seriesById={seriesById}
-        seriesOrder={seriesOrder}
-        schemasById={schemasById}
-        schemasOrder={schemasOrder}
-      />
-      <AddWidgetPopup
-        seriesById={seriesById}
-        seriesOrder={seriesOrder}
-        schemasById={schemasById}
-        schemasOrder={schemasOrder}
-      />
+      <ChartPopups />
+      <AddWidgetPopup />
 
       {/* <ConfirmationPopup
         open={true}
@@ -120,12 +86,7 @@ function DashboardContext() {
 
       <StatsGridStack />
 
-      <ChartGridStack
-        seriesById={seriesById}
-        seriesOrder={seriesOrder}
-        schemasById={schemasById}
-        schemasOrder={schemasOrder}
-      />
+      <ChartGridStack />
     </>
   );
 }

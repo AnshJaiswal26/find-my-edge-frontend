@@ -29,7 +29,6 @@ export default function DurationInput({
     if (wrapperRef.current?.contains(nextFocused)) return;
 
     onBlur?.(parts.join(":"));
-    hideTooltip();
   };
 
   return (
@@ -47,9 +46,10 @@ export default function DurationInput({
               className={`${className} outline-0 text-center !min-w-0 !w-10`}
               value={String(p).padStart(2, "0")}
               autoFocus={index === 0}
-              onFocus={(e) => {
+              onMouseEnter={(e) => {
                 showTooltip(e, labels[index]);
               }}
+              onMouseLeave={hideTooltip}
               onChange={(e) => updatePart(index, e.target.value, e)}
               onKeyDown={(e) => {
                 handleArrow(index, e);

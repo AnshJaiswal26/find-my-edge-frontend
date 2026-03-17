@@ -9,32 +9,6 @@ export const createFilterSlice = (set, get) => ({
   /*                 FILTER ACTIONS                   */
   /* ------------------------------------------------ */
 
-  addFilter() {
-    set((s) => {
-      s.filters.push({
-        id: crypto.randomUUID(),
-        key: Object.keys(s.columnsById)[0],
-        operator: "none",
-        value: 0,
-        from: 0,
-        to: 0,
-      });
-    });
-  },
-
-  updateFilter(index, patch) {
-    set((s) => {
-      const f = s.filters.find((_, i) => i === index);
-      if (f) Object.assign(f, patch);
-    });
-  },
-
-  removeFilter(index) {
-    set((s) => {
-      s.filters = s.filters.filter((f, i) => i !== index);
-    });
-  },
-
   clearFilters() {
     set((s) => {
       s.filters = [];
@@ -49,9 +23,8 @@ export const createFilterSlice = (set, get) => ({
     closePopup();
   },
 
-  applyFilters() {
+  applyFilters(filters) {
     const {
-      filters,
       closePopup,
       groupBy,
       buildGroups,
@@ -78,6 +51,7 @@ export const createFilterSlice = (set, get) => ({
       set({ filteredRowOrder: [] });
     } else {
       set((s) => {
+        s.filters = filters;
         s.filteredRowOrder = order.filter((tradeId) => {
           return applyFilters(filters, tradeId, getValue);
         });

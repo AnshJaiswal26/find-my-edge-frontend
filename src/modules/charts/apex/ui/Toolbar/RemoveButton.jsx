@@ -1,12 +1,13 @@
 import { Trash2 } from "lucide-react";
 import { ToolbarButton } from "./ToolbarButton";
+import { chartEngine } from "../../model/chartEngine";
 
-export function RemoveButton({ chartId, onRemove }) {
+export function RemoveButton({ chartId }) {
   return (
     <ToolbarButton
       icon={Trash2}
       title="Remove Chart"
-      onClick={(e) => onRemove?.(chartId, e)}
+      onClick={() => chartEngine.remove(chartId)}
     />
   );
 }

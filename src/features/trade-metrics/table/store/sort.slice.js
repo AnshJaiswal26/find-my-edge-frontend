@@ -13,13 +13,6 @@ export const createSortSlice = (set, get) => ({
   /*                SORT ACTIONS                     */
   /* ----------------------------------------------- */
 
-  updateSort(columnId, operator) {
-    set((s) => {
-      s.sort.columnId = columnId;
-      s.sort.operator = operator;
-    });
-  },
-
   clearSort() {
     const { buildGroups, groupBy, closePopup, updateLockedColumns } = get();
     set((s) => {
@@ -34,9 +27,8 @@ export const createSortSlice = (set, get) => ({
     closePopup();
   },
 
-  applySort() {
+  applySort(sort) {
     const {
-      sort,
       groupBy,
       closePopup,
       buildGroups,
@@ -66,6 +58,7 @@ export const createSortSlice = (set, get) => ({
     const order = filteredRowOrder.length ? filteredRowOrder : tradesOrder;
 
     set((s) => {
+      s.sort = sort;
       s.sortedRowOrder = applySort(
         order,
         { key: sort.columnId, operator: sort.operator },

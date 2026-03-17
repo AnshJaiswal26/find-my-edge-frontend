@@ -6,11 +6,27 @@ import { SemanticType } from "@lib/analytics/schema";
 export default function FilterBuilder({
   filters,
   fieldOptions,
-  getFieldType,
-  addFilter,
-  updateFilter,
-  removeFilter,
+  getType,
+  getKey,
+  setFilters,
 }) {
+  const addFilter = () => {
+    setFilters((f) => [
+      ...f,
+      { key: "", operator: "none", value: 0, from: 0, to: 0 },
+    ]);
+  };
+
+  const updateFilter = (index, patch) => {
+    setFilters((f) =>
+      f.map((item, i) => (i === index ? { ...item, ...patch } : item)),
+    );
+  };
+
+  const removeFilter = (index) => {
+    setFilters((f) => f.filter((_, i) => i !== index));
+  };
+
   return (
     <>
       {filters.length === 0 && (
@@ -20,7 +36,7 @@ export default function FilterBuilder({
       )}
 
       {filters.map((f, index) => {
-        const type = getFieldType(f.key);
+        const type = getType(f.key);
 
         return (
           <div
@@ -36,14 +52,15 @@ export default function FilterBuilder({
                 label="Field:"
                 options={fieldOptions}
                 getLabel={(o) => o.label ?? o.name}
-                getKey={(o) => o.field ?? o.id}
+                getKey={getKey}
                 value={f.key}
                 onChange={(o) =>
                   updateFilter(index, {
-                    key: o.field ?? o.id,
+                    key: getKey(o),
                     operator: "none",
                     value: "",
-                    value2: "",
+                    from: "",
+                    to: "",
                   })
                 }
               />

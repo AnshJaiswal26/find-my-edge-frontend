@@ -16,10 +16,9 @@ export default function SortPopup() {
 
   const sort = useTableStore((s) => s.sort);
 
-  const [draft, setDraft] = useState(sort);
+  const [draft, setDraft] = useState({ ...sort });
 
-  const { updateSort, applySort, clearSort, closePopup } =
-    useTableStore.getState();
+  const { applySort, clearSort, closePopup } = useTableStore.getState();
 
   return (
     <Popup open>
@@ -52,14 +51,8 @@ export default function SortPopup() {
 
         <Popup.Footer
           text={["Clear", "Apply"]}
-          onCancel={() => {
-            setDraft({ columnId: null, operator: "none" });
-            clearSort();
-          }}
-          onApply={() => {
-            updateSort(draft.columnId, draft.operator);
-            applySort();
-          }}
+          onCancel={clearSort}
+          onApply={() => applySort(draft)}
         />
       </Popup.Container>
     </Popup>

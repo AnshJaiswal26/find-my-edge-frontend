@@ -2,6 +2,7 @@ import ChartInstance from "./chartInstance";
 
 class ChartEngine {
   charts = new Map();
+  datasets = new Map();
   listeners = new Map();
 
   /* ---------------- EVENTS ---------------- */
@@ -23,19 +24,29 @@ class ChartEngine {
   }
 
   /* ---------------- CHART LIFECYCLE ---------------- */
-  create(container, chartId, store, dataset) {
-    const chart = new ChartInstance(container, chartId, store, dataset);
+  create(container, chartId, store) {
+    const chart = new ChartInstance(container, chartId, store);
 
     this.charts.set(chartId, chart);
 
     this.emit("chart:init", chartId);
   }
 
+  render(chartId) {
+    this.charts.get(chartId)?.render();
+  }
+
   destroy(chartId) {
     this.charts.get(chartId)?.destroy();
     this.charts.delete(chartId);
 
+    this.datasets.delete(chartId);
+
     this.emit("chart:destroy", chartId);
+  }
+
+  remove(chartId) {
+    this.emit("chart:remove", chartId);
   }
 
   updateLayout(chartId) {
@@ -61,6 +72,59 @@ class ChartEngine {
 
   update(chartId) {
     this.charts.get(chartId)?.update();
+  }
+
+  getDataset(chartId) {
+    return this.datasets.get(chartId);
+  }
+
+  setDataset(chartId, dataset) {
+    const chart = this.charts.get(chartId);
+
+    if (this.datasets.has(chartId)) {
+      const existingDataset = this.datasets.get(chartId);
+
+      if (chart) {
+        chart.setDataset(existingDataset);
+      }
+
+      return;
+    }
+
+    this.datasets.set(chartId, dataset);
+
+    if (chart) {
+      chart.setDataset(dataset);
+    }
+  }
+
+  updateDataset(chartId, dataset) {
+    if (this.datasets.has(chartId)) return;
+
+    this.datasets.set(chartId, dataset);
+
+    const chart = this.charts.get(chartId);
+    if (chart) chart.setDataset(dataset);
+  }
+
+  mergeDataset(chartId, partialDataset) {
+    const currentDataset = this.datasets.get(chartId);
+
+    if (!currentDataset) return;
+
+    const nextDataset = {
+      ...currentDataset,
+      ...partialDataset,
+    };
+
+    this.datasets.set(chartId, nextDataset);
+
+    const chart = this.charts.get(chartId);
+    if (chart) {
+      chart.setDataset(nextDataset);
+    }
+
+    this.emit("dataset:merge", chartId);
   }
 }
 

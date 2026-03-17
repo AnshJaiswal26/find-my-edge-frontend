@@ -52,7 +52,7 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
   } = useTableStore.getState();
 
   const handlePointerDown = (e, mode) => {
-    // e.preventDefault();
+    e.preventDefault();
     unselectColumn();
 
     const headerEl = headerRef.current;
@@ -141,7 +141,16 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
       <div
         className={`flex font-bold items-center px-2 py-1 border-r border-(--border) justify-between`}
       >
-        {column.label}
+        <span
+          onMouseEnter={(e) =>
+            column.formula
+              ? showTooltip(e, column.formula.replace(/[\[\]]/g, ""))
+              : null
+          }
+          onMouseLeave={() => (column.formula ? hideTooltip() : null)}
+        >
+          {column.label}
+        </span>
         <div className="flex gap-2">
           {column.mode === "cumulative" && (
             <RefreshCcwDot
@@ -153,7 +162,15 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
               onMouseLeave={hideTooltip}
             />
           )}
-          {!editable && <LockKeyholeIcon size={13} />}
+          {!editable && (
+            <LockKeyholeIcon
+              size={13}
+              onMouseEnter={(e) =>
+                showTooltip(e, "Computed column - cannot be edited")
+              }
+              onMouseLeave={hideTooltip}
+            />
+          )}
         </div>
       </div>
     </div>

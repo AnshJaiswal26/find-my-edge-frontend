@@ -2,13 +2,7 @@ import { ChartLegend } from "./ChartLegend";
 import { ChartViewportWrapper } from "./ChartViewport";
 import { useChartStore } from "@modules/charts/apex/store";
 
-export function ChartWithConfig({
-  chartId,
-  type,
-  category,
-  ids,
-  seriesSelector,
-}) {
+export function ChartWithConfig({ chartId, type, category, dataset }) {
   const layout = useChartStore((s) => s.charts[chartId].layout);
   const seriesById = useChartStore((s) => s.charts[chartId].seriesById);
   const seriesOrder = useChartStore((s) => s.charts[chartId].seriesOrder);
@@ -32,8 +26,7 @@ export function ChartWithConfig({
         type={type}
         category={category}
         layout={layout}
-        ids={ids}
-        seriesSelector={seriesSelector}
+        dataset={dataset}
       />
     </div>
   );

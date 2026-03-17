@@ -3,6 +3,7 @@ import { useTableStore } from "@features/trade-metrics/table/store";
 import { Cell } from "../Cell/Cell";
 import { HighlighterIcon, Trash2 } from "lucide-react";
 import { useTradeStore } from "@shared/stores";
+import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
 
 export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
   const updateTradeValue = useTradeStore((s) => s.updateTradeValue);
@@ -55,7 +56,8 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
               bg-yellow-500/90 hover:bg-yellow-400
               text-black shadow
             "
-              title="Highlight row"
+              onMouseEnter={(e) => showTooltip(e, "Highlight Row")}
+              onMouseLeave={hideTooltip}
             >
               <HighlighterIcon size={16} />
             </button>
@@ -68,7 +70,8 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
               bg-red-600/90 hover:bg-red-500
               text-white shadow
             "
-              title="Delete row"
+              onMouseEnter={(e) => showTooltip(e, "Delete Row")}
+              onMouseLeave={hideTooltip}
             >
               <Trash2 size={16} />
             </button>

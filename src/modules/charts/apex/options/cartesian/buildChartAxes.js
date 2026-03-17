@@ -4,12 +4,11 @@ import { ChartMode } from "@modules/charts/apex/model/enums";
 export const buildChartAxes = ({
   ids,
   seriesSelector,
+  groupSelector,
   layout,
   series,
   mode,
   xMetric,
-  groupSelector,
-  type,
 }) => {
   const style = { fontSize: "0.75rem" };
 
@@ -33,10 +32,7 @@ export const buildChartAxes = ({
           return formatValue(item, xMetric.type, format);
         }
 
-        // if (mode === "GROUP_AGGREGATE") {
-        //   return formatGroupValue(meta, xMetric.type, format);
-        // }
-        const group = seriesSelector(ids[index], xMetric.field);
+        const group = groupSelector(ids[index]);
         if (!group) return "";
 
         return formatGroupValue(group.meta, xMetric.type, format);

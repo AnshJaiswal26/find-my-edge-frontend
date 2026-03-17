@@ -4,7 +4,7 @@ import { Select } from "@shared/components/ui";
 import { SORT_OPTIONS, SORT_TYPE } from "@shared/utils";
 import { useChartStore } from "@modules/charts/apex/store";
 
-export default function SortPopup({ chartId, schemasById }) {
+export default function SortPopup({ chartId }) {
   const sort = useChartStore((s) => s.charts[chartId].sort);
 
   const seriesOrder = useChartStore((s) => s.charts[chartId].seriesOrder);
@@ -30,15 +30,13 @@ export default function SortPopup({ chartId, schemasById }) {
             label="Column"
             options={seriesConfig}
             getLabel={(o) => o.label}
-            getKey={(o) => o.field}
+            getKey={(o) => o.id}
             value={draft.key}
-            onChange={(o) => setDraft({ key: o.field, operator: "none" })}
+            onChange={(o) => setDraft({ key: o.id, operator: "none" })}
           />
           <Select
             label="Sort Order"
-            options={
-              SORT_TYPE[schemasById?.[draft.key]?.semanticType] || ["none"]
-            }
+            options={SORT_TYPE[seriesById?.[draft.key]?.type] || ["none"]}
             getLabel={(o) => SORT_OPTIONS[o]}
             value={draft.operator}
             onChange={(o) => setDraft((p) => ({ ...p, operator: o }))}
@@ -47,13 +45,8 @@ export default function SortPopup({ chartId, schemasById }) {
 
         <Popup.Footer
           text={["Clear", "Apply"]}
-          onCancel={() => {
-            setDraft({ key: null, operator: "none" });
-            clearSort(chartId);
-          }}
-          onApply={() => {
-            applySort(chartId, draft.key, draft.operator);
-          }}
+          onCancel={() => clearSort(chartId)}
+          onApply={() => applySort(chartId, draft)}
         />
       </Popup.Container>
     </Popup>

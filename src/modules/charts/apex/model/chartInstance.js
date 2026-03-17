@@ -15,31 +15,31 @@ import {
 } from "../options";
 import { ChartType } from "./enums";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
-import { buildGroups } from "@lib/analytics/engine/data";
 
 export default class ChartInstance {
-  constructor(container, chartId, store, dataset) {
+  constructor(container, chartId, store) {
     this.container = container;
     this.chartId = chartId;
     this.store = store;
-    this.dataset = dataset;
 
-    this.originalIds = dataset.ids;
+    /* dataset */
+    this.dataset = null;
+    this.originalIds = [];
 
+    /* selectors */
+    this.seriesSelector = null;
+    this.groupSelector = null;
+
+    /* pipeline */
     this.processedIds = null;
 
-    this.groups = null;
     this.currentGroupIndex = 0;
 
     this.filterHash = 0;
     this.sortHash = 0;
 
-    this.seriesSelector = dataset.seriesSelector;
-    this.groupSelector = dataset.groupSelector;
-
-    this.initGroups();
-
-    this.render();
+    /* chart instance */
+    this.apex = null;
   }
 
   get chart() {
@@ -47,14 +47,41 @@ export default class ChartInstance {
   }
 
   /* =========================
+     DATASET
+  ========================= */
+
+  setDataset(dataset) {
+    this.dataset = dataset;
+
+    this.originalIds = dataset.ids ?? [];
+    this.seriesSelector = dataset.seriesSelector;
+
+    this.groupSelector = dataset.groupSelector;
+
+    /* reset pipeline */
+    this.processedIds = null;
+
+    this.currentGroupIndex = 0;
+
+    this.filterHash = 0;
+    this.sortHash = 0;
+
+    if (!this.apex) {
+      this.render();
+    } else {
+      this.update();
+    }
+  }
+
+  /* =========================
      LIFECYCLE
   ========================= */
 
   render() {
+    if (!this.dataset) return;
+
     const ids = this.getVisibleIds();
-
     const series = this.computeSeries(ids);
-
     const options = this.buildOptions(ids, series);
 
     this.apex = new ApexCharts(this.container, {
@@ -66,57 +93,45 @@ export default class ChartInstance {
   }
 
   update() {
+    if (!this.apex || !this.dataset) return;
+
     const ids = this.getVisibleIds();
-
     const series = this.computeSeries(ids);
-
     const options = this.buildOptions(ids, series);
 
     this.apex.updateOptions(options, false, true);
     this.apex.updateSeries(series, true);
   }
 
-  initGroups() {
-    const { groupSpec } = this.chart;
-
-    if (!groupSpec) return;
-
-    this.groups = buildGroups({
-      ids: this.originalIds,
-      groupSpec,
-      getValue: this.seriesSelector,
-    });
-  }
-
   destroy() {
     this.apex?.destroy();
+    this.apex = null;
   }
 
-  toggleSeries(seriesName) {
-    this.apex.toggleSeries(seriesName);
-  }
-
-  hideSeries(seriesName) {
-    this.apex.hideSeries(seriesName);
-  }
-
-  highlightSeries(seriesName) {
-    this.apex.highlightSeries(seriesName);
-  }
+  /* =========================
+     GROUPS
+  ========================= */
 
   showGroup(index) {
-    if (!this.groups || !this.groups[index]) return;
-
-    if (this.currentGroupIndex === index) return;
+    if (!this.groupSelector || this.currentGroupIndex === index) return;
 
     this.currentGroupIndex = index;
-
     this.update();
   }
 
   getGroups() {
+    let index = 0;
+    const groups = [];
+
+    while (true) {
+      const group = this.groupSelector?.(index);
+      if (!group) break;
+      groups.push(group);
+      index++;
+    }
+
     return {
-      groups: this.groups ?? [],
+      groups: groups ?? [],
       currentGroupIndex: this.currentGroupIndex,
     };
   }
@@ -126,6 +141,7 @@ export default class ChartInstance {
   ========================= */
 
   recomputeSeries() {
+    this.processedIds = null;
     this.update();
   }
 
@@ -136,9 +152,12 @@ export default class ChartInstance {
   computeIds() {
     let ids;
 
-    if (this.groups) {
-      ids = this.groups[this.currentGroupIndex]?.ids ?? [];
-    } else {
+    if (this.groupSelector) {
+      const group = this.groupSelector(this.currentGroupIndex);
+      ids = group?.ids;
+    }
+
+    if (!ids) {
       ids = this.computeProcessedIds();
     }
 
@@ -167,11 +186,11 @@ export default class ChartInstance {
 
     let result = this.originalIds;
 
-    const getValue = (id, key) => this.seriesSelector(id, key);
-
     /* FILTER */
     if (filters?.length) {
-      result = result.filter((id) => applyFilters(filters, id, getValue));
+      result = result.filter((id) =>
+        applyFilters(filters, id, this.seriesSelector),
+      );
     }
 
     /* SORT */
@@ -197,10 +216,10 @@ export default class ChartInstance {
     return seriesOrder.map((sId) => ({
       name: seriesById[sId].label,
 
-      data: ids.map((id) => this.seriesSelector(id, seriesById[sId].field)),
+      data: ids.map((id) => this.seriesSelector(id, seriesById[sId])),
 
       color:
-        type === "line"
+        type === ChartType.LINE
           ? seriesById[sId].color
           : ({ value }) =>
               evaluateColorRules(value, seriesById[sId].colorRules)?.color,
@@ -213,7 +232,8 @@ export default class ChartInstance {
 
   buildTooltip() {
     const { type, id } = this.chart;
-    if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR)
+
+    if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR) {
       return (seriesValue, index, seriesIndex, w) =>
         groupedTooltipCallback({
           chartId: id,
@@ -222,6 +242,7 @@ export default class ChartInstance {
           index,
           w,
         });
+    }
 
     return (seriesValue, index, seriesIndex, w) =>
       seriesTooltipCallback({
@@ -255,20 +276,26 @@ export default class ChartInstance {
       dataSeries: computedSeries,
     };
 
-    if (type === ChartType.LINE) {
-      return buildLineChartOptions(params);
-    }
-
-    if (type === ChartType.BAR) {
-      return buildBarChartOptions(params);
-    }
-
-    if (type === ChartType.DONUT) {
-      return buildPieChartOptions(params);
-    }
-
-    if (type === ChartType.RADIAL_BAR) {
+    if (type === ChartType.LINE) return buildLineChartOptions(params);
+    if (type === ChartType.BAR) return buildBarChartOptions(params);
+    if (type === ChartType.DONUT) return buildPieChartOptions(params);
+    if (type === ChartType.RADIAL_BAR)
       return buildRadialBarChartOptions(params);
-    }
+  }
+
+  /* =========================
+     CHART CONTROL
+  ========================= */
+
+  toggleSeries(seriesName) {
+    this.apex?.toggleSeries(seriesName);
+  }
+
+  hideSeries(seriesName) {
+    this.apex?.hideSeries(seriesName);
+  }
+
+  highlightSeries(seriesName) {
+    this.apex?.highlightSeries(seriesName);
   }
 }

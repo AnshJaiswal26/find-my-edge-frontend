@@ -12,6 +12,7 @@ import { useDashboardStore } from "@features/dashboard/store";
 import { useFilteredOptions } from "@features/dashboard/hooks";
 import { draftToSpec } from "@lib/analytics/engine/data";
 import { ChartMode } from "@modules/charts/apex/model/enums";
+import { SemanticType } from "@lib/analytics/schema";
 
 export const CartesianChartForm = forwardRef(
   ({ type, options, schemasById, setLoading }, ref) => {
@@ -137,7 +138,10 @@ export const CartesianChartForm = forwardRef(
                     setSeriesX({
                       field: groupSpec.field,
                       label: schemasById[groupSpec.field].label,
-                      type: schemasById[groupSpec.field].semanticType,
+                      type:
+                        groupSpec.kind === "condition"
+                          ? SemanticType.STRING
+                          : schemasById[groupSpec.field].semanticType,
                     });
 
                     setSeriesY([

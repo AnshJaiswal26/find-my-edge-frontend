@@ -1,6 +1,7 @@
 import { useChartStore } from "@modules/charts/apex/store";
 import { PAGE_CONFIG } from "@pages/config/pageConfig";
 import { chartService } from "../services/chart.service";
+import { chartEngine } from "@modules/charts/apex/model/chartEngine";
 
 const deleteQueue = new Map();
 
@@ -24,10 +25,20 @@ export const createChartsSlice = (set, get) => ({
     const { closePopup } = get();
 
     try {
-      const { chart, chartResult } = await chartService.create(
+      const { chart, result } = await chartService.create(
         PAGE_CONFIG.DASHBOARD.key,
         payload,
       );
+
+      if (result?.groupsOrder) {
+        const { groupsOrder, groupsById, series } = result;
+
+        chartEngine.setDataset(chart.id, {
+          ids: groupsOrder,
+          seriesSelector: (id, s) => series[id]?.[s.id || s],
+          groupSelector: (id) => groupsById?.[id] || null,
+        });
+      }
 
       useChartStore.setState((s) => {
         s.charts[chart.id] = chart;
