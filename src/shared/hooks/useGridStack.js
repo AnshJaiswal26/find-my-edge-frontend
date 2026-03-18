@@ -19,22 +19,19 @@ const syncLayoutDebounced = debounce(
   { maxWait: 2000 },
 );
 
-export default function useGridStack(
-  gridRef,
-  {
-    onLayoutChange = () => {},
-    // user configurable
-    columns = { min: 6, sm: 12, md: 20, lg: 30 },
-    float = false,
-    resizable = { handles: "" },
-    animate = false,
-  },
-) {
+export default function useGridStack({
+  onLayoutChange = () => {},
+  columns = { min: 6, sm: 12, md: 20, lg: 30 },
+  float = false,
+  resizable = { handles: "" },
+  animate = false,
+}) {
+  const containerRef = useRef(null);
   const grid = useRef(null);
   const isResponsiveChange = useRef(false);
 
   useEffect(() => {
-    if (!gridRef.current || grid.current) return;
+    if (!containerRef.current || grid.current) return;
 
     const instance = GridStack.init(
       {
@@ -49,7 +46,7 @@ export default function useGridStack(
         animate,
         margin: 8,
       },
-      gridRef.current,
+      containerRef.current,
     );
 
     grid.current = instance;
@@ -69,7 +66,10 @@ export default function useGridStack(
       syncLayoutDebounced(() => onLayoutChange(layout));
     });
 
-    instance.on("remove", () => instance.compact());
+    instance.on("removed", () => {
+      console.log("removed");
+      instance.compact();
+    });
 
     /* ------------------ RESPONSIVE ------------------ */
 
@@ -84,9 +84,8 @@ export default function useGridStack(
 
       grid.current.batchUpdate(true);
 
-      grid.current.column(newCols); // REMOVE "move"
-
-      grid.current.compact(); // resolve gaps
+      grid.current.column(newCols);
+      grid.current.compact();
 
       grid.current.engine.nodes.forEach((n) => {
         if (n.x + n.w > newCols) {
@@ -104,8 +103,6 @@ export default function useGridStack(
     updateColumns();
     window.addEventListener("resize", updateColumns);
 
-    /* ------------------ CLEANUP ------------------ */
-
     return () => {
       window.removeEventListener("resize", updateColumns);
 
@@ -115,4 +112,7 @@ export default function useGridStack(
       }
     };
   }, []);
+
+  //  RETURN register function ALSO
+  return { grid, containerRef };
 }

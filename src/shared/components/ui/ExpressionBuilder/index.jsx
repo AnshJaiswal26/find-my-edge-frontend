@@ -1,11 +1,11 @@
 import React, {
-  useCallback,
-  useMemo,
-  useState,
-  useEffect,
-  useRef,
   forwardRef,
+  useCallback,
+  useEffect,
   useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
@@ -13,12 +13,12 @@ import {
   buildAST,
   tokenize,
   toPostfix,
-  validateTypes,
   validateSemantic,
+  validateTypes,
 } from "@lib/expression";
 import { Section } from "@shared/components/layout";
 import { formatExpression } from "./formatExpression";
-import { getSchemaSuggestions, getFunctionSuggestions } from "./suggestions";
+import { getFunctionSuggestions, getSchemaSuggestions } from "./suggestions";
 import { highlightFormula } from "./highlightFormula";
 import { FunctionDocsPanel } from "./FunctionDocPanel";
 import { formatAST } from "./formatAst";

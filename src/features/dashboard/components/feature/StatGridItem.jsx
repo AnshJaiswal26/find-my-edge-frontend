@@ -3,11 +3,11 @@ import StatCard from "../ui/StatCard";
 import { useGridStackWidget } from "@shared/hooks";
 import { useRef } from "react";
 
-export default function StatGridItem({ id }) {
+export default function StatGridItem({ id, grid }) {
   const ref = useRef(null);
   const savedLayout = useDashboardStore((s) => s.gridLayout?.[`stat-${id}`]);
 
-  useGridStackWidget(ref);
+  useGridStackWidget(ref, grid);
 
   return (
     <div

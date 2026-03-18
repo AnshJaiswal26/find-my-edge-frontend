@@ -1,6 +1,6 @@
 import { useDurationInput } from "@shared/hooks";
 import { useRef } from "react";
-import { hideTooltip, showTooltip } from "../tooltip";
+import { hideTooltip, showTooltip } from "../tooltip/index.js";
 
 const labels = ["Days", "Hrs", "Mins", "Sec"];
 

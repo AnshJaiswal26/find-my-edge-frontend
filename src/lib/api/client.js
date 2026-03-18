@@ -79,7 +79,7 @@ export async function apiFetch(url, options = {}) {
     }
   }
 
-  let json = null;
+  let json;
   try {
     json = await res.json();
   } catch {

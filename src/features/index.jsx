@@ -1,4 +1,4 @@
-export { default as Dashboard } from "./dashboard/Dashboard";
+export { default as Dashboard } from "./dashboard/Dashboard.jsx";
 export { default as Edge } from "./Edge/Edge";
 export { default as CustomJournal } from "./CustomRecords/CustomJournal";
 export { default as CustomEdge } from "./CustomRecords/CustomEdge";

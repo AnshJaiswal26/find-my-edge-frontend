@@ -1,54 +1,68 @@
 class DismissManager {
   constructor() {
-    this.layers = new Set();
+    this.listeners = new Map();
 
-    this.handlePointerDown = this.handlePointerDown.bind(this);
-    this.handleResize = this.handleResize.bind(this);
-    this.handleVisibility = this.handleVisibility.bind(this);
+    this.handleEvent = this.handleEvent.bind(this);
 
-    window.addEventListener("pointerdown", this.handlePointerDown);
-    window.addEventListener("resize", this.handleResize);
-    document.addEventListener("visibilitychange", this.handleVisibility);
+    // register global events
+    this.addGlobalListener("pointerdown");
+    this.addGlobalListener("resize");
+    this.addGlobalListener("scroll", { passive: true, capture: true });
+    this.addGlobalListener("visibilitychange", { target: document });
   }
 
-  register({ element, close }) {
-    const layer = { element, close };
-    this.layers.add(layer);
+  addGlobalListener(event, options = {}) {
+    const target = options.target || window;
 
-    return () => {
-      this.layers.delete(layer);
-    };
+    target.addEventListener(
+      event,
+      (e) => {
+        // defer to avoid React ordering issues
+        this.handleEvent(event, e);
+      },
+      options,
+    );
   }
 
-  handlePointerDown(e) {
-    const target = e.target;
+  handleEvent(event, e) {
+    const handlers = this.listeners.get(event);
+    if (!handlers) return;
 
-    // iterate from last opened to first (top-most first)
-    const layers = Array.from(this.layers);
+    // copy to avoid mutation issues during iteration
+    const queue = [...handlers];
 
-    for (let i = layers.length - 1; i >= 0; i--) {
-      const layer = layers[i];
+    for (let i = queue.length - 1; i >= 0; i--) {
+      queue[i](e);
+    }
+  }
 
-      if (!layer.element || layer.element.contains(target)) {
-        return;
+  register(events, callback) {
+    const eventList = Array.isArray(events) ? events : [events];
+
+    // store references for cleanup
+    const cleanups = [];
+
+    for (const event of eventList) {
+      if (!this.listeners.has(event)) {
+        this.listeners.set(event, []);
       }
 
-      layer.close();
+      const arr = this.listeners.get(event);
+      arr.push(callback);
+
+      cleanups.push(() => {
+        const list = this.listeners.get(event);
+        if (!list) return;
+
+        const idx = list.indexOf(callback);
+        if (idx !== -1) list.splice(idx, 1);
+      });
     }
-  }
 
-  handleResize() {
-    this.closeAll();
-  }
-
-  handleVisibility() {
-    if (document.hidden) {
-      this.closeAll();
-    }
-  }
-
-  closeAll() {
-    this.layers.forEach((layer) => layer.close());
+    // return single cleanup fn
+    return () => {
+      cleanups.forEach((fn) => fn());
+    };
   }
 }
 

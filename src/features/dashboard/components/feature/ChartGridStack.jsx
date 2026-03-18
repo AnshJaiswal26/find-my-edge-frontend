@@ -1,13 +1,11 @@
 import { useDashboardStore } from "@features/dashboard/store";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import ChartGridItem from "./ChartGridItem";
 import { useGridStack } from "@shared/hooks";
 import { useChartEngineEvent } from "@modules/charts/apex/hooks";
 import { useTradeStore } from "@shared/stores";
 
 export default function ChartGridStack() {
-  const gridRef = useRef(null);
-
   const chartsOrder = useDashboardStore((s) => s.chartsOrder);
 
   const tradesOrder = useTradeStore((s) => s.tradesOrder);
@@ -32,7 +30,7 @@ export default function ChartGridStack() {
     };
   }, [tradesOrder, tradesById, derivedByTradeId]);
 
-  useGridStack(gridRef, {
+  const { grid, containerRef } = useGridStack({
     onLayoutChange: (layout) => {
       useDashboardStore.getState().setLayout(layout);
     },
@@ -52,13 +50,16 @@ export default function ChartGridStack() {
   //   [deleteChart],
   // );
 
-  useChartEngineEvent("chart:remove", useDashboardStore.getState().deleteChart);
+  useChartEngineEvent("chart:remove", (id) => {
+    useDashboardStore.getState().deleteChart(id);
+  });
 
   return (
-    <div className="grid-stack" ref={gridRef}>
+    <div className="grid-stack" ref={containerRef}>
       {chartsOrder.map((id) => (
         <ChartGridItem
           key={`chart-${id}`}
+          grid={grid}
           id={id}
           dataset={dataset}
           getDisplayValue={(metric) => schemasById[metric]?.display}

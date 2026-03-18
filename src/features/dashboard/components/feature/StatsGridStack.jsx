@@ -1,14 +1,12 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useDashboardStore } from "@features/dashboard/store";
 import StatGridItem from "./StatGridItem";
 import { useGridStack } from "@shared/hooks";
 
 export default function StatsGridStack() {
-  const gridRef = useRef(null);
-
   const statsOrder = useDashboardStore((s) => s.statsOrder);
 
-  useGridStack(gridRef, {
+  const { grid, containerRef } = useGridStack({
     onLayoutChange: (layout) => {
       useDashboardStore.getState().setLayout(layout);
     },
@@ -17,9 +15,9 @@ export default function StatsGridStack() {
   });
 
   return (
-    <div className="grid-stack" ref={gridRef}>
+    <div className="grid-stack" ref={containerRef}>
       {statsOrder.map((id, index) => (
-        <StatGridItem key={index} id={id} />
+        <StatGridItem key={index} id={id} grid={grid} />
       ))}
     </div>
   );

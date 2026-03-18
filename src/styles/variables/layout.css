@@ -1,108 +1,98 @@
 /* Tooltip with seudo elements*/
 [data-tooltip] {
-  position: relative !important;
-  z-index: 100;
+    position: relative !important;
+    z-index: 100;
 }
 
 [data-tooltip]::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.85rem;
-  opacity: 0;
-  background-color: #000;
-  color: #fff;
-  border-radius: 4px;
-  white-space: pre;
-  /* transition: transform 0.2s ease-in, opacity 0.2s ease-in; */
-  z-index: 100;
-  pointer-events: none;
-  width: fit-content;
+    content: attr(data-tooltip);
+    position: absolute;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    opacity: 0;
+    background-color: #000;
+    color: #fff !important;
+    border-radius: 4px;
+    white-space: pre;
+    /* transition: transform 0.2s ease-in, opacity 0.2s ease-in; */
+    z-index: 100;
+    pointer-events: none;
+    width: fit-content;
 }
 
 [data-tooltip]:hover::after {
-  opacity: 0.9;
+    opacity: 0.9;
 }
 
 [data-tooltip-position="top"]::after,
 [data-tooltip-position="bottom"]::after {
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%) translateY(-20%);
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-20%);
 }
 
 [data-tooltip-position="bottom"]::after {
-  top: calc(100% + 8px);
-  bottom: auto;
+    top: calc(100% + 8px);
+    bottom: auto;
 }
 
 [data-tooltip-position="left"]::after,
 [data-tooltip-position="right"]::after {
-  right: calc(100% + 8px);
-  top: 50%;
-  transform: translateY(-50%) translateX(-20%);
+    right: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-20%);
 }
 
 [data-tooltip-position="right"]::after {
-  left: calc(100% + 8px);
+    left: calc(100% + 8px);
 }
 
 [data-tooltip-position="left"]:hover::after,
 [data-tooltip-position="right"]:hover::after {
-  transform: translateY(-50%) translateX(0%);
+    transform: translateY(-50%) translateX(0%);
 }
 
 [data-tooltip-position="top"]:hover::after,
 [data-tooltip-position="bottom"]:hover::after {
-  transform: translateX(-50%) translateY(0%);
+    transform: translateX(-50%) translateY(0%);
 }
 
 /* for gouped table columns  */
 .stick-left {
-  position: sticky;
-  z-index: 25;
-  left: 51px;
-  box-shadow: 6px 0 8px -2px rgba(0, 0, 0, 0.18);
+    position: sticky;
+    z-index: 25;
+    left: 51px;
+    box-shadow: 6px 0 8px -2px rgba(0, 0, 0, 0.18);
 }
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+
+.tooltip {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+
+    opacity: 0;
+    /*transition: opacity 0.12s ease;*/
+
+    background-color: #000;
+
+    border: 1px solid var(--info-soft);
+    border-radius: 4px;
+
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    white-space: pre;
+    max-width: 260px;
 }
 
-.shimmer {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--info-soft),
-    transparent
-  );
-  animation: shimmer 1.5s infinite;
+.tooltip-text {
+    color: #fff;
 }
 
-.ui-tooltip {
-  position: fixed;
-  padding: 4px 10px;
-  font-size: 12px;
-  background: #000;
-  color: white;
-  border-radius: 4px;
-  pointer-events: none;
-  white-space: nowrap;
-  z-index: 9999;
-  transition: opacity 0.12s ease;
-}
-
-.ui-tooltip-arrow {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: #000;
-  transform: rotate(45deg);
+.tooltip-arrow {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    transform: rotate(45deg);
+    background-color: #000;
 }

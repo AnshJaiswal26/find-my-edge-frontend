@@ -3,21 +3,20 @@ import { useChartStore } from "@modules/charts/apex/store";
 
 import { CustomApexChart } from "@modules/charts";
 import { ChartCategory } from "@modules/charts/apex/model/enums";
-import { useRef } from "react";
-import { useGridStackWidget } from "@shared/hooks";
+import { useGridStackWidget } from "@shared/hooks/index.js";
 
 export default function ChartGridItem(props) {
-  const itemRef = useRef(null);
+  const { id, grid } = props;
 
-  const savedLayout = useDashboardStore((s) => s.gridLayout?.[props.id]);
+  const savedLayout = useDashboardStore((s) => s.gridLayout?.[id]);
 
-  const { type, category, mode } = useChartStore.getState().charts[props.id];
+  const { type, category, mode } = useChartStore.getState().charts[id];
 
-  useGridStackWidget(itemRef);
+  const initWidget = useGridStackWidget(grid);
 
   return (
     <div
-      ref={itemRef}
+      ref={initWidget}
       className="grid-stack-item"
       gs-id={props.id}
       gs-x={savedLayout?.x}

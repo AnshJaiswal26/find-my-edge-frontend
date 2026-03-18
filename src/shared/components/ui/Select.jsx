@@ -1,8 +1,8 @@
 import { useResolvedValue } from "@shared/hooks";
-import { useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
-import { useUIStore } from "@shared/stores";
+import { dismissManager } from "@shared/components/ui/managers/index.js";
 
 export default function Select({
   label,
@@ -15,18 +15,12 @@ export default function Select({
   getKey = (v) => v,
   vertical = false,
 }) {
-  const selectId = useId();
-  const listId = `${selectId}-list`;
-  const buttonId = `${selectId}-button`;
+  const [active, setActive] = useState(false);
 
   const buttonRef = useRef(null);
+  const listRef = useRef(null);
 
   const val = useResolvedValue(store, value);
-
-  const activeSelect = useUIStore((s) => s.activeSelect);
-  const toggleSelect = useUIStore((s) => s.toggleSelect);
-
-  const active = activeSelect?.id === selectId;
 
   const [pos, setPos] = useState({
     top: 0,
@@ -85,7 +79,6 @@ export default function Select({
         }`}
       >
         <button
-          id={buttonId}
           ref={buttonRef}
           className={`
             flex items-center justify-between
@@ -100,7 +93,7 @@ export default function Select({
           `}
           onClick={(e) => {
             e.preventDefault();
-            toggleSelect({ id: selectId, buttonId, listId });
+            setActive(true);
           }}
         >
           <span>{selectedItem ? getLabel(selectedItem) : "Select"}</span>
@@ -115,9 +108,55 @@ export default function Select({
 
         {active &&
           createPortal(
-            <div
-              id={listId}
-              className={`
+            <Options
+              buttonRef={buttonRef}
+              listRef={listRef}
+              options={options}
+              setActive={setActive}
+              getLabel={getLabel}
+              onChange={onChange}
+              classNames={classNames}
+              pos={pos}
+            />,
+            document.body,
+          )}
+      </div>
+    </div>
+  );
+}
+
+function Options({
+  buttonRef,
+  listRef,
+  options,
+  getLabel,
+  onChange,
+  setActive,
+  classNames,
+  pos,
+}) {
+  useEffect(() => {
+    return dismissManager.register(
+      ["pointerdown", "resize", "scroll", "visibilitychange"],
+      (e) => {
+        const target = e.target;
+        if (target.nodeType === Node.ELEMENT_NODE) {
+          if (
+            buttonRef.current?.contains?.(target) ||
+            listRef.current?.contains?.(target)
+          )
+            return;
+        }
+
+        setActive(false);
+      },
+    );
+  }, []);
+
+  return (
+    <div
+      ref={listRef}
+      className={`
                 fixed 
                 w-full
                 flex flex-col
@@ -137,19 +176,19 @@ export default function Select({
                  }
                 ${classNames?.list}
               `}
-              style={{
-                top: pos.top,
-                bottom: pos.bottom,
-                left: pos.left,
-                width: pos.width,
-                maxHeight: pos.maxHeight,
-                boxShadow: pos.shadow,
-              }}
-            >
-              {options.map((item, i) => (
-                <button
-                  key={i}
-                  className={`
+      style={{
+        top: pos.top,
+        bottom: pos.bottom,
+        left: pos.left,
+        width: pos.width,
+        maxHeight: pos.maxHeight,
+        boxShadow: pos.shadow,
+      }}
+    >
+      {options.map((item, i) => (
+        <button
+          key={i}
+          className={`
                     text-left
                     w-full
                     px-3 py-2
@@ -159,18 +198,14 @@ export default function Select({
                     hover:text-white
                     ${classNames?.button}
                   `}
-                  onClick={() => {
-                    onChange(item, i);
-                    toggleSelect({ id: selectId, buttonId, listId });
-                  }}
-                >
-                  {getLabel(item)}
-                </button>
-              ))}
-            </div>,
-            document.body,
-          )}
-      </div>
+          onClick={() => {
+            onChange(item, i);
+            setActive(false);
+          }}
+        >
+          {getLabel(item)}
+        </button>
+      ))}
     </div>
   );
 }

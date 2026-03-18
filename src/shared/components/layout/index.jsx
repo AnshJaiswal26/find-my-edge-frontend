@@ -1,6 +1,6 @@
 import { Button, Toast } from "@shared/components/ui";
-import { Loader2, X } from "lucide-react";
-import { Sidebar, Header } from "@shared/components/features";
+import { X } from "lucide-react";
+import { Header, Sidebar } from "@shared/components/features";
 
 export const PageContainer = ({
   children,

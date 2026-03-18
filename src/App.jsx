@@ -1,13 +1,12 @@
-import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 import { PageContainer } from "@shared/components/layout";
 import { Loader } from "@shared/components/ui";
-import { useGlobalUIClose } from "@shared/hooks";
 
 import { useAppBootstrap } from "@lib/bootstrap/useAppBootstrap";
 import { ProtectedRoute } from "@lib/auth/ProtectedRoute";
 
-import Dashboard from "@features/dashboard/Dashboard";
+import Dashboard from "@features/dashboard/Dashboard.jsx";
 import TradeMetrics from "@features/trade-metrics/TradeMetrics";
 import SheetIntegration from "@features/sheet-integration/SheetIntegration";
 import YearlyCalendar from "@features/calander/YearlyCalendar";
@@ -58,7 +57,7 @@ function Layout() {
 }
 
 function AppRoutes() {
-  useGlobalUIClose();
+  // useGlobalUIClose();
 
   return (
     <Routes>

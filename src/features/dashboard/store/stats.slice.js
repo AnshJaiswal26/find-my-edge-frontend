@@ -1,157 +1,160 @@
-import { useTradeStore, useUIStore } from "@shared/stores";
-import { computeAggregate } from "@lib/analytics/engine/execute";
-import { statService } from "@features/dashboard/services/stat.service";
-import { PAGE_CONFIG } from "@pages/config/pageConfig";
+import {useTradeStore, useUIStore} from "@shared/stores";
+import {computeAggregate} from "@lib/analytics/engine/execute";
+import {statService} from "@features/dashboard/services/stat.service";
+import {PAGE_CONFIG} from "@pages/config/pageConfig";
 
 const computeStat = (ast, store) => {
-  const { tradesOrder, tradesById, derivedByTradeId, schemasById } = store;
+    const {tradesOrder, tradesById, derivedByTradeId, schemasById} = store;
 
-  return computeAggregate({
-    ast,
-    getTradeValue: (index, key) => {
-      if (index < 0) return null;
-      const id = tradesOrder[index];
-      console.log(derivedByTradeId[id], tradesById[id]);
-      return id ? (derivedByTradeId[id]?.[key] ?? tradesById[id]?.[key]) : null;
-    },
-    getTradeCount: () => tradesOrder.length,
-    getSchemaType: (key) => {
-      const schema = schemasById[key];
-      return {
-        format: schema?.display?.format,
-        type: schema?.semanticType,
-      };
-    },
-  });
+    return computeAggregate({
+        ast,
+        getTradeValue: (index, key) => {
+            if (index < 0) return null;
+            const id = tradesOrder[index];
+            console.log(derivedByTradeId[id], tradesById[id]);
+            return id ? (derivedByTradeId[id]?.[key] ?? tradesById[id]?.[key]) : null;
+        },
+        getTradeCount: () => tradesOrder.length,
+        getSchemaType: (key) => {
+            const schema = schemasById[key];
+            return {
+                format: schema?.display?.format,
+                type: schema?.semanticType,
+            };
+        },
+    });
 };
 
 export const createStatsSlice = (set, get) => ({
-  statLoading: {
-    create: false,
-    update: false,
-    delete: false,
-  },
+    statsById: {},
+    statsOrder: {},
 
-  /* ---------------- RECOMPUTE ---------------- */
-  recomputeStats() {
-    const tradeStore = useTradeStore.getState();
+    statLoading: {
+        create: false,
+        update: false,
+        delete: false,
+    },
 
-    set((s) => {
-      s.statsOrder.forEach((id) => {
-        const stat = s.statsById[id];
-        if (!stat) return;
-        stat.value = computeStat(stat.ast, tradeStore);
-        console.log(stat.value);
-      });
-    });
-  },
+    /* ---------------- RECOMPUTE ---------------- */
+    recomputeStats() {
+        const tradeStore = useTradeStore.getState();
 
-  /* ---------------- ADD ---------------- */
-  async addStat(stat) {
-    const { statsOrder } = get();
-    const tradeStore = useTradeStore.getState();
+        set((s) => {
+            s.statsOrder.forEach((id) => {
+                const stat = s.statsById[id];
+                if (!stat) return;
+                stat.value = computeStat(stat.ast, tradeStore);
+                console.log(stat.value);
+            });
+        });
+    },
 
-    if (statsOrder.length > 19) {
-      useUIStore
-        .getState()
-        .showToast("ERROR", "You cannot add more than 20 stats");
-      return;
-    }
+    /* ---------------- ADD ---------------- */
+    async addStat(stat) {
+        const {statsOrder} = get();
+        const tradeStore = useTradeStore.getState();
 
-    const value = computeStat(stat.ast, tradeStore);
-
-    //  optimistic update
-    set((s) => {
-      s.statsById[stat.id] = { ...stat, value };
-      s.statsOrder.push(stat.id);
-    });
-
-    try {
-      await statService.create(PAGE_CONFIG.DASHBOARD.key, stat); // UPDATED
-      get().closePopup();
-    } catch (err) {
-      useUIStore.getState().showToast("ERROR", err.message);
-
-      // rollback
-      set((s) => {
-        delete s.statsById[stat.id];
-        const i = s.statsOrder.indexOf(stat.id);
-        if (i !== -1) s.statsOrder.splice(i, 1);
-      });
-    }
-  },
-
-  /* ---------------- UPDATE ---------------- */
-  async updateStat(page, id, updates) {
-    const tradeStore = useTradeStore.getState();
-
-    let prev;
-
-    set((s) => {
-      const stat = s.statsById[id];
-      if (!stat) return;
-
-      prev = { ...stat };
-
-      Object.assign(stat, updates);
-
-      if (updates.ast) {
-        stat.value = computeStat(stat.ast, tradeStore);
-      }
-    });
-
-    try {
-      await statService.update(page, id, updates); //  UPDATED
-    } catch (err) {
-      useUIStore.getState().showToast("ERROR", err.message);
-
-      set((s) => {
-        if (prev) s.statsById[id] = prev;
-      });
-    }
-  },
-
-  /* ---------------- DELETE ---------------- */
-  async deleteStat(id) {
-    try {
-      await statService.delete("dashboard", id);
-
-      // ✅ update only after success
-      set((s) => {
-        delete s.statsById[id];
-
-        const index = s.statsOrder.indexOf(id);
-        if (index !== -1) {
-          s.statsOrder.splice(index, 1);
+        if (statsOrder.length > 19) {
+            useUIStore
+                .getState()
+                .showToast("ERROR", "You cannot add more than 20 stats");
+            return;
         }
-      });
-    } catch (err) {
-      useUIStore.getState().showToast("ERROR", err.message);
-    }
-  },
 
-  /* ---------------- UPDATE ORDER ---------------- */
-  async updateStatsOrder(page, order) {
-    const prev = get().statsOrder;
+        const value = computeStat(stat.ast, tradeStore);
 
-    set({ statsOrder: order });
+        //  optimistic update
+        set((s) => {
+            s.statsById[stat.id] = {...stat, value};
+            s.statsOrder.push(stat.id);
+        });
 
-    try {
-      await statService.updateOrder(page, order);
-    } catch (err) {
-      useUIStore.getState().showToast("ERROR", err.message);
+        try {
+            await statService.create(PAGE_CONFIG.DASHBOARD.key, stat); // UPDATED
+            get().closePopup();
+        } catch (err) {
+            useUIStore.getState().showToast("ERROR", err.message);
 
-      set({ statsOrder: prev });
-    }
-  },
-
-  updateComputedStats(statValues) {
-    set((s) => {
-      Object.entries(statValues).forEach(([id, value]) => {
-        if (s.statsById[id]) {
-          s.statsById[id].value = value;
+            // rollback
+            set((s) => {
+                delete s.statsById[stat.id];
+                const i = s.statsOrder.indexOf(stat.id);
+                if (i !== -1) s.statsOrder.splice(i, 1);
+            });
         }
-      });
-    });
-  },
+    },
+
+    /* ---------------- UPDATE ---------------- */
+    async updateStat(page, id, updates) {
+        const tradeStore = useTradeStore.getState();
+
+        let prev;
+
+        set((s) => {
+            const stat = s.statsById[id];
+            if (!stat) return;
+
+            prev = {...stat};
+
+            Object.assign(stat, updates);
+
+            if (updates.ast) {
+                stat.value = computeStat(stat.ast, tradeStore);
+            }
+        });
+
+        try {
+            await statService.update(page, id, updates); //  UPDATED
+        } catch (err) {
+            useUIStore.getState().showToast("ERROR", err.message);
+
+            set((s) => {
+                if (prev) s.statsById[id] = prev;
+            });
+        }
+    },
+
+    /* ---------------- DELETE ---------------- */
+    async deleteStat(id) {
+        try {
+            await statService.delete("dashboard", id);
+
+            // ✅ update only after success
+            set((s) => {
+                delete s.statsById[id];
+
+                const index = s.statsOrder.indexOf(id);
+                if (index !== -1) {
+                    s.statsOrder.splice(index, 1);
+                }
+            });
+        } catch (err) {
+            useUIStore.getState().showToast("ERROR", err.message);
+        }
+    },
+
+    /* ---------------- UPDATE ORDER ---------------- */
+    async updateStatsOrder(page, order) {
+        const prev = get().statsOrder;
+
+        set({statsOrder: order});
+
+        try {
+            await statService.updateOrder(page, order);
+        } catch (err) {
+            useUIStore.getState().showToast("ERROR", err.message);
+
+            set({statsOrder: prev});
+        }
+    },
+
+    updateComputedStats(statValues) {
+        set((s) => {
+            Object.entries(statValues).forEach(([id, value]) => {
+                if (s.statsById[id]) {
+                    s.statsById[id].value = value;
+                }
+            });
+        });
+    },
 });

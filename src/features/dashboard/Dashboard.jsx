@@ -4,15 +4,17 @@ import { ChartPopups } from "@modules/charts";
 
 import { BrokerConnectCard, Button } from "@shared/components/ui";
 import { Container } from "@shared/components/layout";
+import NoTradesEmptyState from "@shared/components/ui/NoTradesEmptyState";
 
 import { useDashboardStore } from "./store";
-import { AddWidgetPopup } from "./components/ui/Popups";
+
 import { ChartGridStack, StatsGridStack } from "./components/feature";
+import { AddWidgetPopup } from "./components/ui/Popups";
+import DashboardSkeleton from "./components/ui/DashboardSkeleton";
 
 import { useIntegrationsStore, useTradeStore } from "@shared/stores";
-import DashboardSkeleton from "./components/ui/DashboardSkeleton";
 import { dashboardInit } from "./init/dashboard.init";
-import NoTradesEmptyState from "@shared/components/ui/NoTradesEmptyState";
+
 import {
   Brokers,
   ConnectionStatus,

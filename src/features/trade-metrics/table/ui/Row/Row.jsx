@@ -3,7 +3,10 @@ import { useTableStore } from "@features/trade-metrics/table/store";
 import { Cell } from "../Cell/Cell";
 import { HighlighterIcon, Trash2 } from "lucide-react";
 import { useTradeStore } from "@shared/stores";
-import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
+import {
+  hideTooltip,
+  showTooltip,
+} from "@shared/components/ui/tooltip/index.js";
 
 export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
   const updateTradeValue = useTradeStore((s) => s.updateTradeValue);

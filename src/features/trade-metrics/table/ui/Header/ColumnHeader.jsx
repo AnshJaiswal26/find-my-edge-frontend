@@ -3,7 +3,10 @@ import { useRef } from "react";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { createColumnDragController } from "@features/trade-metrics/table/interaction/columnDragController";
 import { useTradeStore } from "@shared/stores";
-import { showTooltip, hideTooltip } from "@shared/components/ui/tooltip";
+import {
+  hideTooltip,
+  showTooltip,
+} from "@shared/components/ui/tooltip/index.js";
 import { SchemaSource, SemanticType } from "@lib/analytics/schema";
 
 const controller = createColumnDragController();

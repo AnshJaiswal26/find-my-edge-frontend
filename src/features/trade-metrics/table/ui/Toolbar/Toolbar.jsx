@@ -1,23 +1,25 @@
 import {
-  Filter,
   ArrowUpDown,
-  Flame,
-  Download,
-  RotateCcw,
-  LayoutGrid,
-  ColumnsSettings,
-  Rows3,
-  Columns3,
-  Group,
-  Loader2,
   CheckCircle2,
+  Columns3,
+  ColumnsSettings,
+  Download,
+  Filter,
+  Flame,
+  Group,
+  LayoutGrid,
+  Loader2,
+  RotateCcw,
+  Rows3,
 } from "lucide-react";
 import { Button } from "@shared/components/ui";
 import { useTableStore } from "@features/trade-metrics/table/store";
-import { ColumnInspector } from "../Column/ColumnInspector";
 import { useTradeStore } from "@shared/stores";
 import { useState } from "react";
-import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
+import {
+  hideTooltip,
+  showTooltip,
+} from "@shared/components/ui/tooltip/index.js";
 
 export function Toolbar({
   onAddTrade,
