@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTableStore } from "@features/trade-metrics/table/store";
-import { ConfirmationPopup, PopupSideList } from "@shared/components/ui";
+import { PopupSideList } from "@shared/components/ui";
 import { ColumnDetails } from "../shared";
 import { Popup } from "@shared/components/layout";
 import { isValid } from "@features/trade-metrics/table/validation";
-import { SchemaSource } from "@lib/analytics/schema";
+import { SchemaRole, SchemaSource } from "@lib/analytics/schema";
 import { useTradeStore } from "@shared/stores";
+import { confirmManager } from "@shared/components/ui/managers";
+import { toast } from "@shared/services/toast.service";
 
 export default function ColumnSettingsPopup() {
   const builderRef = useRef();
@@ -14,7 +16,7 @@ export default function ColumnSettingsPopup() {
 
   const columnsOrder = useTableStore((s) => s.columnsOrder);
   const updateLoading = useTableStore((s) => s.loading.updateSchema);
-  const deleteLoading = useTableStore((s) => s.loading.deleteSchema);
+  // const deleteLoading = useTableStore((s) => s.loading.deleteSchema);
 
   const closePopup = useTableStore((s) => s.closePopup);
   const updateColumn = useTableStore((s) => s.updateColumn);
@@ -25,7 +27,6 @@ export default function ColumnSettingsPopup() {
 
   const [draft, setDraft] = useState(activeColumn);
   const [error, setError] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
 
   console.log(draft);
 
@@ -65,17 +66,6 @@ export default function ColumnSettingsPopup() {
 
   return (
     <Popup.Container className="w-150 !max-w-150 h-[520px]">
-      {isDeleting && (
-        <ConfirmationPopup
-          open={true}
-          message="Are you sure you want to delete this column"
-          onCancel={() => setIsDeleting(false)}
-          onConfirm={() => {
-            setIsDeleting(false);
-            deleteColumn(activeColumn.id);
-          }}
-        />
-      )}
       <Popup.Header title={"Column Settings"} onClose={closePopup} />
       <Popup.Body>
         <PopupSideList
@@ -98,21 +88,35 @@ export default function ColumnSettingsPopup() {
       </Popup.Body>
       <Popup.ActionsFooter
         fnMap={{
-          ...(activeColumn.source !== SchemaSource.SYSTEM && {
+          ...((activeColumn.source !== SchemaSource.SYSTEM ||
+            activeColumn.role !== SchemaRole.SYSTEM_REQUIRED) && {
             Delete: {
-              fn: () => setIsDeleting(true),
-              loading: deleteLoading,
-              disabled: deleteLoading,
+              fn: () => {
+                confirmManager.confirm({
+                  title: "Delete Column",
+                  danger: true,
+                  message:
+                    "Are you sure you want to delete this column?" +
+                    (draft.source === SchemaSource.COMPUTED
+                      ? " \nAny charts or statistics using this column may also be affected or removed."
+                      : ""),
+                  onConfirm: async () => {
+                    await deleteColumn(activeColumn.id);
+                  },
+                  onError: (e) => toast.error(e.message),
+                });
+                closePopup();
+              },
             },
           }),
           Cancel: {
             fn: closePopup,
             align: "right",
-            disabled: updateLoading || deleteLoading,
+            disabled: updateLoading,
           },
           Apply: {
             fn: applyChanges,
-            disabled: updateLoading || deleteLoading,
+            disabled: updateLoading,
             loading: updateLoading,
           },
         }}

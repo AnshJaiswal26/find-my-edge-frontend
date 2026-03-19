@@ -2,7 +2,7 @@ import { useDashboardStore } from "@features/dashboard/store";
 import { useChartStore } from "@modules/charts/apex/store";
 
 import { CustomApexChart } from "@modules/charts";
-import { ChartCategory } from "@modules/charts/apex/model/enums";
+import { CHART_CATEGORY } from "@modules/charts/apex/model/enums";
 import { useGridStackWidget } from "@shared/hooks/index.js";
 
 export default function ChartGridItem(props) {
@@ -21,9 +21,9 @@ export default function ChartGridItem(props) {
       gs-id={props.id}
       gs-x={savedLayout?.x}
       gs-y={savedLayout?.y}
-      gs-w={savedLayout?.w ?? (category === ChartCategory.PARTITION ? 10 : 15)}
+      gs-w={savedLayout?.w ?? (category === CHART_CATEGORY.PARTITION ? 10 : 15)}
       gs-h={savedLayout?.h ?? 10}
-      gs-min-w={category === ChartCategory.PARTITION ? 8 : 12}
+      gs-min-w={category === CHART_CATEGORY.PARTITION ? 8 : 12}
       gs-min-h={8}
       gs-max-h={100}
     >

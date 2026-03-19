@@ -43,7 +43,6 @@ export function Table() {
         onSort={() => openPopup("sort")}
         onGroup={() => openPopup("group")}
         onToggleSummary={() => openPopup("summary")}
-        onDelete={deleteColumn}
         onOpenColumnSettings={() => openPopup("column-settings")}
       />
       {/* SCROLL CONTAINER */}

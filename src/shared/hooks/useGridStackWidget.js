@@ -24,7 +24,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-export default function useGridStackWidget(gridRef) {
+export function useGridStackWidget(gridRef) {
   const elementRef = useRef(null);
   const initWidget = useCallback(
     (el) => {

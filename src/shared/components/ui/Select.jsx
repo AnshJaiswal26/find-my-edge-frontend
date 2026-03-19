@@ -1,8 +1,7 @@
-import { useResolvedValue } from "@shared/hooks";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useGlobalEvents, useResolvedValue } from "@shared/hooks";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
-import { dismissManager } from "@shared/components/ui/managers/index.js";
 
 export default function Select({
   label,
@@ -135,23 +134,22 @@ function Options({
   classNames,
   pos,
 }) {
-  useEffect(() => {
-    return dismissManager.register(
-      ["pointerdown", "resize", "scroll", "visibilitychange"],
-      (e) => {
-        const target = e.target;
-        if (target.nodeType === Node.ELEMENT_NODE) {
-          if (
-            buttonRef.current?.contains?.(target) ||
-            listRef.current?.contains?.(target)
-          )
-            return;
-        }
-
-        setActive(false);
-      },
-    );
+  const callback = useCallback((e) => {
+    const target = e.target;
+    if (target.nodeType === Node.ELEMENT_NODE) {
+      if (
+        buttonRef.current?.contains?.(target) ||
+        listRef.current?.contains?.(target)
+      )
+        return;
+    }
+    setActive(false);
   }, []);
+
+  useGlobalEvents(
+    ["pointerdown", "resize", "scroll", "visibilitychange"],
+    callback,
+  );
 
   return (
     <div

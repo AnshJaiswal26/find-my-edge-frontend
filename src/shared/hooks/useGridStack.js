@@ -19,7 +19,7 @@ const syncLayoutDebounced = debounce(
   { maxWait: 2000 },
 );
 
-export default function useGridStack({
+export function useGridStack({
   onLayoutChange = () => {},
   columns = { min: 6, sm: 12, md: 20, lg: 30 },
   float = false,

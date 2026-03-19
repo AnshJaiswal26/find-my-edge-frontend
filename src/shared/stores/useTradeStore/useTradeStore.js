@@ -14,6 +14,8 @@ import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
 
 import { tradeService } from "@shared/services/trade.service";
 import { schemaService } from "@shared/services/schema.service";
+import { TOAST } from "@shared/constants";
+import { toast } from "@shared/services/toast.service";
 
 export const useTradeStore = create(
   immer((set, get) => ({
@@ -79,7 +81,7 @@ export const useTradeStore = create(
         useDashboardStore.getState().loadInitialCharts();
       } catch (err) {
         console.error(err);
-        useUIStore.getState().showToast("ERROR", err.message);
+        toast.error(err.message);
         set({ isLoading: false });
       }
     },

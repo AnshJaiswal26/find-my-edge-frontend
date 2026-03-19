@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState } from "react";
 
-export default function useFloatingPosition(active, ref) {
+export function useFloatingPosition(active, ref) {
   const [pos, setPos] = useState(null);
 
   useLayoutEffect(() => {

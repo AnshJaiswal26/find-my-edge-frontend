@@ -8,12 +8,12 @@ import {
 
 import { seriesTooltipCallback } from "../tooltip/series.tooltip";
 import {
-  buildLineChartOptions,
   buildBarChartOptions,
+  buildLineChartOptions,
   buildPieChartOptions,
   buildRadialBarChartOptions,
 } from "../options";
-import { ChartType } from "./enums";
+import { CHART_TYPE } from "./enums";
 import { groupedTooltipCallback } from "../tooltip/group.tooltip";
 
 export default class ChartInstance {
@@ -209,7 +209,7 @@ export default class ChartInstance {
   computeSeries(ids) {
     const { seriesOrder, seriesById, type } = this.chart;
 
-    if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR) {
+    if (type === CHART_TYPE.DONUT || type === CHART_TYPE.RADIAL_BAR) {
       return seriesOrder.map((id) => Math.abs(seriesById[id].value));
     }
 
@@ -219,7 +219,7 @@ export default class ChartInstance {
       data: ids.map((id) => this.seriesSelector(id, seriesById[sId])),
 
       color:
-        type === ChartType.LINE
+        type === CHART_TYPE.LINE
           ? seriesById[sId].color
           : ({ value }) =>
               evaluateColorRules(value, seriesById[sId].colorRules)?.color,
@@ -233,7 +233,7 @@ export default class ChartInstance {
   buildTooltip() {
     const { type, id } = this.chart;
 
-    if (type === ChartType.DONUT || type === ChartType.RADIAL_BAR) {
+    if (type === CHART_TYPE.DONUT || type === CHART_TYPE.RADIAL_BAR) {
       return (seriesValue, index, seriesIndex, w) =>
         groupedTooltipCallback({
           chartId: id,
@@ -276,10 +276,10 @@ export default class ChartInstance {
       dataSeries: computedSeries,
     };
 
-    if (type === ChartType.LINE) return buildLineChartOptions(params);
-    if (type === ChartType.BAR) return buildBarChartOptions(params);
-    if (type === ChartType.DONUT) return buildPieChartOptions(params);
-    if (type === ChartType.RADIAL_BAR)
+    if (type === CHART_TYPE.LINE) return buildLineChartOptions(params);
+    if (type === CHART_TYPE.BAR) return buildBarChartOptions(params);
+    if (type === CHART_TYPE.DONUT) return buildPieChartOptions(params);
+    if (type === CHART_TYPE.RADIAL_BAR)
       return buildRadialBarChartOptions(params);
   }
 

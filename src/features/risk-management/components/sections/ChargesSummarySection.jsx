@@ -1,13 +1,13 @@
 import { Button } from "@shared/components/ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import {
-  useTradeSummary,
   useChargesLogic,
+  useTradeSummary,
 } from "@features/risk-management/hooks";
 import { formatINR } from "@features/risk-management/utils";
 import { Section } from "@shared/components/layout";
 import { useUIStore } from "@shared/stores";
-import { useRef } from "react";
+import { TOAST } from "@shared/constants";
 
 export default function ChargesSummarySection() {
   console.log("ChargesSummarySection...");
@@ -38,7 +38,7 @@ function ToggleChargesButtons() {
         color="#05ab72"
         onClick={() => {
           charges("added");
-          showToast("SUCCESS", "Charges added");
+          showToast(TOAST.SUCCESS, "Charges added");
         }}
         style={{
           padding: "3px 10px",
@@ -51,7 +51,7 @@ function ToggleChargesButtons() {
         color="#fe5a5a"
         onClick={() => {
           charges("removed");
-          showToast("ERROR", "Charges removed");
+          showToast(TOAST.ERROR, "Charges removed");
         }}
         style={{
           padding: "3px 10px",

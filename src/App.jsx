@@ -22,7 +22,7 @@ import BrokerSuccess from "@features/integrations/brokers/success/BrokerSuccess"
 import Login from "@pages/public/LoginPage";
 import Register from "@pages/public/RegisterPage";
 
-import OfflinePage from "@pages/system/offlinePage";
+import OfflinePage from "@pages/system/OfflinePage";
 import ServerUnavailablePage from "@pages/system/ServerUnavailablePage";
 
 import { PAGE_CONFIG } from "@pages/config/pageConfig";

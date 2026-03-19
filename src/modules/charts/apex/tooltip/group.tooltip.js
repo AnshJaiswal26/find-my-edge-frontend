@@ -1,6 +1,6 @@
 import { formatValue } from "@shared/utils";
 import { useChartStore } from "../store";
-import { ChartType } from "../model/enums";
+import { CHART_TYPE } from "../model/enums";
 
 export const groupedTooltipCallback = ({ seriesIndex, chartId }) => {
   const chart = useChartStore.getState().charts[chartId];
@@ -11,7 +11,7 @@ export const groupedTooltipCallback = ({ seriesIndex, chartId }) => {
   const { label, color, value, type, format, decimals } = seriesById[sId] || {};
 
   const display =
-    chartType === ChartType.DONUT
+    chartType === CHART_TYPE.DONUT
       ? { format: layout.format, decimals: layout.decimals }
       : { format, decimals };
 

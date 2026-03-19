@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useUIStore } from "@shared/stores";
 
-export default function useGlobalUIClose() {
+export function useGlobalUIClose() {
   useEffect(() => {
     const { setSelect, setColorPicker } = useUIStore.getState();
 

@@ -2,10 +2,10 @@ import Toolbar from "../Toolbar";
 import { ChartContainer } from "./ChartContainer";
 import { ChartTitle } from "./ChartTitle";
 import { ChartWithConfig } from "./ChartWithConfig";
-import { Loader, Skeleton } from "@shared/components/ui";
+import { Loader } from "@shared/components/ui";
 import { useEffect, useState } from "react";
 
-import { ChartCategory, ChartMode } from "@modules/charts/apex/model/enums";
+import { CHART_CATEGORY, CHART_MODE } from "@modules/charts/apex/model/enums";
 import { GroupOptionSelect } from "./GroupOptionsSelect";
 
 export default function CustomApexChart({
@@ -28,8 +28,8 @@ export default function CustomApexChart({
     <ChartContainer chartId={chartId}>
       <div className="flex items-center justify-between">
         <ChartTitle chartId={chartId} />
-        {category !== ChartCategory.PARTITION &&
-          mode === ChartMode.GROUP_SELECT && (
+        {category !== CHART_CATEGORY.PARTITION &&
+          mode === CHART_MODE.GROUP_SELECT && (
             <GroupOptionSelect
               chartId={chartId}
               getDisplayValue={getDisplayValue}

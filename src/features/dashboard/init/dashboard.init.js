@@ -3,6 +3,7 @@ import { useUIStore } from "@shared/stores";
 import { useDashboardStore } from "../store";
 import { useChartStore } from "@modules/charts/apex/store";
 import { chartEngine } from "@modules/charts/apex/model/chartEngine";
+import { TOAST } from "@shared/constants";
 
 export async function dashboardInit() {
   if (useDashboardStore.getState().isInitialized) return;
@@ -41,6 +42,6 @@ export async function dashboardInit() {
   } catch (e) {
     useUIStore
       .getState()
-      .showToast("ERROR", "Error initializing dashboard: " + e.message);
+      .showToast(TOAST.ERROR, "Error initializing dashboard: " + e.message);
   }
 }

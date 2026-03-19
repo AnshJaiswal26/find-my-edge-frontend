@@ -1,13 +1,13 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { BrokerLogo } from "@shared/components/ui";
-import { useIntegrationsStore } from "@shared/stores";
+import { useIntegrationsStore, useUIStore } from "@shared/stores";
 import { useEffect, useRef, useState } from "react";
 import { Brokers } from "../config";
-import { useUIStore } from "@shared/stores";
 import { dashboardInit } from "@features/dashboard/init/dashboard.init";
 import { tradeSyncService } from "@shared/services/tradesSync.service";
-import { Check, ShieldCheck, TrendingUp, LayoutDashboard } from "lucide-react";
+import { Check, LayoutDashboard, ShieldCheck, TrendingUp } from "lucide-react";
 import { PAGE_CONFIG } from "@pages/config/pageConfig";
+import { TOAST } from "@shared/constants";
 
 // ─── Step config ────────────────────────────────────────────────────────────
 const STEPS = { CONNECTED: 0, SYNCING: 1, PREPARING: 2 };
@@ -234,7 +234,9 @@ export default function BrokerSuccess() {
         navigate(PAGE_CONFIG.DASHBOARD.route, { replace: true });
       } catch (err) {
         console.error(err);
-        useUIStore.getState().showToast("ERROR", "Failed to prepare dashboard");
+        useUIStore
+          .getState()
+          .showToast(TOAST.ERROR, "Failed to prepare dashboard");
         navigate(PAGE_CONFIG.INTEGRATIONS.route, { replace: true });
       }
     };

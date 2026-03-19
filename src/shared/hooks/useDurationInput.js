@@ -52,7 +52,7 @@ const normalize = (parts) => {
   return [d, h, m, s].map(String);
 };
 
-export default function useDurationInput(value, onChange, inputRefs) {
+export function useDurationInput(value, onChange, inputRefs) {
   const [parts, setParts] = useState(toParts(value || "00:00:00:00"));
 
   const updatePart = (index, val, e) => {

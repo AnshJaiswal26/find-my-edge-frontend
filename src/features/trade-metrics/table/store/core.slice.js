@@ -1,6 +1,7 @@
-import { useTradeStore, useUIStore } from "@shared/stores";
+import { useTradeStore } from "@shared/stores";
 import { debounce } from "lodash";
 import { tradeMetricService } from "../service/tradeMetric.service";
+import { toast } from "@shared/services/toast.service";
 
 const debouncedHighlightSync = debounce(async (rowId, highlight, set) => {
   try {
@@ -31,7 +32,7 @@ export const createCoreSlice = (set, get) => ({
         s.groups.forEach((group) => {
           group.ids = group.ids.filter((id) => id !== rowId);
         });
-        if (s.highlightedRows[rowId]) delete s.highlightedRows[id];
+        if (s.highlightedRows[rowId]) delete s.highlightedRows[rowId];
       }
     });
 
@@ -66,7 +67,7 @@ export const createCoreSlice = (set, get) => ({
 
       get().closePopup();
     } catch (err) {
-      useUIStore.getState().showToast("ERROR", err.message);
+      toast.error(err.message);
     } finally {
       set((s) => {
         s.loading.createSchema = false;
@@ -80,14 +81,14 @@ export const createCoreSlice = (set, get) => ({
         s.loading.updateSchema = true;
       });
 
-      // 🔥 call trade store only
+      // call trade store only
       await useTradeStore.getState().updateSchema(colId, draft);
 
       get().closePopup();
 
-      useUIStore.getState().showToast("SUCCESS", "Column updated");
+      toast.success("Column updated");
     } catch (err) {
-      useUIStore.getState().showToast("ERROR", err.message);
+      toast.error(err.message);
     } finally {
       set((s) => {
         s.loading.updateSchema = false;
@@ -104,7 +105,7 @@ export const createCoreSlice = (set, get) => ({
         s.columnsOrder = s.columnsOrder.filter((id) => id !== colId);
       });
 
-      // 🔥 call trade store only
+      // call trade store only
       await useTradeStore.getState().deleteSchema(colId);
 
       set((s) => {
@@ -114,9 +115,9 @@ export const createCoreSlice = (set, get) => ({
 
       get().closePopup();
 
-      useUIStore.getState().showToast("SUCCESS", "Column deleted");
+      toast.success("Column deleted");
     } catch (err) {
-      useUIStore.getState().showToast("ERROR", err.message);
+      toast.error(err.message);
       console.error("Failed to delete column", err);
     } finally {
       set((s) => {

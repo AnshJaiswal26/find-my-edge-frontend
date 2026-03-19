@@ -11,7 +11,7 @@ import { Trash2 } from "lucide-react";
 import { useDashboardStore } from "@features/dashboard/store";
 import { useFilteredOptions } from "@features/dashboard/hooks";
 import { draftToSpec } from "@lib/analytics/engine/data";
-import { ChartMode } from "@modules/charts/apex/model/enums";
+import { CHART_MODE } from "@modules/charts/apex/model/enums";
 import { SemanticType } from "@lib/analytics/schema";
 
 export const CartesianChartForm = forwardRef(
@@ -21,7 +21,7 @@ export const CartesianChartForm = forwardRef(
 
     const [groupSpec, setGroupSpec] = useState({});
 
-    const [mode, setMode] = useState(ChartMode.SERIES);
+    const [mode, setMode] = useState(CHART_MODE.SERIES);
 
     const [layout, setLayout] = useState({
       xTitleText: "",
@@ -55,25 +55,6 @@ export const CartesianChartForm = forwardRef(
 
         setLoading(true);
 
-        const seriesById = {};
-        const seriesOrder = [];
-
-        seriesY.forEach((s, i) => {
-          const id = `series_${i}`;
-
-          seriesById[id] = {
-            id,
-            field: s.field,
-            label: s.label,
-            type: s.type,
-            ast: s.ast ?? null,
-            formula: s.formula ?? null,
-            dependencies: s.dependencies ?? [],
-          };
-
-          seriesOrder.push(id);
-        });
-
         const payload = {
           chartType: type,
           layout,
@@ -81,7 +62,6 @@ export const CartesianChartForm = forwardRef(
           xMetric: seriesX,
           series: seriesY,
         };
-        // console.log("Payload:", payload);
 
         if (groupSpec?.field || groupSpec?.kind) {
           payload.groupSpec = draftToSpec(groupSpec);
@@ -108,17 +88,17 @@ export const CartesianChartForm = forwardRef(
           label="Chart Mode"
           value={mode}
           options={[
-            { id: ChartMode.SERIES, label: "Normal Series" },
-            { id: ChartMode.GROUP_SELECT, label: "Grouped (Select)" },
-            { id: ChartMode.GROUP_AGGREGATE, label: "Grouped (Aggregate)" },
+            { mode: CHART_MODE.SERIES, label: "Normal Series" },
+            { mode: CHART_MODE.GROUP_SELECT, label: "Grouped (Select)" },
+            { mode: CHART_MODE.GROUP_AGGREGATE, label: "Grouped (Aggregate)" },
           ]}
-          getKey={(o) => o.id}
+          getKey={(o) => o.mode}
           getLabel={(o) => o.label}
-          onChange={(o) => setMode(o.id)}
+          onChange={(o) => setMode(o.mode)}
         />
 
-        {(mode === ChartMode.GROUP_SELECT ||
-          mode === ChartMode.GROUP_AGGREGATE) && (
+        {(mode === CHART_MODE.GROUP_SELECT ||
+          mode === CHART_MODE.GROUP_AGGREGATE) && (
           <Section title={"Group Chart Series"}>
             <GroupByBuilder
               schemasById={schemasById}
@@ -126,7 +106,7 @@ export const CartesianChartForm = forwardRef(
               onChange={setGroupSpec}
             />
 
-            {mode == ChartMode.GROUP_AGGREGATE && (
+            {mode === CHART_MODE.GROUP_AGGREGATE && (
               <ExpressionBuilder
                 ref={builderRef}
                 value={""}
@@ -167,7 +147,7 @@ export const CartesianChartForm = forwardRef(
           </Section>
         )}
 
-        {(mode === "SERIES" || mode === "GROUP_SELECT") && (
+        {(mode === CHART_MODE.SERIES || mode === CHART_MODE.GROUP_SELECT) && (
           <>
             <Section title={"X Axis Series"}>
               <Select
@@ -203,6 +183,7 @@ export const CartesianChartForm = forwardRef(
                           field: o.id,
                           label: o.label,
                           type: o.semanticType,
+                          dependencies: [o.id],
                         };
                         return next;
                       });

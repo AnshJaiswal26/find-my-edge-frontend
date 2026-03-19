@@ -1,3 +1,3 @@
-export { ChartCategory } from "./ChartCategrory";
-export { ChartType } from "./ChartType";
-export { ChartMode } from "./ChartMode";
+export { CHART_CATEGORY } from "./chartCategory";
+export { CHART_TYPE } from "./chartType";
+export { CHART_MODE } from "./chartMode";

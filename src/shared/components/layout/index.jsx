@@ -1,4 +1,4 @@
-import { Button, Toast } from "@shared/components/ui";
+import { Button, ConfirmationPopup, Toast } from "@shared/components/ui";
 import { X } from "lucide-react";
 import { Header, Sidebar } from "@shared/components/features";
 
@@ -18,6 +18,7 @@ export const PageContainer = ({
         className={`flex flex-col justify-center items-center font-(--font-faimily-base) w-full h-fit box-border ${className}`}
       >
         <Toast />
+        <ConfirmationPopup />
 
         {editor && <Header />}
         <div className="box-border flex-wrap p-5 bg-(--surface) w-full h-full max-w-[1350px] overflow-x-auto overflow-y-auto">
@@ -108,11 +109,13 @@ export const Section = ({ title, children, subSection = false, className }) => {
   );
 };
 
-export const Popup = ({ open = true, children }) => {
+export const Popup = ({ open = true, children, className = "" }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40">
+    <div
+      className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 ${className}`}
+    >
       {children}
     </div>
   );
@@ -141,7 +144,7 @@ Popup.Container = ({ children, className = "", large = false }) => {
   );
 };
 
-Popup.Header = ({ title, onClose, children }) => {
+Popup.Header = ({ title, onClose, disabled, children }) => {
   return (
     <header className="p-[15px] border-b border-(--border) flex items-center justify-between">
       <div>{title}</div>
@@ -151,6 +154,7 @@ Popup.Header = ({ title, onClose, children }) => {
           aria-label="Close"
           className="hover:text-(--error)"
           onClick={onClose}
+          disabled={disabled}
         >
           <X size={16} className="text-inherit" />
         </Button.Icon>

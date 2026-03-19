@@ -1,5 +1,5 @@
 import { formatGroupValue, formatValue } from "@shared/utils";
-import { ChartMode } from "@modules/charts/apex/model/enums";
+import { CHART_MODE } from "@modules/charts/apex/model/enums";
 
 export const buildChartAxes = ({
   ids,
@@ -26,7 +26,7 @@ export const buildChartAxes = ({
 
         const format = { format: layout.xFormat, decimals: layout.xDecimals };
 
-        if (mode === ChartMode.SERIES || mode == ChartMode.GROUP_SELECT) {
+        if (mode === CHART_MODE.SERIES || mode === CHART_MODE.GROUP_SELECT) {
           const item = seriesSelector(ids[index], xMetric.field);
           if (!item) return 0;
           return formatValue(item, xMetric.type, format);

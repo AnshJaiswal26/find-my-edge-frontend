@@ -1,4 +1,4 @@
-import { ChartCategory } from "@modules/charts/apex/model/enums";
+import { CHART_CATEGORY } from "@modules/charts/apex/model/enums";
 import { DownloadButton } from "./DownloadButton";
 import { FilterButton } from "./FilterButton";
 import { LayoutButton } from "./LayoutButton";
@@ -10,8 +10,8 @@ import { ZoomOutButton } from "./ZoomOutButton";
 
 export default function Toolbar({ chartId, category }) {
   const isGroupType =
-    category === ChartCategory.PARTITION ||
-    category === ChartCategory.RADIAL_AXIS;
+    category === CHART_CATEGORY.PARTITION ||
+    category === CHART_CATEGORY.RADIAL_AXIS;
 
   return (
     <div className="apexcharts-custom-toolbar">

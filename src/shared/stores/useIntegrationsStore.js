@@ -4,6 +4,7 @@ import { immer } from "zustand/middleware/immer";
 import { useUIStore } from "./useUIStore";
 
 import { Brokers } from "@features/integrations/brokers/config";
+import { TOAST } from "@shared/constants";
 
 export const useIntegrationsStore = create(
   immer((set, get) => ({
@@ -42,7 +43,7 @@ export const useIntegrationsStore = create(
       } catch (err) {
         useUIStore
           .getState()
-          .showToast("ERROR", "Failed to fetch broker status");
+          .showToast(TOAST.ERROR, "Failed to fetch broker status");
       } finally {
         set((s) => {
           s.brokers[broker].loading = false;
