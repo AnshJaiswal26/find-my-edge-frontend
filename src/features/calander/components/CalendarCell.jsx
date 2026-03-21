@@ -3,7 +3,7 @@ const mapRange = (value, inMin, inMax, outMin, outMax) => {
   return outMin + ((clamped - inMin) * (outMax - outMin)) / (inMax - inMin);
 };
 
-const CalendarCell = ({
+export const CalendarCell = ({
   day,
   year,
   month,
@@ -126,5 +126,3 @@ const CalendarCell = ({
     </div>
   );
 };
-
-export default CalendarCell;

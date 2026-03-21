@@ -1,4 +1,4 @@
-const Brokers = {
+const BROKERS = {
   DHAN: { key: "dhan", name: "Dhan", logo: "/Icons/broker/dhan.png" },
   ANGEL_BROKING: {
     key: "angel-broking",
@@ -32,7 +32,7 @@ const Brokers = {
   },
 };
 
-const ConnectionStatus = {
+const CONNECTION_STATUS = {
   CONNECTED: "CONNECTED",
   NOT_CONNECTED: "NOT_CONNECTED",
   TOKEN_EXPIRED: "TOKEN_EXPIRED",
@@ -55,4 +55,4 @@ const ConnectionStatus = {
   },
 };
 
-export { Brokers, ConnectionStatus };
+export { BROKERS, CONNECTION_STATUS };

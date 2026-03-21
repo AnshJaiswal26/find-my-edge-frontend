@@ -3,9 +3,9 @@ import { useChartStore } from "@modules/charts/apex/store";
 
 import { CustomApexChart } from "@modules/charts";
 import { CHART_CATEGORY } from "@modules/charts/apex/model/enums";
-import { useGridStackWidget } from "@shared/hooks/index.js";
+import { useGridStackWidget } from "@shared/hooks";
 
-export default function ChartGridItem(props) {
+export function ChartGridItem(props) {
   const { id, grid } = props;
 
   const savedLayout = useDashboardStore((s) => s.gridLayout?.[id]);

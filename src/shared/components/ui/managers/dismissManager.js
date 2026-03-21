@@ -14,14 +14,7 @@ class DismissManager {
   addGlobalListener(event, options = {}) {
     const target = options.target || window;
 
-    target.addEventListener(
-      event,
-      (e) => {
-        // defer to avoid React ordering issues
-        this.handleEvent(event, e);
-      },
-      options,
-    );
+    target.addEventListener(event, (e) => this.handleEvent(event, e), options);
   }
 
   handleEvent(event, e) {

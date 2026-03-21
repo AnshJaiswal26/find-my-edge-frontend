@@ -1,4 +1,4 @@
-import { Brokers } from "@features/integrations/brokers/config";
+import { BROKERS } from "@features/integrations/brokers/config";
 import { PAGE_CONFIG } from "@pages/config/pageConfig";
 import { BrokerLogo } from "@shared/components/ui";
 import { ArrowRight } from "lucide-react";
@@ -10,8 +10,8 @@ export default function DhanConnectCard({ broker }) {
   if (!broker) return null;
 
   const isCompact =
-    broker.name === Brokers.ANGEL_BROKING.name ||
-    broker.name === Brokers.ZERODHA.name;
+    broker.name === BROKERS.ANGEL_BROKING.name ||
+    broker.name === BROKERS.ZERODHA.name;
 
   return (
     <div className="w-full h-[82vh] flex items-center justify-center bg-(--surface)">

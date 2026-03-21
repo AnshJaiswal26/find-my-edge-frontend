@@ -6,10 +6,10 @@ import { Loader } from "@shared/components/ui";
 import { useAppBootstrap } from "@lib/bootstrap/useAppBootstrap";
 import { ProtectedRoute } from "@lib/auth/ProtectedRoute";
 
-import Dashboard from "@features/dashboard/Dashboard.jsx";
+import Dashboard from "@features/dashboard/Dashboard";
 import TradeMetrics from "@features/trade-metrics/TradeMetrics";
 import SheetIntegration from "@features/sheet-integration/SheetIntegration";
-import YearlyCalendar from "@features/calander/YearlyCalendar";
+import Calendar from "@features/calander/Calendar";
 import CapturedStrategies from "@features/captured-strategies/CapturedStrategies";
 import SetupRules from "@features/setups-rules/SetupRules";
 import Settings from "@features/settings/Settings";
@@ -94,7 +94,7 @@ function AppRoutes() {
           element={<TradeMetrics />}
         />
 
-        <Route path={PAGE_CONFIG.CALENDAR.route} element={<YearlyCalendar />} />
+        <Route path={PAGE_CONFIG.CALENDAR.route} element={<Calendar />} />
 
         <Route path={PAGE_CONFIG.SETUP_RULES.route} element={<SetupRules />} />
 

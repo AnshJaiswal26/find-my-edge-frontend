@@ -1,21 +1,21 @@
 import { Button } from "@shared/components/ui";
 import { useIntegrationsStore } from "@shared/stores";
-import { ConnectionStatus } from "@features/integrations/brokers/config";
+import { CONNECTION_STATUS } from "@features/integrations/brokers/config";
 
 const badgeMap = {
-  [ConnectionStatus.CONNECTED]: {
+  [CONNECTION_STATUS.CONNECTED]: {
     text: "Active",
     color: "text-(--success) bg-(--success-soft)",
   },
-  [ConnectionStatus.TOKEN_EXPIRED]: {
+  [CONNECTION_STATUS.TOKEN_EXPIRED]: {
     text: "Connection Expired",
     color: "text-(--error) bg-(--error-soft)",
   },
-  [ConnectionStatus.DISCONNECTED]: {
+  [CONNECTION_STATUS.DISCONNECTED]: {
     text: "Disconnected",
     color: "text-(--error) bg-(--error-soft)",
   },
-  [ConnectionStatus.NOT_CONNECTED]: {
+  [CONNECTION_STATUS.NOT_CONNECTED]: {
     text: "Not Active",
     color: "text-(--error) font-bold bg-(--error-soft)",
   },
@@ -28,7 +28,7 @@ export function BrokerConnectCard({ broker }) {
   const loading = useIntegrationsStore((s) => s.brokers?.[broker.key]?.loading);
   const brokerState = useIntegrationsStore((s) => s.brokers?.[broker.key]);
 
-  const status = brokerState?.status ?? ConnectionStatus.NOT_CONNECTED;
+  const status = brokerState?.status ?? CONNECTION_STATUS.NOT_CONNECTED;
   const connectedAt = brokerState?.connectedAt;
   const expiresAt = brokerState?.expiresAt;
 
@@ -43,7 +43,7 @@ export function BrokerConnectCard({ broker }) {
 
   const isAvailable = broker.available;
 
-  const badge = badgeMap[status] || badgeMap[ConnectionStatus.CONNECTED];
+  const badge = badgeMap[status] || badgeMap[CONNECTION_STATUS.CONNECTED];
 
   return (
     <div
@@ -74,9 +74,9 @@ export function BrokerConnectCard({ broker }) {
         </div>
       </div>
 
-      {ConnectionStatus.isConnected(status) && (
+      {CONNECTION_STATUS.isConnected(status) && (
         <span className="text-[11px] text-(--text-muted) mt-1">
-          {ConnectionStatus.isTokenExpired(status) ? "Last " : ""}
+          {CONNECTION_STATUS.isTokenExpired(status) ? "Last " : ""}
           <span className="text-(--text)">Connected At</span>{" "}
           {connectedAt ? `• ${connectedAt}` : ""}
         </span>
@@ -110,7 +110,7 @@ export function BrokerConnectCard({ broker }) {
           <div className={`${badge.color} font-bold py-0.5 px-2 rounded`}>
             {badge.text}
           </div>
-          {ConnectionStatus.isConnected(status) ? (
+          {CONNECTION_STATUS.isConnected(status) ? (
             <Button
               text={loading === true ? "Disconnecting..." : "Disconnect"}
               variant="error"
@@ -122,7 +122,7 @@ export function BrokerConnectCard({ broker }) {
               text={
                 loading
                   ? "Redirecting..."
-                  : ConnectionStatus.isTokenExpired(status)
+                  : CONNECTION_STATUS.isTokenExpired(status)
                     ? "Reconnect"
                     : `Connect ${broker.name}`
               }
@@ -137,7 +137,7 @@ export function BrokerConnectCard({ broker }) {
       {/* BOTTOM */}
       {isAvailable && (
         <div className="flex gap-1 mt-auto pt-3 text-[11px] text-(--text-muted)">
-          {ConnectionStatus.isConnected(status) ? (
+          {CONNECTION_STATUS.isConnected(status) ? (
             expiresAt ? (
               <>
                 <span className="text-(--text)">Expires At</span> • {expiresAt}

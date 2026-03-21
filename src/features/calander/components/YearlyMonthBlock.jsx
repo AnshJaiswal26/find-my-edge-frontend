@@ -1,6 +1,6 @@
-import { useCalendarStore } from "./store/uesCalendarStore";
-import { useCalendarTrades } from "./hooks/useCalendarData";
-import CalendarGrid from "./CalendarGrid";
+import { useCalendarStore } from "../store/uesCalendarStore";
+import { useCalendarTrades } from "../hooks/useCalendarData";
+import { CalendarGrid } from "./CalendarGrid";
 
 export const YearMonthBlock = ({ year, month }) => {
   const setSelectedDate = useCalendarStore((s) => s.setSelectedDate);

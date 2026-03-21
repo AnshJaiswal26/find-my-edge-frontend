@@ -1,2 +1,2 @@
-export { default as CustomApexChart } from "./apex/ui/Chart";
-export { default as ChartPopups } from "./apex/ui/Popups";
+export { default as CustomApexChart } from "./apex/ui/chart";
+export { default as ChartPopups } from "./apex/ui/modals";

@@ -1,9 +1,9 @@
 import { useDashboardStore } from "@features/dashboard/store";
-import StatCard from "../ui/StatCard";
+import { StatCard } from "../ui";
 import { useGridStackWidget } from "@shared/hooks";
 import { useRef } from "react";
 
-export default function StatGridItem({ id, grid }) {
+export function StatGridItem({ id, grid }) {
   const ref = useRef(null);
   const savedLayout = useDashboardStore((s) => s.gridLayout?.[`stat-${id}`]);
 

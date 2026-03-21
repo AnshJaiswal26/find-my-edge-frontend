@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   ColorRules,
+  ErrorText,
   ExpressionBuilder,
   Input,
   Select,
   SelectOptionsEditor,
-  ErrorText,
 } from "@shared/components/ui";
 import { DisplaySection } from "./DisplaySection";
 import { Section } from "@shared/components/layout";
@@ -15,6 +15,7 @@ import { DEFAULT_FORMATS } from "@shared/utils";
 import {
   BASE_TYPES,
   SchemaComputeMode,
+  SchemaRole,
   SchemaSource,
   SchemaType,
   SchemaTypeGroup,
@@ -48,50 +49,54 @@ export default function ColumnDetails({
   return (
     <div className="flex-1 w-full space-y-4 overflow-auto">
       {/* ✅ TYPE (only base types) */}
-      {!isComputed && draft?.source !== SchemaSource.SYSTEM && (
-        <Select
-          label={"Column Type"}
-          value={draft.type}
-          options={BASE_TYPES}
-          getLabel={(v) => v.toUpperCase()}
-          onChange={(v) =>
-            onDraftChange((p) => ({
-              ...p,
-              type: v,
-              semanticType: SchemaTypeGroup[v],
-              editable: true,
-              display: { format: DEFAULT_FORMATS[v], decimals: 2 },
-            }))
-          }
-        />
-      )}
+      {!isComputed &&
+        draft?.role !== SchemaRole.SYSTEM_REQUIRED &&
+        draft?.role !== SchemaRole.SYSTEM_OPTIONAL && (
+          <Select
+            label={"Column Type"}
+            value={draft.type}
+            options={BASE_TYPES}
+            getLabel={(v) => v.toUpperCase()}
+            onChange={(v) =>
+              onDraftChange((p) => ({
+                ...p,
+                type: v,
+                semanticType: SchemaTypeGroup[v],
+                editable: true,
+                display: { format: DEFAULT_FORMATS[v], decimals: 2 },
+              }))
+            }
+          />
+        )}
 
       {/* MODE */}
-      {draft?.source !== SchemaSource.SYSTEM && (
-        <Select
-          label={"Computation Mode"}
-          value={draft.mode}
-          options={["row", "cumulative"]}
-          getLabel={(v) => v.toUpperCase()}
-          onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
-        />
-      )}
+      {draft?.role !== SchemaRole.SYSTEM_REQUIRED &&
+        draft?.role !== SchemaRole.SYSTEM_OPTIONAL && (
+          <Select
+            label={"Computation Mode"}
+            value={draft.mode}
+            options={["row", "cumulative"]}
+            getLabel={(v) => v.toUpperCase()}
+            onChange={(v) => onDraftChange((p) => ({ ...p, mode: v }))}
+          />
+        )}
 
       {/*  COMPUTED TOGGLE */}
-      {draft?.source !== SchemaSource.SYSTEM && (
-        <Button.Toggle
-          label="Derived"
-          value={isComputed}
-          onChange={(val) => {
-            setIsComputed(val);
-            onDraftChange((p) => ({
-              ...p,
-              ...(!val && { ast: null, formula: "", dependencies: [] }),
-              source: val ? SchemaSource.COMPUTED : SchemaSource.USER,
-            }));
-          }}
-        />
-      )}
+      {draft?.role !== SchemaRole.SYSTEM_REQUIRED &&
+        draft?.role !== SchemaRole.SYSTEM_OPTIONAL && (
+          <Button.Toggle
+            label="Derived"
+            value={isComputed}
+            onChange={(val) => {
+              setIsComputed(val);
+              onDraftChange((p) => ({
+                ...p,
+                ...(!val && { ast: null, formula: "", dependencies: [] }),
+                source: val ? SchemaSource.COMPUTED : SchemaSource.USER,
+              }));
+            }}
+          />
+        )}
 
       {settings && (
         <Button.Toggle
@@ -107,76 +112,80 @@ export default function ColumnDetails({
       )}
 
       {/* LABEL */}
-      {draft?.source !== SchemaSource.SYSTEM && (
-        <Section title={"Label"}>
-          <Input
-            vertical
-            placeholder="Enter Column Name"
-            value={draft.label}
-            onChange={(v) => {
-              onDraftChange((p) => ({ ...p, label: v }));
-            }}
-          />
-          {error?.input && <ErrorText text={error.input} />}
-        </Section>
-      )}
 
-      {/* 🔥 EXPRESSION BUILDER */}
-      {isComputed && (
-        <>
-          <Section title={"Initial Value"}>
-            <Input
-              vertical
-              type="number"
-              placeholder="Enter initial value"
-              value={draft.initialValue}
-              onChange={(v) => {
-                onDraftChange((p) => ({
-                  ...p,
-                  initialValue: Number(v),
-                }));
-              }}
-            />
-          </Section>
+      <Section title={"Label"}>
+        <Input
+          vertical
+          placeholder="Enter Column Name"
+          value={draft.label}
+          onChange={(v) => {
+            onDraftChange((p) => ({ ...p, label: v }));
+          }}
+        />
+        {error?.input && <ErrorText text={error.input} />}
+      </Section>
 
-          <ExpressionBuilder
-            key={draft.id}
-            value={draft.formula}
-            schemasById={columnsById}
-            mode={mode}
-            ref={builderRef}
-            onCommit={({
-              labelFormula,
-              idFormula,
-              ast,
-              dependencies,
-              semanticType,
-            }) => {
-              onDraftChange((p) => ({
-                ...p,
-                formula: labelFormula, // UI expression
-                idFormula, // ENGINE expression
+      {/* EXPRESSION BUILDER */}
+      {isComputed &&
+        draft?.role !== SchemaRole.SYSTEM_REQUIRED &&
+        draft?.role !== SchemaRole.SYSTEM_OPTIONAL && (
+          <>
+            <Section title={"Initial Value"}>
+              <Input
+                vertical
+                type="number"
+                placeholder="Enter initial value"
+                value={draft.initialValue}
+                onChange={(v) => {
+                  onDraftChange((p) => ({
+                    ...p,
+                    initialValue: Number(v),
+                  }));
+                }}
+              />
+            </Section>
+
+            <ExpressionBuilder
+              key={draft.id}
+              value={draft.formula}
+              schemasById={columnsById}
+              mode={mode}
+              ref={builderRef}
+              onCommit={({
+                labelFormula,
+                idFormula,
                 ast,
                 dependencies,
                 semanticType,
-                type:
-                  semanticType === SemanticType.STRING
-                    ? SchemaType.TEXT
-                    : semanticType,
-              }));
-            }}
-          />
-        </>
-      )}
+              }) => {
+                onDraftChange((p) => ({
+                  ...p,
+                  formula: labelFormula, // UI expression
+                  idFormula, // ENGINE expression
+                  ast,
+                  dependencies,
+                  semanticType,
+                  type:
+                    semanticType === SemanticType.STRING
+                      ? SchemaType.TEXT
+                      : semanticType,
+                }));
+              }}
+            />
+          </>
+        )}
 
       {/* SELECT OPTIONS */}
-      {!isComputed && draft.type === SchemaType.SELECT && (
-        <SelectOptionsEditor
-          error={error}
-          options={draft?.options || []}
-          onChange={(opts) => onDraftChange((p) => ({ ...p, options: opts }))}
-        />
-      )}
+      {!isComputed &&
+        draft?.role !== SchemaRole.SYSTEM_REQUIRED &&
+        draft?.role !== SchemaRole.SYSTEM_OPTIONAL &&
+        draft.type === SchemaType.SELECT && (
+          <SelectOptionsEditor
+            error={error}
+            options={draft?.options || []}
+            onChange={(opts) => onDraftChange((p) => ({ ...p, options: opts }))}
+          />
+        )}
 
       {/* DISPLAY */}
       <DisplaySection

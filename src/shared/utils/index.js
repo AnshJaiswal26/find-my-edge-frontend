@@ -60,3 +60,5 @@ export {
 } from "./deFormat";
 
 export { smallHash } from "./hash";
+
+export { moveItem } from "./arrayHelpers";

@@ -1,39 +1,39 @@
 import { Section } from "@shared/components/layout";
 import { BrokerConnectCard } from "./components/features/BrokerConnectCard";
-import { Brokers } from "./config";
+import { BROKERS } from "./config";
 import { useEffect } from "react";
 import { useIntegrationsStore } from "@shared/stores";
 import { Skeleton } from "@shared/components/ui";
 
 const brokers = [
   {
-    key: Brokers.DHAN.key,
-    name: Brokers.DHAN.name,
-    logo: Brokers.DHAN.logo,
+    key: BROKERS.DHAN.key,
+    name: BROKERS.DHAN.name,
+    logo: BROKERS.DHAN.logo,
     available: true,
   },
   {
-    key: Brokers.ANGEL_BROKING.key,
-    name: Brokers.ANGEL_BROKING.name,
-    logo: Brokers.ANGEL_BROKING.logo,
+    key: BROKERS.ANGEL_BROKING.key,
+    name: BROKERS.ANGEL_BROKING.name,
+    logo: BROKERS.ANGEL_BROKING.logo,
     available: false,
   },
   {
-    key: Brokers.GROWW.key,
-    name: Brokers.GROWW.name,
-    logo: Brokers.GROWW.logo,
+    key: BROKERS.GROWW.key,
+    name: BROKERS.GROWW.name,
+    logo: BROKERS.GROWW.logo,
     available: false,
   },
   {
-    key: Brokers.UPSTOX.key,
-    name: Brokers.UPSTOX.name,
-    logo: Brokers.UPSTOX.logo,
+    key: BROKERS.UPSTOX.key,
+    name: BROKERS.UPSTOX.name,
+    logo: BROKERS.UPSTOX.logo,
     available: false,
   },
   {
-    key: Brokers.ZERODHA.key,
-    name: Brokers.ZERODHA.name,
-    logo: Brokers.ZERODHA.logo,
+    key: BROKERS.ZERODHA.key,
+    name: BROKERS.ZERODHA.name,
+    logo: BROKERS.ZERODHA.logo,
     available: false,
   },
 ];
@@ -43,7 +43,7 @@ export function BrokerIntegration() {
   const initializing = useIntegrationsStore((s) => s.initializing);
 
   useEffect(() => {
-    fetchStatus(Brokers.DHAN.key);
+    fetchStatus(BROKERS.DHAN.key);
   }, []);
 
   return (

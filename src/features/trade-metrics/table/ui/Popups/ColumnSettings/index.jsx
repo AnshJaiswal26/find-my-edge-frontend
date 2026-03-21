@@ -88,27 +88,27 @@ export default function ColumnSettingsPopup() {
       </Popup.Body>
       <Popup.ActionsFooter
         fnMap={{
-          ...((activeColumn.source !== SchemaSource.SYSTEM ||
-            activeColumn.role !== SchemaRole.SYSTEM_REQUIRED) && {
-            Delete: {
-              fn: () => {
-                confirmManager.confirm({
-                  title: "Delete Column",
-                  danger: true,
-                  message:
-                    "Are you sure you want to delete this column?" +
-                    (draft.source === SchemaSource.COMPUTED
-                      ? " \nAny charts or statistics using this column may also be affected or removed."
-                      : ""),
-                  onConfirm: async () => {
-                    await deleteColumn(activeColumn.id);
-                  },
-                  onError: (e) => toast.error(e.message),
-                });
-                closePopup();
+          ...(activeColumn.role !== SchemaRole.SYSTEM_REQUIRED &&
+            activeColumn.role !== SchemaRole.SYSTEM_OPTIONAL && {
+              Delete: {
+                fn: () => {
+                  confirmManager.confirm({
+                    title: "Delete Column",
+                    danger: true,
+                    message:
+                      "Are you sure you want to delete this column?" +
+                      (draft.source === SchemaSource.COMPUTED
+                        ? " \nAny charts or statistics using this column may also be affected or removed."
+                        : ""),
+                    onConfirm: async () => {
+                      await deleteColumn(activeColumn.id);
+                    },
+                    onError: (e) => toast.error(e.message),
+                  });
+                  closePopup();
+                },
               },
-            },
-          }),
+            }),
           Cancel: {
             fn: closePopup,
             align: "right",

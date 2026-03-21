@@ -99,7 +99,7 @@ export const CartesianChartForm = forwardRef(
 
         {(mode === CHART_MODE.GROUP_SELECT ||
           mode === CHART_MODE.GROUP_AGGREGATE) && (
-          <Section title={"Group Chart Series"}>
+          <Section title={"Group chart Series"}>
             <GroupByBuilder
               schemasById={schemasById}
               groupBy={groupSpec}

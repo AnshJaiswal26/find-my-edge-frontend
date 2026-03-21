@@ -1,11 +1,11 @@
 import { useDashboardStore } from "@features/dashboard/store";
 import { useMemo } from "react";
-import ChartGridItem from "./ChartGridItem";
+import { ChartGridItem } from "./ChartGridItem";
 import { useGridStack } from "@shared/hooks";
 import { useChartEngineEvent } from "@modules/charts/apex/hooks";
 import { useTradeStore } from "@shared/stores";
 
-export default function ChartGridStack() {
+export function ChartGridStack() {
   const chartsOrder = useDashboardStore((s) => s.chartsOrder);
 
   const tradesOrder = useTradeStore((s) => s.tradesOrder);
@@ -35,20 +35,6 @@ export default function ChartGridStack() {
       useDashboardStore.getState().setLayout(layout);
     },
   });
-
-  // const removeChart = useCallback(
-  //   (chartId) => {
-  //     const scrollContainer = document.getElementById("app-container");
-  //     const scrollTop = scrollContainer.scrollTop;
-
-  //     deleteChart(chartId);
-
-  //     requestAnimationFrame(() => {
-  //       scrollContainer.scrollTop = scrollTop;
-  //     });
-  //   },
-  //   [deleteChart],
-  // );
 
   useChartEngineEvent("chart:remove", (id) => {
     useDashboardStore.getState().deleteChart(id);

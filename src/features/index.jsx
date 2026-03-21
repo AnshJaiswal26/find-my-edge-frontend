@@ -3,7 +3,7 @@ export { default as Edge } from "./Edge/Edge";
 export { default as CustomJournal } from "./CustomRecords/CustomJournal";
 export { default as CustomEdge } from "./CustomRecords/CustomEdge";
 export { default as TradingJournal } from "./TradingJournal/TradingJournal";
-export { default as YearlyCalendar } from "./calander/YearlyCalendar";
+export { default as YearlyCalendar } from "./calander/Calendar";
 export { default as SetupRules } from "./setups-rules/SetupRules";
 export { default as Settings } from "./settings/Settings";
 export { default as Backtest } from "./CustomRecords/backtest";

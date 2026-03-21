@@ -1,7 +1,7 @@
-import CalendarCell from "./CalendarCell";
-import { useCalendarStore } from "./store/uesCalendarStore";
+import { CalendarCell } from "./CalendarCell";
+import { useCalendarStore } from "../store/uesCalendarStore";
 
-const CalendarGrid = ({ currentDate, data, isYearView = false }) => {
+export const CalendarGrid = ({ currentDate, data, isYearView = false }) => {
   const storeDate = useCalendarStore((s) => s.currentDate);
 
   const setSelectedDate = useCalendarStore((s) => s.setSelectedDate);
@@ -76,5 +76,3 @@ const CalendarGrid = ({ currentDate, data, isYearView = false }) => {
     </div>
   );
 };
-
-export default CalendarGrid;

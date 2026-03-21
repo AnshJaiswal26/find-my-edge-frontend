@@ -1,7 +1,7 @@
 import { CalendarDaysIcon, ChevronLeft, ChevronRight } from "lucide-react";
-import { useCalendarStore } from "./store/uesCalendarStore";
+import { useCalendarStore } from "../store/uesCalendarStore";
 
-const CalendarHeader = () => {
+export const CalendarHeader = () => {
   const currentDate = useCalendarStore((s) => s.currentDate);
   const setCurrentDate = useCalendarStore((s) => s.setCurrentDate);
 
@@ -73,5 +73,3 @@ const CalendarHeader = () => {
     </div>
   );
 };
-
-export default CalendarHeader;

@@ -1,14 +1,18 @@
-import TradeDayDetails from "./TradeDayDetails";
+import {
+  CalendarGrid,
+  CalendarHeader,
+  TradeDayDetails,
+  YearMonthBlock,
+} from "./components";
+
+// import PopupSummary from "./components/PopupSummary";
 import { useCalendarTrades } from "./hooks/useCalendarData";
-import CalendarHeader from "./CalendarHeader";
-import CalendarGrid from "./CalendarGrid";
-import PopupSummary from "./PopupSummary";
-import { Container } from "@shared/components/layout";
-import { Select } from "@shared/components/ui";
-import { YearMonthBlock } from "./YearlyMonthBlock";
 import { useCalendarStore } from "./store/uesCalendarStore";
 
-const YearlyCalendar = () => {
+import { Container } from "@shared/components/layout";
+import { Select } from "@shared/components/ui";
+
+export default function Calendar() {
   const viewMode = useCalendarStore((s) => s.viewMode);
   const setViewMode = useCalendarStore((s) => s.setViewMode);
 
@@ -84,6 +88,4 @@ const YearlyCalendar = () => {
       </div>
     </div>
   );
-};
-
-export default YearlyCalendar;
+}

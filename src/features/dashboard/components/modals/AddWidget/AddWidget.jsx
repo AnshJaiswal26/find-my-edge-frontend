@@ -8,9 +8,9 @@ import { useTradeStore } from "@shared/stores";
 
 const CHART_TYPES = [
   { id: "stat", label: "Stat Card" },
-  { id: "bar", label: "Bar Chart" },
-  { id: "line", label: "Line Chart" },
-  { id: "donut", label: "Donut Chart" },
+  { id: "bar", label: "Bar chart" },
+  { id: "line", label: "Line chart" },
+  { id: "donut", label: "Donut chart" },
   { id: "radialBar", label: "Radial Bar" },
   { id: "polarArea", label: "Polar Area" },
   { id: "radar", label: "Radar" },

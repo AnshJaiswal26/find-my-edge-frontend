@@ -1,2 +1,3 @@
-export { dismissManager } from "./dismissManager.js";
-export { confirmManager } from "./confirmationManger.js";
+export { dismissManager } from "./dismissManager";
+export { confirmManager } from "./confirmationManger";
+export { DragResizeManager } from "./DragResizeManager";

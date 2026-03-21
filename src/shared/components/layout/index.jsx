@@ -58,16 +58,18 @@ export const Container = ({
         ${className}
       `}
     >
-      <div className="flex flex-col gap-[0.65rem] min-w-0 w-full h-full">
-        <div className="flex items-center justify-between">
-          {title && (
-            <div className="text-[1.2rem] font-semibold mb-1.5">{title}</div>
-          )}
-          {header && <div>{header}</div>}
-        </div>
+      <div className="flex flex-col flex-1 gap-[0.65rem] min-w-0 min-h-0 w-full h-full">
+        {(title || header) && (
+          <div className="flex items-center justify-between">
+            {title && (
+              <div className="text-[1.2rem] font-semibold mb-1.5">{title}</div>
+            )}
+            {header && <div>{header}</div>}
+          </div>
+        )}
 
         <div
-          className={`flex flex-col flex-1 gap-[0.65rem] min-w-0 ${childClassName}`}
+          className={`flex flex-col flex-1 gap-[0.65rem] min-w-0 min-h-0 h-full ${childClassName}`}
         >
           {children}
         </div>

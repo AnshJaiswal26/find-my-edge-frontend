@@ -1,19 +1,19 @@
 import {
+  useCallback,
   useEffect,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  useCallback,
 } from "react";
 import { createPortal } from "react-dom";
 import { RgbaStringColorPicker } from "react-colorful";
-import { RefreshCcw, ArrowLeftRight, Copy, CopyCheck } from "lucide-react";
+import { ArrowLeftRight, Copy, CopyCheck } from "lucide-react";
 
 import { Button, Input } from "@shared/components/ui";
 import { useUIStore } from "@shared/stores";
 import { resolveCssColor, rgbaToHex } from "@shared/utils";
+import { useGlobalEvents } from "@shared/hooks";
 
 /* ---------- utils ---------- */
 function normalizeInputColor(input) {
@@ -30,22 +30,14 @@ export default function ColorPicker({
   value,
   onChange,
   onCommit,
-  resetColor,
   disabled = false,
-  reset = true,
 }) {
   /* ---------- ids ---------- */
-  const pickerId = useId();
-  const triggerId = `${pickerId}-trigger`;
-  const paletteId = `${pickerId}-palette`;
+
+  const [active, setActive] = useState(false);
 
   /* ---------- store ---------- */
-  const activeColorPicker = useUIStore((s) => s.activeColorPicker);
-  const setColorPicker = useUIStore((s) => s.setColorPicker);
   const addRecentColor = useUIStore((s) => s.addRecentColor);
-  const recentColors = useUIStore((s) => s.recentColors);
-
-  const active = activeColorPicker?.id === pickerId;
 
   /* ---------- refs ---------- */
   const triggerRef = useRef(null);
@@ -60,17 +52,12 @@ export default function ColorPicker({
   const [dirty, setDirty] = useState(false);
   const [format, setFormat] = useState("hex");
   const [input, setInput] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
   const [pos, setPos] = useState({});
 
   /* ---------- helpers ---------- */
-  const markCommitted = useCallback((next) => {
+  const markCommitted = (next) => {
     lastCommittedRef.current = next;
-  }, []);
-
-  const closePicker = useCallback(() => {
-    setColorPicker(null);
-  }, [setColorPicker]);
+  };
 
   /* ---------- sync on open ---------- */
   useLayoutEffect(() => {
@@ -162,104 +149,130 @@ export default function ColorPicker({
     [format, onChange, onCommit, markCommitted],
   );
 
-  const handleReset = useCallback(() => {
-    const resolved = resolveCssColor(resetColor);
-    commitColor(resolved);
-    closePicker();
-  }, [resetColor, commitColor, closePicker]);
-
-  /* ---------- ui ---------- */
-  const CopyIcon = isCopied ? CopyCheck : Copy;
-
   return (
     <div className="inline-flex items-center gap-2 border border-(--border) px-2 py-1 rounded w-fit">
       <button
-        id={triggerId}
         ref={triggerRef}
         type="button"
         disabled={disabled}
-        onClick={() =>
-          active
-            ? closePicker()
-            : setColorPicker({ id: pickerId, triggerId, paletteId })
-        }
+        onClick={() => setActive((p) => !p)}
         className="w-5 h-5 rounded border border-(--border)"
         style={{ backgroundColor: color }}
       />
 
       <span className="text-xs">{label}</span>
 
-      {reset && (
-        <Button.Icon
-          onClick={handleReset}
-          data-tooltip="Reset Color"
-          data-tooltip-position="right"
-        >
-          <RefreshCcw size={14} />
-        </Button.Icon>
-      )}
-
       {active &&
         createPortal(
-          <div
-            id={paletteId}
-            style={pos}
-            className="fixed space-y-2 z-9999 text-(--text) w-64 rounded-xl border border-(--border) bg-(--surface) shadow-xl p-3"
-          >
-            <RgbaStringColorPicker
-              color={color}
-              onChange={handleColorChange}
-              className="!w-full"
-            />
-
-            <div className="flex items-center gap-2 text-xs">
-              <div className="flex justify-between gap-2 items-center">
-                <span>{format.toUpperCase()}</span>
-                <Button.Icon
-                  onClick={() =>
-                    setFormat((f) => (f === "hex" ? "rgba" : "hex"))
-                  }
-                >
-                  <ArrowLeftRight size={12} />
-                </Button.Icon>
-              </div>
-
-              <div className="relative">
-                <Input
-                  vertical
-                  size="sm"
-                  value={input}
-                  onChange={handleInputChange}
-                />
-                <CopyIcon
-                  size={25}
-                  className="absolute top-[50%] -translate-y-1/2 right-1 hover:bg-(--hover) p-1 rounded"
-                  onClick={() => {
-                    setIsCopied(true);
-                    navigator.clipboard.writeText(input);
-                    setTimeout(() => setIsCopied(false), 2000);
-                  }}
-                />
-              </div>
-            </div>
-
-            {recentColors.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {recentColors.map(({ color }) => (
-                  <button
-                    key={color}
-                    type="button"
-                    className="w-4.5 h-4.5 rounded border border-(--border)"
-                    style={{ backgroundColor: color }}
-                    onClick={() => commitColor(color)}
-                    title={color}
-                  />
-                ))}
-              </div>
-            )}
-          </div>,
+          <Picker
+            handleColorChange={handleColorChange}
+            triggerRef={triggerRef}
+            setActive={setActive}
+            pos={pos}
+            format={format}
+            setFormat={setFormat}
+            handleInputChange={handleInputChange}
+            commitColor={commitColor}
+            input={input}
+            color={color}
+          />,
           document.body,
         )}
+    </div>
+  );
+}
+
+function Picker({
+  format,
+  setFormat,
+  handleInputChange,
+  handleColorChange,
+  triggerRef,
+  setActive,
+  pos,
+  commitColor,
+  input,
+  color,
+}) {
+  const pickerRef = useRef(null);
+
+  const [isCopied, setIsCopied] = useState(false);
+  const recentColors = useUIStore((s) => s.recentColors);
+
+  const CopyIcon = isCopied ? CopyCheck : Copy;
+
+  const callback = useCallback((e) => {
+    const target = e.target;
+    if (target.nodeType === Node.ELEMENT_NODE) {
+      if (
+        triggerRef.current?.contains?.(target) ||
+        pickerRef.current?.contains?.(target)
+      )
+        return;
+    }
+    setActive(false);
+  }, []);
+
+  useGlobalEvents(
+    ["pointerdown", "resize", "scroll", "visibilitychange"],
+    callback,
+  );
+
+  return (
+    <div
+      ref={pickerRef}
+      style={pos}
+      className="fixed space-y-2 z-9999 text-(--text) w-64 rounded-xl border border-(--border) bg-(--surface) shadow-xl p-3"
+    >
+      <RgbaStringColorPicker
+        color={color}
+        onChange={handleColorChange}
+        className="!w-full"
+      />
+
+      <div className="flex items-center gap-2 text-xs">
+        <div className="flex justify-between gap-2 items-center">
+          <span>{format.toUpperCase()}</span>
+          <Button.Icon
+            onClick={() => setFormat((f) => (f === "hex" ? "rgba" : "hex"))}
+          >
+            <ArrowLeftRight size={12} />
+          </Button.Icon>
+        </div>
+
+        <div className="relative">
+          <Input
+            vertical
+            size="sm"
+            value={input}
+            onChange={handleInputChange}
+          />
+          <CopyIcon
+            size={25}
+            className="absolute top-[50%] -translate-y-1/2 right-1 hover:bg-(--hover) p-1 rounded"
+            onClick={async () => {
+              setIsCopied(true);
+              if (!isCopied) await navigator.clipboard.writeText(input);
+              setTimeout(() => setIsCopied(false), 2000);
+            }}
+          />
+        </div>
+      </div>
+
+      {recentColors.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {recentColors.map(({ color }) => (
+            <button
+              key={color}
+              type="button"
+              className="w-4.5 h-4.5 rounded border border-(--border)"
+              style={{ backgroundColor: color }}
+              onClick={() => commitColor(color)}
+              title={color}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

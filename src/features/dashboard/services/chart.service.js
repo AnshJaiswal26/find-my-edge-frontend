@@ -4,11 +4,11 @@ import { chartApi } from "@features/dashboard/api/chart.api";
 
 const validateChartRequest = (chart) => {
   if (!chart?.chartType) {
-    throw new Error("Chart type is required");
+    throw new Error("chart type is required");
   }
 
   if (!chart?.series?.length) {
-    throw new Error("Chart must contain at least one series");
+    throw new Error("chart must contain at least one series");
   }
 };
 
@@ -30,35 +30,35 @@ export const chartService = {
 
   /* -------- GET BY ID -------- */
   async getById(page, chartId) {
-    if (!chartId) throw new Error("Chart id is required");
+    if (!chartId) throw new Error("chart id is required");
 
     return chartApi.getById(page, chartId);
   },
 
   /* -------- UPDATE -------- */
   async update(page, chartId, updates) {
-    if (!chartId) throw new Error("Chart id is required");
+    if (!chartId) throw new Error("chart id is required");
 
     return chartApi.update(page, chartId, updates);
   },
 
   /* -------- DELETE -------- */
   async delete(page, chartId) {
-    if (!chartId) throw new Error("Chart id is required");
+    if (!chartId) throw new Error("chart id is required");
 
     return chartApi.delete(page, chartId);
   },
 
   /* -------- UPDATE LAYOUT -------- */
   async updateLayout(page, chartId, layout) {
-    if (!chartId) throw new Error("Chart id is required");
+    if (!chartId) throw new Error("chart id is required");
 
     return chartApi.updateLayout(page, chartId, layout);
   },
 
   /* -------- UPDATE SERIES -------- */
   async updateSeries(page, chartId, series) {
-    if (!chartId) throw new Error("Chart id is required");
+    if (!chartId) throw new Error("chart id is required");
 
     return chartApi.updateSeries(page, chartId, series);
   },

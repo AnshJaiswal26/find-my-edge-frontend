@@ -6,7 +6,7 @@ import { evaluateColorRules, formatValue, parseColor } from "@shared/utils";
 import { useMemo, useState } from "react";
 import { Trash2 } from "lucide-react";
 
-export default function StatCard({ statId }) {
+export function StatCard({ statId }) {
   const stat = useDashboardStore((s) => s.statsById[statId]);
   const deleteStat = useDashboardStore((s) => s.deleteStat);
   const [hovered, setHovered] = useState(false);

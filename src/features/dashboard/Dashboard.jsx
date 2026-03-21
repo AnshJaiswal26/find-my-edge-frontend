@@ -2,22 +2,26 @@ import { useEffect, useState } from "react";
 
 import { ChartPopups } from "@modules/charts";
 
-import { BrokerConnectCard, Button } from "@shared/components/ui";
+import {
+  BrokerConnectCard,
+  NoTradesEmptyState,
+  Button,
+} from "@shared/components/ui";
 import { Container } from "@shared/components/layout";
-import NoTradesEmptyState from "@shared/components/ui/NoTradesEmptyState";
-
-import { useDashboardStore } from "./store";
-
-import { ChartGridStack, StatsGridStack } from "./components/feature";
-import { AddWidgetPopup } from "./components/ui/Popups";
-import DashboardSkeleton from "./components/ui/DashboardSkeleton";
 
 import { useIntegrationsStore, useTradeStore } from "@shared/stores";
-import { dashboardInit } from "./init/dashboard.init";
+
+import { useDashboardStore } from "./store";
+import { AddWidgetPopup } from "./components/modals";
+import { ChartGridStack } from "./components/charts";
+import { StatsGridStack } from "./components/stats";
+import { DashboardSkeleton } from "./components/ui";
+
+import { dashboardInit } from "./init";
 
 import {
-  Brokers,
-  ConnectionStatus,
+  BROKERS,
+  CONNECTION_STATUS,
 } from "@features/integrations/brokers/config";
 
 export default function Dashboard() {
@@ -25,7 +29,7 @@ export default function Dashboard() {
   const isEmpty = useTradeStore((s) => s.tradesOrder.length === 0);
   const isNotConnected = useIntegrationsStore(
     (s) =>
-      s.brokers[Brokers.DHAN.key]?.status === ConnectionStatus.NOT_CONNECTED,
+      s.brokers[BROKERS.DHAN.key]?.status === CONNECTION_STATUS.NOT_CONNECTED,
   );
 
   useEffect(() => {
@@ -39,7 +43,7 @@ export default function Dashboard() {
   }, []);
 
   if (isNotConnected && isEmpty)
-    return <BrokerConnectCard broker={Brokers.DHAN} />;
+    return <BrokerConnectCard broker={BROKERS.DHAN} />;
 
   if (loading) return <DashboardSkeleton />;
   if (isEmpty) return <NoTradesEmptyState />;
@@ -52,14 +56,6 @@ function DashboardContent() {
     <>
       <ChartPopups />
       <AddWidgetPopup />
-
-      {/* <ConfirmationPopup
-        open={true}
-        onCancel={() => null}
-        onConfirm={() => null}
-
-        
-      /> */}
 
       <Container className="rounded-[4px] mb-5">
         <div className="flex-box items-center">

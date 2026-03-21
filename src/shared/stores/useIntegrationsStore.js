@@ -3,14 +3,14 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { useUIStore } from "./useUIStore";
 
-import { Brokers } from "@features/integrations/brokers/config";
+import { BROKERS } from "@features/integrations/brokers/config";
 import { TOAST } from "@shared/constants";
 
 export const useIntegrationsStore = create(
   immer((set, get) => ({
     brokers: {
-      ...Object.keys(Brokers).reduce((acc, key) => {
-        acc[Brokers[key].key] = {
+      ...Object.keys(BROKERS).reduce((acc, key) => {
+        acc[BROKERS[key].key] = {
           loading: false,
           status: null,
           connectedAt: null,

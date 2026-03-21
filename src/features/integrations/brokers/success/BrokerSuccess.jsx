@@ -2,8 +2,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { BrokerLogo } from "@shared/components/ui";
 import { useIntegrationsStore, useUIStore } from "@shared/stores";
 import { useEffect, useRef, useState } from "react";
-import { Brokers } from "../config";
-import { dashboardInit } from "@features/dashboard/init/dashboard.init";
+import { BROKERS } from "../config";
+import { dashboardInit } from "@features/dashboard/init";
 import { tradeSyncService } from "@shared/services/tradesSync.service";
 import { Check, LayoutDashboard, ShieldCheck, TrendingUp } from "lucide-react";
 import { PAGE_CONFIG } from "@pages/config/pageConfig";
@@ -185,7 +185,7 @@ export default function BrokerSuccess() {
   const brokerState = useIntegrationsStore((s) => s.brokers?.[broker]);
   const loading = brokerState?.loading;
 
-  const brokerInfo = Brokers.get(broker);
+  const brokerInfo = BROKERS.get(broker);
   const [step, setStep] = useState(STEPS.CONNECTED);
 
   const start = useRef(Date.now());

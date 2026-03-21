@@ -2,8 +2,10 @@ import { Loader2, LineChart } from "lucide-react";
 
 export default function Loader({ size = 90, className = "" }) {
   return (
-    <div className={`flex flex-col items-center justify-center h-screen gap-6 ${className}`}>
-      {/* Animated Chart Icon */}
+    <div
+      className={`flex flex-col items-center justify-center h-screen gap-6 ${className}`}
+    >
+      {/* Animated chart Icon */}
       <div className="relative flex items-center justify-center">
         <Loader2
           size={size}

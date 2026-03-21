@@ -1,9 +1,9 @@
 import React from "react";
 import { useDashboardStore } from "@features/dashboard/store";
-import StatGridItem from "./StatGridItem";
+import { StatGridItem } from "./StatGridItem";
 import { useGridStack } from "@shared/hooks";
 
-export default function StatsGridStack() {
+export function StatsGridStack() {
   const statsOrder = useDashboardStore((s) => s.statsOrder);
 
   const { grid, containerRef } = useGridStack({

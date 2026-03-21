@@ -3,7 +3,7 @@ import { Skeleton } from "@shared/components/ui";
 const CardSkeleton = () => <Skeleton height="100px" width="100%" />;
 const CartSkeleton = () => <Skeleton height="250px" width="100%" />;
 
-export default function DashboardSkeleton() {
+export function DashboardSkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton height="150px" width="100%" />

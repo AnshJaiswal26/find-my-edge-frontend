@@ -27,6 +27,8 @@ export { default as Legend } from "./Legend";
 export { default as Bar } from "./Bar";
 export { default as Skeleton } from "./Skeleton";
 export { default as NoTradesEmptyState } from "./NoTradesEmptyState";
+export { default as ResizeHandle } from "./ResizeHandle";
+export { default as DragHandle } from "./DragHandle";
 
 /* =========================
    🔹 NAVIGATION / STRUCTURE

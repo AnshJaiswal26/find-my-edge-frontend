@@ -1,11 +1,11 @@
 import { Container } from "@shared/components/layout";
-import { useCalendarStore } from "../store/uesCalendarStore";
+import { useCalendarStore } from "../../store/uesCalendarStore";
 import { Cell } from "./Cell";
 import { Card } from "./Card";
 import { TradeRow } from "./TradeRow";
 import { useState } from "react";
 
-const TradeDayDetails = ({ data }) => {
+export const TradeDayDetails = ({ data }) => {
   const selectedDate = useCalendarStore((s) => s.selectedDate);
 
   const [colWidths, setColWidths] = useState(
@@ -134,5 +134,3 @@ const TradeDayDetails = ({ data }) => {
     </Container>
   );
 };
-
-export default TradeDayDetails;

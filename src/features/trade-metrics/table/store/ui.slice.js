@@ -1,8 +1,8 @@
 import { useTradeStore } from "@shared/stores";
-import { moveItem } from "../interaction";
 import { debounce } from "lodash";
 
 import { tradeMetricService } from "../service/tradeMetric.service";
+import { moveItem } from "@shared/utils";
 
 const debouncedWidthSync = debounce(async (columnId, width, set) => {
   try {
@@ -56,7 +56,7 @@ export const createUiSlice = (set, get) => ({
       /* ---------- REORDER ---------- */
       if (s.colDragMode === "reorder") {
         const { fromIndex } = s.draggingColumn;
-        const toIndex = s.colDragOverIndex;
+        const toIndex = payload.index;
 
         if (
           typeof fromIndex === "number" &&
@@ -66,7 +66,7 @@ export const createUiSlice = (set, get) => ({
           const newOrder = moveItem(
             s.columnsOrder,
             fromIndex,
-            s.groupBy && toIndex == 0 ? 1 : toIndex,
+            s.groupBy && toIndex === 0 ? 1 : toIndex,
           );
           s.columnsOrder = newOrder;
           useTradeStore.getState().updateSchemaOrder(newOrder, "TABLE");

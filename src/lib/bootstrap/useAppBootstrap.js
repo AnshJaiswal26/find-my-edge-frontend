@@ -5,7 +5,7 @@ import { appBootstrap } from "./appBootstrap";
 import { authService } from "@lib/services/auth.service";
 import { setAccessToken } from "@lib/api/client";
 import { useAuthStore, useIntegrationsStore } from "@shared/stores";
-import { Brokers } from "@features/integrations/brokers/config";
+import { BROKERS } from "@features/integrations/brokers/config";
 import { ServerUnavailableError } from "@lib/api/error";
 import { PUBLIC_ROUTES } from "@lib/auth/publicRoutes";
 
@@ -48,7 +48,7 @@ export function useAppBootstrap() {
             const user = await authService.getMe();
             login(user);
 
-            await fetchConnectionStatus(Brokers.DHAN.key);
+            await fetchConnectionStatus(BROKERS.DHAN.key);
 
             authenticated = true;
           }

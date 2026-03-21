@@ -317,7 +317,7 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
     "m-0 p-5 border-0 box-border w-full " +
     "font-mono text-[16px] leading-[1.6] tracking-[0] font-normal " +
     "whitespace-pre-wrap break-words [tab-size:4] " +
-    "[font-variant-ligatures:none] [font-feature-settings:'liga'_0] " +
+    "[font-variant-ligatures:none] [font-stats-settings:'liga'_0] " +
     "[font-kerning:none]";
 
   return (
