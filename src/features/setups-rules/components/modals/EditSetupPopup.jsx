@@ -1,8 +1,11 @@
 import { Popup } from "@shared/components/layout";
 import { Input } from "@shared/components/ui";
 import { useEffect, useRef, useState } from "react";
+import { useTradeSetupStore } from "@shared/stores";
 
-export function EditSetupPopup(props) {
+export function EditSetupPopup({ setupId }) {
+  const closePopup = useTradeSetupStore((s) => s.closePopup);
+
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -45,32 +48,31 @@ export function EditSetupPopup(props) {
   }, [preview]);
 
   return (
-    <Popup open>
-      <Popup.Container>
-        <Popup.Header title={"Edit Setup"} onClose={() => null} />
+    <Popup.Container>
+      <Popup.Header title={"Edit Setup"} onClose={closePopup} />
 
-        <Popup.Body className="!p-4 space-y-5">
-          <Input
-            vertical
-            label={"Setup Name"}
-            classNames={{ input: "!min-w-full w-full" }}
+      <Popup.Body className="!p-4 space-y-5">
+        <Input
+          vertical
+          label={"Setup Name"}
+          classNames={{ input: "!min-w-full w-full" }}
+        />
+
+        {/* Upload Section */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium">Setup Image</label>
+
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
           />
 
-          {/* Upload Section */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium">Setup Image</label>
-
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-
-            <div
-              onClick={() => !uploading && fileRef.current.click()}
-              className="
+          <div
+            onClick={() => !uploading && fileRef.current.click()}
+            className="
                 w-full
                 h-40
                 border-2 border-dashed border-(--border)
@@ -80,51 +82,46 @@ export function EditSetupPopup(props) {
                 relative
                 overflow-hidden
               "
-            >
-              {/* Upload UI */}
-              {!preview ? (
-                <>
-                  <div className="text-3xl mb-2">📤</div>
-                  <p className="text-sm font-medium">Click to upload image</p>
-                  <p className="text-xs text-muted-foreground">
-                    PNG, JPG up to 5MB
-                  </p>
-                </>
-              ) : (
-                <img
-                  src={preview}
-                  alt="preview"
-                  className="!h-full !w-[70%] "
-                />
-              )}
+          >
+            {/* Upload UI */}
+            {!preview ? (
+              <>
+                <div className="text-3xl mb-2">📤</div>
+                <p className="text-sm font-medium">Click to upload image</p>
+                <p className="text-xs text-muted-foreground">
+                  PNG, JPG up to 5MB
+                </p>
+              </>
+            ) : (
+              <img src={preview} alt="preview" className="!h-full !w-[70%] " />
+            )}
 
-              {/* Upload overlay */}
-              {uploading && (
-                <div className="absolute inset-0 bg-(--surface) flex flex-col items-center justify-center gap-2">
-                  <p className="text-white text-sm font-medium">
-                    Uploading... {progress}%
-                  </p>
+            {/* Upload overlay */}
+            {uploading && (
+              <div className="absolute inset-0 bg-(--surface) flex flex-col items-center justify-center gap-2">
+                <p className="text-white text-sm font-medium">
+                  Uploading... {progress}%
+                </p>
 
-                  {/* Progress bar */}
-                  <div className="w-3/4 h-2 bg-white/30 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-(--text-muted) transition-all"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
+                {/* Progress bar */}
+                <div className="w-3/4 h-2 bg-white/30 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-(--text-muted) transition-all"
+                    style={{ width: `${progress}%` }}
+                  />
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
-        </Popup.Body>
+        </div>
+      </Popup.Body>
 
-        <Popup.Footer
-          onApply={() => {
-            console.log("Image:", image);
-          }}
-          onCancel={() => null}
-        />
-      </Popup.Container>
-    </Popup>
+      <Popup.Footer
+        onApply={() => {
+          console.log("Image:", image);
+        }}
+        onCancel={closePopup}
+      />
+    </Popup.Container>
   );
 }

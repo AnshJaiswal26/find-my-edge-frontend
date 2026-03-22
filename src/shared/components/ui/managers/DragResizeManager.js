@@ -1,26 +1,40 @@
-function getDragRects(ele) {
-  return Array.from(ele.querySelectorAll("[data-col-header]")).map(
-    (el, index) => {
-      const r = el.getBoundingClientRect();
-      return { index, left: r.left, right: r.right };
-    },
-  );
+function getDragRects(ele, att) {
+  return Array.from(ele.querySelectorAll(att)).map((el, index) => {
+    const r = el.getBoundingClientRect();
+    return {
+      index,
+      left: r.left,
+      right: r.right,
+      top: r.top,
+      bottom: r.bottom,
+    };
+  });
 }
 
-function findDragIndex(rects, x) {
+function findDragIndex(rects, x, y, mode) {
   let low = 0;
   let high = rects.length - 1;
 
   while (low <= high) {
     let mid = (low + high) >> 1;
-    const col = rects[mid];
+    const target = rects[mid];
 
-    if (x < col.left) {
-      high = mid - 1;
-    } else if (x > col.right) {
-      low = mid + 1;
+    if (mode === "x") {
+      if (x < target.left) {
+        high = mid - 1;
+      } else if (x > target.right) {
+        low = mid + 1;
+      } else {
+        return target.index;
+      }
     } else {
-      return col.index;
+      if (y < target.top) {
+        high = mid - 1;
+      } else if (y > target.bottom) {
+        low = mid + 1;
+      } else {
+        return target.index;
+      }
     }
   }
 
@@ -70,7 +84,7 @@ export class DragResizeManager {
   }
 
   // ================= DRAG =================
-  startDrag(e, element, extra = {}) {
+  startDrag(e, element, direction, extra = {}) {
     e.preventDefault();
     this.cleanup();
 
@@ -93,9 +107,14 @@ export class DragResizeManager {
       parentRect,
       mode: "reorder",
       axis: this.mode,
+      direction,
+      parentEl: this.parentRef.current,
     });
 
-    this.dragRects = getDragRects(this.parentRef?.current);
+    this.dragRects = getDragRects(
+      this.parentRef?.current,
+      this.mode === "x" ? "[data-col-header]" : "[data-row-header]",
+    );
 
     this.callbacks.onDragStart?.(session);
 
@@ -111,9 +130,9 @@ export class DragResizeManager {
       if (this.mode === "x") dy = 0;
       if (this.mode === "y") dx = 0;
 
-      this.controller?.move?.(dx, dy, this.mode);
+      this.controller?.move?.(dx, dy, this.mode, parentRect);
 
-      const index = findDragIndex(this.dragRects, clientX);
+      const index = findDragIndex(this.dragRects, clientX, clientY, this.mode);
       const prevIndex = lastIndex;
       lastIndex = index;
 
@@ -172,6 +191,7 @@ export class DragResizeManager {
       mode: "resize",
       axis: this.mode,
       direction,
+      parentEl: this.parentRef.current,
     });
 
     this.callbacks.onResizeStart?.(session);

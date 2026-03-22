@@ -1,7 +1,6 @@
 import { GripHorizontal, LockKeyholeIcon, RefreshCcwDot } from "lucide-react";
 import { useMemo, useRef } from "react";
 import { useTableStore } from "@features/trade-metrics/table/store";
-import { createColumnDragController } from "@features/trade-metrics/table/interaction/columnDragController";
 import { useTradeStore } from "@shared/stores";
 import {
   hideTooltip,
@@ -10,6 +9,7 @@ import {
 import { SchemaSource, SemanticType } from "@lib/analytics/schema";
 import { DragResizeManager } from "@shared/components/ui/managers";
 import { DragHandle, ResizeHandle } from "@shared/components/ui";
+import { createDragResizeController } from "@shared/components/ui/controller";
 
 export function ColumnHeader(props) {
   const isHidden = useTradeStore(
@@ -40,7 +40,7 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
   const {
     startColumnDrag,
     startColumnResize,
-    endColumnDrag,
+    endColumnResize,
     selectColumn,
     unselectColumn,
   } = useTableStore.getState();
@@ -48,20 +48,20 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
   const manager = useMemo(() => {
     return new DragResizeManager({
       parentRef: tableRef,
-      controllerFactory: createColumnDragController,
+      controllerFactory: createDragResizeController,
       mode: "x",
 
       onDragStart: ({ startX }) => {
         startColumnDrag({ id: colId, index });
       },
 
-      onDragEnd: ({ lastIndex }) => endColumnDrag({ index: lastIndex }),
+      onDragEnd: ({ lastIndex }) => endColumnResize({ index: lastIndex }),
 
       onResizeStart: () => {
         startColumnResize({ id: colId });
       },
 
-      onResizeEnd: endColumnDrag,
+      onResizeEnd: endColumnResize,
     });
   }, [colId, index]);
 
@@ -80,9 +80,7 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
       {!isGroupColumn && (
         <DragHandle
           direction="bottom"
-          onPointerDown={(e, dir) =>
-            manager.startDrag(e, headerRef.current, dir)
-          }
+          onPointerDown={(e, dir) => manager.startDrag(e, headerRef.current)}
           className="opacity-0 group-hover:opacity-60"
         >
           <GripHorizontal size={18} />

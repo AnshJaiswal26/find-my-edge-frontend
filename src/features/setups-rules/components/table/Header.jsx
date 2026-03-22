@@ -1,16 +1,18 @@
-import { Cell } from "@features/setups-rules/components/ui";
+import { RowWrapper } from "../layout";
+import { HeaderCell } from "./HeaderCell";
 
-export function Header() {
+export function Header({ id, tableRef }) {
   return (
-    <div
-      className="sticky top-0 z-10 flex bg-(--surface)
-      border border-(--border)
-      divide-x divide-(--border)"
-    >
-      <div className="w-4.5 border-0" />
+    <RowWrapper className="sticky top-0 z-10" header={true}>
       {["Label", "Mapped Column", "Rule", "Expected", "Tag"].map((text, i) => (
-        <Cell text={text} key={i} index={i} />
+        <HeaderCell
+          key={i}
+          text={text}
+          index={i}
+          setupId={id}
+          tableRef={tableRef}
+        />
       ))}
-    </div>
+    </RowWrapper>
   );
 }

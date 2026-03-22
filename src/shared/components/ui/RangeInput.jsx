@@ -10,7 +10,7 @@ export default function RangeInput({ type, value = {}, onChange }) {
           normalize
           placeholder="Enter from"
           type={type}
-          value={value.from ?? 0}
+          value={value.from ?? ""}
           onChange={(parsed) => onChange({ ...value, from: parsed })}
         />
 
@@ -20,7 +20,7 @@ export default function RangeInput({ type, value = {}, onChange }) {
           placeholder="Enter to"
           normalize
           type={type}
-          value={value.to ?? 0}
+          value={value.to ?? ""}
           onChange={(parsed) => onChange({ ...value, to: parsed })}
         />
       </div>

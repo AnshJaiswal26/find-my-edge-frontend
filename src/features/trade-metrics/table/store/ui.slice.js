@@ -49,7 +49,7 @@ export const createUiSlice = (set, get) => ({
     });
   },
 
-  endColumnDrag(payload) {
+  endColumnResize(payload) {
     set((s) => {
       if (!s.draggingColumn) return;
 

@@ -1,1 +1,1 @@
-export { createColumnDragController } from "./columnDragController";
+export { createColumnDragController } from "@shared/components/ui/controller/createDragResizeController";

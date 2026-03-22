@@ -1,13 +1,24 @@
-export const Cell = ({ text, index }) => {
+import { useTradeSetupStore } from "@shared/stores";
+import { TAG_STYLES } from "../tagStyles";
+
+const getCellClass = (tag, text) => {
+  if (!tag) return "text-(--text)";
+  return TAG_STYLES[text];
+};
+
+export const Cell = ({ text, index, tag = false, setupId }) => {
+  const width = useTradeSetupStore((s) => s.columnWidths[setupId][index]);
   return (
     <div
-      className={`text-(--text) text-left
-      flex-1
-      p-2 px-3 ${index === 0 ? "pl-0" : ""}
+      style={{ width: width ?? 130 }}
+      className={`
+      text-left
+      p-2 px-3
       text-ellipsis overflow-hidden
-      whitespace-nowrap`}
+      whitespace-nowrap font-bold select-none
+      ${getCellClass(tag, text)}`}
     >
-      {text}
+      <span>{tag ? text.replace("_", " ") : text}</span>
     </div>
   );
 };

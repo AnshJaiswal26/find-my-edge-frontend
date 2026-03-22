@@ -1,16 +1,20 @@
 import { Header } from "./Header";
-import { Row } from "./Row";
+import { TableBody } from "./TableBody";
+import { useRef } from "react";
 
-export function TradeSetupTable() {
+export function TradeSetupTable({ id }) {
+  const tableRef = useRef(null);
   return (
-    <div className="flex-4 overflow-auto border-b border-(--border) text-sm h-full">
-      <Header />
-      {Array.from({ length: 18 }).map((_, i) => (
-        <Row
-          key={i}
-          data={["Entry Time", "Entry Time", "<=", "09:30 AM", "GOOD"]}
-        />
-      ))}
+    <div className="flex-5 overflow-auto text-sm h-full">
+      <div
+        ref={tableRef}
+        className="relative border border-(--border) overflow-auto"
+      >
+        <div className="w-fit">
+          <Header id={id} tableRef={tableRef} />
+          <TableBody id={id} tableRef={tableRef} />
+        </div>
+      </div>
     </div>
   );
 }
