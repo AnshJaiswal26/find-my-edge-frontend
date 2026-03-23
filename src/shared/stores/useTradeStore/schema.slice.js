@@ -1,4 +1,4 @@
-import { SchemaSource } from "@lib/analytics/schema";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
 import { createCellValue } from "@features/trade-metrics/table/model";
 import { schemaService } from "@shared/services/schema.service";
@@ -41,7 +41,7 @@ export const createSchemaSlice = (set, get) => ({
         const trade = s.tradesById[tradeId];
         if (!trade) return;
 
-        if (savedSchema.source === SchemaSource.COMPUTED) {
+        if (savedSchema.source === SCHEMA_SOURCE.COMPUTED) {
           // 👉 computed goes to derived
           if (!s.derivedByTradeId[tradeId]) {
             s.derivedByTradeId[tradeId] = {};
@@ -97,8 +97,8 @@ export const createSchemaSlice = (set, get) => ({
           s.derivedByTradeId[tradeId] = {};
         }
 
-        const wasComputed = prevSchema.source === SchemaSource.COMPUTED;
-        const isComputed = updatedSchema.source === SchemaSource.COMPUTED;
+        const wasComputed = prevSchema.source === SCHEMA_SOURCE.COMPUTED;
+        const isComputed = updatedSchema.source === SCHEMA_SOURCE.COMPUTED;
 
         // RAW → COMPUTED
         if (!wasComputed && isComputed) {
@@ -119,7 +119,7 @@ export const createSchemaSlice = (set, get) => ({
     });
 
     // 5. Recompute if computed
-    if (updatedSchema.source === SchemaSource.COMPUTED) {
+    if (updatedSchema.source === SCHEMA_SOURCE.COMPUTED) {
       get().recompute({
         reason: "schema",
         schemaId: id,
@@ -137,7 +137,7 @@ export const createSchemaSlice = (set, get) => ({
       const schema = s.schemasById[id];
       if (!schema) return;
 
-      const isComputed = schema.source === SchemaSource.COMPUTED;
+      const isComputed = schema.source === SCHEMA_SOURCE.COMPUTED;
 
       // 2. Remove schema
       delete s.schemasById[id];

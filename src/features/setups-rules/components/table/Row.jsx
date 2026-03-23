@@ -3,25 +3,22 @@ import { useTradeSetupStore, useTradeStore } from "@shared/stores";
 import { useMemo, useRef } from "react";
 import { FILTER_OPTIONS, formatValue, isBetween } from "@shared/utils";
 import { CellWrapper, RowWrapper } from "../layout";
-import { DragResizeManager } from "@shared/components/ui/managers";
+import {
+  confirmManager,
+  DragResizeManager,
+} from "@shared/components/ui/managers";
 import { createDragResizeController } from "@shared/components/ui/controller";
+import { toast } from "@shared/services/toast.service";
 
 export function Row({ index, setupId, id, tableRef }) {
   const rowRef = useRef(null);
 
-  const {
-    label,
-    mappedSchemaId,
-    condition,
-    expected,
-    from,
-    to,
-    semanticType,
-    tag,
-  } = useTradeSetupStore((s) => s.tradeSetupsById[setupId].fieldsById[id]);
+  const { mappedSchemaId, condition, expected, from, to, semanticType, tag } =
+    useTradeSetupStore((s) => s.tradeSetupsById[setupId].fieldsById[id]);
 
   const startRowDrag = useTradeSetupStore((s) => s.startRowDrag);
   const endRowDrag = useTradeSetupStore((s) => s.endRowDrag);
+  const deleteSetupField = useTradeSetupStore((s) => s.deleteSetupField);
 
   const schemaLabel = useTradeStore((s) => s.schemasById[mappedSchemaId].label);
   const display = useTradeStore((s) => s.schemasById[mappedSchemaId].display);
@@ -56,11 +53,22 @@ export function Row({ index, setupId, id, tableRef }) {
       ref={rowRef}
       index={index}
       onPointerDown={(e) => manager.startDrag(e, rowRef.current)}
+      onRemove={() => {
+        confirmManager.confirm({
+          title: "Delete Field",
+          danger: true,
+          message: "Are you sure you want to delete this field ?",
+          onConfirm: async () => {
+            await deleteSetupField(setupId, id, index);
+          },
+          onError: (e) => toast.error(e.message),
+        });
+      }}
     >
-      {[label, schemaLabel, FILTER_OPTIONS[condition], displayValue, tag].map(
+      {[schemaLabel, FILTER_OPTIONS[condition], displayValue, tag].map(
         (text, i) => (
           <CellWrapper key={i}>
-            <Cell text={text} index={i} setupId={setupId} tag={i === 4} />
+            <Cell text={text} index={i} setupId={setupId} tag={i === 3} />
           </CellWrapper>
         ),
       )}

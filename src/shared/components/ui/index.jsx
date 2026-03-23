@@ -26,7 +26,7 @@ export { default as Divider } from "./Divider";
 export { default as Legend } from "./Legend";
 export { default as Bar } from "./Bar";
 export { default as Skeleton } from "./Skeleton";
-export { default as NoTradesEmptyState } from "./NoTradesEmptyState";
+export { default as NoTradesEmptyState } from "./NoDataEmptyState";
 export { default as ResizeHandle } from "./ResizeHandle";
 export { default as DragHandle } from "./DragHandle";
 
@@ -57,3 +57,9 @@ export { default as ColorRules } from "./ColorRules";
 export { default as ColorPicker } from "./ColorPicker";
 export { default as ValidationTooltip } from "./ValidationTooltip";
 export { default as Overview } from "./Overview";
+
+/* =======================
+      File UI
+========================= */
+
+export { default as ImageUpload } from "./ImageUpload";

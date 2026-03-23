@@ -1,7 +1,7 @@
 import { FILTER_OPTIONS, FILTER_TYPE, isBetween } from "@shared/utils";
 import { Button, Input, RangeInput, Select } from "@shared/components/ui";
 import { Trash2 } from "lucide-react";
-import { SemanticType } from "@lib/analytics/schema";
+import { SEMANTIC_TYPE } from "@lib/analytics/schema";
 
 export default function FilterBuilder({
   filters,
@@ -82,7 +82,7 @@ export default function FilterBuilder({
                       onChange={({ from, to }) => {
                         // auto swap if range is reversed
                         if (
-                          type !== SemanticType.STRING &&
+                          type !== SEMANTIC_TYPE.STRING &&
                           from != null &&
                           to != null &&
                           from > to

@@ -4,7 +4,7 @@ import { PopupSideList } from "@shared/components/ui";
 import { ColumnDetails } from "../shared";
 import { Popup } from "@shared/components/layout";
 import { isValid } from "@features/trade-metrics/table/validation";
-import { SchemaRole, SchemaSource } from "@lib/analytics/schema";
+import { SCHEMA_ROLE, SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { useTradeStore } from "@shared/stores";
 import { confirmManager } from "@shared/components/ui/managers";
 import { toast } from "@shared/services/toast.service";
@@ -88,8 +88,8 @@ export default function ColumnSettingsPopup() {
       </Popup.Body>
       <Popup.ActionsFooter
         fnMap={{
-          ...(activeColumn.role !== SchemaRole.SYSTEM_REQUIRED &&
-            activeColumn.role !== SchemaRole.SYSTEM_OPTIONAL && {
+          ...(activeColumn.role !== SCHEMA_ROLE.SYSTEM_REQUIRED &&
+            activeColumn.role !== SCHEMA_ROLE.SYSTEM_OPTIONAL && {
               Delete: {
                 fn: () => {
                   confirmManager.confirm({
@@ -97,7 +97,7 @@ export default function ColumnSettingsPopup() {
                     danger: true,
                     message:
                       "Are you sure you want to delete this column?" +
-                      (draft.source === SchemaSource.COMPUTED
+                      (draft.source === SCHEMA_SOURCE.COMPUTED
                         ? " \nAny charts or statistics using this column may also be affected or removed."
                         : ""),
                     onConfirm: async () => {

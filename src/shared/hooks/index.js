@@ -8,3 +8,5 @@ export { useGridStackWidget } from "./useGridStackWidget";
 export { useFloatingPosition } from "./useFloatingPosition";
 export { useConfirmation } from "./useConfirmation";
 export { useGlobalEvents } from "./useGlobalEvents";
+export { useFormValidator } from "./useFormValidator";
+export { useImageUpload } from "./useImageUpload";

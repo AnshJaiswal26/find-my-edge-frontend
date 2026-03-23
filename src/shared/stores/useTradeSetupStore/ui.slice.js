@@ -2,7 +2,7 @@ import { moveItem } from "../../utils";
 
 export const createUISlice = (set, get) => ({
   columnWidths: {
-    "setup-1": [80, 100, 150, 200, 120],
+    "setup-1": [130, 150, 230, 130],
   },
 
   dragStartIndex: null,
@@ -46,14 +46,14 @@ export const createUISlice = (set, get) => ({
   openPopup(id, setupId) {
     set((s) => {
       s.activePopup.id = id;
-      s.activeSetupId = setupId;
+      s.activePopup.activeSetupId = setupId;
     });
   },
 
   closePopup() {
     set((s) => {
       s.activePopup.id = null;
-      s.activeSetupId = null;
+      s.activePopup.activeSetupId = null;
     });
   },
 });

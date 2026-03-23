@@ -1,7 +1,7 @@
 import { Button } from "@shared/components/ui";
 import { Inbox } from "lucide-react";
 
-export default function NoTradesEmptyState({
+export default function NoDataEmptyState({
   title = "No trades available",
   message = "You don’t have any trades to display right now.",
   onRetry,

@@ -1,23 +1,27 @@
 /* ------------------ SOURCE ------------------ */
-const SchemaSource = {
+const SCHEMA_SOURCE = {
   SYSTEM: "system",
   USER: "user",
   COMPUTED: "computed",
 };
 
-const SchemaRole = {
+const SCHEMA_ROLE = {
   SYSTEM_REQUIRED: "system_required",
   USER_DEFINED: "user_defined",
   SYSTEM_OPTIONAL: "system_optional",
+
+  isSystemRequired(value) {
+    return value !== this.SYSTEM_REQUIRED && value !== this.SYSTEM_OPTIONAL;
+  },
 };
 
-const SchemaComputeMode = {
+const SCHEMA_COMPUTE_MODE = {
   ROW: "row",
   CUMULATIVE: "cumulative",
 };
 
 /* ------------------ SEMANTIC TYPES ------------------ */
-const SemanticType = {
+const SEMANTIC_TYPE = {
   NUMBER: "number",
   DURATION: "duration",
 
@@ -32,7 +36,7 @@ const SemanticType = {
 };
 
 /* ------------------ SCHEMA TYPES ------------------ */
-const SchemaType = {
+const SCHEMA_TYPE = {
   NUMBER: "number",
   DURATION: "duration",
 
@@ -59,34 +63,34 @@ const BASE_TYPES = [
 ];
 
 /* ------------------ TYPE → SEMANTIC ------------------ */
-const SchemaTypeGroup = {
+const SCHEMA_TYPE_GROUP = {
   // 🔢 Numeric
-  number: SemanticType.NUMBER,
+  number: SEMANTIC_TYPE.NUMBER,
 
   // ⏳ Duration
-  duration: SemanticType.DURATION,
+  duration: SEMANTIC_TYPE.DURATION,
 
   // 📅 Temporal
-  date: SemanticType.DATE,
+  date: SEMANTIC_TYPE.DATE,
 
-  time: SemanticType.TIME,
+  time: SEMANTIC_TYPE.TIME,
 
-  datetime: SemanticType.DATETIME,
+  datetime: SEMANTIC_TYPE.DATETIME,
 
   // 📝 Categorical
-  text: SemanticType.STRING,
-  select: SemanticType.STRING,
+  text: SEMANTIC_TYPE.STRING,
+  select: SEMANTIC_TYPE.STRING,
 
   // ✅ Logical
-  boolean: SemanticType.BOOLEAN,
+  boolean: SEMANTIC_TYPE.BOOLEAN,
 };
 
 export {
-  SchemaSource,
-  SchemaRole,
-  SemanticType,
-  SchemaType,
-  SchemaComputeMode,
+  SCHEMA_SOURCE,
+  SCHEMA_ROLE,
+  SEMANTIC_TYPE,
+  SCHEMA_TYPE,
+  SCHEMA_COMPUTE_MODE,
   BASE_TYPES,
-  SchemaTypeGroup,
+  SCHEMA_TYPE_GROUP,
 };

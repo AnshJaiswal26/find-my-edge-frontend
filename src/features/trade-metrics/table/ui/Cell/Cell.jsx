@@ -5,7 +5,7 @@ import { CellSelect } from "./CellSelect";
 import { CellDisplay } from "./CellDisplay";
 import { useCellValue } from "@features/trade-metrics/table/hooks";
 import { useTradeStore } from "@shared/stores";
-import { SemanticType } from "@lib/analytics/schema";
+import { SEMANTIC_TYPE } from "@lib/analytics/schema";
 
 export const Cell = memo(function Cell({
   rowId,
@@ -25,7 +25,7 @@ export const Cell = memo(function Cell({
 
   const width = useTableStore(
     (s) =>
-      s.columnWidths[colId] ?? (type === SemanticType.DATETIME ? 200 : 150),
+      s.columnWidths[colId] ?? (type === SEMANTIC_TYPE.DATETIME ? 200 : 150),
   );
   /* ---------- Keep draft synced with store value ---------- */
   const [draft, setDraft] = useState(value);

@@ -11,7 +11,7 @@ export const PageContainer = ({
   return (
     <div
       id={"app-container"}
-      className="w-full h-screen overflow-x-hidden overflow-y-auto"
+      className="w-full h-screen overflow-x-hidden overflow-y-auto relative"
     >
       {sidebar && <Sidebar />}
       <div
@@ -116,7 +116,7 @@ export const Popup = ({ open = true, children, className = "" }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 ${className}`}
+      className={`fixed inset-0 z-[1000] flex w-full h-full items-center justify-center bg-black/40 ${className}`}
     >
       {children}
     </div>

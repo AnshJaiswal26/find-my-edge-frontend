@@ -94,3 +94,17 @@ export const CellWrapper = ({ ref, children }) => {
     </div>
   );
 };
+
+export const EmptyStateWrapper = ({ children, className }) => {
+  return (
+    <div
+      className={`flex w-full h-full items-center justify-center 
+        rounded border border-(--border) 
+        text-(--text-muted)
+        text-sm
+        ${className}`}
+    >
+      {children}
+    </div>
+  );
+};

@@ -1,12 +1,21 @@
 import { Popup, Section } from "@shared/components/layout";
 import { useTradeSetupStore, useTradeStore } from "@shared/stores";
-import { useMemo, useState } from "react";
-import { Input, RangeInput, Select } from "@shared/components/ui";
-import { FILTER_OPTIONS, FILTER_TYPE, isBetween } from "@shared/utils";
+import { useMemo } from "react";
+import { ErrorText, Input, RangeInput, Select } from "@shared/components/ui";
+import {
+  FILTER_OPTIONS,
+  FILTER_TYPE,
+  isBetween,
+  requiredIf,
+} from "@shared/utils";
 import { TagSelector } from "../ui";
+import { useFormValidator } from "@shared/hooks";
 
 export function AddSetupFieldPopup({ setupId }) {
   const closePopup = useTradeSetupStore((s) => s.closePopup);
+  const addSetupField = useTradeSetupStore((s) => s.addSetupField);
+  const isSubmitting = useTradeSetupStore((s) => s.isSubmitting);
+
   const schemasOrder = useTradeStore((s) => s.schemasOrder);
   const schemasById = useTradeStore((s) => s.schemasById);
 
@@ -16,15 +25,35 @@ export function AddSetupFieldPopup({ setupId }) {
     [schemasById, schemasOrder],
   );
 
-  const [draft, setDraft] = useState({
-    label: "",
-    mappedSchemaId: "pnl",
-    condition: "greaterThan",
-    expected: "",
-    from: "",
-    to: "",
-    semanticType: "number",
-    tag: "EXCELLENT",
+  const {
+    values: draft,
+    errors,
+    setField,
+    validate,
+    register,
+  } = useFormValidator({
+    initialValues: {
+      mappedSchemaId: "date",
+      condition: "greaterThan",
+      expected: "",
+      from: "",
+      to: "",
+      semanticType: "date",
+      tag: "EXCELLENT",
+    },
+
+    rules: {
+      expected: [
+        requiredIf(
+          (f) => !isBetween(f.condition),
+          "Expected value is required",
+        ),
+      ],
+
+      from: [requiredIf((f) => isBetween(f.condition), "From is required")],
+
+      to: [requiredIf((f) => isBetween(f.condition), "To is required")],
+    },
   });
 
   return (
@@ -32,39 +61,28 @@ export function AddSetupFieldPopup({ setupId }) {
       <Popup.Header title={"Add Field"} onClose={closePopup} />
 
       <Popup.Body className="!p-4 space-y-5">
-        <Section title={"Label"}>
-          <Input
-            value={draft.label}
-            placeholder={"Enter Label"}
-            classNames={{ input: "!min-w-full" }}
-            onChange={(v) => setDraft((p) => ({ ...p, label: v }))}
-          />
-        </Section>
-        <Section title={"Map To"}>
+        <Section title={"Field"}>
           <Select
             options={schemas}
             getLabel={(s) => s.label}
             getKey={(s) => s.id}
             value={draft.mappedSchemaId}
             classNames={{ button: "!min-w-full" }}
-            onChange={(s) =>
-              setDraft((p) => ({
-                ...p,
-                mappedSchemaId: s.id,
-                semanticType: s.semanticType,
-                condition: FILTER_TYPE[s.semanticType][0],
-              }))
-            }
+            onChange={(s) => {
+              setField("mappedSchemaId", s.id);
+              setField("semanticType", s.semanticType);
+              setField("condition", FILTER_TYPE[s.semanticType][0]);
+            }}
           />
         </Section>
 
-        <Section title={"Condition"}>
+        <Section title={"Rule"}>
           <Select
             options={FILTER_TYPE[draft.semanticType]}
             getLabel={(l) => FILTER_OPTIONS[l]}
             classNames={{ button: "!min-w-full" }}
             value={draft.condition}
-            onChange={(v) => setDraft((p) => ({ ...p, condition: v }))}
+            onChange={(v) => setField("condition", v)}
           />
         </Section>
 
@@ -73,30 +91,48 @@ export function AddSetupFieldPopup({ setupId }) {
             <RangeInput
               type={draft.semanticType}
               value={{ from: draft.from, to: draft.to }}
-              onChange={({ from, to }) => setDraft((p) => ({ ...p, from, to }))}
+              onChange={({ from, to }) => {
+                setField("from", from);
+                setField("to", to);
+              }}
+              refFrom={register("from")}
+              refTo={register("to")}
             />
           ) : (
             <Input
+              ref={register("expected")}
               vertical={true}
               placeholder={"Enter Value"}
               type={draft.semanticType}
               value={draft.expected}
               classNames={{ input: "!min-w-full" }}
-              onChange={(v) => setDraft((p) => ({ ...p, expected: v }))}
+              onChange={(v) => setField("expected", v)}
             />
           )}
+
+          {(errors.expected || errors.from || errors.to) && (
+            <ErrorText text={errors.expected || errors.from || errors.to} />
+          )}
         </Section>
+
         <Section title={"Tag"}>
           <TagSelector
             value={draft.tag}
-            onChange={(tag) => setDraft((p) => ({ ...p, tag }))}
+            onChange={(tag) => setField("tag", tag)}
           />
         </Section>
       </Popup.Body>
 
       <Popup.Footer
         text={["Cancel", "Add"]}
-        onApply={() => null}
+        loading={{ apply: isSubmitting }}
+        disableApply={isSubmitting}
+        disableCancel={isSubmitting}
+        onApply={() => {
+          if (validate()) {
+            addSetupField(setupId, draft);
+          }
+        }}
         onCancel={closePopup}
       />
     </Popup.Container>

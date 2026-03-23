@@ -1,4 +1,4 @@
-import { SemanticType } from "@lib/analytics/schema";
+import { SEMANTIC_TYPE } from "@lib/analytics/schema";
 import { parseInputValue } from "@shared/utils";
 
 const DEFAULT_VALUE_MAP = {
@@ -7,9 +7,9 @@ const DEFAULT_VALUE_MAP = {
   time: () => 0,
 
   date: () =>
-    parseInputValue(new Date().toISOString().slice(0, 10), SemanticType.DATE),
+    parseInputValue(new Date().toISOString().slice(0, 10), SEMANTIC_TYPE.DATE),
   datetime: () =>
-    parseInputValue(new Date().toISOString(), SemanticType.DATETIME),
+    parseInputValue(new Date().toISOString(), SEMANTIC_TYPE.DATETIME),
 
   text: () => "—",
 

@@ -17,7 +17,7 @@ export default function ResizeHandle({
       onPointerDown={(e) => onPointerDown(e, direction)}
       className={`
         absolute 
-        ${vertical ? "w-full cursor-row-resize h-1" : "h-full cursor-col-resize w-0.5"} 
+        ${vertical ? "w-full cursor-row-resize h-1" : "h-full cursor-col-resize w-[3px]"} 
         hover:bg-(--cyan) 
         ${directionMap[direction]} ${className}`}
     />

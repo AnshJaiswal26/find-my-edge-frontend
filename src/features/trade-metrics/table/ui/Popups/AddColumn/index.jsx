@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { ColumnDetails } from "../shared";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { Popup } from "@shared/components/layout";
-import { createSchema, SchemaSource } from "@lib/analytics/schema";
+import { createSchema, SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { isValid } from "@features/trade-metrics/table/validation";
 import { useTradeStore } from "@shared/stores";
 

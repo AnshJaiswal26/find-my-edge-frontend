@@ -1,32 +1,30 @@
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@shared/components/ui";
-
-import { ToolbarSection } from "../layout";
 import { useTradeSetupStore } from "@shared/stores";
 import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
+import { confirmManager } from "@shared/components/ui/managers";
+import { toast } from "@shared/services/toast.service";
 
 function Title({ id }) {
   const name = useTradeSetupStore((s) => s.tradeSetupsById[id].name);
-  return <span className="ml-3">{name}</span>;
+  return <span>{name}</span>;
 }
 
 export function Toolbar({ id }) {
   const openPopup = useTradeSetupStore((s) => s.openPopup);
+  const deleteTradeSetup = useTradeSetupStore((s) => s.deleteTradeSetup);
 
   return (
-    <div className="flex flex-row w-full gap-3 h-fit">
-      <ToolbarSection className="flex-4 justify-between border-r border-(--border)">
-        <Title id={id} />
+    <div className="flex items-center justify-between w-full gap-3 h-fit">
+      <Title id={id} />
+      <div className="flex gap-2">
         <Button.Icon
-          className="mr-3"
           onClick={() => openPopup("setup-edit", id)}
           onMouseEnter={(e) => showTooltip(e, "Edit Setup")}
           onMouseLeave={hideTooltip}
         >
           <Pencil size={16} />
         </Button.Icon>
-      </ToolbarSection>
-      <ToolbarSection className="flex-5 justify-end">
         <Button.Icon
           onClick={() => openPopup("field-add", id)}
           onMouseEnter={(e) => showTooltip(e, "Add Field")}
@@ -35,12 +33,23 @@ export function Toolbar({ id }) {
           <Plus size={16} />
         </Button.Icon>
         <Button.Icon
+          onClick={() => {
+            confirmManager.confirm({
+              title: "Delete Setup",
+              danger: true,
+              message: "Are you sure you want to delete this setup ?",
+              onConfirm: async () => {
+                await deleteTradeSetup(id);
+              },
+              onError: (e) => toast.error(e.message),
+            });
+          }}
           onMouseEnter={(e) => showTooltip(e, "Delete Setup")}
           onMouseLeave={hideTooltip}
         >
           <Trash2 size={16} />
         </Button.Icon>
-      </ToolbarSection>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { SemanticType } from "@lib/analytics/schema";
+import { SEMANTIC_TYPE } from "@lib/analytics/schema";
 import { useEffect, useMemo } from "react";
 
 export default function useFilteredOptions({ series, options, setSeries }) {
@@ -8,7 +8,7 @@ export default function useFilteredOptions({ series, options, setSeries }) {
   }, [series]);
 
   const baseOptions = useMemo(() => {
-    return options.filter((o) => o.semanticType !== SemanticType.STRING);
+    return options.filter((o) => o.semanticType !== SEMANTIC_TYPE.STRING);
   }, [options]);
 
   const filteredOptions = useMemo(() => {

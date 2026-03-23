@@ -40,15 +40,17 @@ async function refreshAccessToken() {
 }
 
 async function doRequest(url, options = {}) {
+  const isFormData = options.body instanceof FormData;
+
   try {
     return await fetch(`${BASE_API_URL}/${url}`, {
+      ...options,
       credentials: "include",
       headers: {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
         ...options.headers,
       },
-      ...options,
     });
   } catch (err) {
     if (err instanceof TypeError) {

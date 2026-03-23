@@ -1,10 +1,10 @@
 export { createSchema } from "./createSchema";
 export {
-  SchemaSource,
-  SchemaRole,
-  SemanticType,
-  SchemaType,
-  SchemaComputeMode,
+  SCHEMA_SOURCE,
+  SCHEMA_ROLE,
+  SEMANTIC_TYPE,
+  SCHEMA_TYPE,
+  SCHEMA_COMPUTE_MODE,
   BASE_TYPES,
-  SchemaTypeGroup,
+  SCHEMA_TYPE_GROUP,
 } from "./schemaTypes";

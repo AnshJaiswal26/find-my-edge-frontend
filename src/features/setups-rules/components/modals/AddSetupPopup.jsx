@@ -2,26 +2,23 @@ import { Popup } from "@shared/components/layout";
 import { useTradeSetupStore } from "@shared/stores";
 import { SetupFormBuilder } from "./SetupFormBuilder";
 
-export function EditSetupPopup({ setupId }) {
-  const updateSetup = useTradeSetupStore((s) => s.updateTradeSetup);
+export function AddSetupPopup() {
+  const addTradeSetup = useTradeSetupStore((s) => s.addTradeSetup);
   const isSubmitting = useTradeSetupStore((s) => s.isSubmitting);
-
-  const { name, imageUrl, imagePublicId } =
-    useTradeSetupStore.getState().tradeSetupsById[setupId];
 
   return (
     <Popup.Container>
       <SetupFormBuilder
-        title={"Edit Setup"}
+        title={"Add Setup"}
         initialValues={{
-          name,
-          imageUrl,
-          imagePublicId,
+          name: "",
+          imageUrl: "",
+          imagePublicId: "",
         }}
-        isSubmitting={isSubmitting}
+        isSubmiting={isSubmitting}
         onApply={(values, validate) => {
           if (validate()) {
-            updateSetup(setupId, values);
+            addTradeSetup(values);
           }
         }}
       />

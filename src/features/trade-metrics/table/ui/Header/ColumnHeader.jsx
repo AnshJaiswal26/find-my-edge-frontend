@@ -6,7 +6,7 @@ import {
   hideTooltip,
   showTooltip,
 } from "@shared/components/ui/tooltip/index.js";
-import { SchemaSource, SemanticType } from "@lib/analytics/schema";
+import { SCHEMA_SOURCE, SEMANTIC_TYPE } from "@lib/analytics/schema";
 import { DragResizeManager } from "@shared/components/ui/managers";
 import { DragHandle, ResizeHandle } from "@shared/components/ui";
 import { createDragResizeController } from "@shared/components/ui/controller";
@@ -27,10 +27,10 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
   const width = useTableStore(
     (s) =>
       s.columnWidths[colId] ??
-      (column.semanticType === SemanticType.DATETIME ? 200 : 150),
+      (column.semanticType === SEMANTIC_TYPE.DATETIME ? 200 : 150),
   );
 
-  const isColEditable = column.source !== SchemaSource.COMPUTED;
+  const isColEditable = column.source !== SCHEMA_SOURCE.COMPUTED;
   const isColUnlocked = useTableStore(
     (s) => s.lockedColumnsMap?.[colId] !== true,
   );

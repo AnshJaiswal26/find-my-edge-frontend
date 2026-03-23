@@ -1,4 +1,4 @@
-import { SchemaSource } from "@lib/analytics/schema";
+import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { computeAggregate } from "./computeAggregate";
 import { computeRowSequence } from "./computeRowSequence";
 import { COMPUTATION_MODE } from "./computionModes";
@@ -10,7 +10,7 @@ export function computeOverSequence(options) {
     return computeAggregate(options);
   }
 
-  if (options.schema?.source !== SchemaSource.COMPUTED) return;
+  if (options.schema?.source !== SCHEMA_SOURCE.COMPUTED) return;
   // console.log(options);
 
   // Row / Window evaluation

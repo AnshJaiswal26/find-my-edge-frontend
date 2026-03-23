@@ -1,4 +1,4 @@
-import { formatForInput, parseInputValue, INPUT_TYPES } from "@shared/utils";
+import { formatForInput, INPUT_TYPES, parseInputValue } from "@shared/utils";
 import { useTradeStore } from "@shared/stores";
 import { DurationInput } from "@shared/components/ui";
 
@@ -24,7 +24,7 @@ export const CellInput = ({ colId, draft, setDraft, onCommit, setEditing }) => {
 
   return (
     <input
-      className="w-full px-2 py-1 outline-0 h-[28px] appearance-none"
+      className="w-full px-2 py-1 outline-0 h-[28px]"
       autoFocus
       type={INPUT_TYPES[type] || "text"}
       step={1}

@@ -5,7 +5,7 @@ import { KpiGrid } from "./KpiGrid";
 import { MetricTableHeader } from "./MetricTableHeader";
 import { formatValue } from "@shared/utils";
 import { useTradeStore } from "@shared/stores";
-import { SchemaType, SemanticType } from "@lib/analytics/schema";
+import { SCHEMA_TYPE, SEMANTIC_TYPE } from "@lib/analytics/schema";
 
 function Divider() {
   return <div className="h-px bg-(--border)" />;
@@ -28,7 +28,7 @@ function computeSummary() {
   } = useTradeStore.getState();
 
   const numericColumns = Object.values(columnsById).filter(
-    (col) => col.semanticType !== SemanticType.STRING,
+    (col) => col.semanticType !== SEMANTIC_TYPE.STRING,
   );
 
   const rows = rowsOrder.map((id) => rowsById[id]);

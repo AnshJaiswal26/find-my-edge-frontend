@@ -1,4 +1,5 @@
-import { useTradeStore } from "@shared/stores";
+import { useTradeSetupStore, useTradeStore } from "@shared/stores";
+import { useMemo } from "react";
 
 export const CellSelect = ({
   rowId,
@@ -9,6 +10,14 @@ export const CellSelect = ({
   setEditing,
 }) => {
   const options = useTradeStore((s) => s.schemasById[colId].options);
+  const { tradeSetupsOrder, tradeSetupsById } = useTradeSetupStore.getState();
+
+  const setupOptions = useMemo(
+    () => tradeSetupsOrder.map((id) => tradeSetupsById[id].name),
+    [],
+  );
+
+  const opts = colId === "setup" ? setupOptions : options;
 
   return (
     <select
@@ -24,7 +33,7 @@ export const CellSelect = ({
       }}
     >
       <option className="bg-(--surface)">—</option>
-      {options.map((o) => (
+      {opts.map((o) => (
         <option key={o} className="bg-(--surface)">
           {o}
         </option>

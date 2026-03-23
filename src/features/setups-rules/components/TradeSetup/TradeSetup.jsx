@@ -1,10 +1,8 @@
 import { Container } from "@shared/components/layout";
 
-import {
-  Toolbar,
-  TradeSetupTable,
-} from "@features/setups-rules/components/table";
+import { Toolbar } from "@features/setups-rules/components/table";
 import { SetupImage } from "./SetupImage";
+import { TableSection } from "./TableSection";
 
 export function TradeSetup({ id }) {
   return (
@@ -12,7 +10,7 @@ export function TradeSetup({ id }) {
       <Toolbar id={id} />
       <div className="flex flex-wrap md:flex-row flex-col gap-3 justify-between h-full overflow-x-auto">
         <SetupImage id={id} />
-        <TradeSetupTable id={id} />
+        <TableSection id={id} />
       </div>
     </Container>
   );
