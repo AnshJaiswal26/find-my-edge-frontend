@@ -11,7 +11,7 @@ const SCHEMA_ROLE = {
   SYSTEM_OPTIONAL: "system_optional",
 
   isSystemRequired(value) {
-    return value !== this.SYSTEM_REQUIRED && value !== this.SYSTEM_OPTIONAL;
+    return value === this.SYSTEM_REQUIRED || value === this.SYSTEM_OPTIONAL;
   },
 };
 
@@ -31,9 +31,9 @@ const SEMANTIC_TYPE = {
 
   STRING: "string",
   BOOLEAN: "boolean",
-
-  ANY: "any",
 };
+
+const SEMANTIC_TYPE_VALUES = Object.values(SEMANTIC_TYPE);
 
 /* ------------------ SCHEMA TYPES ------------------ */
 const SCHEMA_TYPE = {
@@ -89,6 +89,7 @@ export {
   SCHEMA_SOURCE,
   SCHEMA_ROLE,
   SEMANTIC_TYPE,
+  SEMANTIC_TYPE_VALUES,
   SCHEMA_TYPE,
   SCHEMA_COMPUTE_MODE,
   BASE_TYPES,

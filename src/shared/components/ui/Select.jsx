@@ -57,7 +57,7 @@ export default function Select({
   }, [active]);
 
   const selectedItem = useMemo(
-    () => options.find((o) => getKey(o) === val) ?? null,
+    () => options?.find((o) => getKey(o) === val) ?? null,
     [val],
   );
 
@@ -91,8 +91,8 @@ export default function Select({
             ${classNames?.button}
           `}
           onClick={(e) => {
+            setActive((p) => !p);
             e.preventDefault();
-            setActive(true);
           }}
         >
           <span>{selectedItem ? getLabel(selectedItem) : "Select"}</span>

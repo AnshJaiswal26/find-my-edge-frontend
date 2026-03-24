@@ -5,7 +5,7 @@ import { useTradeStore } from "@shared/stores";
 import { useMemo, useState } from "react";
 
 export default function FilterPopup() {
-  const appliedfilters = useTableStore((s) => s.filters);
+  const appliedFilters = useTableStore((s) => s.filters);
 
   const schemasOrder = useTradeStore((s) => s.schemasOrder);
   const schemasById = useTradeStore((s) => s.schemasById);
@@ -15,7 +15,7 @@ export default function FilterPopup() {
     [schemasById, schemasOrder],
   );
 
-  const [filters, setFilters] = useState([...appliedfilters]);
+  const [filters, setFilters] = useState([...appliedFilters]);
 
   const { clearFilters, closePopup, applyFilters } = useTableStore.getState();
 
@@ -28,7 +28,7 @@ export default function FilterPopup() {
           <FilterBuilder
             filters={filters}
             fieldOptions={schemas}
-            getKey={(s) => s.field}
+            getKey={(s) => s.id}
             getType={(key) => schemasById[key]?.semanticType}
             setFilters={setFilters}
           />

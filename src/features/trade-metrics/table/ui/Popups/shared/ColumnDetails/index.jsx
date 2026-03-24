@@ -49,7 +49,7 @@ export default function ColumnDetails({
   return (
     <div className="flex-1 w-full space-y-4 overflow-auto">
       {/* ✅ TYPE (only base types) */}
-      {!isComputed && SCHEMA_ROLE.isSystemRequired(draft?.role) && (
+      {!isComputed && !SCHEMA_ROLE.isSystemRequired(draft?.role) && (
         <Select
           label={"Column Type"}
           value={draft.type}
@@ -68,7 +68,7 @@ export default function ColumnDetails({
       )}
 
       {/* MODE */}
-      {SCHEMA_ROLE.isSystemRequired(draft?.role) && (
+      {isComputed && !SCHEMA_ROLE.isSystemRequired(draft?.role) && (
         <Select
           label={"Computation Mode"}
           value={draft.mode}
@@ -79,7 +79,7 @@ export default function ColumnDetails({
       )}
 
       {/*  COMPUTED TOGGLE */}
-      {SCHEMA_ROLE.isSystemRequired(draft.role) && (
+      {!SCHEMA_ROLE.isSystemRequired(draft.role) && (
         <Button.Toggle
           label="Derived"
           value={isComputed}
@@ -122,29 +122,31 @@ export default function ColumnDetails({
       </Section>
 
       {/* EXPRESSION BUILDER */}
-      {isComputed && SCHEMA_ROLE.isSystemRequired(draft.role) && (
+      {isComputed && (
         <>
-          <Section title={"Initial Value"}>
-            <Input
-              vertical
-              type="number"
-              placeholder="Enter initial value"
-              value={draft.initialValue}
-              onChange={(v) => {
-                onDraftChange((p) => ({
-                  ...p,
-                  initialValue: Number(v),
-                }));
-              }}
-            />
-          </Section>
-
+          {!SCHEMA_ROLE.isSystemRequired(draft.role) && (
+            <Section title={"Initial Value"}>
+              <Input
+                vertical
+                type="number"
+                placeholder="Enter initial value"
+                value={draft.initialValue}
+                onChange={(v) => {
+                  onDraftChange((p) => ({
+                    ...p,
+                    initialValue: Number(v),
+                  }));
+                }}
+              />
+            </Section>
+          )}
           <ExpressionBuilder
+            ref={builderRef}
             key={draft.id}
+            disabled={SCHEMA_ROLE.isSystemRequired(draft.role)}
             value={draft.formula}
             schemasById={columnsById}
             mode={mode}
-            ref={builderRef}
             onCommit={({
               labelFormula,
               idFormula,
@@ -171,7 +173,7 @@ export default function ColumnDetails({
 
       {/* SELECT OPTIONS */}
       {!isComputed &&
-        SCHEMA_ROLE.isSystemRequired(draft.role) &&
+        !SCHEMA_ROLE.isSystemRequired(draft.role) &&
         draft.type === SCHEMA_TYPE.SELECT && (
           <SelectOptionsEditor
             error={error}

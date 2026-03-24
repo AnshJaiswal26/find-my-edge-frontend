@@ -1,57 +1,76 @@
-import { SCHEMA_SOURCE } from "@lib/analytics/schema";
-import { useTableStore } from "@features/trade-metrics/table/store";
 import { formatValue } from "@shared/utils";
+import { useTradeStore } from "@shared/stores";
+import { showTooltip } from "@shared/components/ui/tooltip";
+import { SEMANTIC_TYPE } from "@lib/analytics/schema";
+import { highlightFormula } from "@shared/components/ui/ExpressionBuilder/highlightFormula";
+import { formatExpression } from "@shared/components/ui/ExpressionBuilder/formatExpression";
 
-function isSafeIdentifier(label) {
-  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(label);
-}
+export const handleShowTooltip = (e, { type, value, colId, rowId, color }) => {
+  if (type === SEMANTIC_TYPE.STRING) {
+    value.length > 100
+      ? showTooltip(e, value, null, {
+          allowHTML: true,
+          content: `<span style="color: var(--text);">${value}</span>`,
+          tooltipStyle: {
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+            overflowWrap: "anywhere",
+            border: "1px solid var(--border)",
+            backgroundColor: "var(--surface)",
+          },
+          arrowStyle: {
+            backgroundColor: "var(--surface)",
+            borderRight: "1px solid var(--border)",
+            borderBottom: "1px solid var(--border)",
+          },
+        })
+      : null;
 
-export function explainFormulaFromColumn(colId, rowId) {
-  const { columnsById, rowsById } = useTableStore.getState();
-
-  const column = columnsById[colId];
-  const row = rowsById[rowId];
-
-  if (
-    column.source !== SCHEMA_SOURCE.COMPUTED ||
-    !column.formula ||
-    !column.dependencies?.length
-  ) {
-    return null;
+    return;
   }
 
-  let expanded = column.formula;
+  const state = useTradeStore.getState();
+  const schema = state.schemasById[colId];
 
-  column.dependencies.forEach((depColId) => {
-    const depColumn = columnsById[depColId];
-    if (!depColumn) return;
+  if (!schema || !schema.dependencies?.length) return;
 
-    const label = depColumn.label;
-    const value = row.cells[depColId]?.value ?? 0;
+  const trade = state.tradesById[rowId];
 
-    if (isSafeIdentifier(label)) {
-      // replace whole-word identifiers only
-      const re = new RegExp(`\\b${label}\\b`, "g");
-      expanded = expanded.replace(
-        re,
-        formatValue(value, depColumn.type, depColumn.display),
-      );
-    } else {
-      // replace [Label Name]
-      expanded = expanded.replaceAll(
-        `[${label}]`,
-        formatValue(value, depColumn.type, depColumn.display),
-      );
-    }
+  const htmlFormula = highlightFormula(schema.formula);
+
+  let exp = schema.idFormula.replace(/@\{([^}]+)\}/g, "$1");
+
+  schema.dependencies.forEach((dep) => {
+    const schema = state.schemasById[dep];
+    const value = trade[dep];
+    const fV = formatValue(value, schema.semanticType, schema.display);
+    exp = exp.replace(new RegExp(dep, "g"), dep + " ");
+    exp = exp.replace(new RegExp(dep, "g"), fV);
   });
 
-  return {
-    formula: column.formula,
-    expanded,
-    result: formatValue(
-      row.cells[colId]?.value,
-      column.semanticType,
-      column.display,
-    ),
-  };
-}
+  exp = formatExpression(exp);
+
+  console.log(htmlFormula);
+
+  showTooltip(e, "", null, {
+    tooltipStyle: {
+      border: "1px solid var(--border)",
+      backgroundColor: "var(--surface)",
+    },
+    arrowStyle: {
+      borderRight: "1px solid var(--border)",
+      borderBottom: "1px solid var(--border)",
+      backgroundColor: "var(--surface)",
+    },
+    render: () => {
+      const div = document.createElement("div");
+      div.style.display = "flex";
+      div.style.flexDirection = "column";
+      div.innerHTML = `
+        <div style="color: var(--text)">${htmlFormula}</div>
+        <div style="color: var(--text)">${exp}</div>
+        <div style="color: ${color || "var(--text)"}">= ${value}</div>`;
+      return div;
+    },
+  });
+};

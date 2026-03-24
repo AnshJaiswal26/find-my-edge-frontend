@@ -1,27 +1,12 @@
 import { memo, useMemo } from "react";
 
-import { evaluateColorRules, formatForInput } from "@shared/utils";
+import { evaluateColorRules, formatForInput, formatValue } from "@shared/utils";
 
 import { useTableStore } from "@features/trade-metrics/table/store";
-import { formatValue } from "@shared/utils";
-import { explainFormulaFromColumn } from "./cellUtils";
 import { useTradeStore } from "@shared/stores";
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
-
-// const handleMouseEnter = (e, type, cell, colId, rowId, color) => {
-//   if (!type.includes("computed")) return;
-
-//   const explanation = explainFormulaFromColumn(colId, rowId);
-//   if (!explanation) return;
-
-//   tooltipApi.show({
-//     rect: e.target.getBoundingClientRect(),
-//     content: `= ${explanation?.formula}\n= ${explanation?.expanded}\n= ${explanation?.result}`,
-//     color,
-//     slide: -30,
-//     placement: "top",
-//   });
-// };
+import { hideTooltip } from "@shared/components/ui/tooltip";
+import { handleShowTooltip } from "./cellUtils";
 
 export const CellDisplay = memo(function CellDisplay({
   value,
@@ -69,6 +54,16 @@ export const CellDisplay = memo(function CellDisplay({
         setDraft(formatForInput(value ?? "", type));
         setEditing(true);
       }}
+      onMouseEnter={(e) =>
+        handleShowTooltip(e, {
+          type,
+          value: displayValue,
+          colId,
+          rowId,
+          color,
+        })
+      }
+      onMouseLeave={hideTooltip}
       // onMouseEnter={(e) => handleMouseEnter(e, type, cell, colId, rowId, color)}
       // onMouseLeave={tooltipApi.hide}
     >

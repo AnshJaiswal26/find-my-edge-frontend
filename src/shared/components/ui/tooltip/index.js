@@ -4,7 +4,11 @@ let tooltipEl = null;
 let contentEl = null;
 let arrowEl = null;
 
-const OFFSET = 10;
+let prevStyle = {
+  tooltip: null,
+  arrow: null,
+};
+
 const MARGIN = 8;
 
 function ensureTooltip() {
@@ -27,7 +31,7 @@ function ensureTooltip() {
   dismissManager.register(["scroll"], hideTooltip);
 }
 
-function getAutoPosition(rect, tooltipWidth, tooltipHeight) {
+function getAutoPosition(rect, tooltipWidth, tooltipHeight, dynamicOffset) {
   const space = {
     top: rect.top,
     bottom: window.innerHeight - rect.bottom,
@@ -35,15 +39,15 @@ function getAutoPosition(rect, tooltipWidth, tooltipHeight) {
     right: window.innerWidth - rect.right,
   };
 
-  if (space.top >= tooltipHeight + OFFSET) return "top";
-  if (space.bottom >= tooltipHeight + OFFSET) return "bottom";
-  if (space.right >= tooltipWidth + OFFSET) return "right";
-  if (space.left >= tooltipWidth + OFFSET) return "left";
+  if (space.top >= tooltipHeight + dynamicOffset) return "top";
+  if (space.bottom >= tooltipHeight + dynamicOffset) return "bottom";
+  if (space.right >= tooltipWidth + dynamicOffset) return "right";
+  if (space.left >= tooltipWidth + dynamicOffset) return "left";
 
   return "bottom";
 }
 
-function setArrowPosition(arrow, placement, anchorOffset) {
+function setArrowPosition(arrow, placement, anchorOffset, style) {
   const size = 8;
 
   // reset first (important)
@@ -73,111 +77,145 @@ function setArrowPosition(arrow, placement, anchorOffset) {
       arrow.style.top = `${anchorOffset}px`;
       break;
   }
+  prevStyle.arrow = arrow.style;
+
+  if (style) Object.assign(arrow.style, style);
 }
 
-export function showTooltip(e, message, position) {
+export function showTooltip(e, message, position, options = {}) {
   ensureTooltip();
 
   const target = e.currentTarget;
   const rect = target.getBoundingClientRect();
 
-  // update content
-  contentEl.textContent = message;
+  if (options.render) {
+    contentEl.innerHTML = "";
+    contentEl.appendChild(options.render());
+  } else if (options.allowHTML) {
+    contentEl.innerHTML = options.content;
+  } else {
+    contentEl.textContent = options.content;
+  }
+
+  if (options.class) {
+    tooltipEl.classList.add(options.class);
+  }
 
   tooltipEl.style.opacity = "0";
   tooltipEl.style.display = "block";
 
-  const tooltipRect = tooltipEl.getBoundingClientRect();
+  prevStyle.tooltip = tooltipEl.tooltipStyle;
 
-  const finalPosition =
-    position || getAutoPosition(rect, tooltipRect.width, tooltipRect.height);
-
-  let top = 0;
-  let left = 0;
-  let anchorOffset = 0;
-
-  switch (finalPosition) {
-    case "top":
-    case "bottom": {
-      const centerX = rect.left + rect.width / 2;
-
-      let computedLeft = centerX - tooltipRect.width / 2;
-
-      const overflowLeft = MARGIN - computedLeft;
-      const overflowRight =
-        computedLeft + tooltipRect.width - window.innerWidth + MARGIN;
-
-      if (overflowLeft > 0) {
-        computedLeft += overflowLeft;
-      } else if (overflowRight > 0) {
-        computedLeft -= overflowRight;
-      }
-
-      left = computedLeft;
-
-      top =
-        finalPosition === "top"
-          ? rect.top - OFFSET - tooltipRect.height
-          : rect.bottom + OFFSET;
-
-      const rawOffset = centerX - left;
-      const arrowPadding = 12;
-
-      anchorOffset = Math.max(
-        arrowPadding,
-        Math.min(rawOffset, tooltipRect.width - arrowPadding),
-      );
-
-      break;
-    }
-
-    case "left":
-    case "right": {
-      const centerY = rect.top + rect.height / 2;
-
-      let computedTop = centerY - tooltipRect.height / 2;
-
-      const overflowTop = MARGIN - computedTop;
-      const overflowBottom =
-        computedTop + tooltipRect.height - window.innerHeight + MARGIN;
-
-      if (overflowTop > 0) {
-        computedTop += overflowTop;
-      } else if (overflowBottom > 0) {
-        computedTop -= overflowBottom;
-      }
-
-      top = computedTop;
-
-      left =
-        finalPosition === "left"
-          ? rect.left - OFFSET - tooltipRect.width
-          : rect.right + OFFSET;
-
-      const rawOffset = centerY - top;
-      const arrowPadding = 12;
-
-      anchorOffset = Math.max(
-        arrowPadding,
-        Math.min(rawOffset, tooltipRect.height - arrowPadding),
-      );
-
-      break;
-    }
-  }
-
-  tooltipEl.style.top = `${top}px`;
-  tooltipEl.style.left = `${left}px`;
-
-  setArrowPosition(arrowEl, finalPosition, anchorOffset - 4);
+  if (options.tooltipStyle)
+    Object.assign(tooltipEl.style, options.tooltipStyle);
 
   requestAnimationFrame(() => {
+    const tooltipRect = tooltipEl.getBoundingClientRect();
+
+    const dynamicOffset = Math.min(10, tooltipRect.height * 0.25);
+
+    const finalPosition =
+      position ||
+      getAutoPosition(
+        rect,
+        tooltipRect.width,
+        tooltipRect.height,
+        dynamicOffset,
+      );
+
+    let top = 0;
+    let left = 0;
+    let anchorOffset = 0;
+
+    switch (finalPosition) {
+      case "top":
+      case "bottom": {
+        const centerX = rect.left + rect.width / 2;
+
+        let computedLeft = centerX - tooltipRect.width / 2;
+
+        const overflowLeft = MARGIN - computedLeft;
+        const overflowRight =
+          computedLeft + tooltipRect.width - window.innerWidth + MARGIN;
+
+        if (overflowLeft > 0) {
+          computedLeft += overflowLeft;
+        } else if (overflowRight > 0) {
+          computedLeft -= overflowRight;
+        }
+
+        left = computedLeft;
+
+        top =
+          finalPosition === "top"
+            ? rect.top - dynamicOffset - tooltipRect.height
+            : rect.bottom + dynamicOffset;
+
+        const rawOffset = centerX - left;
+        const arrowPadding = 12;
+
+        anchorOffset = Math.max(
+          arrowPadding,
+          Math.min(rawOffset, tooltipRect.width - arrowPadding),
+        );
+
+        break;
+      }
+
+      case "left":
+      case "right": {
+        const centerY = rect.top + rect.height / 2;
+
+        let computedTop = centerY - tooltipRect.height / 2;
+
+        const overflowTop = MARGIN - computedTop;
+        const overflowBottom =
+          computedTop + tooltipRect.height - window.innerHeight + MARGIN;
+
+        if (overflowTop > 0) {
+          computedTop += overflowTop;
+        } else if (overflowBottom > 0) {
+          computedTop -= overflowBottom;
+        }
+
+        top = computedTop;
+
+        left =
+          finalPosition === "left"
+            ? rect.left - dynamicOffset - tooltipRect.width
+            : rect.right + dynamicOffset;
+
+        const rawOffset = centerY - top;
+        const arrowPadding = 12;
+
+        anchorOffset = Math.max(
+          arrowPadding,
+          Math.min(rawOffset, tooltipRect.height - arrowPadding),
+        );
+
+        break;
+      }
+    }
+
+    tooltipEl.style.top = `${top}px`;
+    tooltipEl.style.left = `${left}px`;
+
+    setArrowPosition(
+      arrowEl,
+      finalPosition,
+      anchorOffset - 4,
+      options.arrowStyle,
+    );
+
     tooltipEl.style.opacity = "1";
   });
 }
 
 export function hideTooltip() {
   if (!tooltipEl) return;
+
+  tooltipEl.style = prevStyle.tooltip;
+  arrowEl.style = prevStyle.arrow;
 
   tooltipEl.style.opacity = "0";
   tooltipEl.style.display = "none";

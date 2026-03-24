@@ -5,7 +5,7 @@ import { FilterBuilder } from "@shared/components/ui";
 import { useChartStore } from "@modules/charts/apex/store";
 
 export default function FilterPopup({ chartId }) {
-  const appliedfilters = useChartStore((s) => s.charts[chartId].filters);
+  const appliedFilters = useChartStore((s) => s.charts[chartId].filters);
 
   const clearFilters = useChartStore((s) => s.clearFilters);
   const closePopup = useChartStore((s) => s.closePopup);
@@ -19,7 +19,7 @@ export default function FilterPopup({ chartId }) {
     [seriesOrder],
   );
 
-  const [filters, setFilters] = useState([...appliedfilters]);
+  const [filters, setFilters] = useState([...appliedFilters]);
 
   return (
     <Popup open>

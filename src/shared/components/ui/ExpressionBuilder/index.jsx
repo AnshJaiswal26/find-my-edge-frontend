@@ -30,6 +30,7 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   {
     value = "",
     label = null,
+    disabled = false,
     schemasById,
     onCommit,
     onChange,
@@ -324,13 +325,14 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
     <Section title={label ?? "Expression Query"}>
       <div className="relative w-full">
         <div
-          className="
+          className={`
             relative w-full
             bg-(--surface-disabled) rounded-lg overflow-hidden
             border-2 border-(--border) transition-colors
             focus-within:border-(--info)
             grid
-          "
+            ${disabled ? "opacity-60 pointer-events-none" : ""}
+          `}
         >
           {/* Highlight layer */}
           <div
@@ -359,6 +361,7 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
+            disabled={disabled}
             className={`
             ${sharedTextLayer}
             relative z-10
