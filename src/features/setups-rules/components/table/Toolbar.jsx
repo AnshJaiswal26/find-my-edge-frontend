@@ -20,14 +20,14 @@ export function Toolbar({ id }) {
       <div className="flex gap-2">
         <Button.Icon
           onClick={() => openPopup("setup-edit", id)}
-          onMouseEnter={(e) => showTooltip(e, "Edit Setup")}
+          onMouseEnter={(e) => showTooltip(e, { content: "Edit Setup" })}
           onMouseLeave={hideTooltip}
         >
           <Pencil size={16} />
         </Button.Icon>
         <Button.Icon
           onClick={() => openPopup("field-add", id)}
-          onMouseEnter={(e) => showTooltip(e, "Add Field")}
+          onMouseEnter={(e) => showTooltip(e, { content: "Add Field" })}
           onMouseLeave={hideTooltip}
         >
           <Plus size={16} />
@@ -44,7 +44,7 @@ export function Toolbar({ id }) {
               onError: (e) => toast.error(e.message),
             });
           }}
-          onMouseEnter={(e) => showTooltip(e, "Delete Setup")}
+          onMouseEnter={(e) => showTooltip(e, { content: "Delete Setup" })}
           onMouseLeave={hideTooltip}
         >
           <Trash2 size={16} />

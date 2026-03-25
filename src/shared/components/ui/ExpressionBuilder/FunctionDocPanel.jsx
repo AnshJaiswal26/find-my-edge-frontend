@@ -1,6 +1,6 @@
 import {
-  FunctionRegistry,
-  FunctionAllowByMode,
+  FUNCTION_REGISTRY,
+  FUNCTIONS_ALLOWED_BY_MODE,
 } from "@lib/analytics/engine/functions";
 import { ChevronDown } from "lucide-react";
 import React, { useMemo, useState } from "react";
@@ -25,11 +25,11 @@ export function FunctionDocsPanel({ mode = "ALL" }) {
     // Decide which function names are allowed
     const allowedNames =
       mode === "ALL"
-        ? Object.keys(FunctionRegistry)
-        : Array.from(FunctionAllowByMode[mode] || []);
+        ? Object.keys(FUNCTION_REGISTRY)
+        : Array.from(FUNCTIONS_ALLOWED_BY_MODE[mode] || []);
 
     for (const name of allowedNames) {
-      const def = FunctionRegistry[name];
+      const def = FUNCTION_REGISTRY[name];
       if (!def) continue;
 
       const key = def.type || "OTHER"; // BASE / WINDOW / GLOBAL / etc.

@@ -1,10 +1,8 @@
 export const MAX = {
-  argTypes: ["number"],
-  returnType: "number",
-  semantic: {
-    args: [["number", "duration"]],
-    return: "same",
-  },
+  args: ["$T"],
+  generics: { $T: ["number", "duration"] },
+  returnType: "$T",
+
   signature: "MAX(expr)",
   description: "Largest value",
 

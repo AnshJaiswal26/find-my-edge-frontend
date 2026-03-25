@@ -1,7 +1,6 @@
 export const MAX_DRAWDOWN_N = {
-  argTypes: ["number", "number"],
+  args: ["number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number"], return: "number" },
   signature: "MAX_DRAWDOWN_N(expr, n)",
   description: "Maximum drawdown over last N rows",
 

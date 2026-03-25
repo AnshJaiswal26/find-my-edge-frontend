@@ -1,7 +1,6 @@
 export const COUNT_ALL = {
-  argTypes: [],
+  args: [],
   returnType: "number",
-  semantic: { args: [], return: "number" },
   signature: "COUNT_ALL()",
   description: "Total number of records",
 

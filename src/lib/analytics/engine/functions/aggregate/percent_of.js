@@ -1,7 +1,6 @@
 export const PERCENT_OF = {
-  argTypes: ["number", "number"],
+  args: ["number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number"], return: "number" },
   signature: "PERCENT_OF(part, total)",
   description: "What percent one value is of another",
 

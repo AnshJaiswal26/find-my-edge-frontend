@@ -1,7 +1,9 @@
 export const MIN_N = {
-  argTypes: ["number", "number"],
-  returnType: "number",
-  semantic: { args: [["number", "duration"], "number"], return: "same" },
+  args: ["$T", "number"],
+  generics: {
+    $T: ["number", "duration"],
+  },
+  returnType: "$T",
   signature: "MIN_N(expr, n)",
   description: "Rolling min over N rows",
 

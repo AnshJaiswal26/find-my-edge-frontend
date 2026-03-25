@@ -1,10 +1,7 @@
 export const MIN = {
-  argTypes: ["number"],
-  returnType: "number",
-  semantic: {
-    args: [["number", "duration"]],
-    return: "same",
-  },
+  args: ["$T"],
+  generics: { $T: ["number", "duration"] },
+  returnType: "$T",
   signature: "MIN(expr)",
   description: "Smallest value",
 

@@ -1,5 +1,5 @@
-import { FunctionRegistry } from "@lib/analytics/engine/functions";
-import { FunctionType } from "@lib/analytics/engine/functions/funtionType";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
+import { FUNCTION_TYPE } from "@lib/analytics/engine/functions/funtionType";
 import { NodeType } from "@lib/expression/nodeType";
 
 export function validateExpression(ast) {
@@ -17,8 +17,8 @@ function hasInvalidFieldUsage(node, insideAggregate) {
 
   // If it's a function → check if it's aggregate
   if (node.type === NodeType.FUNCTION) {
-    const fnType = FunctionRegistry[node.fn]?.type;
-    const isAggregate = fnType === FunctionType.AGGREGATE;
+    const fnType = FUNCTION_REGISTRY[node.fn]?.type;
+    const isAggregate = fnType === FUNCTION_TYPE.AGGREGATE;
 
     return node.args?.some((arg) =>
       hasInvalidFieldUsage(arg, insideAggregate || isAggregate),

@@ -1,52 +1,90 @@
-import { MathFunctions } from "./math";
-import { LogicalFunctions } from "./logical";
-import { WindowFunctions } from "./window";
-import { AggregateFunctions } from "./aggregate";
-import { SchemaFunctions } from "./schema";
-import { DurationFunctions } from "./duration";
-import { NativeAggregateFunctions } from "./native";
+import { MATH_FUNCTIONS } from "./math";
+import { LOGICAL_FUNCTIONS } from "./logical";
+import { WINDOW_FUNCTIONS } from "./window";
+import { AGGREGATE_FUNCTIONS } from "./aggregate";
+import { SCHEMA_FUNCTIONS } from "./schema";
+import { DURATION_FUNCTIONS } from "./duration";
+import { NATIVE_AGGREGATE_FUNCTIONS } from "./native";
 
-export const FunctionRegistry = {
+export const FUNCTION_REGISTRY = {
   /* ---------- MATH ---------- */
-  ...MathFunctions,
+  ...MATH_FUNCTIONS,
 
   /* ---------- LOGICAL ---------- */
-  ...LogicalFunctions,
+  ...LOGICAL_FUNCTIONS,
 
   /* ---------- WINDOW / ROLLING ---------- */
-  ...WindowFunctions,
+  ...WINDOW_FUNCTIONS,
 
   /* ---------- AGGREGATE ---------- */
-  ...AggregateFunctions,
+  ...AGGREGATE_FUNCTIONS,
 
-  ...NativeAggregateFunctions,
+  ...NATIVE_AGGREGATE_FUNCTIONS,
 
   /* ---------- SCHEMA ---------- */
-  ...SchemaFunctions,
+  ...SCHEMA_FUNCTIONS,
 
   /* ---------- TIME ---------- */
-  ...DurationFunctions,
+  ...DURATION_FUNCTIONS,
 };
 
-const BASE_FUNCS = [
-  ...Object.keys(MathFunctions),
-  ...Object.keys(DurationFunctions),
-  ...Object.keys(LogicalFunctions),
+const BASE_FUNCTIONS = [
+  ...Object.keys(MATH_FUNCTIONS),
+  ...Object.keys(DURATION_FUNCTIONS),
+  ...Object.keys(LOGICAL_FUNCTIONS),
 ];
 
-export const FunctionAllowByMode = {
-  BASE: new Set([...BASE_FUNCS, "COUNT_ALL"]),
+export const FUNCTIONS_ALLOWED_BY_MODE = {
+  BASE: new Set([...BASE_FUNCTIONS, "COUNT_ALL"]),
 
   WINDOW: new Set([
-    ...BASE_FUNCS,
-    ...Object.keys(SchemaFunctions),
-    ...Object.keys(WindowFunctions),
+    ...BASE_FUNCTIONS,
+    ...Object.keys(SCHEMA_FUNCTIONS),
+    ...Object.keys(WINDOW_FUNCTIONS),
     "COUNT_ALL",
   ]),
 
   AGGREGATE: new Set([
-    ...BASE_FUNCS,
-    ...Object.keys(AggregateFunctions),
-    ...Object.keys(NativeAggregateFunctions),
+    ...BASE_FUNCTIONS,
+    ...Object.keys(AGGREGATE_FUNCTIONS),
+    ...Object.keys(NATIVE_AGGREGATE_FUNCTIONS),
   ]),
 };
+
+const META_KEYS = new Set([
+  "args",
+  "returnType",
+  "signature",
+  "description",
+  "type",
+  "executionMode",
+  "generics",
+  "strategy",
+]);
+
+function extractMeta(fn) {
+  return Object.fromEntries(
+    Object.entries(fn).filter(([key]) => META_KEYS.has(key)),
+  );
+}
+
+export function buildFunctionMetaRegistry(registry) {
+  return Object.fromEntries(
+    Object.entries(registry).map(([name, fn]) => [name, extractMeta(fn)]),
+  );
+}
+
+// console.log(
+//   JSON.stringify(buildFunctionMetaRegistry(FUNCTION_REGISTRY), null, 2),
+// );
+//
+// console.log(
+//   JSON.stringify(
+//     Object.fromEntries(
+//       Object.entries(FUNCTIONS_ALLOWED_BY_MODE).map(([mode, set]) => [
+//         mode,
+//         Array.of(...set),
+//       ]),
+//     ),
+//   ),
+// );

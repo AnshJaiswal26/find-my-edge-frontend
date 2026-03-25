@@ -1,10 +1,9 @@
 export const SUM_IF_N = {
-  argTypes: ["number", "boolean", "number"],
-  returnType: "number",
-  semantic: {
-    args: [["number", "duration"], "boolean", "number"],
-    return: "same",
+  args: ["$T", "boolean", "number"],
+  generics: {
+    $T: ["number", "duration"],
   },
+  returnType: "$T",
   signature: "SUM_IF_N(expr, condition, n)",
   description: "Rolling sum of expr over last N rows where condition is true",
 

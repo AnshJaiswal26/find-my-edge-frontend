@@ -1,10 +1,10 @@
 export const AVG = {
-  argTypes: ["number"],
-  returnType: "number",
-  semantic: {
-    args: [["number", "duration"]],
-    return: "same",
+  args: ["$T"],
+  generics: {
+    $T: ["number", "duration"],
   },
+  returnType: "$T",
+
   signature: "AVG(expr)",
   description: "Average (mean) of values",
 

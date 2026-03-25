@@ -1,7 +1,11 @@
+import { SEMANTIC_TYPE } from "@lib/analytics/schema";
+
 export const AVG_N = {
-  argTypes: ["number", "number"],
-  returnType: "number",
-  semantic: { args: [["number", "duration"], "number"], return: "same" },
+  args: ["$T", SEMANTIC_TYPE.NUMBER],
+  generics: {
+    $T: [SEMANTIC_TYPE.NUMBER, SEMANTIC_TYPE.DURATION],
+  },
+  returnType: "$T",
   signature: "AVG_N(expr, n)",
   description: "Rolling average over N rows",
 

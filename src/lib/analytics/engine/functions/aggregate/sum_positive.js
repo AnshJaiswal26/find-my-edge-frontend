@@ -1,10 +1,7 @@
 export const SUM_POSITIVE = {
-  argTypes: ["number"],
-  returnType: "number",
-  semantic: {
-    args: [["number", "duration"]],
-    return: "same",
-  },
+  args: ["$T"],
+  generics: { $T: ["number", "duration"] },
+  returnType: "$T",
   signature: "SUM_POSITIVE(expr)",
   description: "Sum of values greater than 0",
 

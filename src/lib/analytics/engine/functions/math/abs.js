@@ -1,7 +1,6 @@
 export const ABS = {
-  argTypes: ["number"],
+  args: ["number"],
   returnType: "number",
-  semantic: { args: ["number"], return: "number" },
   signature: "ABS(expr)",
   description: "Absolute value",
 

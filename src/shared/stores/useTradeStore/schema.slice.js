@@ -60,14 +60,6 @@ export const createSchemaSlice = (set, get) => ({
       get().applyTradeUpdates(recomputeResult.tradeUpdates);
     }
 
-    // // 3. Recompute ONLY for computed
-    // if (savedSchema.source === SchemaSource.COMPUTED) {
-    //   get().recompute({
-    //     reason: "schema",
-    //     schemaId: savedSchema.id,
-    //   });
-    // }
-
     return { savedSchema };
   },
 
@@ -118,13 +110,17 @@ export const createSchemaSlice = (set, get) => ({
       });
     });
 
-    // 5. Recompute if computed
-    if (updatedSchema.source === SCHEMA_SOURCE.COMPUTED) {
-      get().recompute({
-        reason: "schema",
-        schemaId: id,
-      });
+    if (recomputeResult) {
+      get().applyTradeUpdates(recomputeResult.tradeUpdates);
     }
+
+    // 5. Recompute if computed
+    // if (updatedSchema.source === SCHEMA_SOURCE.COMPUTED) {
+    //   get().recompute({
+    //     reason: "schema",
+    //     schemaId: id,
+    //   });
+    // }
 
     return { updatedSchema };
   },

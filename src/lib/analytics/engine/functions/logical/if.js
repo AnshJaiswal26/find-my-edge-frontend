@@ -1,13 +1,10 @@
 import { SEMANTIC_TYPE_VALUES } from "@lib/analytics/schema";
 
 export const IF = {
+  args: ["boolean", "$T", "$T"],
+  generics: { $T: SEMANTIC_TYPE_VALUES },
+  returnType: "$T",
   signature: "IF(cond, yes, no)",
-  argTypes: ["boolean", "any", "any"],
-  returnType: "any",
-  semantic: {
-    args: ["boolean", SEMANTIC_TYPE_VALUES, 1],
-    return: "same",
-  },
   description: "Conditional expression",
 
   exec(fn, ctx) {

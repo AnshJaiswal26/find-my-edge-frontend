@@ -1,7 +1,6 @@
 export const RATE = {
-  argTypes: ["boolean"],
+  args: ["boolean"],
   returnType: "number",
-  semantic: { args: ["boolean"], return: "number" },
   signature: "RATE(condition)",
   description: "Percentage of rows where condition is true",
 

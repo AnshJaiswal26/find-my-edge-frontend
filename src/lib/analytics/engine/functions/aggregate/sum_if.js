@@ -1,10 +1,7 @@
 export const SUM_IF = {
-  argTypes: ["number", "boolean"],
-  returnType: "number",
-  semantic: {
-    args: [["number", "duration"], "boolean"],
-    return: "same",
-  },
+  args: ["$T", "boolean"],
+  generics: { $T: ["number", "duration"] },
+  returnType: "$T",
   signature: "SUM_IF(expr, condition)",
   description: "Sum of expr where condition is true",
 

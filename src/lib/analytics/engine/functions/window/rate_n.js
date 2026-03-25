@@ -1,9 +1,8 @@
 import { AVG_N } from "./avg_n";
 
 export const RATE_N = {
-  argTypes: ["boolean", "number"],
+  args: ["boolean", "number"],
   returnType: "number",
-  semantic: { args: ["boolean", "number"], return: "number" },
   signature: "RATE_N(condition, n)",
   description: "Rate (percentage) of rows in last N where condition is true",
 

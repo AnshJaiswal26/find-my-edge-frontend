@@ -1,7 +1,6 @@
 export const STREAK = {
-  argTypes: ["boolean"],
+  args: ["boolean"],
   returnType: "number",
-  semantic: { args: ["boolean"], return: "number" },
   signature: "STREAK(condition)",
   description: "Longest consecutive TRUE streak over all rows",
 

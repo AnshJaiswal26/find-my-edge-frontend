@@ -16,7 +16,7 @@ export function SetupRulesToolbar({ count }) {
         <span>Total Setups {count}</span>
         <Button.Icon
           onClick={() => openPopup("setup-add")}
-          onMouseEnter={(e) => showTooltip(e, "Add Setup")}
+          onMouseEnter={(e) => showTooltip(e, { content: "Add Setup" })}
           onMouseLeave={hideTooltip}
         >
           <Plus size={18} />

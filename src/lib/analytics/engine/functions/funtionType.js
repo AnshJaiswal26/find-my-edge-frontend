@@ -1,4 +1,4 @@
-export const FunctionType = {
+export const FUNCTION_TYPE = {
   PURE: "PURE",
   WINDOW: "WINDOW",
   AGGREGATE: "AGGREGATE",

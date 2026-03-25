@@ -1,9 +1,7 @@
 export const PAYOFF_RATIO = {
   field: "pnl",
-
-  argTypes: [],
+  args: [],
   returnType: "number",
-  semantic: { args: [], return: "number" },
   signature: "PAYOFF_RATIO()",
   description: "Average win divided by average loss",
 

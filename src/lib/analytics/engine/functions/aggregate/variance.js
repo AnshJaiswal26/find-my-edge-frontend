@@ -1,7 +1,6 @@
 export const VARIANCE = {
-  argTypes: ["number"],
+  args: ["number"],
   returnType: "number",
-  semantic: { args: ["number"], return: "number" },
   signature: "VARIANCE(expr)",
   description: "Variance of values",
 

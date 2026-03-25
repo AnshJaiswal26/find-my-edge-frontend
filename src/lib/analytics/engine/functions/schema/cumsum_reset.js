@@ -1,5 +1,5 @@
 export const CUMSUM_RESET = {
-  argTypes: ["number", "boolean"],
+  args: ["number", "boolean"],
   returnType: "number",
   signature: "CUMSUM_RESET(expr, condition)",
   description: "Accumulate expr but reset when condition is true",

@@ -1,14 +1,15 @@
-import { FunctionRegistry } from "@lib/analytics/engine/functions";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
 import {
-  runWindowReducer,
   runAggregateReducer,
-  runNativeWindowReducer,
   runNativeAggregateReducer,
+  runNativeWindowReducer,
+  runWindowReducer,
 } from "@lib/analytics/runners";
 import { deformatValue } from "@shared/utils";
 import { NodeType } from "./nodeType";
-import { FunctionType } from "@lib/analytics/engine/functions/funtionType";
-import { ExecutionMode } from "@lib/analytics/engine/functions/executionMode";
+import { FUNCTION_TYPE } from "@lib/analytics/engine/functions/funtionType";
+import { EXECUTION_MODE } from "@lib/analytics/engine/functions/EXECUTION_MODE";
+import { WINDOW_STRATEGY } from "../analytics/engine/functions/windowStrategy";
 
 const runReducers = {
   WINDOW: runWindowReducer,
@@ -154,20 +155,28 @@ export function evaluateExpression(ast, ctx = {}) {
     }
 
     case NodeType.FUNCTION: {
-      const fn = FunctionRegistry[ast.fn.toUpperCase()];
+      const fn = FUNCTION_REGISTRY[ast.fn.toUpperCase()];
 
-      if (fn.type == FunctionType.PURE) {
+      if (
+        fn.type === FUNCTION_TYPE.PURE ||
+        (fn.type === FUNCTION_TYPE.WINDOW &&
+          fn.strategy === WINDOW_STRATEGY.CUMULATIVE)
+      ) {
         if (!fn.exec) return null;
         return fn.exec(ast, ctx);
       }
 
       let runnerKey;
-      if (fn.type == FunctionType.AGGREGATE) {
+      if (fn.type === FUNCTION_TYPE.AGGREGATE) {
         runnerKey =
-          fn.executionMode == ExecutionMode.NATIVE ? "NATIVE_AGG" : "AGGREGATE";
-      } else if (fn.type == FunctionType.WINDOW) {
+          fn.executionMode === EXECUTION_MODE.NATIVE
+            ? "NATIVE_AGG"
+            : "AGGREGATE";
+      } else if (fn.type === FUNCTION_TYPE.WINDOW) {
         runnerKey =
-          fn.executionMode == ExecutionMode.NATIVE ? "NATIVE_WINDOW" : "WINDOW";
+          fn.executionMode === EXECUTION_MODE.NATIVE
+            ? "NATIVE_WINDOW"
+            : "WINDOW";
       } else {
         return null;
       }

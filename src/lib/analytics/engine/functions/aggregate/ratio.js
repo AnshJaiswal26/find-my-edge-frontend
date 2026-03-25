@@ -1,7 +1,6 @@
 export const RATIO = {
-  argTypes: ["number", "number"],
+  args: ["number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number"], return: "number" },
   signature: "RATIO(a, b)",
   description: "Division of two aggregated values (a / b)",
 

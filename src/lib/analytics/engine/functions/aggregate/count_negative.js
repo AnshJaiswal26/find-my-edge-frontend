@@ -1,7 +1,6 @@
 export const COUNT_NEGATIVE = {
-  argTypes: ["number"],
+  args: ["number"],
   returnType: "number",
-  semantic: { args: ["number"], return: "number" },
   signature: "COUNT_NEGATIVE(expr)",
   description: "Count of values less than 0",
 

@@ -1,10 +1,6 @@
 export const SECONDS = {
-  argTypes: ["number"],
-  returnType: "number",
-  semantic: {
-    args: ["number"],
-    return: "duration",
-  },
+  args: ["number"],
+  returnType: "duration",
   signature: "SECONDS(n)",
   description: "Convert seconds to duration",
 

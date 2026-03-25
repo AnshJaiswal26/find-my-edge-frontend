@@ -1,0 +1,3 @@
+export const COMPUTE_CONFIG = {
+  HEAVY_THRESHOLD: 500,
+};

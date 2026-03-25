@@ -1,10 +1,10 @@
 export const AVG_IF = {
-  argTypes: ["number", "boolean"],
-  semantic: {
-    args: [["number", "duration"], "boolean"],
-    return: "same",
+  args: ["$T", "boolean"],
+  generics: {
+    $T: ["number", "duration"],
   },
-  returnType: "number",
+  returnType: "$T",
+
   signature: "AVG_IF(expr, condition)",
   description: "Average of expr where condition is true",
 

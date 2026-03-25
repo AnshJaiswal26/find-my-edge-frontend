@@ -1,7 +1,9 @@
 export const MAX_N = {
-  argTypes: ["number", "number"],
-  returnType: "number",
-  semantic: { args: [["number", "duration"], "number"], return: "same" },
+  args: ["$T", "number"],
+  generics: {
+    $T: ["number", "duration"],
+  },
+  returnType: "$T",
   signature: "MAX_N(expr, n)",
   description: "Rolling max over N rows",
 

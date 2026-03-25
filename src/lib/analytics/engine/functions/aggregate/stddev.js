@@ -1,7 +1,6 @@
 export const STDDEV = {
-  argTypes: ["number"],
+  args: ["number"],
   returnType: "number",
-  semantic: { args: ["number"], return: "number" },
   signature: "STDDEV(expr)",
   description: "Standard deviation of values",
 

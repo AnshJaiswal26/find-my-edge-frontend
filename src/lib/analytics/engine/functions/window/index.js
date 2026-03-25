@@ -11,8 +11,9 @@ import { VOLATILITY_N } from "./volatility_n";
 import { SHARPE_N } from "./sharpe_n";
 import { EXPECTANCY_N } from "./expectancy_n";
 
-import { FunctionType } from "../funtionType";
-import { ExecutionMode } from "../executionMode";
+import { FUNCTION_TYPE } from "../funtionType";
+import { EXECUTION_MODE } from "../EXECUTION_MODE";
+import { WINDOW_STRATEGY } from "../windowStrategy";
 
 const windowFns = {
   SUM_N,
@@ -29,9 +30,14 @@ const windowFns = {
   EXPECTANCY_N,
 };
 
-export const WindowFunctions = Object.fromEntries(
+export const WINDOW_FUNCTIONS = Object.fromEntries(
   Object.entries(windowFns).map(([name, fn]) => [
     name,
-    { ...fn, type: FunctionType.WINDOW, executionMode: ExecutionMode.AST },
+    {
+      ...fn,
+      type: FUNCTION_TYPE.WINDOW,
+      strategy: WINDOW_STRATEGY.ROLLING,
+      executionMode: EXECUTION_MODE.AST,
+    },
   ]),
 );

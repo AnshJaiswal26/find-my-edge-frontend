@@ -1,15 +1,17 @@
-import { GripHorizontal, LockKeyholeIcon, RefreshCcwDot } from "lucide-react";
+import {
+  GripHorizontal,
+  Hourglass,
+  LockKeyholeIcon,
+  RefreshCcwDot,
+} from "lucide-react";
 import { useMemo, useRef } from "react";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { useTradeStore } from "@shared/stores";
-import {
-  hideTooltip,
-  showTooltip,
-} from "@shared/components/ui/tooltip/index.js";
 import { SCHEMA_SOURCE, SEMANTIC_TYPE } from "@lib/analytics/schema";
 import { DragResizeManager } from "@shared/components/ui/managers";
 import { DragHandle, ResizeHandle } from "@shared/components/ui";
 import { createDragResizeController } from "@shared/components/ui/controller";
+import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
 
 export function ColumnHeader(props) {
   const isHidden = useTradeStore(
@@ -36,6 +38,8 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
   );
 
   const editable = isColUnlocked && isColEditable;
+
+  const isBackendComputing = false;
 
   const {
     startColumnDrag,
@@ -69,7 +73,7 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
     <div
       ref={headerRef}
       data-col-header
-      className={`group relative select-none overflow-hidden overflow-ellipsis text-nowrap 
+      className={`group relative select-none overflow-hidden overflow-ellipsis text-nowrap pt-1.5
       ${isGroupColumn ? "stick-left text-(--text-muted) bg-(--surface-muted)" : ""}`}
       style={{ width }}
       onClick={(e) => {
@@ -79,7 +83,7 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
     >
       {!isGroupColumn && (
         <DragHandle
-          direction="bottom"
+          direction="top"
           onPointerDown={(e, dir) => manager.startDrag(e, headerRef.current)}
           className="opacity-0 group-hover:opacity-60"
         >
@@ -94,34 +98,34 @@ function ColumnHeaderContent({ colId, index, tableRef, isGroupColumn }) {
       />
 
       <div
-        className={`flex font-bold items-center px-2 py-1 border-r border-(--border) justify-between`}
+        className={`flex font-bold items-center px-2 py-1 border-r border-(--border) ${isBackendComputing ? "gap-2" : "justify-between"}`}
       >
-        <span
-          onMouseEnter={(e) =>
-            column.formula
-              ? showTooltip(e, column.formula.replace(/[\[\]]/g, ""))
-              : null
-          }
-          onMouseLeave={() => (column.formula ? hideTooltip() : null)}
-        >
-          {column.label}
-        </span>
+        <span>{isBackendComputing ? "Computing..." : column.label}</span>
+        {isBackendComputing && (
+          <Hourglass
+            size={13}
+            className="animate-spin text-(--text-muted) min-w-3"
+          />
+        )}
         <div className="flex gap-2">
           {column.mode === "cumulative" && (
             <RefreshCcwDot
               size={13}
               className="hover:cursor-pointer hover:text-(--info)"
               onMouseEnter={(e) =>
-                showTooltip(e, "Recompute Over Current View")
+                showTooltip(e, { content: "Recompute Over Current View" })
               }
               onMouseLeave={hideTooltip}
             />
           )}
+
           {!editable && (
             <LockKeyholeIcon
               size={13}
               onMouseEnter={(e) =>
-                showTooltip(e, "Computed column - cannot be edited")
+                showTooltip(e, {
+                  content: "Computed column - cannot be edited",
+                })
               }
               onMouseLeave={hideTooltip}
             />

@@ -1,9 +1,7 @@
 export const WIN_RATE = {
   field: "pnl",
-
-  argTypes: [],
+  args: [],
   returnType: "number",
-  semantic: { args: [], return: "number" },
   signature: "WIN_RATE()",
   description: "Winning trades divided by total trades",
 

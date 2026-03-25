@@ -1,7 +1,6 @@
 export const CLAMP = {
-  argTypes: ["number", "number", "number"],
+  args: ["number", "number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number", "number"], return: "number" },
   signature: "CLAMP(expr, min, max)",
   description: "Clamp value to range",
 

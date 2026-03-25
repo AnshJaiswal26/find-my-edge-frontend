@@ -1,5 +1,3 @@
-import { useUIStore } from "@shared/stores";
-
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -14,7 +12,6 @@ import { buildSchemasAffectedMap } from "@lib/analytics/schema/dependency";
 
 import { tradeService } from "@shared/services/trade.service";
 import { schemaService } from "@shared/services/schema.service";
-import { TOAST } from "@shared/constants";
 import { toast } from "@shared/services/toast.service";
 
 export const useTradeStore = create(
@@ -29,6 +26,8 @@ export const useTradeStore = create(
     schemasOrder: [],
 
     affectedMap: {},
+
+    computingMap: {},
 
     isSaving: false,
 

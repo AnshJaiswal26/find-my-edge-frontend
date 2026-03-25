@@ -1,10 +1,12 @@
 export const SUM_N = {
-  argTypes: ["number", "number"],
-  returnType: "number",
-  semantic: { args: [["number", "duration"], "number"], return: "same" },
   signature: "SUM_N(expr, n)",
   description: "Rolling sum over N rows",
 
+  args: ["$T", "number"],
+  generics: {
+    $T: ["number", "duration"],
+  },
+  returnType: "$T",
   init(n) {
     if (n <= 0) return null;
     return { n, seen: 0, sum: 0 };

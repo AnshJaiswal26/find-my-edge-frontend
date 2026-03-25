@@ -1,4 +1,4 @@
-import { FunctionRegistry } from "@lib/analytics/engine/functions";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
 import { TokenType } from "./tokenType";
 
 const OPS = "+-*/()";
@@ -27,7 +27,7 @@ export function tokenize(expr) {
       return;
     }
 
-    const isFunction = FunctionRegistry[upper] && expr[i] === "(";
+    const isFunction = FUNCTION_REGISTRY[upper] && expr[i] === "(";
 
     const t = {
       type: isFunction ? TokenType.FUNCTION : TokenType.IDENTIFIER,

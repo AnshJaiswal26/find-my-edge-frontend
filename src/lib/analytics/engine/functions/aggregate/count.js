@@ -1,7 +1,8 @@
+import { SEMANTIC_TYPE_VALUES } from "@lib/analytics/schema";
+
 export const COUNT = {
-  argTypes: ["any"],
+  args: SEMANTIC_TYPE_VALUES,
   returnType: "number",
-  semantic: { args: ["any"], return: "number" },
   signature: "COUNT(expr)",
   description: "Count of non-null values",
 

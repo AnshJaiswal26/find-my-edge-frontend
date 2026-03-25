@@ -1,10 +1,8 @@
 export const SUM_NEGATIVE = {
-  argTypes: ["number"],
-  returnType: "number",
-  semantic: {
-    args: [["number", "duration"]],
-    return: "same",
-  },
+  args: ["$T"],
+  generics: { $T: ["number", "duration"] },
+  returnType: "$T",
+
   signature: "SUM_NEGATIVE(expr)",
   description: "Sum of values less than 0",
 

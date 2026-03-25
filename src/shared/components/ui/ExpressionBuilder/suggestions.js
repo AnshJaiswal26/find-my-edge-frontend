@@ -1,6 +1,6 @@
 import {
-  FunctionRegistry,
-  FunctionAllowByMode,
+  FUNCTION_REGISTRY,
+  FUNCTIONS_ALLOWED_BY_MODE,
 } from "@lib/analytics/engine/functions";
 import { highlightMatch } from "./highlightMatch";
 
@@ -20,10 +20,10 @@ export function getSchemaSuggestions(q, schemas, showAll = false) {
 export function getFunctionSuggestions(q, mode, showAll = false) {
   const allowedNames =
     mode === "ALL"
-      ? Object.keys(FunctionRegistry)
-      : Array.from(FunctionAllowByMode[mode] || []);
+      ? Object.keys(FUNCTION_REGISTRY)
+      : Array.from(FUNCTIONS_ALLOWED_BY_MODE[mode] || []);
 
-  const entries = allowedNames.map((name) => [name, FunctionRegistry[name]]);
+  const entries = allowedNames.map((name) => [name, FUNCTION_REGISTRY[name]]);
 
   const filtered = showAll
     ? entries

@@ -1,7 +1,6 @@
 export const FACTOR = {
-  argTypes: ["number", "number"],
+  args: ["number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number"], return: "number" },
   signature: "FACTOR(a, b)",
   description: "Magnitude comparison between two values (a / b)",
 

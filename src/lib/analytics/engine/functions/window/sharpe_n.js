@@ -1,7 +1,6 @@
 export const SHARPE_N = {
-  argTypes: ["number", "number"],
+  args: ["number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number"], return: "number" },
   signature: "SHARPE_N(expr, n)",
   description: "Sharpe ratio over last N rows (risk-free = 0)",
 

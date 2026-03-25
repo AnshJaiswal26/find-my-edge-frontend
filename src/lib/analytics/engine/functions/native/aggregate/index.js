@@ -5,8 +5,8 @@ import { LOSS_FACTOR } from "./loss_factor";
 import { PAYOFF_RATIO } from "./payoff_ratio";
 import { EXPECTANCY } from "./expectancy";
 
-import { FunctionType } from "@lib/analytics/engine/functions/funtionType";
-import { ExecutionMode } from "@lib/analytics/engine/functions/executionMode";
+import { FUNCTION_TYPE } from "@lib/analytics/engine/functions/funtionType";
+import { EXECUTION_MODE } from "@lib/analytics/engine/functions/EXECUTION_MODE";
 
 const nativeFns = {
   WIN_RATE,
@@ -17,13 +17,13 @@ const nativeFns = {
   EXPECTANCY,
 };
 
-export const NativeAggregateFunctions = Object.fromEntries(
+export const NATIVE_AGGREGATE_FUNCTIONS = Object.fromEntries(
   Object.entries(nativeFns).map(([key, fn]) => [
     key,
     {
       ...fn,
-      type: FunctionType.AGGREGATE,
-      ExecutionMode: ExecutionMode.NATIVE,
+      type: FUNCTION_TYPE.AGGREGATE,
+      ExecutionMode: EXECUTION_MODE.NATIVE,
     },
   ]),
 );

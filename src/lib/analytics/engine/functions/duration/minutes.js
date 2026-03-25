@@ -1,10 +1,6 @@
 export const MINUTES = {
-  argTypes: ["number"],
-  returnType: "number",
-  semantic: {
-    args: ["number"],
-    return: "duration",
-  },
+  args: ["number"],
+  returnType: "duration",
   signature: "MINUTES(n)",
   description: "Convert minutes to duration",
 

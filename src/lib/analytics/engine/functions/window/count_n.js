@@ -1,7 +1,8 @@
+import { SEMANTIC_TYPE_VALUES } from "@lib/analytics/schema";
+
 export const COUNT_N = {
-  argTypes: ["any", "number"],
+  args: [SEMANTIC_TYPE_VALUES, "number"],
   returnType: "number",
-  semantic: { args: ["any", "number"], return: "number" },
   signature: "COUNT_N(expr, n)",
   description: "Rolling count over N rows",
 

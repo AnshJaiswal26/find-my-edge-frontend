@@ -1,5 +1,5 @@
 export const CUMSUM = {
-  argTypes: ["number"],
+  args: ["number"],
   returnType: "number",
   signature: "CUMSUM(expr)",
   description: "Cumulative sum over rows",

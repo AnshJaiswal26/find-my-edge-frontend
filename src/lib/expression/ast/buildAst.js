@@ -1,37 +1,14 @@
 import {
-  FunctionRegistry,
-  FunctionAllowByMode,
+  FUNCTION_REGISTRY,
+  FUNCTIONS_ALLOWED_BY_MODE,
 } from "@lib/analytics/engine/functions";
-import { FunctionType } from "@lib/analytics/engine/functions/funtionType";
+import { FUNCTION_TYPE } from "@lib/analytics/engine/functions/funtionType";
 import { NodeType } from "../nodeType";
 import { TokenType } from "./tokenType";
-
-function containsWindowFunction(node) {
-  if (!node) return false;
-
-  if (node.type === NodeType.FUNCTION) {
-    const def = FunctionRegistry[node.name];
-    if (def?.type === FunctionType.WINDOW) return true;
-
-    return node.args.some(containsWindowFunction);
-  }
-
-  if (node.type === NodeType.BINARY) {
-    return (
-      containsWindowFunction(node.left) || containsWindowFunction(node.right)
-    );
-  }
-
-  if (node.type === NodeType.UNARY) {
-    return containsWindowFunction(node.arg);
-  }
-
-  return false;
-}
+import { containsWindowFunction } from "./containsWindow";
+import { WINDOW_STRATEGY } from "../../analytics/engine/functions/windowStrategy";
 
 export function buildAST(postfix, type) {
-  // console.log(postfix);
-
   const stack = [];
   const dependencies = new Set();
 
@@ -41,14 +18,14 @@ export function buildAST(postfix, type) {
       const name = t.value.toUpperCase();
 
       // Get function definition (execution behavior)
-      const fnDef = FunctionRegistry[name];
+      const fnDef = FUNCTION_REGISTRY[name];
       if (!fnDef) {
         throw new Error(`Unknown function ${name}`);
       }
 
       // Validate function allowed in this computation mode
       if (type) {
-        const allowed = FunctionAllowByMode[type];
+        const allowed = FUNCTIONS_ALLOWED_BY_MODE[type];
         if (!allowed?.has(name)) {
           throw new Error(
             `Function ${name} is not allowed in ${type} computation`,
@@ -56,13 +33,7 @@ export function buildAST(postfix, type) {
         }
       }
 
-      const arity = fnDef.argTypes.length;
-
-      if (arity == null || arity === undefined) {
-        throw new Error(
-          `Function ${name} is not suitable for current computation mode`,
-        );
-      }
+      const arity = fnDef.args.length;
 
       if (stack.length < arity) {
         throw new Error(`Function ${name} expects ${arity} argument(s)`);
@@ -78,7 +49,10 @@ export function buildAST(postfix, type) {
       }
 
       //  Prevent WINDOW inside WINDOW
-      if (fnDef?.type === FunctionType.WINDOW) {
+      if (
+        fnDef?.type === FUNCTION_TYPE.WINDOW &&
+        fnDef?.strategy === WINDOW_STRATEGY.ROLLING
+      ) {
         for (const arg of args) {
           if (containsWindowFunction(arg)) {
             throw new Error(

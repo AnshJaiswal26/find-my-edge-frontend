@@ -1,9 +1,7 @@
 export const LOSS_FACTOR = {
   field: "pnl",
-
-  argTypes: [],
+  args: [],
   returnType: "number",
-  semantic: { args: [], return: "number" },
   signature: "LOSS_FACTOR()",
   description: "Gross loss divided by gross profit",
 

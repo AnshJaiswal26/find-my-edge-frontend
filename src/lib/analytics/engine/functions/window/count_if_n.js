@@ -1,7 +1,7 @@
 import { SUM_N } from "./sum_n";
 
 export const COUNT_IF_N = {
-  argTypes: ["boolean", "number"],
+  args: ["boolean", "number"],
   returnType: "number",
   signature: "COUNT_IF_N(condition, n)",
   description: "Count of rows in last N where condition is true",

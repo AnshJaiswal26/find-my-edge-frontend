@@ -1,7 +1,6 @@
 export const EDGE_RATIO = {
-  argTypes: ["number", "number"],
+  args: ["number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number"], return: "number" },
   signature: "EDGE_RATIO(win, loss)",
   description: "Net edge ratio between two opposing values",
 

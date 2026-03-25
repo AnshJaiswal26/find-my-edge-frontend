@@ -9,13 +9,7 @@ import React, {
 } from "react";
 import { FormulaSuggestions } from "./FormulaSuggestions";
 import { FormulaValidation } from "./FormulaValidation";
-import {
-  buildAST,
-  tokenize,
-  toPostfix,
-  validateSemantic,
-  validateTypes,
-} from "@lib/expression";
+import { buildAST, tokenize, toPostfix } from "@lib/expression";
 import { Section } from "@shared/components/layout";
 import { formatExpression } from "./formatExpression";
 import { getFunctionSuggestions, getSchemaSuggestions } from "./suggestions";
@@ -25,6 +19,7 @@ import { formatAST } from "./formatAst";
 import { validateExpression } from "./semanticModeValidators";
 import { CopyButton } from "./CopyButton";
 import { labelToIdExpr } from "./labelToIdExpr";
+import { validate } from "@lib/expression/ast";
 
 const ExpressionBuilder = forwardRef(function ExpressionBuilder(
   {
@@ -79,12 +74,12 @@ const ExpressionBuilder = forwardRef(function ExpressionBuilder(
       const result = buildAST(toPostfix(tokenize(idExpr)), mode);
 
       if (result?.ast) {
-        validateTypes(result.ast, mode, schemasById);
-        const semanticType = validateSemantic(result.ast, schemasById);
+        const semanticType = validate(result.ast, schemasById);
 
         if (semanticMode === "AGGREGATE") {
           validateExpression(result.ast);
         }
+
         result.semanticType = semanticType;
       }
 

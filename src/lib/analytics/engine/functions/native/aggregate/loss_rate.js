@@ -1,11 +1,9 @@
 export const LOSS_RATE = {
-  argTypes: [],
+  field: "pnl",
+  args: [],
   returnType: "number",
-  semantic: { args: [], return: "number" },
   signature: "LOSS_RATE()",
   description: "Losing trades divided by total trades",
-
-  field: "pnl",
 
   init() {
     return { total: 0, losses: 0 };

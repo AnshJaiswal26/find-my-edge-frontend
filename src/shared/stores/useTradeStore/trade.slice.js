@@ -1,11 +1,9 @@
 import { debounce } from "lodash";
-import { useUIStore } from "@shared/stores";
 import { createRow } from "@features/trade-metrics/table/model";
 
 import { tradeService } from "@shared/services/trade.service";
 import { useDashboardStore } from "@features/dashboard/store";
 import { useChartStore } from "@modules/charts/apex/store";
-import { TOAST } from "@shared/constants";
 import { toast } from "@shared/services/toast.service";
 
 export const createTradeSlice = (set, get) => ({

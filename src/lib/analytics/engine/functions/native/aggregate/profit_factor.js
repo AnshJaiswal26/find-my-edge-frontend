@@ -1,9 +1,7 @@
 export const PROFIT_FACTOR = {
   field: "pnl",
-
-  argTypes: [],
+  args: [],
   returnType: "number",
-  semantic: { args: [], return: "number" },
   signature: "PROFIT_FACTOR()",
   description: "Gross profit divided by gross loss",
 

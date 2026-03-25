@@ -1,4 +1,4 @@
-import { FunctionRegistry } from "@lib/analytics/engine/functions";
+import { FUNCTION_REGISTRY } from "@lib/analytics/engine/functions";
 import {
   customTooltip,
   formatValue,
@@ -7,7 +7,7 @@ import {
 } from "@shared/utils";
 
 const applyReducer = (reducerName, values) => {
-  const reducer = FunctionRegistry[reducerName];
+  const reducer = FUNCTION_REGISTRY[reducerName];
   const state = reducer.init(values.length);
 
   for (let i = 0; i < values.length; i++) {

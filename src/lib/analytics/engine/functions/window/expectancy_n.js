@@ -1,7 +1,6 @@
 export const EXPECTANCY_N = {
-  argTypes: ["number", "number"],
+  args: ["number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number"], return: "number" },
   signature: "EXPECTANCY_N(expr, n)",
   description: "Trade expectancy (win rate × avg win − loss rate × avg loss)",
 

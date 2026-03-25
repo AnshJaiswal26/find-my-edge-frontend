@@ -59,7 +59,7 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
               bg-yellow-500/90 hover:bg-yellow-400
               text-black shadow
             "
-              onMouseEnter={(e) => showTooltip(e, "Highlight Row")}
+              onMouseEnter={(e) => showTooltip(e, { content: "Highlight Row" })}
               onMouseLeave={hideTooltip}
             >
               <HighlighterIcon size={16} />
@@ -73,7 +73,7 @@ export const Row = memo(function Row({ rowId, index, groupId, groupBy }) {
               bg-red-600/90 hover:bg-red-500
               text-white shadow
             "
-              onMouseEnter={(e) => showTooltip(e, "Delete Row")}
+              onMouseEnter={(e) => showTooltip(e, { content: "Delete Row" })}
               onMouseLeave={hideTooltip}
             >
               <Trash2 size={16} />

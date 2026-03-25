@@ -1,7 +1,6 @@
 export const STDDEV_N = {
-  argTypes: ["number", "number"],
+  args: ["number", "number"],
   returnType: "number",
-  semantic: { args: ["number", "number"], return: "number" },
   signature: "STDDEV_N(expr, n)",
   description: "Rolling standard deviation",
 

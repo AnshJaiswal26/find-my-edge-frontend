@@ -67,7 +67,7 @@ export function Toolbar({
         <div className="flex items-center gap-1">
           <Button.Icon
             onClick={handleAddTrade}
-            onMouseEnter={(e) => showTooltip(e, "Add Row")}
+            onMouseEnter={(e) => showTooltip(e, { content: "Add Row" })}
             onMouseLeave={hideTooltip}
           >
             <Rows3 size={15} />
@@ -75,7 +75,7 @@ export function Toolbar({
 
           <Button.Icon
             onClick={onAddColumn}
-            onMouseEnter={(e) => showTooltip(e, "Add Column")}
+            onMouseEnter={(e) => showTooltip(e, { content: "Add Column" })}
             onMouseLeave={hideTooltip}
           >
             <Columns3 size={15} />
@@ -87,7 +87,7 @@ export function Toolbar({
           <Button.Icon
             className={isFilterApplied ? "bg-(--hover)!" : ""}
             onClick={onFilter}
-            onMouseEnter={(e) => showTooltip(e, "Filter")}
+            onMouseEnter={(e) => showTooltip(e, { content: "Filter" })}
             onMouseLeave={hideTooltip}
           >
             <Filter size={15} />
@@ -96,7 +96,7 @@ export function Toolbar({
           <Button.Icon
             className={isSortingApplied ? "bg-(--hover)!" : ""}
             onClick={onSort}
-            onMouseEnter={(e) => showTooltip(e, "Sort")}
+            onMouseEnter={(e) => showTooltip(e, { content: "Sort" })}
             onMouseLeave={hideTooltip}
           >
             <ArrowUpDown size={15} />
@@ -105,7 +105,7 @@ export function Toolbar({
           <Button.Icon
             className={isGroupingApplied ? "bg-(--hover)!" : ""}
             onClick={onGroup}
-            onMouseEnter={(e) => showTooltip(e, "Group")}
+            onMouseEnter={(e) => showTooltip(e, { content: "Group" })}
             onMouseLeave={hideTooltip}
           >
             <Group size={15} />
@@ -116,7 +116,7 @@ export function Toolbar({
         <div className="flex items-center gap-1 opacity-80">
           <Button.Icon
             onClick={onToggleSummary}
-            onMouseEnter={(e) => showTooltip(e, "Trade Summary")}
+            onMouseEnter={(e) => showTooltip(e, { content: "Trade Summary" })}
             onMouseLeave={hideTooltip}
           >
             <LayoutGrid size={15} />
@@ -124,7 +124,7 @@ export function Toolbar({
 
           <Button.Icon
             onClick={onToggleHeatmap}
-            onMouseEnter={(e) => showTooltip(e, "HeatMap")}
+            onMouseEnter={(e) => showTooltip(e, { content: "HeatMap" })}
             onMouseLeave={hideTooltip}
           >
             <Flame size={15} />
@@ -158,7 +158,7 @@ export function Toolbar({
         <div className="flex items-center gap-1 opacity-90">
           <Button.Icon
             onClick={onOpenColumnSettings}
-            onMouseEnter={(e) => showTooltip(e, "Column Settings")}
+            onMouseEnter={(e) => showTooltip(e, { content: "Column Settings" })}
             onMouseLeave={hideTooltip}
           >
             <ColumnsSettings size={15} />
@@ -166,7 +166,9 @@ export function Toolbar({
 
           <Button.Icon
             onClick={onResetLayout}
-            onMouseEnter={(e) => showTooltip(e, "Reset Column Order")}
+            onMouseEnter={(e) =>
+              showTooltip(e, { content: "Reset Column Order" })
+            }
             onMouseLeave={hideTooltip}
           >
             <RotateCcw size={15} />
@@ -174,7 +176,7 @@ export function Toolbar({
 
           <Button.Icon
             onClick={onExport}
-            onMouseEnter={(e) => showTooltip(e, "Export Trades")}
+            onMouseEnter={(e) => showTooltip(e, { content: "Export Trades" })}
             onMouseLeave={hideTooltip}
           >
             <Download size={15} />

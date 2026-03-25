@@ -1,7 +1,6 @@
 export const VOLATILITY = {
-  argTypes: ["number"],
+  args: ["number"],
   returnType: "number",
-  semantic: { args: ["number"], return: "number" },
   signature: "VOLATILITY(expr)",
   description: "Standard deviation of returns over entire sequence",
 

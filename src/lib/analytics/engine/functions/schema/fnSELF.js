@@ -1,6 +1,6 @@
 export const SELF = {
-  argTypes: [],
-  returnType: "any",
+  args: [],
+  returnType: "$T",
   signature: "SELF()",
   description: "Previous computed value of this column",
 

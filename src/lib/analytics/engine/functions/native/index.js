@@ -1,1 +1,1 @@
-export { NativeAggregateFunctions } from "./aggregate";
+export { NATIVE_AGGREGATE_FUNCTIONS } from "./aggregate";

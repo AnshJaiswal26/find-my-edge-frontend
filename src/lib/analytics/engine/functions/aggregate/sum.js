@@ -1,10 +1,7 @@
 export const SUM = {
-  argTypes: ["number"],
-  returnType: "number",
-  semantic: {
-    args: [["number", "duration"]],
-    return: "same",
-  },
+  args: ["$T"],
+  generics: { $T: ["number", "duration"] },
+  returnType: "$T",
   signature: "SUM(expr)",
   description: "Sum of all non-null values",
 

@@ -1,8 +1,8 @@
 import { NodeType } from "@lib/expression/nodeType";
 
 export const PREV = {
-  argTypes: ["any"], // expression allowed
-  returnType: "any",
+  args: ["$T"],
+  returnType: "$T",
   signature: "PREV(expr)",
   description: "Value of expression from previous row",
 

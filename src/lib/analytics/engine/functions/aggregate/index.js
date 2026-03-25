@@ -26,8 +26,8 @@ import { FACTOR } from "./factor";
 import { EDGE_RATIO } from "./edge_ratio";
 import { PERCENT_OF } from "./percent_of";
 
-import { FunctionType } from "../funtionType";
-import { ExecutionMode } from "../executionMode";
+import { FUNCTION_TYPE } from "../funtionType";
+import { EXECUTION_MODE } from "../EXECUTION_MODE";
 
 const globalFns = {
   SUM,
@@ -58,18 +58,26 @@ const ratioFns = {
   PERCENT_OF,
 };
 
-export const AggregateFunctions = {
+export const AGGREGATE_FUNCTIONS = {
   ...Object.fromEntries(
     Object.entries(globalFns).map(([name, fn]) => [
       name,
-      { ...fn, type: FunctionType.AGGREGATE, executionMode: ExecutionMode.AST },
+      {
+        ...fn,
+        type: FUNCTION_TYPE.AGGREGATE,
+        executionMode: EXECUTION_MODE.AST,
+      },
     ]),
   ),
 
   ...Object.fromEntries(
     Object.entries(ratioFns).map(([name, fn]) => [
       name,
-      { ...fn, type: FunctionType.AGGREGATE, executionMode: ExecutionMode.AST },
+      {
+        ...fn,
+        type: FUNCTION_TYPE.AGGREGATE,
+        executionMode: EXECUTION_MODE.AST,
+      },
     ]),
   ),
 };
