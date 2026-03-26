@@ -13,8 +13,13 @@ import { toast } from "@shared/services/toast.service";
 export function Row({ index, setupId, id, tableRef }) {
   const rowRef = useRef(null);
 
+  const field = useTradeSetupStore(
+    (s) => s.tradeSetupsById[setupId].fieldsById[id],
+  );
+  if (!field) return null;
+
   const { mappedSchemaId, condition, expected, from, to, semanticType, tag } =
-    useTradeSetupStore((s) => s.tradeSetupsById[setupId].fieldsById[id]);
+    field;
 
   const startRowDrag = useTradeSetupStore((s) => s.startRowDrag);
   const endRowDrag = useTradeSetupStore((s) => s.endRowDrag);

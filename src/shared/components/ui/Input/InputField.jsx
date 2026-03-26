@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { parseInputValue, formatForInput, INPUT_TYPES } from "@shared/utils";
+import { formatForInput, INPUT_TYPES, parseInputValue } from "@shared/utils";
 import { BASE_CLASS } from "./baseClasses";
 import DurationInput from "./DurationInput";
 
 export function InputField({
   type = "text",
   value,
-  normalize = false,
   sizes,
   formatter,
   onChange,
@@ -46,14 +45,10 @@ export function InputField({
     );
   }
 
-  const displayValue = normalize
-    ? formatForInput(rawValue, type)
-    : (rawValue ?? "");
+  const displayValue = formatForInput(rawValue, type);
 
   const handleChange = (e) => {
-    const parsed = normalize
-      ? parseInputValue(e.target.value, type)
-      : e.target.value;
+    const parsed = parseInputValue(e.target.value, type);
 
     commitMode ? setLocal(parsed) : onChange?.(parsed, e);
   };

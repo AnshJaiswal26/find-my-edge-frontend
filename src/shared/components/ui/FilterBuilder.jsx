@@ -97,7 +97,6 @@ export default function FilterBuilder({
                     <Input
                       label="Value"
                       vertical
-                      normalize
                       placeholder="Enter value"
                       type={type}
                       value={f.value ?? ""}

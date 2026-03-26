@@ -6,6 +6,7 @@ import SummaryPopup from "./Summary";
 import GroupByPopup from "./GroupBy";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { Popup } from "@shared/components/layout";
+import { TradeScorePopup } from "./TradeScore";
 
 const PopupContents = {
   "add-column": AddColumnPopup,
@@ -14,6 +15,7 @@ const PopupContents = {
   sort: SortPopup,
   summary: SummaryPopup,
   group: GroupByPopup,
+  "trade-score": TradeScorePopup,
 };
 
 export default function Popups() {

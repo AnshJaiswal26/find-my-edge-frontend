@@ -1,6 +1,6 @@
 import { Popup, Section } from "@shared/components/layout";
 import { useTradeSetupStore, useTradeStore } from "@shared/stores";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ErrorText, Input, RangeInput, Select } from "@shared/components/ui";
 import {
   FILTER_OPTIONS,
@@ -56,6 +56,10 @@ export function AddSetupFieldPopup({ setupId }) {
     },
   });
 
+  useEffect(() => {
+    setField("condition", FILTER_TYPE[draft.semanticType][0]);
+  }, [draft.semanticType]);
+
   return (
     <Popup.Container>
       <Popup.Header title={"Add Field"} onClose={closePopup} />
@@ -71,7 +75,6 @@ export function AddSetupFieldPopup({ setupId }) {
             onChange={(s) => {
               setField("mappedSchemaId", s.id);
               setField("semanticType", s.semanticType);
-              setField("condition", FILTER_TYPE[s.semanticType][0]);
             }}
           />
         </Section>
@@ -106,7 +109,9 @@ export function AddSetupFieldPopup({ setupId }) {
               type={draft.semanticType}
               value={draft.expected}
               classNames={{ input: "!min-w-full" }}
-              onChange={(v) => setField("expected", v)}
+              onChange={(v) => {
+                setField("expected", v);
+              }}
             />
           )}
 

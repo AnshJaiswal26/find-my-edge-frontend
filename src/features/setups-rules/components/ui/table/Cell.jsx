@@ -7,7 +7,7 @@ const getCellClass = (tag, text) => {
 };
 
 export const Cell = ({ text, index, tag = false, setupId }) => {
-  const width = useTradeSetupStore((s) => s.columnWidths[setupId][index]);
+  const width = useTradeSetupStore((s) => s.columnWidths[setupId]?.[index]);
   return (
     <div
       style={{ width: width ?? 130 }}

@@ -131,6 +131,7 @@ export const createCoreSlice = (set, get) => ({
           fieldOrder: [],
           fieldsById: {},
         };
+        s.columnWidths[setup.id] = [];
       });
 
       get().closePopup();

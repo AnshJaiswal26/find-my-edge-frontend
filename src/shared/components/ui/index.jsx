@@ -29,6 +29,7 @@ export { default as Skeleton } from "./Skeleton";
 export { default as NoTradesEmptyState } from "./NoDataEmptyState";
 export { default as ResizeHandle } from "./ResizeHandle";
 export { default as DragHandle } from "./DragHandle";
+export { EmptyState } from "./EmptyState";
 
 /* =========================
    🔹 NAVIGATION / STRUCTURE

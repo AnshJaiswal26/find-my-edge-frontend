@@ -25,7 +25,6 @@ export default function Input({
   value,
   label,
   vertical = false,
-  normalize = false,
   onChange,
   onCommit,
   onBlur,
@@ -60,7 +59,6 @@ export default function Input({
           value={value}
           sizes={sizes}
           type={type}
-          normalize={normalize}
           onChange={onChange}
           onCommit={onCommit}
           onBlur={onBlur}

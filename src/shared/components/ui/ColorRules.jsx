@@ -1,14 +1,14 @@
 import { Section } from "@shared/components/layout";
 import {
-  Select,
-  Input,
-  ColorPicker,
   Button,
-  RangeInput,
+  ColorPicker,
   Divider,
   ErrorText,
+  Input,
+  RangeInput,
+  Select,
 } from "@shared/components/ui";
-import { FILTER_TYPE, FILTER_OPTIONS, isBetween } from "@shared/utils";
+import { FILTER_OPTIONS, FILTER_TYPE, isBetween } from "@shared/utils";
 import { Trash2 } from "lucide-react";
 
 function updateRule(index, patch, onChange) {
@@ -57,7 +57,6 @@ export default function ColorRules({
               vertical
               value={r.value}
               type={type}
-              normalize
               placeholder={`Enter Value ${isBetween(r.operator) ? "1" : ""}`}
               onChange={(parsed) => updateRule(i, { value: parsed }, onChange)}
             />

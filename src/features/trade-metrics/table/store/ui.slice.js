@@ -16,7 +16,7 @@ const debouncedWidthSync = debounce(async (columnId, width, set) => {
   }
 }, 400);
 
-export const createUiSlice = (set, get) => ({
+export const createUISlice = (set, get) => ({
   /* ---------------------------------------------------------------------- */
   /*                        DRAG & RESIZE                                   */
   /* ---------------------------------------------------------------------- */
@@ -24,6 +24,10 @@ export const createUiSlice = (set, get) => ({
   draggingColumn: null,
   colDragMode: null,
   colDragOverIndex: null,
+
+  currentTradeId: null,
+
+  setCurrentRowId: (id) => set({ currentTradeId: id }),
 
   startColumnDrag({ id, index }) {
     set({

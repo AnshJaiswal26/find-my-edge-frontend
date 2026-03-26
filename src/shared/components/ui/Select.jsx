@@ -1,5 +1,5 @@
 import { useGlobalEvents, useResolvedValue } from "@shared/hooks";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
 
@@ -134,21 +134,19 @@ function Options({
   classNames,
   pos,
 }) {
-  const callback = useCallback((e) => {
-    const target = e.target;
-    if (target.nodeType === Node.ELEMENT_NODE) {
-      if (
-        buttonRef.current?.contains?.(target) ||
-        listRef.current?.contains?.(target)
-      )
-        return;
-    }
-    setActive(false);
-  }, []);
-
   useGlobalEvents(
     ["pointerdown", "resize", "scroll", "visibilitychange"],
-    callback,
+    (e) => {
+      const target = e.target;
+      if (target.nodeType === Node.ELEMENT_NODE) {
+        if (
+          buttonRef.current?.contains?.(target) ||
+          listRef.current?.contains?.(target)
+        )
+          return;
+      }
+      setActive(false);
+    },
   );
 
   return (

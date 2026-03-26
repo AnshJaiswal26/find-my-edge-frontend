@@ -12,7 +12,7 @@ export const LOSS_RATE = {
   step(state, pnl) {
     if (pnl == null) return;
     state.total++;
-    if (pnl < 0) state.losses++;
+    if (pnl <= 0) state.losses++;
   },
 
   result(state) {

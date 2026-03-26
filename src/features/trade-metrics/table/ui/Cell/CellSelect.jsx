@@ -1,5 +1,20 @@
 import { useTradeSetupStore, useTradeStore } from "@shared/stores";
-import { useMemo } from "react";
+
+const Options = () => {
+  const setupIds = useTradeSetupStore((s) => s.tradeSetupsOrder);
+  const tradeSetups = useTradeSetupStore((s) => s.tradeSetupsById);
+
+  return (
+    <>
+      <option className="bg-(--surface)">—</option>
+      {setupIds.map((o) => (
+        <option key={o} value={o} className="bg-(--surface)">
+          {tradeSetups[o].name}
+        </option>
+      ))}
+    </>
+  );
+};
 
 export const CellSelect = ({
   rowId,
@@ -10,14 +25,6 @@ export const CellSelect = ({
   setEditing,
 }) => {
   const options = useTradeStore((s) => s.schemasById[colId].options);
-  const { tradeSetupsOrder, tradeSetupsById } = useTradeSetupStore.getState();
-
-  const setupOptions = useMemo(
-    () => tradeSetupsOrder.map((id) => tradeSetupsById[id].name),
-    [],
-  );
-
-  const opts = colId === "setup" ? setupOptions : options;
 
   return (
     <select
@@ -32,12 +39,18 @@ export const CellSelect = ({
         setEditing(false);
       }}
     >
-      <option className="bg-(--surface)">—</option>
-      {opts.map((o) => (
-        <option key={o} className="bg-(--surface)">
-          {o}
-        </option>
-      ))}
+      {colId !== "setup" ? (
+        <>
+          <option className="bg-(--surface)">—</option>
+          {options.map((o) => (
+            <option key={o} className="bg-(--surface)">
+              {o}
+            </option>
+          ))}
+        </>
+      ) : (
+        <Options />
+      )}
     </select>
   );
 };

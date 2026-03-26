@@ -3,10 +3,16 @@ import { memo, useMemo } from "react";
 import { evaluateColorRules, formatForInput, formatValue } from "@shared/utils";
 
 import { useTableStore } from "@features/trade-metrics/table/store";
-import { useTradeStore } from "@shared/stores";
+import { useTradeSetupStore, useTradeStore } from "@shared/stores";
 import { SCHEMA_SOURCE } from "@lib/analytics/schema";
 import { hideTooltip } from "@shared/components/ui/tooltip";
 import { handleShowTooltip } from "./cellUtils";
+
+const SetupName = ({ value }) => {
+  const tradeSetups = useTradeSetupStore((s) => s.tradeSetupsById);
+
+  return <span>{tradeSetups[value]?.name || "—"}</span>;
+};
 
 export const CellDisplay = memo(function CellDisplay({
   value,
@@ -67,7 +73,7 @@ export const CellDisplay = memo(function CellDisplay({
       // onMouseEnter={(e) => handleMouseEnter(e, type, cell, colId, rowId, color)}
       // onMouseLeave={tooltipApi.hide}
     >
-      {displayValue}
+      {colId === "setup" ? <SetupName value={displayValue} /> : displayValue}
     </div>
   );
 });

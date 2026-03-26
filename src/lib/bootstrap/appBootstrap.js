@@ -6,6 +6,8 @@ import { useTradeSetupStore } from "@shared/stores";
 export async function appBootstrap() {
   const data = await bootstrapService.init();
 
+  console.log("Bootstrap res", data);
+
   useTradeStore.setState({
     tradesById: data.tradesById,
     derivedByTradeId: data.derivedByTradeId,

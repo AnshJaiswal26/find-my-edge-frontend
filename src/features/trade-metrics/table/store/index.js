@@ -3,7 +3,7 @@ import { immer } from "zustand/middleware/immer";
 
 import { createFilterSlice } from "./filter.slice";
 import { createSortSlice } from "./sort.slice";
-import { createUiSlice } from "./ui.slice";
+import { createUISlice } from "./ui.slice";
 import { createCoreSlice } from "./core.slice";
 import { createComputeSlice } from "./compute.slice";
 import { createGroupSlice } from "./group.slice";
@@ -36,7 +36,7 @@ export const useTableStore = create(
 
     ...createGroupSlice(set, get),
 
-    ...createUiSlice(set, get),
+    ...createUISlice(set, get),
 
     ...createFilterSlice(set, get),
 

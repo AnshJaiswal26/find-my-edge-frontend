@@ -23,7 +23,7 @@ export const NATIVE_AGGREGATE_FUNCTIONS = Object.fromEntries(
     {
       ...fn,
       type: FUNCTION_TYPE.AGGREGATE,
-      ExecutionMode: EXECUTION_MODE.NATIVE,
+      executionMode: EXECUTION_MODE.NATIVE,
     },
   ]),
 );

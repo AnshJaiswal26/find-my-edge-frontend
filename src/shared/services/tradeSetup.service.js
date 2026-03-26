@@ -6,12 +6,6 @@ const validateSetupRequest = (setup) => {
   }
 };
 
-const validateFieldRequest = (field) => {
-  if (!field?.name?.trim()) {
-    throw new Error("field name is required");
-  }
-};
-
 /* ---------------- SERVICE ---------------- */
 
 export const tradeSetupService = {
@@ -48,7 +42,6 @@ export const tradeSetupService = {
   /* -------- ADD FIELD -------- */
   async addField(setupId, field) {
     if (!setupId) throw new Error("setup id is required");
-    validateFieldRequest(field);
 
     return tradeSetupApi.addField(setupId, field);
   },

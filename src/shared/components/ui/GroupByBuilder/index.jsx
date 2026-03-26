@@ -1,4 +1,4 @@
-import { Select, Input, RangeInput } from "@shared/components/ui";
+import { Input, RangeInput, Select } from "@shared/components/ui";
 import { FILTER_OPTIONS, isBetween } from "@shared/utils";
 import { GROUPING_OPTIONS, GROUPING_SCHEMA } from "@lib/analytics/config";
 import { RangeBucket } from "./RangeBucket";
@@ -92,7 +92,6 @@ export default function GroupByBuilder({
             <Input
               label="Value"
               type={schema.input}
-              normalize
               value={draft.value ?? ""}
               onCommit={(v) => update({ value: v })}
             />

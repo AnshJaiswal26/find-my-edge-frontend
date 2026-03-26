@@ -27,10 +27,6 @@
     overflow: hidden;
 }
 
-:root img {
-    width: 30px;
-    height: 30px;
-}
 
 [data-theme^="dark-"] input[type="date"],
 [data-theme^="dark-"] input[type="time"],

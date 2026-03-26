@@ -13,7 +13,7 @@ export const LOSS_FACTOR = {
     if (pnl == null) return;
 
     if (pnl > 0) state.grossProfit += pnl;
-    else if (pnl < 0) state.grossLoss += pnl;
+    else if (pnl <= 0) state.grossLoss += pnl;
   },
 
   result(state) {

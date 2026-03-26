@@ -14,7 +14,6 @@ export default function RangeInput({
           ref={refFrom}
           label="From"
           vertical
-          normalize
           placeholder="Enter from"
           type={type}
           value={value.from ?? ""}
@@ -26,7 +25,6 @@ export default function RangeInput({
           label="To"
           vertical
           placeholder="Enter to"
-          normalize
           type={type}
           value={value.to ?? ""}
           onChange={(parsed) => onChange({ ...value, to: parsed })}
