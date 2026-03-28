@@ -1,6 +1,6 @@
 import { ButtonSelector, Overview } from "@shared/components/ui";
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import { calculationPoints } from "@features/risk-management/data";
+import { CALCULATION_POINTS } from "../../../../constants";
 
 export default function CalculationModeSelector({ updateSettings }) {
   const autoRound = useRiskManagementStore((s) => s.settings.autoRound);
@@ -33,7 +33,7 @@ function SelectorAndOverview({ updateSettings }) {
       />
       <Overview
         title={"⚙️ Round Mode Overview"}
-        pointsArray={calculationPoints[calcMode]}
+        pointsArray={CALCULATION_POINTS[calcMode]}
         withNote={true}
         note={
           <>

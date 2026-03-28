@@ -3,7 +3,6 @@ import {
   formatValue,
   generateTooltip,
   getValBySecName,
-  is,
   resolvePts,
   safe,
 } from "@features/risk-management/utils";
@@ -43,19 +42,19 @@ export function handleChange(sectionName, field, val, state) {
 
   const value = field === "ratio" ? val.replace("1 : ", "") : val;
 
-  const { status, caseValue } = checkSpecialCase(sectionName, field, value);
+  // const { status, caseValue } = checkSpecialCase(sectionName, field, value);
 
-  if (caseValue !== null) {
-    state.updater.section(
-      sectionName,
-      { [field]: caseValue },
-      { round: false }
-    );
-    return;
-  } else if (status) return;
+  // if (caseValue !== null) {
+  //   state.updater.section(
+  //     sectionName,
+  //     { [field]: caseValue },
+  //     { round: false }
+  //   );
+  //   return;
+  // } else if (status) return;
 
   const prev = section[field];
-  const num = value === "" ? 0 : Number(value);
+  const num = Number(value);
 
   if (prev === num) return;
 
@@ -129,7 +128,7 @@ function handleRiskRewardChange({ val, state }) {
       rr: newRiskReward,
       state,
     },
-    false
+    false,
   );
 
   return [
@@ -232,8 +231,8 @@ export function handlePtsAmountAndPercentChange({
   const newAmount = isPts
     ? value * qty
     : field === "amount"
-    ? value
-    : capital * safe(value / 100);
+      ? value
+      : capital * safe(value / 100);
   const newPts = isPts ? value : safe(newAmount / qty);
   const newPercent = safe(newAmount / capital) * 100;
 
@@ -305,7 +304,7 @@ function handlePositionSizingChange({ section, field, val, state }) {
     updated.riskAmount ?? riskAmount,
     updated.slPts ?? slPts,
     updated.lotSize ?? lotSize,
-    mode
+    mode,
   );
 
   return [["calculator", name, { ...updated, ...readOnlyFields }]];
@@ -362,8 +361,8 @@ function validateAndSyncSection(current, validation = true) {
 // --- validate and show tooltip if input is wrong ---
 function validateAndNotify({ name, field, buyPrice, sellPrice, state }) {
   const prev = state[name + "Tooltip"];
-  const isTargetOrSl = is.TOrSl(name);
-  const opposite = is.oFL(field);
+  const isTargetOrSl = name === "target" || name === "stopLoss";
+  const opposite = field === "buyPrice" ? "sellPrice" : "buyPrice";
   const isBuyPrice = field === "buyPrice";
   const updated = {};
 
@@ -386,7 +385,7 @@ function validateAndNotify({ name, field, buyPrice, sellPrice, state }) {
       updated[f] = null;
     }
   }
-  if (isTargetOrSl && is.BS(field)) {
+  if (isTargetOrSl && (field === "buyPrice" || field === "sellPrice")) {
     const label1 = isBuyPrice && isBuyGreater ? "less" : "greater";
     const label2 = isBuyPrice && isBuySmaller ? "greater" : "less";
     const key = name === "target" ? label1 : label2;

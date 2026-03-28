@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import { fields } from "@features/risk-management/data";
+import { FIELDS } from "../constants";
 import { getFormulaMap } from "@features/risk-management/utils";
 
 export default function useCalculationGuide() {
   const derivedInput = useRiskManagementStore((s) => s.settings.derivedInput);
   const selectedField = useRiskManagementStore((s) => s.settings.selectedField);
   const selectedSection = useRiskManagementStore(
-    (s) => s.settings.selectedSection
+    (s) => s.settings.selectedSection,
   );
 
   const isAmountLock = useMemo(() => derivedInput === "amount", [derivedInput]);
@@ -15,20 +15,20 @@ export default function useCalculationGuide() {
 
   const commonField = useMemo(
     () => (isBuyLock ? "buyPrice" : "sellPrice"),
-    [isBuyLock]
+    [isBuyLock],
   );
 
   const remainingCommonField = useMemo(
     () => (isBuyLock ? "sellPrice" : "buyPrice"),
-    [isBuyLock]
+    [isBuyLock],
   );
 
   const mainFields = useMemo(
     () =>
       selectedSection === "Target" || selectedSection === "Stop-Loss"
-        ? ["riskReward", ...fields["calculator"]]
-        : fields["calculator"],
-    [selectedSection]
+        ? ["riskReward", ...FIELDS["calculator"]]
+        : FIELDS["calculator"],
+    [selectedSection],
   );
 
   const commonAffectedFields = useMemo(() => {
@@ -47,24 +47,24 @@ export default function useCalculationGuide() {
 
   const affected = useMemo(
     () => commonAffectedFields[selectedField],
-    [commonAffectedFields, selectedField]
+    [commonAffectedFields, selectedField],
   );
 
   const userDefined = useMemo(
     () => mainFields.filter((field) => !affected.includes(field)),
-    [mainFields, affected]
+    [mainFields, affected],
   );
 
   const formulaMap = useMemo(
     () => getFormulaMap(selectedField),
-    [selectedField]
+    [selectedField],
   );
 
   return {
     affected,
     userDefined,
     selectedField,
-    fields,
+    fields: FIELDS,
     mainFields,
     formulaMap,
   };

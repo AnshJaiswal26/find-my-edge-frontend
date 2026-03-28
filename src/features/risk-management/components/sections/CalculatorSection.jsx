@@ -24,15 +24,6 @@ export default function CalculatorSection({ sectionName }) {
     <CalculatorSectionLayout
       section={sectionName}
       onMouseEnter={debouncedsetHoveredSection}
-      headerElement={
-        isTargetOrSL && (
-          <Button
-            text={`Place ${sectionName}`}
-            color="#05ab72"
-            disabled={true}
-          />
-        )
-      }
       footerElement={
         !isTargetOrSL && <FooterButtons sectionName={sectionName} />
       }

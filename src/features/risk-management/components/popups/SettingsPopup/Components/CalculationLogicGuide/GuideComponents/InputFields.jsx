@@ -1,4 +1,4 @@
-import { fieldLabels } from "@features/risk-management/data";
+import { FIELD_LABELS } from "../../../../../../constants";
 
 export default function InputFields({
   selectedField,
@@ -20,7 +20,7 @@ export default function InputFields({
             }`}
             onClick={() => updateSettings({ selectedField: field })}
           >
-            <div className="field-name">{fieldLabels[field]}</div>
+            <div className="field-name">{FIELD_LABELS[field]}</div>
             <div className="field-note">Editable</div>
           </div>
         ))}

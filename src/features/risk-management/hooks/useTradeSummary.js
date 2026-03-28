@@ -19,7 +19,12 @@ export default function useTradeSummary() {
   const grossPL = sellVal - buyVal;
   const breakevenPts = totalCharges / qty;
 
-  const pnlColor = netPL === 0 ? "neutral" : netPL > 0 ? "green" : "red";
+  const pnlColor =
+    netPL === 0
+      ? "text-(--text)"
+      : netPL > 0
+        ? "text-(--success)"
+        : "text-(--error)";
 
   // ⚡ Pre-built lists for direct rendering
   const transactionSummaryList = [

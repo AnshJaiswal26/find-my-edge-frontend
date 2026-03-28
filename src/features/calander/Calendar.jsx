@@ -83,7 +83,7 @@ export default function Calendar() {
 
         {/* RIGHT SIDE */}
         {/* <div>
-          <PopupSummary data={data} currentDate={currentDate} />
+          <PopupSummary constants={constants} currentDate={currentDate} />
         </div> */}
       </div>
     </div>

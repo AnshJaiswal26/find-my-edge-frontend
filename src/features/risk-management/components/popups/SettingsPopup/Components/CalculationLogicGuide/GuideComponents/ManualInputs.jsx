@@ -1,4 +1,4 @@
-import { fieldLabels } from "@features/risk-management/data";
+import { FIELD_LABELS } from "../../../../../../constants";
 
 export default function ManualInputs({ userDefined }) {
   return (
@@ -9,7 +9,7 @@ export default function ManualInputs({ userDefined }) {
       <div className="flex flex-col gap-3">
         {userDefined.map((field) => (
           <div className="field-card input-card" key={field}>
-            <div className="field-name">{fieldLabels[field]}</div>
+            <div className="field-name">{FIELD_LABELS[field]}</div>
             <div className="formula-box-green">
               <div className="formula-value-green">Manual / Last Change</div>
             </div>

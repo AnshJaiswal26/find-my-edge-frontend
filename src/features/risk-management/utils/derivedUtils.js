@@ -1,14 +1,4 @@
-import { logResult, logStart, safe } from ".";
-
-export const is = {
-  TOrSl: (f) => f === "target" || f === "stopLoss",
-  oSL: (f) => (f === "target" ? "stopLoss" : "target"),
-  oFU: (f) => (f === "buyPrice" ? "Sell Price" : "Buy Price"),
-  oFL: (f) => (f === "buyPrice" ? "sellPrice" : "buyPrice"),
-  PAP: (f) => f === "pts" || f === "amount" || f === "percent",
-  BSQ: (f) => f === "buyPrice" || f === "sellPrice" || f === "qty",
-  BS: (f) => f === "buyPrice" || f === "sellPrice",
-};
+import { logResult, logStart } from ".";
 
 export const resolvePts = (name, pts, newPts) => {
   logStart("getCalculatedPts");

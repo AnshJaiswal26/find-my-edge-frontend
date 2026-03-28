@@ -65,7 +65,6 @@ export const useUIStore = create((set) => ({
   toggleSidebar: () =>
     set((prev) => {
       const value = !prev.isSidebarOpen;
-      document.body.style.overflow = value ? "hidden" : "";
       document.documentElement.classList.toggle("sidebar-open", value);
       return { isSidebarOpen: value };
     }),

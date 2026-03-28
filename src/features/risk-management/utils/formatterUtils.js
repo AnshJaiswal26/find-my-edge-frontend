@@ -1,4 +1,4 @@
-import { fields } from "@features/risk-management/data";
+import { FIELDS } from "../constants";
 
 export function formatINR(num) {
   const number = parseFloat(num);
@@ -20,7 +20,7 @@ export function formatINR(num) {
 
 export const cleanFloat = (
   val,
-  cfg = { threshold: 0.01, epsilon: 1e-10, decimals: 4 }
+  cfg = { threshold: 0.01, epsilon: 1e-10, decimals: 4 },
 ) => {
   if (Number.isInteger(val)) return val;
 
@@ -84,7 +84,7 @@ export const shouldFormat = (sec, mode) => {
   const regex1 = /^-?\d+(?:\.(?:\d{1}|(?:\d{1}[05])))?$/;
   const regex2 = /^-?\d+(?:\.\d{2})?$/;
 
-  const formatedKeys = fields[name].reduce((acc, key) => {
+  const formatedKeys = FIELDS[name].reduce((acc, key) => {
     const val = sec[key].toString();
 
     if (mode !== "Approx" && !regex1.test(val)) acc[key] = sec[key];

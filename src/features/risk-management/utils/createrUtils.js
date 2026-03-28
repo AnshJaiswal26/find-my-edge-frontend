@@ -1,5 +1,4 @@
-import { fieldLabels } from "@features/risk-management/data";
-import { is } from "./derivedUtils";
+import { FIELD_LABELS } from "../constants";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 
 export const getKey = (s, f) => `${s}_${f}`;
@@ -10,12 +9,15 @@ export const generateTooltip = (field, key, mode) => {
   const derived =
     mode ?? useRiskManagementStore.getState().settings.derivedInput;
 
-  const fieldHolder = fieldLabels[field];
-  const isPriceOrQty = is.BSQ(field);
+  const fieldHolder = FIELD_LABELS[field];
+  const isPriceOrQty =
+    field === "buyPrice" || field === "sellPrice" || field === "qty";
 
   const isAmountLock = derived === "amount";
 
   const holder = field !== "buyPrice" ? "positive" : "negative";
+
+  const upperCaseOpposite = field === "buyPrice" ? "Sell Price" : "Buy Price";
 
   const conditionalMsg = {
     negative: isAmountLock ? fieldHolder : "Buy/Sell Price",
@@ -31,9 +33,9 @@ export const generateTooltip = (field, key, mode) => {
       case "adjust":
         return `${fieldHolder} cannot be negative. Increase ${fieldHolder} or switch ${conditionalMsg.adjust} back to ${fieldHolder}.`;
       case "less":
-        return `${fieldHolder} should be less than the ${is.oFU(field)}`;
+        return `${fieldHolder} should be less than the ${upperCaseOpposite}`;
       case "greater":
-        return `${fieldHolder} should be greater than the ${is.oFU(field)}`;
+        return `${fieldHolder} should be greater than the ${upperCaseOpposite}`;
     }
   };
 

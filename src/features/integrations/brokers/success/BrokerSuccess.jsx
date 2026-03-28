@@ -31,7 +31,7 @@ const STEP_CONFIG = [
       "Fetching trade history…",
       "Processing open positions…",
       "Reconciling P&L records…",
-      "Validating trade data…",
+      "Validating trade constants…",
     ],
   },
   {

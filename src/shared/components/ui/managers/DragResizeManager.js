@@ -113,7 +113,7 @@ export class DragResizeManager {
 
     this.dragRects = getDragRects(
       this.parentRef?.current,
-      this.mode === "x" ? "[data-col-header]" : "[data-row-header]",
+      this.mode === "x" ? "[constants-col-header]" : "[constants-row-header]",
     );
 
     this.callbacks.onDragStart?.(session);

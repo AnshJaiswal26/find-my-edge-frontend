@@ -1,4 +1,4 @@
-export const qtyRoundModePoints = {
+export const QTY_ROUND_MODE_POINTS = {
   Nearest: [
     "Rounds quantity to the nearest valid lot multiple.",
     "✅ Balanced approach — adjusted SL may be slightly above or below original SL.",
@@ -16,7 +16,7 @@ export const qtyRoundModePoints = {
   ],
 };
 
-export const calculationPoints = {
+export const CALCULATION_POINTS = {
   Approx: [
     "Rounding is done up to 2 decimal places.",
     "✅ Useful for quick estimates and faster input.",

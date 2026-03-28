@@ -1,7 +1,6 @@
 import { Button, ValidationTooltip } from "@shared/components/ui";
-import { Container } from "@shared/components/layout";
 import {
-  Input,
+  CalculatorInput,
   CalculatorSection,
   PyramidingSection,
 } from "@features/risk-management/components";
@@ -10,13 +9,15 @@ import {
   useClearLogic,
   useFormatterLogic,
 } from "@features/risk-management/hooks";
+import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
+import { RefreshCcw, RemoveFormatting } from "lucide-react";
 
 export function RiskRewardCalculatorContainer() {
   return (
     <>
       <div className="flex justify-between items-center">
         <RiskRewardInput />
-        <div className="flex gap-4">
+        <div className="flex gap-3">
           <FormatButton />
           <ClearSectionButton />
         </div>
@@ -35,7 +36,7 @@ function RiskRewardInput() {
 
   return (
     <div className="relative">
-      <Input
+      <CalculatorInput
         className={tooltip ? "info" : ""}
         label="Risk/Reward"
         sectionName={"riskReward"}
@@ -59,16 +60,15 @@ function FormatButton() {
   const { format, mode } = useFormatterLogic();
 
   return (
-    <Button
-      text="Format"
-      title={"Current Mode : " + mode}
-      color="#e8bd3eff"
+    <Button.Icon
       onClick={format}
-      style={{
-        padding: "5px 10px",
-        fontSize: "12px",
-      }}
-    />
+      onMouseEnter={(e) =>
+        showTooltip(e, { content: `Format (Current Mode: ${mode})` })
+      }
+      onMouseLeave={hideTooltip}
+    >
+      <RemoveFormatting size={16} />
+    </Button.Icon>
   );
 }
 
@@ -76,16 +76,12 @@ function ClearSectionButton() {
   const clearSection = useClearLogic();
 
   return (
-    <>
-      <Button
-        text="Clear All"
-        color="#fe5a5a"
-        onClick={() => clearSection("target")}
-        style={{
-          padding: "5px 10px",
-          fontSize: "12px",
-        }}
-      />
-    </>
+    <Button.Icon
+      onClick={() => clearSection("target")}
+      onMouseEnter={(e) => showTooltip(e, { content: "Reset Inputs" })}
+      onMouseLeave={hideTooltip}
+    >
+      <RefreshCcw size={16} />
+    </Button.Icon>
   );
 }

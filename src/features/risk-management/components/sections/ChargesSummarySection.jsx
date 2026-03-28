@@ -1,26 +1,27 @@
-import { Button } from "@shared/components/ui";
-import { useRiskManagementStore } from "@features/risk-management/stores";
-import {
-  useChargesLogic,
-  useTradeSummary,
-} from "@features/risk-management/hooks";
-import { formatINR } from "@features/risk-management/utils";
 import { Section } from "@shared/components/layout";
-import { useUIStore } from "@shared/stores";
-import { TOAST } from "@shared/constants";
+import { useRiskManagementStore } from "../../stores";
+import { useChargesLogic, useTradeSummary } from "../../hooks";
+import { toast } from "@shared/services/toast.service";
+import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
+import { Button } from "@shared/components/ui";
+import { formatINR } from "../../utils";
+import { Minus, Plus } from "lucide-react";
 
 export default function ChargesSummarySection() {
   console.log("ChargesSummarySection...");
 
   return (
-    <Section>
-      <div className="flex justify-between flex-wrap">
-        <div className="transaction-summary-title">Charges Summary</div>
-        <div className="flex gap-2.5 align-middle">
-          <label className="risk-label">Charges</label>
-          <ToggleChargesButtons />
+    <Section
+      title={
+        <div className="flex justify-between items-center">
+          <span>Charges Summary</span>
+          <div className="flex gap-2 items-center justify-end">
+            <label className="risk-label">Charges</label>
+            <ToggleChargesButtons />
+          </div>
         </div>
-      </div>
+      }
+    >
       <ChargesSummaryList />
     </Section>
   );
@@ -29,36 +30,29 @@ export default function ChargesSummarySection() {
 function ToggleChargesButtons() {
   const active = useRiskManagementStore((s) => s.anyTooltipActive);
   const charges = useChargesLogic();
-  const showToast = useUIStore((s) => s.showToast);
 
   return (
     <>
-      <Button
-        text="Add"
-        color="#05ab72"
+      <Button.Icon
         onClick={() => {
           charges("added");
-          showToast(TOAST.SUCCESS, "Charges added");
+          toast.success("Charges added");
         }}
-        style={{
-          padding: "3px 10px",
-          fontSize: "12px",
-          disabled: active,
-        }}
-      />
-      <Button
-        text="Remove"
-        color="#fe5a5a"
+        onMouseEnter={(e) => showTooltip(e, { content: "Include Charges" })}
+        onMouseLeave={hideTooltip}
+      >
+        <Plus size={16} />
+      </Button.Icon>
+      <Button.Icon
         onClick={() => {
           charges("removed");
-          showToast(TOAST.ERROR, "Charges removed");
+          toast.success("Charges removed");
         }}
-        style={{
-          padding: "3px 10px",
-          fontSize: "12px",
-          disabled: active,
-        }}
-      />
+        onMouseEnter={(e) => showTooltip(e, { content: "Exclude Charges" })}
+        onMouseLeave={hideTooltip}
+      >
+        <Minus size={16} />
+      </Button.Icon>
     </>
   );
 }
@@ -69,9 +63,9 @@ function ChargesSummaryList() {
   return (
     <>
       {chargesSummaryList.map((item, idx) => (
-        <div className="charges-summary-row" key={idx}>
-          <span className="charges-summary-label">{item.label}</span>
-          <span className="charges-summary-value">
+        <div className="flex justify-between items-center" key={idx}>
+          <span className="text-(--text-muted)">{item.label}</span>
+          <span className="text-(--text-muted)">
             {typeof item.value === "number"
               ? formatINR(item.value || 0)
               : item.value}

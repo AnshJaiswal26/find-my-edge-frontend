@@ -77,7 +77,7 @@ export const logStyles = {
   label: "color: #a7b4c9ff; font-weight: 500;",
 };
 
-// Utility function to get the appropriate style based on data type
+// Utility function to get the appropriate style based on constants type
 const getValueStyle = (value) => {
   const type = typeof value;
   switch (type) {
@@ -134,7 +134,7 @@ export const logTimer = () => {
       console.log(
         `%c⏱️ DURATION: %c${duration.toFixed(2)}ms`,
         logStyles.result[1],
-        logStyles.timer
+        logStyles.timer,
       );
     },
   };
@@ -158,7 +158,7 @@ export const logCmpt = (
   phase,
   actualDuration,
   count,
-  totalDuration
+  totalDuration,
 ) => {
   if (!ENABLE_LOGGING) return;
   console.log(
@@ -166,7 +166,7 @@ export const logCmpt = (
   • For: %c${why}%c 
   • Phase: %c${phase}%c (${actualDuration.toFixed(2)}ms) 
   • Render Count: %c${count}%c`,
-    ...logStyles.component
+    ...logStyles.component,
   );
 };
 
@@ -181,7 +181,7 @@ export const logInfo = (label, value, customType = null) => {
     `%c${label}:%c %c${formattedValue}`,
     logStyles.label,
     logStyles.separator,
-    style
+    style,
   );
 };
 
@@ -194,14 +194,14 @@ export const logObj = (label, value, expanded = false) => {
       `%c${label}:%c %cArray[${value.length}]`,
       logStyles.label,
       logStyles.separator,
-      logStyles.array[0]
+      logStyles.array[0],
     );
   } else if (typeof value === "object" && value !== null) {
     console.log(
       `%c${label}:%c %cObject{${Object.keys(value).length}}`,
       logStyles.label,
       logStyles.separator,
-      logStyles.object[0]
+      logStyles.object[0],
     );
   } else {
     const style = getValueStyle(value);
@@ -210,7 +210,7 @@ export const logObj = (label, value, expanded = false) => {
       `%c${label}:%c %c${formattedValue}`,
       logStyles.label,
       logStyles.separator,
-      style
+      style,
     );
   }
 
@@ -261,10 +261,10 @@ export const logMsg = (msg, type = "info") => {
     type === "info"
       ? "ℹ️"
       : type === "warning"
-      ? "⚠️"
-      : type === "error"
-      ? "❌"
-      : "📝";
+        ? "⚠️"
+        : type === "error"
+          ? "❌"
+          : "📝";
   console.log(`%c${icon} ${msg}`, style);
 };
 
@@ -285,7 +285,7 @@ export const logStateUpdate = (msg, changes) => {
       logStyles.state[1],
       logStyles.state[2],
       logStyles.state[3],
-      getValueStyle(changes)
+      getValueStyle(changes),
     );
   } else {
     console.log(
@@ -297,7 +297,7 @@ export const logStateUpdate = (msg, changes) => {
       logStyles.state[2],
       logStyles.state[3],
       logStyles.object[0],
-      changes
+      changes,
     );
   }
 };
@@ -322,7 +322,7 @@ export const logResult = (label, result) => {
     Result: %c${formattedResult}`,
       logStyles.result[0],
       logStyles.separator,
-      style
+      style,
     );
   } else if (Array.isArray(result)) {
     console.log(
@@ -331,7 +331,7 @@ export const logResult = (label, result) => {
       logStyles.result[0],
       logStyles.separator,
       logStyles.array[0],
-      result
+      result,
     );
   } else if (typeof result === "object") {
     console.log(
@@ -340,14 +340,14 @@ export const logResult = (label, result) => {
       logStyles.result[0],
       logStyles.separator,
       logStyles.object[0],
-      result
+      result,
     );
   } else {
     console.log(
       `%c${label}:%c 
     Result:`,
       logStyles.result[0],
-      logStyles.separator
+      logStyles.separator,
     );
     console.log(result);
   }
@@ -360,7 +360,7 @@ export const logEnd = () => {
   console.groupEnd();
 };
 
-// Comprehensive logging function that handles any data type
+// Comprehensive logging function that handles any constants type
 export const logData = (label, data, options = {}) => {
   if (!ENABLE_LOGGING) return;
 
@@ -378,7 +378,7 @@ export const logData = (label, data, options = {}) => {
     console.groupCollapsed(
       `%c${label}${typeLabel}:%c`,
       logStyles.result[0],
-      logStyles.result[1]
+      logStyles.result[1],
     );
   }
 

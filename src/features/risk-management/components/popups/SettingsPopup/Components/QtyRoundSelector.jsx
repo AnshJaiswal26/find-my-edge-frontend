@@ -1,5 +1,5 @@
 import { ButtonSelector, Overview } from "@shared/components/ui";
-import { qtyRoundModePoints } from "@features/risk-management/data";
+import { QTY_ROUND_MODE_POINTS } from "../../../../constants";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 
 export default function QtyRoundSelector({ updateSettings }) {
@@ -15,7 +15,7 @@ export default function QtyRoundSelector({ updateSettings }) {
       />
       <Overview
         title={"⚙️ Qty Round Mode Overview"}
-        pointsArray={qtyRoundModePoints[mode]}
+        pointsArray={QTY_ROUND_MODE_POINTS[mode]}
       />
     </>
   );

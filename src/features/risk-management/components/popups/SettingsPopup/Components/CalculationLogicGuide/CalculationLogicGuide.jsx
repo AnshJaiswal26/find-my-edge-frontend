@@ -7,7 +7,7 @@ import {
   Summary,
 } from "./GuideComponents";
 import { useCalculationGuide } from "@features/risk-management/hooks";
-import { fields } from "@features/risk-management/data";
+import { FIELDS } from "../../../../../constants";
 import { useMemo } from "react";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { SettingsSectionWrapper } from "@features/risk-management/layout";
@@ -61,7 +61,7 @@ export default function CalculationLogicGuide({ updateSettings }) {
           />
           {isTargetOrSl && (
             <CalculatedFields
-              affected={fields["target"]}
+              affected={FIELDS["target"]}
               formulaMap={formulaMap}
               currentSection={
                 selectedSection === "Target" ? "Stop-Loss" : "Target"

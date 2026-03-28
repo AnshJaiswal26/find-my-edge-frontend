@@ -1,4 +1,4 @@
-import { fields, fieldLabels } from "@features/risk-management/data";
+import { FIELD_LABELS, FIELDS } from "../../../../../../constants";
 
 export default function Summary({ affected, selectedField, currentSection }) {
   const isTargetOrSl =
@@ -9,10 +9,10 @@ export default function Summary({ affected, selectedField, currentSection }) {
     <div className="summary-box">
       <div className="summary-text">
         Change in{" "}
-        <span className="highlight-input">{fieldLabels[selectedField]}</span> in{" "}
-        {currentSection}→{" "}
+        <span className="highlight-input">{FIELD_LABELS[selectedField]}</span>{" "}
+        in {currentSection}→{" "}
         <span className="highlight-calc">
-          {affected.map((field) => fieldLabels[field]).join(", ")}
+          {affected.map((field) => FIELD_LABELS[field]).join(", ")}
         </span>{" "}
         {affected.length < 2 ? "is" : "are"} Auto-Calculated.
       </div>
@@ -21,7 +21,7 @@ export default function Summary({ affected, selectedField, currentSection }) {
           <span className="summary-text">
             Auto-Calculated inputs in {oppositeSection}→{" "}
             <span className="highlight-calc">
-              {fields["target"].map((field) => fieldLabels[field]).join(", ")}
+              {FIELDS["target"].map((field) => FIELD_LABELS[field]).join(", ")}
             </span>{" "}
           </span>
         )}

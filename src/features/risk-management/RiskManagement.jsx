@@ -1,17 +1,17 @@
 import "./RiskManagement.css";
 import {
-  CapitalInputContainer,
-  SummaryContainer,
   CalculatorAndPositionsContainer,
+  CapitalInputContainer,
   Settings,
+  SummaryContainer,
 } from "./components";
 
 function RiskManagement() {
   return (
     <>
       <Settings />
-      <div className="flex-box flex-1">
-        <div className="flex-box flex-col flex-1">
+      <div className="flex flex-row gap-5 flex-1 flex-wrap">
+        <div className="flex flex-col gap-5 flex-6 min-h-0 max-h-fit">
           <CapitalInputContainer />
           <SummaryContainer />
         </div>

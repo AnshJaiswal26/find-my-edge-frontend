@@ -25,7 +25,7 @@ export default defineConfig({
       "@pages": path.resolve(__dirname, "src/pages"),
 
       // --- Data ---
-      "@data": path.resolve(__dirname, "src/data"),
+      "@data": path.resolve(__dirname, "src/constants"),
 
       "@Profiler": path.resolve(__dirname, "src/RenderLogger"),
       "@RM": path.resolve(__dirname, "src/pages/RiskManagement"),

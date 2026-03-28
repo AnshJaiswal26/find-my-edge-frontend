@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import {
-  RiskRewardCalculatorContainer,
   CurrentPositionsContainer,
   NormalCalculatorContainer,
+  RiskRewardCalculatorContainer,
 } from "@features/risk-management/components";
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { Container } from "@shared/components/layout";
@@ -22,7 +22,7 @@ export function CalculatorAndPositionsContainer() {
   );
 
   return (
-    <div className="flex-[1.1] min-w-[360px] relative">
+    <div className="flex-[6.5] min-w-[360px] relative min-h-0 h-fit">
       <TabSelector
         tabs={tabs}
         currentTab={currentTab}

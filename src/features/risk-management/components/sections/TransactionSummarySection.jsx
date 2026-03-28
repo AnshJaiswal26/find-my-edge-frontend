@@ -1,12 +1,12 @@
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import { sectionColor, sectionLabels } from "@features/risk-management/data";
+import { SECTION_COLOR, SECTION_LABELS } from "../../constants";
 import { useTradeSummary } from "@features/risk-management/hooks";
 import { formatINR, safe } from "@features/risk-management/utils";
 import { Section } from "@shared/components/layout";
 
 export default function TransactionSummarySection() {
   return (
-    <Section>
+    <Section className="px-4">
       <TransactionSummaryTitle />
       <TransactionSummaryRow />
     </Section>
@@ -17,12 +17,12 @@ function TransactionSummaryTitle() {
   const transaction = useRiskManagementStore((s) => s.currentTransaction);
 
   return (
-    <div className="transaction-summary-title">
+    <span className="text-lg">
       Transaction Summary For{" "}
-      <span className={sectionColor[transaction]}>
-        {sectionLabels[transaction]}
+      <span className={SECTION_COLOR[transaction]}>
+        {SECTION_LABELS[transaction]}
       </span>
-    </div>
+    </span>
   );
 }
 
@@ -32,13 +32,13 @@ function TransactionSummaryRow() {
   return (
     <div className="transaction-summary-row">
       {transactionSummaryList.map((item, idx) => (
-        <div className="transaction-summary-col" key={idx}>
-          <span className="transaction-summary-label">{item.label}</span>
-          <div className={`transaction-summary-value ${item?.style}`}>
+        <div className="flex flex-col gap-0" key={idx}>
+          <span className="text-(--text-muted)">{item.label}</span>
+          <span className={item?.style}>
             {item.label === "Net P&L (%)"
               ? safe(item.value, 2) + "%"
               : formatINR(item.value || 0)}
-          </div>
+          </span>
         </div>
       ))}
     </div>

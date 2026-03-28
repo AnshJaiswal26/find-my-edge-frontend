@@ -78,7 +78,13 @@ export const Container = ({
   );
 };
 
-export const Section = ({ title, children, subSection = false, className }) => {
+export const Section = ({
+  title,
+  children,
+  subSection = false,
+  className,
+  ...props
+}) => {
   return (
     <div
       className={`
@@ -91,6 +97,7 @@ export const Section = ({ title, children, subSection = false, className }) => {
             : ""
         } ${className}
       `}
+      {...props}
     >
       {title && (
         <h3

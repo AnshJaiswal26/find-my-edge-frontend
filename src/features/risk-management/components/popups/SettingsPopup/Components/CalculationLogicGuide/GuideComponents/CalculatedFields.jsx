@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { fieldLabels } from "@features/risk-management/data";
+import { FIELD_LABELS } from "../../../../../../constants";
 import { getFormula } from "@features/risk-management/utils";
 
 export default function CalculatedFields({
@@ -9,7 +9,7 @@ export default function CalculatedFields({
 }) {
   const createFormula = useCallback(
     (field) => getFormula(field, { currentSection, affected, formulaMap }),
-    [currentSection, affected, formulaMap]
+    [currentSection, affected, formulaMap],
   );
 
   const isRRAndLengthIs6 =
@@ -29,7 +29,7 @@ export default function CalculatedFields({
         <div className="flex flex-col gap-3">
           {affected.map((field) => (
             <div key={field} className="field-card calc-card">
-              <div className="field-name">{fieldLabels[field]}</div>
+              <div className="field-name">{FIELD_LABELS[field]}</div>
               <div className="field-note">Auto-calculated</div>
 
               <div className="formula-box">

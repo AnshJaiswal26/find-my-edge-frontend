@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import { is, resetAllToZero } from "@features/risk-management/utils";
-import { fields } from "@features/risk-management/data";
+import { resetAllToZero } from "@features/risk-management/utils";
+import { FIELDS } from "../constants";
 
 const resetAllTooltips = (tooltips) => {
   return Object.entries(tooltips).reduce((acc, [key, val]) => {
@@ -14,19 +14,19 @@ export default function useClearLogic() {
   const clearTimers = useRef({});
   const updateSections = useRiskManagementStore((s) => s.updater.sections);
 
-  const clearSection = (secName) => {
+  return (secName) => {
     if (clearTimers.current[secName]) return;
-    const isTargetOrSL = is.TOrSl(secName);
-    const oppositeSec = is.oSL(secName);
+    const isTargetOrSL = secName === "target" || secName === "stopLoss";
+    const oppositeSec = secName === "target" ? "stopLoss" : "target";
 
     const tooltipKey = secName + "Tooltip";
-    const oppoTooltipkey = oppositeSec + "Tooltip";
+    const oppoTooltipKey = oppositeSec + "Tooltip";
 
     const state = useRiskManagementStore.getState();
     const sectionTooltips = state[tooltipKey];
     const isAnyActive = state.anyTooltipActive;
 
-    const keysReset = resetAllToZero(fields[secName]);
+    const keysReset = resetAllToZero(FIELDS[secName]);
 
     const updates = [];
     if (isTargetOrSL) {
@@ -35,8 +35,8 @@ export default function useClearLogic() {
       isAnyActive &&
         updates.push([
           "tooltip",
-          oppoTooltipkey,
-          resetAllTooltips(state[oppoTooltipkey]),
+          oppoTooltipKey,
+          resetAllTooltips(state[oppoTooltipKey]),
         ]);
     }
 
@@ -49,6 +49,4 @@ export default function useClearLogic() {
       delete clearTimers.current[secName];
     }, 1000);
   };
-
-  return clearSection;
 }

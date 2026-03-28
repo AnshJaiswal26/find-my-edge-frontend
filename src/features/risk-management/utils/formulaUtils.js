@@ -1,4 +1,4 @@
-import { fieldLabels } from "@features/risk-management/data/calculatorsData";
+import { FIELD_LABELS } from "../constants/calculators";
 
 export const getFormulaMap = (selected) => ({
   name: selected,
@@ -11,14 +11,14 @@ export const getFormulaMap = (selected) => ({
     selected === "riskReward"
       ? "SL Pts × Risk-Reward"
       : selected.includes("Price")
-      ? "Sell Price - Buy Price"
-      : "Amount / Qty",
+        ? "Sell Price - Buy Price"
+        : "Amount / Qty",
   amount:
     selected === "riskReward"
       ? "SL Amount × Risk-Reward"
       : selected === "percent"
-      ? "Capital × (Pnl (%) / 100)"
-      : "Pts × Qty",
+        ? "Capital × (Pnl (%) / 100)"
+        : "Pts × Qty",
   percent:
     selected === "riskReward"
       ? "SL Pnl(%) × Risk-Reward"
@@ -33,7 +33,7 @@ export const getFormula = (field, { currentSection, affected, formulaMap }) => {
     return field === "buyPrice" || field === "qty"
       ? `from ${oppoSec}`
       : field === "sellPrice"
-      ? `Buy Price + (${oppoSec} Pts ${operator} Risk-Reward)`
-      : `${oppoSec} ${fieldLabels[field]} ${operator} Risk-Reward`;
+        ? `Buy Price + (${oppoSec} Pts ${operator} Risk-Reward)`
+        : `${oppoSec} ${FIELD_LABELS[field]} ${operator} Risk-Reward`;
   } else return formulaMap[field];
 };

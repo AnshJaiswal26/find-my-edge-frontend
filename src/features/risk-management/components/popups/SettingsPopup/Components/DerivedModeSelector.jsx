@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { ButtonSelector, Overview } from "@shared/components/ui";
-import { fieldLabels } from "../../../../data/calculatorsData";
+import { FIELD_LABELS } from "../../../../constants/calculators";
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import { derivedInputPoints } from "@features/risk-management/data/settingsData";
+import { derivedInputPoints } from "../../../../constants/settings";
 import {
   generateTooltip,
   logResult,
@@ -14,7 +14,7 @@ export default function DerivedModeSelector({ updateSettings }) {
   const adjust = useRiskManagementStore((s) => s.settings.adjustedField);
   const updateSections = useRiskManagementStore((s) => s.updater.sections);
 
-  const label = fieldLabels[derivedInput];
+  const label = FIELD_LABELS[derivedInput];
   const explanationPoints = derivedInputPoints(label);
 
   const showTooltipForInvalids = useCallback(
@@ -65,7 +65,7 @@ export default function DerivedModeSelector({ updateSettings }) {
           options={["amount", "buyPrice", "sellPrice"]}
           selectedOption={derivedInput}
           onSelect={(m) => handleDependencyChange(m, "derivedInput")}
-          fieldFormatter={fieldLabels}
+          fieldFormatter={FIELD_LABELS}
         />
       </div>
       {derivedInput === "amount" && (
@@ -76,7 +76,7 @@ export default function DerivedModeSelector({ updateSettings }) {
             selectedOption={adjust}
             onSelect={(m) => handleDependencyChange(m, "adjustedField")}
             size="small"
-            fieldFormatter={fieldLabels}
+            fieldFormatter={FIELD_LABELS}
           />
         </div>
       )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import "./ValidationTooltip.css";
 import { tooltip } from "./content";
@@ -65,7 +65,7 @@ export default function ValidationTooltip({
           )}
         </div>
         <div className="tooltip-arrow"></div>
-        <div className="tooltip-arrow-border"></div>
+        {/*<div className="tooltip-arrow-border"></div>*/}
       </div>
     </>
   );

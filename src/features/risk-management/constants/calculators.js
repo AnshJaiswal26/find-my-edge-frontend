@@ -1,4 +1,4 @@
-export const commonfields = [
+export const COMMON_FIELDS = [
   "buyPrice",
   "sellPrice",
   "qty",
@@ -7,7 +7,7 @@ export const commonfields = [
   "percent",
 ];
 
-export const postitionSizingFields = [
+export const POSITION_SIZING_FIELDS = [
   "adjustedSl",
   "suggestedQty",
   "lotSize",
@@ -16,7 +16,7 @@ export const postitionSizingFields = [
   "riskPercent",
 ];
 
-const pyramidingFields = [
+const PYRAMIDING_FIELDS = [
   "entryPrice",
   "qtyAdded",
   "avgBuyPrice",
@@ -25,23 +25,23 @@ const pyramidingFields = [
   "riskPercentPyramiding",
 ];
 
-export const fields = {
-  calculator: commonfields,
-  target: commonfields,
-  stopLoss: commonfields,
-  positionSizing: postitionSizingFields,
-  pyramiding: pyramidingFields,
+export const FIELDS = {
+  calculator: COMMON_FIELDS,
+  target: COMMON_FIELDS,
+  stopLoss: COMMON_FIELDS,
+  positionSizing: POSITION_SIZING_FIELDS,
+  pyramiding: PYRAMIDING_FIELDS,
 };
 
-export const sectionLabels = {
+export const SECTION_LABELS = {
   calculator: "Calculator",
-  positionSizing: "Postition-Sizing",
+  positionSizing: "Position-Sizing",
   target: "Target",
   stopLoss: "Stop-Loss",
   pyramiding: "Pyramiding",
 };
 
-export const fieldLabels = {
+export const FIELD_LABELS = {
   riskReward: "Risk/Reward",
   buyPrice: "Buy Price",
   sellPrice: "Sell Price",
@@ -63,23 +63,23 @@ export const fieldLabels = {
   avgBuyPrice: "Avg. Buy Price",
 };
 
-export const sectionColor = {
-  calculator: "neutral",
-  positionSizing: "neutral",
-  target: "green",
-  stopLoss: "red",
-  pyramiding: "neutral",
+export const SECTION_COLOR = {
+  calculator: "text-(--text-muted)",
+  positionSizing: "text-(--text-muted)",
+  target: "text-(--success)",
+  stopLoss: "text-(--error)",
+  pyramiding: "text-(--text-muted)",
 };
 
-export const fieldColors = {
-  riskReward: "neutral",
-  buyPrice: "green",
-  sellPrice: "red",
-  qty: "neutral",
-  slPts: "red",
-  lotSize: "neutral",
-  suggestedQty: "neutral",
-  riskPercent: "red",
-  riskAmount: "red",
-  adjustedSl: "red",
+export const FIELD_COLORS = {
+  riskReward: "var(--text)",
+  buyPrice: "var(--success)",
+  sellPrice: "var(--error)",
+  qty: "var(--text)",
+  slPts: "var(--error)",
+  lotSize: "var(--text)",
+  suggestedQty: "var(--text)",
+  riskPercent: "var(--error)",
+  riskAmount: "var(--error)",
+  adjustedSl: "var(--error)",
 };

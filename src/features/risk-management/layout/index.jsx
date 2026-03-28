@@ -1,45 +1,43 @@
 import {
-  fieldLabels,
-  fields,
-  sectionColor,
-  sectionLabels,
-} from "@features/risk-management/data";
-import { Input } from "@features/risk-management/components";
+  FIELD_LABELS,
+  FIELDS,
+  SECTION_COLOR,
+  SECTION_LABELS,
+} from "../constants";
+import { CalculatorInput } from "@features/risk-management/components";
 import styles from "./settingsLayout.module.css";
+import { Section } from "@shared/components/layout";
 
 export function CalculatorSectionLayout({
   section,
-  headerElement,
   footerElement,
   onMouseEnter,
 }) {
   const isReadOnly = (f) => f === "suggestedQty" || f === "adjustedSl";
 
   return (
-    <div
-      className={styles.sections}
+    <Section
+      className="!px-4"
+      title={
+        <span className={SECTION_COLOR?.[section]}>
+          {SECTION_LABELS?.[section]}
+        </span>
+      }
       onMouseEnter={() => (onMouseEnter ? onMouseEnter(section) : null)}
     >
-      <div className={styles.heading}>
-        <span className={sectionColor?.[section]}>
-          {sectionLabels?.[section]}
-        </span>
-        {headerElement}
-      </div>
-
-      <CalculatorInputGrid>
-        {fields?.[section]?.map((field) => (
-          <Input
+      <div className="grid gap-3 grid-cols-3">
+        {FIELDS?.[section]?.map((field) => (
+          <CalculatorInput
             key={`${field}_${section}`}
             className={isReadOnly(field) ? "readOnly" : ""}
-            label={fieldLabels[field]}
+            label={FIELD_LABELS[field]}
             sectionName={section}
             field={field}
           />
         ))}
-      </CalculatorInputGrid>
+      </div>
       {footerElement}
-    </div>
+    </Section>
   );
 }
 

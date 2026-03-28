@@ -34,7 +34,7 @@ export const buildPieChartOptions = ({
 
   const colors = seriesConfig.map((s) => s.color);
 
-  /* ---------------- data labels ---------------- */
+  /* ---------------- constants labels ---------------- */
 
   const dataLabels = {
     enabled: layout.dataLabels,

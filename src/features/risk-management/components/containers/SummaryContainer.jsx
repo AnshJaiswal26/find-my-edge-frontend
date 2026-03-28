@@ -6,7 +6,7 @@ import {
 
 export function SummaryContainer() {
   return (
-    <Container className="flex-none w-full">
+    <Container className="!min-h-fit">
       <TransactionSummarySection />
       <ChargesSummarySection />
     </Container>

@@ -1,1 +1,1 @@
-export {default as Input} from "./Input";
+export { CalculatorInput } from "./CalculatorInput";

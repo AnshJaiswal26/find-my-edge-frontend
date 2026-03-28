@@ -1,219 +1,220 @@
 /* tokens.css */
 /* BASE LIGHT FOUNDATION */
+
 [data-theme^="light-"] {
-  --surface-light: hsl(210 27% 94%);
-  --surface-muted-soft: hsla(0 0% 99% / 0.5);
-  --surface-disabled: hsl(0 0% 96%);
+    --surface-light: hsl(210 27% 94%);
+    --surface-muted-soft: hsla(0 0% 99% / 0.5);
+    --surface-disabled: hsl(0 0% 96%);
 
-  --border: hsl(0 0% 87%);
-  --border-muted: hsl(210 38% 94%);
-  --border-raised: hsl(0 0% 100%);
+    --border: hsl(0 0% 87%);
+    --border-muted: hsl(210 38% 94%);
+    --border-raised: hsl(0 0% 100%);
 
-  --text-muted: hsl(216 15% 63%);
-  --text-charts: hsl(210 29% 29%);
-  --text-charts-muted: hsl(210 13% 62%);
-  --text-disabled: hsl(0 0% 70%);
+    --text-muted: hsl(216 15% 63%);
+    --text-charts: hsl(210 29% 29%);
+    --text-charts-muted: hsl(210 13% 62%);
+    --text-disabled: hsl(0 0% 70%);
 
-  --success: hsl(159 94% 35%);
-  --success-soft: hsl(159 94% 35% / 0.12);
+    --success: hsl(159 94% 35%);
+    --success-soft: hsl(159 94% 35% / 0.12);
 
-  --error: hsl(0 99% 67%);
-  --error-soft: hsl(0 99% 67% / 0.12);
+    --error: hsl(0 99% 67%);
+    --error-soft: hsl(0 99% 67% / 0.12);
 
-  --warning: hsl(41 92% 67%);
-  --warning-soft: hsla(41 92% 67% / 0.25);
+    --warning: hsl(41 92% 67%);
+    --warning-soft: hsla(41 92% 67% / 0.25);
 
-  --info: hsl(215 100% 55%);
-  --info-soft: hsla(215 100% 55% / 0.08);
+    --info: hsl(215 100% 55%);
+    --info-soft: hsla(215 100% 55% / 0.08);
 
-  --cyan: hsl(180 100% 34%);
-  --cyan-soft: hsla(180 100% 34% / 0.2);
+    --cyan: hsl(180 100% 34%);
+    --cyan-soft: hsla(180 100% 34% / 0.2);
 
-  --hover: color-mix(in srgb, var(--surface-muted) 82%, black 8%);
-  --hover-elevated: color-mix(in srgb, var(--surface-muted) 65%, black 15%);
+    --hover: color-mix(in srgb, var(--surface-muted) 82%, black 8%);
+    --hover-elevated: color-mix(in srgb, var(--surface-muted) 65%, black 15%);
 
-  --shadow: 0 2px 22px hsla(0 0% 0% / 0.1);
-  --shadow-hover: 0 6px 12px hsla(0 0% 0% / 0.2);
+    --shadow: 0 2px 22px hsla(0 0% 0% / 0.1);
+    --shadow-hover: 0 6px 12px hsla(0 0% 0% / 0.2);
 
-  --scrollbar-track: var(--surface-light);
-  --scrollbar-thumb: color-mix(in srgb, var(--text-muted) 40%, transparent);
-  --scrollbar-thumb-hover: color-mix(
-    in srgb,
-    var(--text-muted) 70%,
-    transparent
-  );
+    --scrollbar-track: var(--surface-light);
+    --scrollbar-thumb: color-mix(in srgb, var(--text-muted) 40%, transparent);
+    --scrollbar-thumb-hover: color-mix(
+            in srgb,
+            var(--text-muted) 70%,
+            transparent
+    );
 
-  font-size: 17px;
+    font-size: 17px;
 
-  background-color: var(--surface);
+    background-color: var(--surface);
 }
 
 [data-theme="light-1"] {
-  --surface: hsl(0 0% 100%);
-  --surface-muted: hsl(0 0% 100%);
-  --surface-disabled: hsl(0 0% 96%);
+    --surface: hsl(0 0% 100%);
+    --surface-muted: hsl(0 0% 100%);
+    --surface-disabled: hsl(0 0% 96%);
 
-  --text: hsl(210 10% 23%);
+    --text: hsl(210 10% 23%);
 
-  background-color: var(--surface);
+    background-color: var(--surface);
 }
 
 [data-theme="light-2"] {
-  --surface: hsl(210 40% 98%);
-  --surface-light: hsl(210 35% 92%);
-  --surface-muted: hsl(210 30% 95%);
-  --surface-disabled: hsl(210 20% 92%);
+    --surface: hsl(210 40% 98%);
+    --surface-light: hsl(210 35% 92%);
+    --surface-muted: hsl(210 30% 95%);
+    --surface-disabled: hsl(210 20% 92%);
 
-  --border: hsl(210 25% 85%);
-  --border-muted: hsl(210 25% 90%);
+    --border: hsl(210 25% 85%);
+    --border-muted: hsl(210 25% 90%);
 
-  --text: hsl(210 30% 20%);
-  --text-muted: hsl(210 15% 55%);
+    --text: hsl(210 30% 20%);
+    --text-muted: hsl(210 15% 55%);
 
-  --hover: hsl(210 40% 85% / 0.4);
-  --hover-muted: hsl(210 20% 80%);
+    --hover: hsl(210 40% 85% / 0.4);
+    --hover-muted: hsl(210 20% 80%);
 
-  --shadow: 0 2px 18px hsl(210 30% 50% / 0.1);
-  --shadow-hover: 0 6px 14px hsl(210 30% 50% / 0.2);
-  background-color: var(--surface);
+    --shadow: 0 2px 18px hsl(210 30% 50% / 0.1);
+    --shadow-hover: 0 6px 14px hsl(210 30% 50% / 0.2);
+    background-color: var(--surface);
 }
 
 [data-theme="light-3"] {
-  --surface: hsl(35 40% 96%);
-  --surface-light: hsl(35 35% 90%);
-  --surface-muted: hsl(35 35% 94%);
-  --surface-disabled: hsl(35 20% 90%);
+    --surface: hsl(35 40% 96%);
+    --surface-light: hsl(35 35% 90%);
+    --surface-muted: hsl(35 35% 94%);
+    --surface-disabled: hsl(35 20% 90%);
 
-  --border: hsl(35 25% 82%);
-  --border-muted: hsl(35 25% 88%);
+    --border: hsl(35 25% 82%);
+    --border-muted: hsl(35 25% 88%);
 
-  --text: hsl(25 20% 20%);
-  --text-muted: hsl(25 15% 50%);
+    --text: hsl(25 20% 20%);
+    --text-muted: hsl(25 15% 50%);
 
-  --hover: hsl(35 30% 85% / 0.4);
-  --hover-muted: hsl(35 20% 80%);
+    --hover: hsl(35 30% 85% / 0.4);
+    --hover-muted: hsl(35 20% 80%);
 
-  --shadow: 0 2px 18px hsl(25 20% 40% / 0.08);
-  --shadow-hover: 0 6px 14px hsl(25 20% 40% / 0.18);
-  background-color: var(--surface);
+    --shadow: 0 2px 18px hsl(25 20% 40% / 0.08);
+    --shadow-hover: 0 6px 14px hsl(25 20% 40% / 0.18);
+    background-color: var(--surface);
 }
 
 [data-theme="light-4"] {
-  --surface: hsl(150 30% 96%);
-  --surface-light: hsl(150 25% 92%);
-  --surface-muted: hsl(150 25% 94%);
-  --surface-disabled: hsl(150 20% 90%);
+    --surface: hsl(150 30% 96%);
+    --surface-light: hsl(150 25% 92%);
+    --surface-muted: hsl(150 25% 94%);
+    --surface-disabled: hsl(150 20% 90%);
 
-  --border: hsl(150 20% 82%);
-  --border-muted: hsl(150 20% 88%);
+    --border: hsl(150 20% 82%);
+    --border-muted: hsl(150 20% 88%);
 
-  --text: hsl(150 25% 20%);
-  --text-muted: hsl(150 15% 45%);
+    --text: hsl(150 25% 20%);
+    --text-muted: hsl(150 15% 45%);
 
-  --hover: hsl(150 30% 85% / 0.4);
-  --hover-muted: hsl(150 20% 80%);
+    --hover: hsl(150 30% 85% / 0.4);
+    --hover-muted: hsl(150 20% 80%);
 
-  --shadow: 0 2px 18px hsl(150 30% 40% / 0.08);
-  --shadow-hover: 0 6px 14px hsl(150 30% 40% / 0.18);
-  background-color: var(--surface);
+    --shadow: 0 2px 18px hsl(150 30% 40% / 0.08);
+    --shadow-hover: 0 6px 14px hsl(150 30% 40% / 0.18);
+    background-color: var(--surface);
 }
 
 /* BASE DARK FOUNDATION */
 [data-theme^="dark-"] {
-  --surface-light: hsl(220 26% 14%);
-  --surface-muted-soft: hsl(220 26% 12% / 0.6);
-  --surface-disabled: color-mix(in srgb, var(--surface-muted) 92%, black 10%);
+    --surface-light: hsl(220 26% 14%);
+    --surface-muted-soft: hsl(220 26% 12% / 0.6);
+    --surface-disabled: color-mix(in srgb, var(--surface-muted) 92%, black 10%);
 
-  --border: hsl(220 24% 20%);
-  --border-muted: hsl(220 22% 15%);
-  --border-raised: hsl(220 28% 8%);
+    --border: hsl(220 24% 20%);
+    --border-muted: hsl(220 22% 15%);
+    --border-raised: hsl(220 28% 8%);
 
-  --text-muted: hsl(220 15% 65%);
-  --text-charts: hsl(210 40% 98%);
-  --text-charts-muted: hsl(220 12% 55%);
-  --text-disabled: hsl(220 10% 40%);
+    --text-muted: hsl(220 15% 65%);
+    --text-charts: hsl(210 40% 98%);
+    --text-charts-muted: hsl(220 12% 55%);
+    --text-disabled: hsl(220 10% 40%);
 
-  --success: hsl(158 90% 40%);
-  --success-soft: hsl(158 90% 40% / 0.15);
+    --success: hsl(158 90% 40%);
+    --success-soft: hsl(158 90% 40% / 0.15);
 
-  --error: hsl(0 90% 62%);
-  --error-soft: hsl(0 90% 62% / 0.15);
+    --error: hsl(0 90% 62%);
+    --error-soft: hsl(0 90% 62% / 0.15);
 
-  --warning: hsl(40 95% 60%);
-  --warning-soft: hsl(40 95% 60% / 0.2);
+    --warning: hsl(40 95% 60%);
+    --warning-soft: hsl(40 95% 60% / 0.2);
 
-  --info: hsl(210 90% 60%);
-  --info-soft: hsl(210 90% 60% / 0.15);
+    --info: hsl(210 90% 60%);
+    --info-soft: hsl(210 90% 60% / 0.15);
 
-  --cyan: hsl(180 80% 45%);
-  --cyan-soft: hsl(180 80% 45% / 0.2);
+    --cyan: hsl(180 80% 45%);
+    --cyan-soft: hsl(180 80% 45% / 0.2);
 
-  --hover: color-mix(in srgb, var(--surface-muted) 92%, #72abe577 20%);
-  --hover-elevated: color-mix(in srgb, var(--surface-muted) 75%, black 15%);
+    --hover: color-mix(in srgb, var(--surface-muted) 92%, #72abe577 20%);
+    --hover-elevated: color-mix(in srgb, var(--surface-muted) 75%, black 15%);
 
-  --shadow: none;
-  --shadow-hover: 0 8px 20px hsl(0 0% 0% / 0.4);
+    --shadow: none;
+    --shadow-hover: 0 8px 20px hsl(0 0% 0% / 0.4);
 
-  --scrollbar-track: var(--surface-light);
-  --scrollbar-thumb: color-mix(in srgb, var(--text-muted) 40%, transparent);
-  --scrollbar-thumb-hover: color-mix(
-    in srgb,
-    var(--text-muted) 70%,
-    transparent
-  );
+    --scrollbar-track: var(--surface-light);
+    --scrollbar-thumb: color-mix(in srgb, var(--text-muted) 40%, transparent);
+    --scrollbar-thumb-hover: color-mix(
+            in srgb,
+            var(--text-muted) 70%,
+            transparent
+    );
 
-  font-size: 17px;
+    font-size: 17px;
 
-  background-color: var(--surface);
+    background-color: var(--surface);
 }
 
 [data-theme="dark-1"] {
-  --surface: hsl(220 28% 8%);
-  --surface-muted: hsl(220 26% 12%);
-  /* --surface-disabled: hsl(220 20% 14%); */
+    --surface: hsl(220 28% 8%);
+    --surface-muted: hsl(220 26% 12%);
+    /* --surface-disabled: hsl(220 20% 14%); */
 
-  --text: hsl(210 40% 98%);
+    --text: hsl(210 40% 98%);
 
-  background-color: var(--surface);
+    background-color: var(--surface);
 }
 
 [data-theme="dark-2"] {
-  --surface: hsl(210 30% 10%);
-  --surface-light: hsl(210 25% 16%);
-  --surface-muted: hsl(210 25% 16%);
+    --surface: hsl(210 30% 10%);
+    --surface-light: hsl(210 25% 16%);
+    --surface-muted: hsl(210 25% 16%);
 
-  --border: hsl(210 20% 22%);
-  --border-muted: hsl(210 20% 18%);
+    --border: hsl(210 20% 22%);
+    --border-muted: hsl(210 20% 18%);
 
-  --text: hsl(210 40% 95%);
+    --text: hsl(210 40% 95%);
 
-  background-color: var(--surface);
+    background-color: var(--surface);
 }
 
 [data-theme="dark-3"] {
-  --surface: hsl(0 0% 3%);
-  --surface-light: hsl(0 0% 8%);
-  --surface-muted: hsl(0 0% 8%);
+    --surface: hsl(0 0% 3%);
+    --surface-light: hsl(0 0% 8%);
+    --surface-muted: hsl(0 0% 8%);
 
-  --border: hsl(0 0% 12%);
-  --border-muted: hsl(0 0% 10%);
+    --border: hsl(0 0% 12%);
+    --border-muted: hsl(0 0% 10%);
 
-  --text: hsl(0 0% 98%);
-  --text-muted: hsl(0 0% 70%);
+    --text: hsl(0 0% 98%);
+    --text-muted: hsl(0 0% 70%);
 
-  background-color: var(--surface);
+    background-color: var(--surface);
 }
 
 [data-theme="dark-4"] {
-  --surface: hsl(260 30% 10%);
-  --surface-light: hsl(260 25% 16%);
-  --surface-muted: hsl(260 25% 16%);
+    --surface: hsl(260 30% 10%);
+    --surface-light: hsl(260 25% 16%);
+    --surface-muted: hsl(260 25% 16%);
 
-  --border: hsl(260 20% 22%);
-  --border-muted: hsl(260 20% 18%);
+    --border: hsl(260 20% 22%);
+    --border-muted: hsl(260 20% 18%);
 
-  --text: hsl(260 30% 92%);
-  --text-muted: hsl(260 15% 65%);
+    --text: hsl(260 30% 92%);
+    --text-muted: hsl(260 15% 65%);
 
-  background-color: var(--surface);
+    background-color: var(--surface);
 }
