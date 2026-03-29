@@ -5,10 +5,10 @@ import {
   handlePtsAmountAndPercentChange,
   logResult,
   logStart,
+  shouldFormat,
 } from "@features/risk-management/utils";
-import { shouldFormat } from "@features/risk-management/utils";
 
-export default function useFormatterLogic() {
+export function useFormatterLogic() {
   const updateSections = useRiskManagementStore((s) => s.updater.sections);
 
   const formatAndUpdate = useCallback(
@@ -37,7 +37,7 @@ export default function useFormatterLogic() {
       logResult("formatAndUpdate", `formating done for ${name}`);
       return section;
     },
-    [handlePtsAmountAndPercentChange]
+    [handlePtsAmountAndPercentChange],
   );
 
   const format = useCallback(() => {

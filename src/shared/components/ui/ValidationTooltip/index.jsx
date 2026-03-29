@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import "./ValidationTooltip.css";
 import { tooltip } from "./content";
+import { createPortal } from "react-dom";
+import { useAutoFloating } from "@shared/hooks";
 
 export default function ValidationTooltip({
+  parentRef,
   message,
   type = "error",
   isVisible,
@@ -14,6 +17,13 @@ export default function ValidationTooltip({
   showCloseButton = false,
 }) {
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const ref = useAutoFloating(
+    true,
+    parentRef,
+    { preferred: "top", offset: 10 },
+    ["scroll", "resize"],
+  );
 
   useEffect(() => {
     if (isVisible) {
@@ -52,21 +62,20 @@ export default function ValidationTooltip({
 
   if (!isVisible) return null;
 
-  return (
-    <>
-      <div className={`validation-tooltip tooltip-${position} ${className}`}>
-        <div className={`tooltip-content ${isAnimating ? "animate-in" : ""}`}>
-          <Icon className="tooltip-icon" />
-          <p className="tooltip-message">{message}</p>
-          {showCloseButton && (
-            <button onClick={handleClose} className="tooltip-close">
-              <X className="tooltip-close-icon" />
-            </button>
-          )}
-        </div>
-        <div className="tooltip-arrow"></div>
-        {/*<div className="tooltip-arrow-border"></div>*/}
+  return createPortal(
+    <div ref={ref} className={`validation-tooltip ${className}`}>
+      <div className={`tooltip-content ${isAnimating ? "animate-in" : ""}`}>
+        <Icon className="tooltip-icon" />
+        <p className="tooltip-message">{message}</p>
+        {showCloseButton && (
+          <button onClick={handleClose} className="tooltip-close">
+            <X className="tooltip-close-icon" />
+          </button>
+        )}
       </div>
-    </>
+      {/*<div className="tooltip-arrow"></div>*/}
+      {/*<div className="tooltip-arrow-border"></div>*/}
+    </div>,
+    document.body,
   );
 }

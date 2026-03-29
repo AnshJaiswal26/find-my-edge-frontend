@@ -10,7 +10,7 @@ const resetAllTooltips = (tooltips) => {
   }, {});
 };
 
-export default function useClearLogic() {
+export function useClearLogic() {
   const clearTimers = useRef({});
   const updateSections = useRiskManagementStore((s) => s.updater.sections);
 

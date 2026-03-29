@@ -33,14 +33,12 @@ const fieldHandlers = {
 };
 
 // --- main handler for all inputs ---
-export function handleChange(sectionName, field, val, state) {
+export function handleChange(sectionName, field, value, state) {
   const updateSections = state.updater.sections;
   const showTooltip = state.updater.tooltip;
 
   const capital = state.capital.current;
   const section = state[sectionName];
-
-  const value = field === "ratio" ? val.replace("1 : ", "") : val;
 
   // const { status, caseValue } = checkSpecialCase(sectionName, field, value);
 
@@ -294,7 +292,7 @@ function handlePositionSizingChange({ section, field, val, state }) {
 
   const updated = { [field]: num };
 
-  if (isAmt || field === "riskpercent") {
+  if (isAmt || field === "riskPercent") {
     updated[opposite] = isAmt
       ? safe(num / capital) * 100
       : safe(num / 100) * capital;

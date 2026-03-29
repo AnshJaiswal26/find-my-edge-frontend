@@ -1,11 +1,9 @@
 import {
   calculatorUpdater,
-  toolTipUpdater,
-  singleUpdater,
   settingsUpdater,
+  singleUpdater,
+  toolTipUpdater,
 } from "@features/risk-management/utils";
-
-const defaultCfg = { round: true };
 
 const updaterMap = {
   "single-value": singleUpdater,
@@ -36,13 +34,14 @@ export const createUpdaterSlice = (set) => ({
     hoveredInput: (val) =>
       set(
         (prev) =>
-          singleUpdater({ prev, section: "hoveredInput", updates: val }) || prev
+          singleUpdater({ prev, section: "hoveredInput", updates: val }) ||
+          prev,
       ),
 
     tab: (val) =>
       set(
         (prev) =>
-          singleUpdater({ prev, section: "currentTab", updates: val }) || prev
+          singleUpdater({ prev, section: "currentTab", updates: val }) || prev,
       ),
 
     transaction: (val) =>
@@ -52,12 +51,12 @@ export const createUpdaterSlice = (set) => ({
             prev,
             section: "currentTransaction",
             updates: val,
-          }) || prev
+          }) || prev,
       ),
 
     field: (name, val) =>
       set(
-        (prev) => singleUpdater({ prev, section: name, updates: val }) || prev
+        (prev) => singleUpdater({ prev, section: name, updates: val }) || prev,
       ),
 
     tooltip: (section, updates) =>

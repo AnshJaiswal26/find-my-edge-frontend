@@ -4,8 +4,7 @@ import {
   SECTION_COLOR,
   SECTION_LABELS,
 } from "../constants";
-import { CalculatorInput } from "@features/risk-management/components";
-import styles from "./settingsLayout.module.css";
+import { CalculatorInput } from "../components/CalculatorInput";
 import { Section } from "@shared/components/layout";
 
 export function CalculatorSectionLayout({
@@ -19,14 +18,17 @@ export function CalculatorSectionLayout({
     <Section
       className="!px-4"
       title={
-        <span className={SECTION_COLOR?.[section]}>
-          {SECTION_LABELS?.[section]}
-        </span>
+        <div className="flex justify-between items-center">
+          <span className={SECTION_COLOR?.[section]}>
+            {SECTION_LABELS?.[section]}
+          </span>
+          {footerElement}
+        </div>
       }
-      onMouseEnter={() => (onMouseEnter ? onMouseEnter(section) : null)}
+      onMouseEnter={() => onMouseEnter?.(section)}
     >
       <div className="grid gap-3 grid-cols-3">
-        {FIELDS?.[section]?.map((field) => (
+        {FIELDS[section]?.map((field) => (
           <CalculatorInput
             key={`${field}_${section}`}
             className={isReadOnly(field) ? "readOnly" : ""}
@@ -36,23 +38,6 @@ export function CalculatorSectionLayout({
           />
         ))}
       </div>
-      {footerElement}
     </Section>
-  );
-}
-
-export function CalculatorInputGrid({ children, className, elementWidth }) {
-  return (
-    <div style={{ "--grid-width": elementWidth ? elementWidth : "130px" }}>
-      <div className={`${styles.calculatorGrid} ${className}`}>{children}</div>
-    </div>
-  );
-}
-
-export function SettingsSectionWrapper({ children, style }) {
-  return (
-    <div className={styles.settingsSectionWrapper} style={style}>
-      {children}
-    </div>
   );
 }

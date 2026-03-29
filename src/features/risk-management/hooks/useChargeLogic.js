@@ -1,13 +1,13 @@
 import { useCallback, useRef } from "react";
 import { useRiskManagementStore } from "@features/risk-management/stores";
-import { toggleCharges, safe } from "@features/risk-management/utils";
+import { safe, toggleCharges } from "@features/risk-management/utils";
 
-export default function useChargesLogic() {
+export function useChargesLogic() {
   const updateSections = useRiskManagementStore((s) => s.updater.sections);
 
   const isProcessing = useRef(false);
 
-  const charges = useCallback(
+  return useCallback(
     (field) => {
       if (isProcessing.current) return;
       isProcessing.current = true;
@@ -59,8 +59,6 @@ export default function useChargesLogic() {
         isProcessing.current = false;
       }, 300);
     },
-    [updateSections]
+    [updateSections],
   );
-
-  return charges;
 }

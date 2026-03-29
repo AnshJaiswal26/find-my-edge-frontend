@@ -10,3 +10,4 @@ export { useConfirmation } from "./useConfirmation";
 export { useGlobalEvents } from "./useGlobalEvents";
 export { useFormValidator } from "./useFormValidator";
 export { useImageUpload } from "./useImageUpload";
+export { useAutoFloating } from "./useAutoFloating";

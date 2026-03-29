@@ -21,7 +21,10 @@ export const PageContainer = ({
         <ConfirmationPopup />
 
         {editor && <Header />}
-        <div className="box-border flex-wrap p-5 bg-(--surface) w-full h-full max-w-[1350px] overflow-x-auto overflow-y-auto">
+        <div
+          id={"page-container"}
+          className="box-border flex-wrap p-5 bg-(--surface) w-full h-full max-w-[1350px] overflow-x-auto overflow-y-auto"
+        >
           {children}
         </div>
       </div>

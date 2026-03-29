@@ -10,35 +10,31 @@ export default function Overview({
   const [showOverview, setShowOverview] = useState(false);
 
   return (
-    <>
-      {/* Toggle button */}
-      <div>
-        <button
-          onClick={() => setShowOverview(!showOverview)}
-          className={`
-            flex gap-1 items-center
-            bg-slate-50 dark:bg-slate-700
-            border border-slate-200 dark:border-slate-700
-            text-slate-700 dark:text-white
-            text-[0.775rem]
-            px-2.5 py-1
-            cursor-pointer
-            transition-colors
-            ${showOverview ? "rounded-t-md border-b-0" : "rounded-md"}
-          `}
-        >
-          <span className="hover:underline">
-            {showOverview ? "Hide" : "See"} Overview
-          </span>
-          <span className="ml-1">
-            <ChevronDown
-              size={15}
-              className={`transition-all duration-300 ${
-                showOverview ? "rotate-180" : ""
-              } `}
-            />
-          </span>
-        </button>
+    <div className="flex flex-col">
+      {/* Header (clickable) */}
+      <div
+        onClick={() => setShowOverview(!showOverview)}
+        className={`
+          flex items-center justify-between
+          bg-(--surface-light)
+          px-3 py-2
+          rounded-md
+          cursor-pointer
+          transition-all duration-500
+          border border-(--border) 
+          ${showOverview ? "rounded-b-none" : ""}
+        `}
+      >
+        {/* Title */}
+        <div className="text-sm font-medium text-(--text-muted)">{title}</div>
+
+        {/* Chevron */}
+        <ChevronDown
+          size={16}
+          className={`transition-transform duration-300 ${
+            showOverview ? "rotate-180" : ""
+          }`}
+        />
       </div>
 
       {/* Collapsible wrapper */}
@@ -48,6 +44,8 @@ export default function Overview({
           transition-all
           duration-500
           ease-in-out
+          border-x border-b border-(--border)
+          rounded-b-md
           ${
             showOverview
               ? "max-h-[500px] opacity-100 overflow-y-auto"
@@ -55,22 +53,16 @@ export default function Overview({
           }
         `}
       >
-        {/* Content box */}
+        {/* Content */}
         <div
           className="
-            bg-slate-50 dark:bg-slate-700
-            border border-slate-200 dark:border-slate-700
-            rounded-b-lg rounded-tr-lg
-            px-4 py-3
+            bg-(--surface-light)
+            rounded-b-lg
+            p-2
             shadow-sm
-            text-slate-800 dark:text-slate-100
+            text-(--text)
           "
         >
-          {/* Title */}
-          <div className="text-base font-semibold mb-2 flex items-center gap-1.5 text-slate-700 dark:text-white">
-            {title}
-          </div>
-
           {/* Points */}
           <ul className="pl-5 text-sm leading-relaxed">
             {pointsArray.map((point, idx) => (
@@ -87,10 +79,10 @@ export default function Overview({
                 mt-3
                 text-[13.5px]
                 leading-relaxed
-                bg-blue-50 dark:bg-blue-900/40
-                text-blue-900 dark:text-white
+                bg-(--info-soft)
+                text-(--info)
                 px-3 py-2
-                border-l-4 border-blue-400
+                border-l-4 border-(--info)
                 rounded-md
               "
             >
@@ -99,6 +91,6 @@ export default function Overview({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

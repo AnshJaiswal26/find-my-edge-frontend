@@ -64,3 +64,5 @@ export { smallHash } from "./hash";
 export { moveItem } from "./arrayHelpers";
 
 export { required, rangeRequired, requiredIf } from "./validators";
+
+export { positionElement } from "./positioning";

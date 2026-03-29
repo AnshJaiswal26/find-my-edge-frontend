@@ -1,24 +1,27 @@
-import "./RiskManagement.css";
 import {
   CalculatorAndPositionsContainer,
-  CapitalInputContainer,
+  CapitalInput,
+  ChargesSummary,
   Settings,
-  SummaryContainer,
+  TransactionSummary,
 } from "./components";
 
-function RiskManagement() {
+import { Container } from "@shared/components/layout";
+
+export default function RiskManagement() {
   return (
     <>
       <Settings />
       <div className="flex flex-row gap-5 flex-1 flex-wrap">
         <div className="flex flex-col gap-5 flex-6 min-h-0 max-h-fit">
-          <CapitalInputContainer />
-          <SummaryContainer />
+          <CapitalInput />
+          <Container className="!min-h-fit" childClassName="!gap-4">
+            <TransactionSummary />
+            <ChargesSummary />
+          </Container>
         </div>
         <CalculatorAndPositionsContainer />
       </div>
     </>
   );
 }
-
-export default RiskManagement;

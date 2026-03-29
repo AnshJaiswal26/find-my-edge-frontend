@@ -6,4 +6,8 @@ export {
   FIELD_COLORS,
   POSITION_SIZING_FIELDS,
 } from "./calculators";
-export { CALCULATION_POINTS, QTY_ROUND_MODE_POINTS } from "./settings";
+export {
+  CALCULATION_POINTS,
+  QTY_ROUND_MODE_POINTS,
+  derivedInputPoints,
+} from "./settings";

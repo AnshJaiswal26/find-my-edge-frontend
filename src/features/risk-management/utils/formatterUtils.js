@@ -31,8 +31,8 @@ export const cleanFloat = (
   const nearInteger = fractional <= threshold || fractional >= 1 - threshold;
 
   const rounded = nearInteger ? Math.round(val) : Number(val);
-  const result = parseFloat(rounded.toFixed(decimals));
-  return result;
+
+  return parseFloat(rounded.toFixed(decimals));
 };
 
 export const safe = (val, decimals = 4) => {
@@ -53,7 +53,7 @@ export const formatValue = (val, { mode, direction = "ceil" }) => {
   if (!isValidDirection) throw new Error("Invalid Direction: " + direction);
 
   const round = (v, t) =>
-    Number(parseFloat(Math?.[direction](safe(v / t)) * t).toFixed(2));
+    Number(parseFloat(Math?.[direction]?.(safe(v / t)) * t).toFixed(2));
 
   switch (mode) {
     case "Approx":

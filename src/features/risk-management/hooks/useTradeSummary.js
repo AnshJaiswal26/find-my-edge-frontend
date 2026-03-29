@@ -1,7 +1,7 @@
 import { useRiskManagementStore } from "@features/risk-management/stores";
 import { calculateCharges, safe } from "@features/risk-management/utils";
 
-export default function useTradeSummary() {
+export function useTradeSummary() {
   const transaction = useRiskManagementStore((s) => s.currentTransaction);
   const buyPrice = useRiskManagementStore((s) => s[transaction].buyPrice);
   const sellPrice = useRiskManagementStore((s) => s[transaction].sellPrice);
