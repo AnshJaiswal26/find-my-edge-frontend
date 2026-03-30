@@ -1,6 +1,6 @@
 import { useDurationInput } from "@shared/hooks";
 import { useRef } from "react";
-import { hideTooltip, showTooltip } from "../tooltip/index.js";
+import { hideTooltip, showTooltip } from "../tooltip";
 
 const labels = ["Days", "Hrs", "Mins", "Sec"];
 
@@ -9,7 +9,7 @@ export default function DurationInput({
   onChange,
   onBlur,
   className = "",
-  wrpperClassName = "",
+  wrapperClassName = "",
 }) {
   const wrapperRef = useRef(null);
 
@@ -33,7 +33,7 @@ export default function DurationInput({
 
   return (
     <div
-      className={`relative flex ${wrpperClassName}`}
+      className={`relative flex ${wrapperClassName}`}
       ref={wrapperRef}
       onBlur={handleBlur}
     >
@@ -47,7 +47,7 @@ export default function DurationInput({
               value={String(p).padStart(2, "0")}
               autoFocus={index === 0}
               onMouseEnter={(e) => {
-                showTooltip(e, labels[index]);
+                showTooltip(e, { content: labels[index] });
               }}
               onMouseLeave={hideTooltip}
               onChange={(e) => updatePart(index, e.target.value, e)}

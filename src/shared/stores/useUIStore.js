@@ -21,39 +21,12 @@ export const useUIStore = create((set) => ({
 
   recentColors: [],
 
-  tooltip: {
-    color: null,
-    visible: false,
-    rect: null,
-    content: null,
-    placement: null,
-  },
-
   setLoading(loading) {
     set({ loading });
   },
 
   setPageName(pageName) {
     set({ pageName });
-  },
-
-  showTooltip: ({ rect, color, placement, content }) => {
-    set({
-      tooltip: {
-        visible: true,
-        color,
-        rect: rect
-          ? {
-              left: rect.left,
-              top: rect.top,
-              width: rect.width,
-              height: rect.height,
-            }
-          : null,
-        content,
-        placement,
-      },
-    });
   },
 
   setTheme: (theme) => {
@@ -68,23 +41,6 @@ export const useUIStore = create((set) => ({
       document.documentElement.classList.toggle("sidebar-open", value);
       return { isSidebarOpen: value };
     }),
-
-  setUserName: (username) => set({ username }),
-
-  setAvtar: (avtar) => set({ selectedAvatar: avtar }),
-
-  setSelect: (payload) => set({ activeSelect: payload }),
-
-  toggleSelect: (payload) =>
-    set((s) => ({
-      activeSelect: s.activeSelect?.id === payload?.id ? null : payload,
-    })),
-
-  setColorPicker: (payload) =>
-    set((s) => ({
-      activeColorPicker:
-        s.activeColorPicker?.id === payload?.id ? null : payload,
-    })),
 
   addRecentColor: (color) =>
     set((state) => {
@@ -120,7 +76,7 @@ export const useUIStore = create((set) => ({
         }));
       }, duration);
 
-      return { toasts: [newToast, ...state.toasts] };
+      return { toasts: [newToast, ...state.toasts].slice(0, 4) };
     });
     return id;
   },

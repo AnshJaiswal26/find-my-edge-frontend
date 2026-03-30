@@ -39,7 +39,7 @@ export function InputField({
           onBlur?.(e);
         }}
         className={`py-4.5 ${sizes?.input} ${classNames?.input}`}
-        wrpperClassName="flex focus-within:border-(--info) border border-(--border) rounded"
+        wrapperClassName="flex focus-within:border-(--info) border border-(--border) rounded"
         {...props}
       />
     );

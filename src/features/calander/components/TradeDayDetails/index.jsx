@@ -4,6 +4,7 @@ import { Cell } from "./Cell";
 import { Card } from "./Card";
 import { TradeRow } from "./TradeRow";
 import { useState } from "react";
+import { EmptyState } from "@shared/components/ui";
 
 export const TradeDayDetails = ({ data }) => {
   const selectedDate = useCalendarStore((s) => s.selectedDate);
@@ -42,9 +43,9 @@ export const TradeDayDetails = ({ data }) => {
     return (
       <Container
         childClassName="text-(--text-muted) items-center"
-        className="flex-3 min-h-70 w-fit items-center"
+        className="flex-3 min-h-70 w-full items-center"
       >
-        Click a day on the calendar to view trades
+        <EmptyState text={"Click a day on the calendar to view trades"} />
       </Container>
     );
   }

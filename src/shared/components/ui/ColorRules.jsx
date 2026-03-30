@@ -104,7 +104,7 @@ export default function ColorRules({
               ...p,
               colorRules: [
                 ...p.colorRules,
-                { operator: "none", value: 0, color: "#fff" },
+                { operator: "always", value: 0, color: "#fff" },
               ],
             }))
           }

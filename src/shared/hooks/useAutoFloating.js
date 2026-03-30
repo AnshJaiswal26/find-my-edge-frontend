@@ -5,21 +5,21 @@ import { useGlobalEvents } from "./useGlobalEvents";
 export function useAutoFloating(active, targetRef, options, events) {
   const ref = useRef(null);
 
+  const isPresent =
+    targetRef && ref.current !== null && targetRef.current !== null;
+
   useEffect(() => {
-    if (active && targetRef && ref) {
+    if (active && isPresent) {
       positionElement(targetRef.current, ref.current, options);
     }
-  }, [active]);
+  }, [active, options, isPresent, targetRef, ref]);
 
   useGlobalEvents(
-    targetRef && ref ? events : null,
-    targetRef && ref
+    isPresent ? events : null,
+    isPresent
       ? () => {
           requestAnimationFrame(() => {
-            positionElement(targetRef.current, ref.current, {
-              preferred: "top",
-              offset: 10,
-            });
+            positionElement(targetRef.current, ref.current, options);
           });
         }
       : null,

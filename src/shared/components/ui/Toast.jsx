@@ -1,5 +1,5 @@
 import { useUIStore } from "@shared/stores";
-import { X, CheckCircle, Info, AlertCircle, AlertTriangle } from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from "lucide-react";
 
 export default function ToastContainer() {
   const removeToast = useUIStore((s) => s.removeToast);
@@ -8,17 +8,17 @@ export default function ToastContainer() {
   if (!toasts.length) return null;
 
   const iconMap = {
-    success: <CheckCircle size={16} className="text-green-500 shrink-0" />,
-    error: <AlertCircle size={16} className="text-red-500 shrink-0" />,
-    info: <Info size={16} className="text-sky-500 shrink-0" />,
-    warning: <AlertTriangle size={16} className="text-amber-500 shrink-0" />,
+    success: <CheckCircle size={16} className="text-(--success) shrink-0" />,
+    error: <AlertCircle size={16} className="text-(--error) shrink-0" />,
+    info: <Info size={16} className="text-(--info) shrink-0" />,
+    warning: <AlertTriangle size={16} className="text-(--warning) shrink-0" />,
   };
 
   const progressColor = {
-    success: "bg-green-500",
-    error: "bg-red-500",
-    info: "bg-sky-500",
-    warning: "bg-amber-500",
+    success: "bg-(--success)",
+    error: "bg-(--error)",
+    info: "bg-(--info)",
+    warning: "bg-(--warning)",
   };
 
   return (
@@ -38,14 +38,15 @@ export default function ToastContainer() {
             pointer-events-auto
             relative
             flex items-center gap-2
-            px-3 py-2
-            rounded-lg
+            p-3
+            rounded
             text-[13px]
             backdrop-blur-md
-            border border-white/10
+            border border-(--border)
             shadow-md
-            bg-(--surface-disabled)
+            bg-(--surface-muted)
             opacity-0 translate-x-4
+            overflow-hidden
             animate-[toast-in_200ms_ease_forwards]
             ${toast.leaving ? "animate-[toast-out_180ms_ease_forwards]" : ""}
           `}
@@ -74,7 +75,7 @@ export default function ToastContainer() {
 
           {/* progress */}
           {!toast.leaving && (
-            <div className="absolute bottom-0 left-0 h-[2px] w-full bg-(--surface)">
+            <div className="absolute bottom-0 left-0 h-[3px] w-full bg-(--surface)">
               <div
                 className={`h-full ${progressColor[toast.type]} animate-[toast-progress_5s_linear]`}
               />

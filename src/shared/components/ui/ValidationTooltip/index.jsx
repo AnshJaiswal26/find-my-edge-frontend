@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import "./ValidationTooltip.css";
 import { tooltip } from "./content";
@@ -18,12 +18,25 @@ export default function ValidationTooltip({
 }) {
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const ref = useAutoFloating(
-    true,
-    parentRef,
-    { preferred: "top", offset: 10 },
-    ["scroll", "resize"],
+  const events = useMemo(() => ["scroll", "resize"], []);
+
+  const options = useMemo(
+    () => ({
+      preferred: position,
+      offset: 10,
+      // flip: false,
+      // shift: false,
+      arrow: {
+        show: true,
+        style: {
+          border: "1px solid var(--border)",
+        },
+      },
+    }),
+    [position],
   );
+
+  const ref = useAutoFloating(true, parentRef, options, events);
 
   useEffect(() => {
     if (isVisible) {
@@ -73,8 +86,6 @@ export default function ValidationTooltip({
           </button>
         )}
       </div>
-      {/*<div className="tooltip-arrow"></div>*/}
-      {/*<div className="tooltip-arrow-border"></div>*/}
     </div>,
     document.body,
   );

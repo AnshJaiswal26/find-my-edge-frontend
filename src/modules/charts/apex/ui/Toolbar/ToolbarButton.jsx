@@ -1,8 +1,5 @@
 import { Button } from "@shared/components/ui";
-import {
-  hideTooltip,
-  showTooltip,
-} from "@shared/components/ui/tooltip/index.js";
+import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
 
 export function ToolbarButton({ icon: Icon, title, active, onClick }) {
   return (

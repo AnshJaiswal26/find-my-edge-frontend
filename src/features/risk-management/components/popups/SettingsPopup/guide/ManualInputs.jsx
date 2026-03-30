@@ -13,11 +13,9 @@ export function ManualInputs({ userDefined }) {
               className="bg-(--success-soft) p-3 rounded space-y-1 border border-(--success-soft)"
               key={field}
             >
-              <div className="field-name">{FIELD_LABELS[field]}</div>
-              <div className="bg-white px-2 py-1.5 rounded">
-                <span className="text-(--text-muted)">
-                  Manual / Last Change
-                </span>
+              <div className="text-(--text) text-md">{FIELD_LABELS[field]}</div>
+              <div className="bg-(--surface-muted) px-2 py-1.5 rounded border border-(--success)">
+                <span className="text-(--text)">Manual / Last Change</span>
               </div>
             </div>
           ),

@@ -30,8 +30,8 @@ export function CalculatedFields({
               <span className="text-(--text)">{FIELD_LABELS[field]}</span>
               <span className="text-(--text-muted)">Auto-calculated</span>
 
-              <div className="bg-white p-2 rounded">
-                <div className="text-(--text-muted) text-xs">Formula:</div>
+              <div className="bg-(--surface-muted) p-2 rounded border border-(--info)">
+                <div className="text-(--text) text-xs">Formula:</div>
                 <div className="text-(--info) text-sm mt-0.5">
                   {createFormula(field)}
                 </div>

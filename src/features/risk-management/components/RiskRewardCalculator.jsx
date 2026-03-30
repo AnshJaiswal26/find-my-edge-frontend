@@ -3,9 +3,9 @@ import { ValidationTooltip } from "@shared/components/ui";
 import { useRiskManagementStore } from "../stores";
 import { FormatButton } from "./FormatButton";
 import { CalculatorInput } from "./CalculatorInput";
-import { PyramidingCalculator } from "./PyramidingCalculator";
 import { Calculator } from "./Calculator";
 import { ResetInputsButton } from "./ResetInputsButton";
+import { useRef } from "react";
 
 export function RiskRewardCalculator() {
   return (
@@ -19,18 +19,19 @@ export function RiskRewardCalculator() {
       </div>
       <Calculator sectionName={"target"} />
       <Calculator sectionName={"stopLoss"} />
-      <PyramidingCalculator />
+      {/*<PyramidingCalculator />*/}
     </>
   );
 }
 
 function RiskRewardInput() {
+  const ref = useRef(null);
   const tooltip = useRiskManagementStore((s) => s["riskRewardTooltip"].ratio);
   const showTooltip = useRiskManagementStore((s) => s.updater.tooltip);
   const riskReward = useRiskManagementStore((s) => s.riskReward);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <CalculatorInput
         className={tooltip ? "info" : ""}
         label="Risk/Reward"
@@ -39,6 +40,7 @@ function RiskRewardInput() {
         enableTooltip={false}
       />
       <ValidationTooltip
+        parentRef={ref}
         message={`To actually earn 1: ${riskReward.prevRatio} after charges, plan for a slightly wider target: around 1: ${riskReward.ratio}.`}
         position="top"
         type="info"

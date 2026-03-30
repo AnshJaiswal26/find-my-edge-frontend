@@ -16,10 +16,7 @@ import { Button } from "@shared/components/ui";
 import { useTableStore } from "@features/trade-metrics/table/store";
 import { useTradeStore } from "@shared/stores";
 import { useState } from "react";
-import {
-  hideTooltip,
-  showTooltip,
-} from "@shared/components/ui/tooltip/index.js";
+import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
 
 export function Toolbar({
   onAddTrade,

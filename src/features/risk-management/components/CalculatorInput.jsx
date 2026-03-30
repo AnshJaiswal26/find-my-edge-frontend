@@ -9,7 +9,6 @@ import { LockKeyholeIcon } from "lucide-react";
 import { hideTooltip, showTooltip } from "@shared/components/ui/tooltip";
 
 export function CalculatorInput({
-  className,
   label,
   sectionName,
   field,

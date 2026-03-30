@@ -1,5 +1,5 @@
 import { useFloatingPosition, useGlobalEvents } from "@shared/hooks";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
 
@@ -17,11 +17,6 @@ export default function Select({
   const listRef = useRef(null);
 
   const [active, setActive] = useState(false);
-
-  useFloatingPosition(active, buttonRef, listRef, {
-    preferred: "bottom",
-    offset: 3,
-  });
 
   const selectedItem = useMemo(
     () => options?.find((o) => getKey(o) === value) ?? null,
@@ -99,25 +94,36 @@ function Options({
   setActive,
   classNames,
 }) {
-  useGlobalEvents(
-    ["pointerdown", "resize", "scroll", "visibilitychange"],
-    (e) => {
-      const target = e.target;
-      if (target.nodeType === Node.ELEMENT_NODE) {
-        if (
-          buttonRef.current?.contains?.(target) ||
-          listRef.current?.contains?.(target)
-        )
-          return;
-      }
-      setActive(false);
-    },
+  const events = useMemo(
+    () => ["pointerdown", "resize", "scroll", "visibilitychange"],
+    [],
   );
 
-  useEffect(() => {
-    listRef.current.style.width =
-      buttonRef.current.getBoundingClientRect().width + "px";
-  }, []);
+  useGlobalEvents(events, (e) => {
+    const target = e.target;
+    if (target.nodeType === Node.ELEMENT_NODE) {
+      if (
+        buttonRef.current?.contains?.(target) ||
+        listRef.current?.contains?.(target)
+      )
+        return;
+    }
+    setActive(false);
+  });
+
+  const opts = useMemo(
+    () => ({
+      preferred: "bottom",
+      offset: 3,
+      axis: "y",
+      overflow: true,
+      matchWidth: true,
+      shift: false,
+    }),
+    [],
+  );
+
+  useFloatingPosition(buttonRef, listRef, opts);
 
   return (
     <div
@@ -134,7 +140,7 @@ function Options({
         min-w-25
         overflow-y-auto
         box-border
-        z-10000
+        z-1000
         ${classNames?.list}
       `}
     >

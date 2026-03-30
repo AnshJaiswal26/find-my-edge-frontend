@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import { BarChart2, HighlighterIcon, Trash2 } from "lucide-react";
 import { useGlobalEvents } from "@shared/hooks";
@@ -65,9 +65,10 @@ export function ContextMenu({ anchorRef, onAction, onClose }) {
     });
   }, [anchorRef]);
 
-  useGlobalEvents(["resize", "scroll", "pointerdown"], (e) => {
+  const events = useMemo(() => ["resize", "scroll", "pointerdown"], []);
+
+  useGlobalEvents(events, (e) => {
     const isFn = typeof menuRef.current.contains === "function";
-    console.log(isFn);
     if (isFn && !menuRef.current.contains(e.target)) onClose();
     else if (!isFn) onClose();
   });

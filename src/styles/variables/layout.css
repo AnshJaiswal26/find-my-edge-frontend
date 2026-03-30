@@ -95,3 +95,13 @@
     transform: rotate(45deg);
     background-color: #000;
 }
+
+.floating-with-arrow {
+    content: "";
+    position: absolute;
+    transform: rotate(45deg);
+    z-index: 10;
+    width: 10px;
+    height: 10px;
+}
+

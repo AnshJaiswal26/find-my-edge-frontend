@@ -13,7 +13,7 @@ import { ArrowLeftRight, Copy, CopyCheck } from "lucide-react";
 import { Button, Input } from "@shared/components/ui";
 import { useUIStore } from "@shared/stores";
 import { resolveCssColor, rgbaToHex } from "@shared/utils";
-import { useGlobalEvents } from "@shared/hooks";
+import { useFloatingPosition, useGlobalEvents } from "@shared/hooks";
 
 /* ---------- utils ---------- */
 function normalizeInputColor(input) {
@@ -52,7 +52,6 @@ export default function ColorPicker({
   const [dirty, setDirty] = useState(false);
   const [format, setFormat] = useState("hex");
   const [input, setInput] = useState("");
-  const [pos, setPos] = useState({});
 
   /* ---------- helpers ---------- */
   const markCommitted = (next) => {
@@ -69,22 +68,22 @@ export default function ColorPicker({
     setDirty(false);
   }, [active, resolvedValue, format]);
 
-  /* ---------- picker position ---------- */
-  useLayoutEffect(() => {
-    if (!active || !triggerRef.current) return;
-
-    const rect = triggerRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const spaceBelow = viewportHeight - rect.bottom;
-    const spaceAbove = rect.top;
-
-    setPos({
-      top: spaceBelow >= spaceAbove ? rect.bottom + 6 : undefined,
-      bottom:
-        spaceBelow < spaceAbove ? viewportHeight - rect.top + 6 : undefined,
-      left: rect.left,
-    });
-  }, [active]);
+  // /* ---------- picker position ---------- */
+  // useLayoutEffect(() => {
+  //   if (!active || !triggerRef.current) return;
+  //
+  //   const rect = triggerRef.current.getBoundingClientRect();
+  //   const viewportHeight = window.innerHeight;
+  //   const spaceBelow = viewportHeight - rect.bottom;
+  //   const spaceAbove = rect.top;
+  //
+  //   setPos({
+  //     top: spaceBelow >= spaceAbove ? rect.bottom + 6 : undefined,
+  //     bottom:
+  //       spaceBelow < spaceAbove ? viewportHeight - rect.top + 6 : undefined,
+  //     left: rect.left,
+  //   });
+  // }, [active]);
 
   /* ---------- commit on pointer up ---------- */
   useEffect(() => {
@@ -150,9 +149,11 @@ export default function ColorPicker({
   );
 
   return (
-    <div className="inline-flex items-center gap-2 border border-(--border) px-2 py-1 rounded w-fit">
+    <div
+      className="inline-flex items-center gap-2 border border-(--border) px-2 py-1 rounded w-fit"
+      ref={triggerRef}
+    >
       <button
-        ref={triggerRef}
         type="button"
         disabled={disabled}
         onClick={() => setActive((p) => !p)}
@@ -168,7 +169,6 @@ export default function ColorPicker({
             handleColorChange={handleColorChange}
             triggerRef={triggerRef}
             setActive={setActive}
-            pos={pos}
             format={format}
             setFormat={setFormat}
             handleInputChange={handleInputChange}
@@ -189,7 +189,6 @@ function Picker({
   handleColorChange,
   triggerRef,
   setActive,
-  pos,
   commitColor,
   input,
   color,
@@ -201,7 +200,30 @@ function Picker({
 
   const CopyIcon = isCopied ? CopyCheck : Copy;
 
-  const callback = useCallback((e) => {
+  const options = useMemo(
+    () => ({
+      preferred: "bottom",
+      axis: "both",
+      shift: false,
+      arrow: {
+        show: true,
+        style: {
+          backgroundColor: "var(--surface)",
+        },
+      },
+      observeResize: true,
+    }),
+    [],
+  );
+
+  useFloatingPosition(triggerRef, pickerRef, options);
+
+  const events = useMemo(
+    () => ["pointerdown", "resize", "scroll", "visibilitychange"],
+    [],
+  );
+
+  useGlobalEvents(events, (e) => {
     const target = e.target;
     if (target.nodeType === Node.ELEMENT_NODE) {
       if (
@@ -211,18 +233,17 @@ function Picker({
         return;
     }
     setActive(false);
-  }, []);
-
-  useGlobalEvents(
-    ["pointerdown", "resize", "scroll", "visibilitychange"],
-    callback,
-  );
+  });
 
   return (
     <div
       ref={pickerRef}
-      style={pos}
-      className="fixed space-y-2 z-9999 text-(--text) w-64 rounded-xl border border-(--border) bg-(--surface) shadow-xl p-3"
+      className="
+        fixed space-y-2
+        z-9999
+        text-(--text) w-64
+        rounded-xl border border-(--border)
+        bg-(--surface) shadow-xl p-3 box-border"
     >
       <RgbaStringColorPicker
         color={color}
